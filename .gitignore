@@ -4,6 +4,9 @@ node_modules/
 vendor/
 bin/
 docs/
+build/
+dist/
+coverage/
 
 # Specific Files
 thunderEnvironment.json
