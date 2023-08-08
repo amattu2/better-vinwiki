@@ -43,23 +43,12 @@ type UserProviderProps = {
 
 export const UserProvider: FC<UserProviderProps> = ({ token, children }: UserProviderProps) => {
   const user : User = JSON.parse(localStorage.getItem("user") || "{}");
-  const [state, setState] = useState<ProviderState>(user && user.id ? {
+  const [state] = useState<ProviderState>(user && user.id ? {
     status: ProviderStatus.LOADED,
     authenticated: true,
     user,
     token,
   } : defaultState);
-
-  useEffect(() => {
-    if (state.status === ProviderStatus.LOADED) {
-      return;
-    }
-    if (state.user) {
-      return;
-    }
-
-    // TODO: Fetch user and cache data IF it's not already cached
-  });
 
   useEffect(() => {
     if (state.authenticated && state.user) {

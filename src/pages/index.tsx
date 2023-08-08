@@ -1,8 +1,15 @@
 import React from 'react';
+import { useUserProvider } from '../Providers/UserProvider';
 
 const App = () => {
+  const { authenticated, user } = useUserProvider();
+
   return (
-    <span>Home page</span>
+    <div>
+      home page
+      <br />
+      {authenticated && user && user.id}
+    </div>
   );
 }
 

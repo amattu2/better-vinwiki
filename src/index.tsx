@@ -19,7 +19,7 @@ const ProtectedRoutes = () => {
   return (
     <UserProvider token={token}>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="*" element={<Home />} />
       </Routes>
     </UserProvider>
   );
@@ -30,8 +30,7 @@ root.render(
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<ProtectedRoutes />} />
-        <Route path="*" element={<span>404</span>} />
+        <Route path="*" element={<ProtectedRoutes />} />
       </Routes>
     </Router>
   </React.StrictMode>
