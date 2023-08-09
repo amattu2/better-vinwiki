@@ -28,4 +28,4 @@ jobs:
 
       # Run ESLint
       - name: "Run ESLint"
-        run: npm run lint . --quiet # Ignore warnings
+        run: npm run lint:ci
