@@ -25,7 +25,7 @@ const LoginView = () => {
     const { person, token: { token }, status } = await response.json();
     if (status === STATUS_OK) {
       localStorage.setItem("user", JSON.stringify(person));
-      localStorage.setItem("token", JSON.stringify(token));
+      localStorage.setItem("token", token);
       navigate("/");
     } else {
       alert("Invalid credentials");

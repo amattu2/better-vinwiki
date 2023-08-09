@@ -3,8 +3,10 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages';
 import Login from './pages/login/Controller';
+import Logout from './pages/logout/Controller';
 import reportWebVitals from './reportWebVitals';
 import { UserProvider } from './Providers/UserProvider';
+import { NotificationProvider } from './Providers/NotificationProvider';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -18,9 +20,11 @@ const ProtectedRoutes = () => {
 
   return (
     <UserProvider token={token}>
-      <Routes>
-        <Route path="*" element={<Home />} />
-      </Routes>
+      <NotificationProvider>
+        <Routes>
+          <Route path="*" element={<Home />} />
+        </Routes>
+      </NotificationProvider>
     </UserProvider>
   );
 };
@@ -30,6 +34,7 @@ root.render(
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/logout" element={<Logout />} />
         <Route path="*" element={<ProtectedRoutes />} />
       </Routes>
     </Router>
