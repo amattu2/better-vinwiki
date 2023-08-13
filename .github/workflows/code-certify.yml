@@ -9,6 +9,7 @@ permissions:
 
 jobs:
   certify:
+    name: Certify Build Changes
     if: ${{ github.repository_owner == 'amattu2' }}
     runs-on: ubuntu-latest
     steps:
