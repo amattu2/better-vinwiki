@@ -23,6 +23,7 @@ const ProtectedRoutes = () => {
     <AuthProvider token={token}>
       <NotificationProvider>
         <Routes>
+          <Route path="/profile/:uuid?" element={<Profile />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </NotificationProvider>
