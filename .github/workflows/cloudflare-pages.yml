@@ -8,6 +8,7 @@ on:
 
 jobs:
   certify:
+    name: Certify the Build
     if: ${{ github.repository_owner == 'amattu2' }}
     runs-on: ubuntu-latest
     steps:
@@ -24,12 +25,10 @@ jobs:
         run: npm run lint:ci
 
   publish:
+    name: Publish to Cloudflare Pages
     needs: certify
     if: ${{ github.repository_owner == 'amattu2' }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    name: Publish to Cloudflare Pages
     steps:
       - name: Checkout
         uses: actions/checkout@v3

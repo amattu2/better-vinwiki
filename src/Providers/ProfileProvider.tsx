@@ -115,7 +115,7 @@ export const ProfileProvider: FC<Props> = ({ uuid, withPosts, withFollowing, chi
         });
       }
     })();
-  }, [token, uuid, withPosts, withFollowing]);
+  }, [token, uuid, withPosts, withFollowing, user?.uuid]);
 
   return (
     <Context.Provider value={state}>
