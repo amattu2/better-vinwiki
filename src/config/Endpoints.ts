@@ -7,6 +7,8 @@ export const ENDPOINTS = {
 
   /* User Endpoints */
   notifications: `${API_URL}person/notification_count/me`,
+  feed: `${API_URL}person/feed/`,
+  filtered_feed: `${API_URL}person/filtered_feed/`,
 };
 
 export const STATUS_OK = "ok";
