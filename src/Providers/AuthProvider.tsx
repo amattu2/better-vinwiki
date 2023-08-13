@@ -3,7 +3,7 @@ import React, { useState, FC, useEffect } from "react";
 type AuthenticatedState = {
   status: ProviderStatus.LOADED;
   authenticated: true;
-  user: User;
+  user: Profile;
   token: string;
 };
 
@@ -26,24 +26,24 @@ const defaultState: ProviderState = { status: ProviderStatus.LOADING, authentica
 
 const Context = React.createContext<ProviderState | null>(null);
 
-export const useUserProvider = (): ProviderState => {
+export const useAuthProvider = (): ProviderState => {
   const contextState = React.useContext(Context);
 
   if (contextState === null) {
-    throw new Error("useUserProvider must be used within a UserProvider");
+    throw new Error("useAuthProvider must be used within a AuthProvider");
   }
 
   return contextState;
 };
 
-type UserProviderProps = {
-  token: string;
-  children: React.ReactNode;
+type Props = {
+  children?: React.ReactNode;
 };
 
-export const UserProvider: FC<UserProviderProps> = ({ token, children }: UserProviderProps) => {
-  const user : User = JSON.parse(localStorage.getItem("user") || "{}");
-  const [state] = useState<ProviderState>(user && user.id ? {
+export const AuthProvider: FC<Props> = ({ children }: Props) => {
+  const user : Profile = JSON.parse(localStorage.getItem("user") || "{}");
+  const token : string = localStorage.getItem("token") || "";
+  const [state, setState] = useState<ProviderState>(user && user.id ? {
     status: ProviderStatus.LOADED,
     authenticated: true,
     user,
@@ -59,6 +59,7 @@ export const UserProvider: FC<UserProviderProps> = ({ token, children }: UserPro
 
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    setState(defaultState);
   }, [state.authenticated, state.user, state.token]);
 
   return (

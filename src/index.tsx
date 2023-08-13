@@ -4,9 +4,10 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Home from './pages';
 import Login from './pages/login/Controller';
 import Logout from './pages/logout/Controller';
+import Profile from './pages/profile/Controller';
 import reportWebVitals from './reportWebVitals';
-import { UserProvider } from './Providers/UserProvider';
 import { NotificationProvider } from './Providers/NotificationProvider';
+import { AuthProvider } from './Providers/AuthProvider';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -19,13 +20,14 @@ const ProtectedRoutes = () => {
   };
 
   return (
-    <UserProvider token={token}>
+    <AuthProvider>
       <NotificationProvider>
         <Routes>
+          <Route path="/profile/:uuid?" element={<Profile />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </NotificationProvider>
-    </UserProvider>
+    </AuthProvider>
   );
 };
 

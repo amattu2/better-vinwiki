@@ -1,5 +1,5 @@
 import React, { useState, FC, useEffect } from "react";
-import { useUserProvider } from "./UserProvider";
+import { useAuthProvider } from "./AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
 
 export type ProviderState = {
@@ -29,11 +29,11 @@ export const useNotificationProvider = (): ProviderState => {
 };
 
 type Props = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 export const NotificationProvider: FC<Props> = ({ children }: Props) => {
-  const { token } = useUserProvider();
+  const { token } = useAuthProvider();
   const [state, setState] = useState<ProviderState>(defaultState);
 
   useEffect(() => {

@@ -1,10 +1,13 @@
-import React from 'react';
-import { useUserProvider } from '../Providers/UserProvider';
+import React, { useState } from 'react';
+import { useAuthProvider } from '../Providers/AuthProvider';
 import { useNotificationProvider } from '../Providers/NotificationProvider';
+import { FeedProvider } from '../Providers/FeedProvider';
+import Feed from '../components/Feed';
 
 const App = () => {
-  const { authenticated, user } = useUserProvider();
+  const { authenticated, user } = useAuthProvider();
   const { count } = useNotificationProvider();
+  const [filteredFeed, setFilteredFeed] = useState<boolean>(false);
 
   return (
     <div>
@@ -13,6 +16,11 @@ const App = () => {
       {authenticated && user && user.id}
       <br />
       Notification count: {count}
+      <br />
+      <button onClick={() => setFilteredFeed(!filteredFeed)}>Toggle Filtered Feed</button>
+      <FeedProvider filtered={filteredFeed}>
+        <Feed />
+      </FeedProvider>
     </div>
   );
 }
