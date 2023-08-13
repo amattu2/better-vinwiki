@@ -20,7 +20,7 @@ const ProtectedRoutes = () => {
   };
 
   return (
-    <AuthProvider token={token}>
+    <AuthProvider>
       <NotificationProvider>
         <Routes>
           <Route path="/profile/:uuid?" element={<Profile />} />

@@ -37,13 +37,13 @@ export const useAuthProvider = (): ProviderState => {
 };
 
 type Props = {
-  token: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
-export const AuthProvider: FC<Props> = ({ token, children }: Props) => {
+export const AuthProvider: FC<Props> = ({ children }: Props) => {
   const user : Profile = JSON.parse(localStorage.getItem("user") || "{}");
-  const [state] = useState<ProviderState>(user && user.id ? {
+  const token : string = localStorage.getItem("token") || "";
+  const [state, setState] = useState<ProviderState>(user && user.id ? {
     status: ProviderStatus.LOADED,
     authenticated: true,
     user,
@@ -59,6 +59,7 @@ export const AuthProvider: FC<Props> = ({ token, children }: Props) => {
 
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    setState(defaultState);
   }, [state.authenticated, state.user, state.token]);
 
   return (

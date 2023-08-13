@@ -32,7 +32,7 @@ export const useFeedProvider = (): ProviderState => {
 
 type Props = {
   filtered: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 export const FeedProvider: FC<Props> = ({ filtered, children }: Props) => {

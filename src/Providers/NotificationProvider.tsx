@@ -29,7 +29,7 @@ export const useNotificationProvider = (): ProviderState => {
 };
 
 type Props = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 export const NotificationProvider: FC<Props> = ({ children }: Props) => {

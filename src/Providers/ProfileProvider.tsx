@@ -81,7 +81,7 @@ type Props = {
   uuid: Profile["uuid"];
   withPosts?: true;
   withFollowing?: true;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 export const ProfileProvider: FC<Props> = ({ uuid, withPosts, withFollowing, children }: Props) => {
