@@ -5,6 +5,8 @@ import { useAuthProvider } from "./AuthProvider";
 export type ProviderState = {
   status: ProviderStatus;
   profile?: Profile;
+  posts?: FeedPost[];
+  following?: boolean;
 };
 
 export enum ProviderStatus {
@@ -27,13 +29,63 @@ export const useProfileProvider = (): ProviderState => {
   return contextState;
 };
 
+const fetchProfile = async (uuid: Profile["uuid"], token: string): Promise<Profile> => {
+  const response = await fetch(ENDPOINTS.profile + uuid, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const { status, profile } = await response.json();
+  if (status === STATUS_OK) {
+    return profile;
+  }
+
+  throw new Error("Error fetching profile");
+};
+
+const fetchPosts = async (uuid: Profile["uuid"], token: string): Promise<{ post: FeedPost }[]> => {
+  const response = await fetch(ENDPOINTS.posts + uuid, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const { status, posts } = await response.json();
+  if (status === STATUS_OK) {
+    return posts;
+  }
+
+  throw new Error("Error fetching posts");
+};
+
+const fetchFollowing = async (uuid: Profile["uuid"], token: string): Promise<boolean> => {
+  const response = await fetch(ENDPOINTS.is_following + uuid, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const { status, following } = await response.json();
+  if (status === STATUS_OK) {
+    return following;
+  }
+
+  return false;
+};
+
 type Props = {
   uuid: Profile["uuid"];
+  withPosts?: true;
+  withFollowing?: true;
   children: React.ReactNode;
 };
 
-export const ProfileProvider: FC<Props> = ({ uuid, children }: Props) => {
-  const { token } = useAuthProvider();
+export const ProfileProvider: FC<Props> = ({ uuid, withPosts, withFollowing, children }: Props) => {
+  const { token, user } = useAuthProvider();
   const [state, setState] = useState<ProviderState>(defaultState);
 
   useEffect(() => {
@@ -44,18 +96,18 @@ export const ProfileProvider: FC<Props> = ({ uuid, children }: Props) => {
     setState(defaultState);
 
     (async () => {
-      const response = await fetch(ENDPOINTS.profile + uuid, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const [profile, posts, following] = (await Promise.allSettled([
+        fetchProfile(uuid, token),
+        withPosts ? fetchPosts(uuid, token) : Promise.resolve([]),
+        withFollowing && uuid !== user?.uuid ? fetchFollowing(uuid, token) : Promise.resolve(false),
+      ])).map((r) => r.status === "fulfilled" ? r.value : null);
 
-      const { status, profile } = await response.json();
-      if (status === STATUS_OK) {
+      if (profile) {
         setState({
           status: ProviderStatus.LOADED,
-          profile,
+          profile: profile as Profile,
+          posts: (posts as { post: FeedPost}[])?.map(r => r?.post),
+          following: following as boolean,
         });
       } else {
         setState({
@@ -63,7 +115,7 @@ export const ProfileProvider: FC<Props> = ({ uuid, children }: Props) => {
         });
       }
     })();
-  }, [token, uuid]);
+  }, [token, uuid, withPosts, withFollowing]);
 
   return (
     <Context.Provider value={state}>

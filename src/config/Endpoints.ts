@@ -10,6 +10,8 @@ export const ENDPOINTS = {
   notifications: `${API_URL}person/notification_count/me`,
   feed: `${API_URL}person/feed/`,
   filtered_feed: `${API_URL}person/filtered_feed/`,
+  posts: `${API_URL}person/posts/`,
+  is_following: `${API_URL}person/is_following/`,
 };
 
 export const STATUS_OK = "ok";
