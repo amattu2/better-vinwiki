@@ -12,6 +12,10 @@ export const ENDPOINTS = {
   filtered_feed: `${API_URL}person/filtered_feed/`,
   posts: `${API_URL}person/posts/`,
   is_following: `${API_URL}person/is_following/`,
+  recent_vins: `${API_URL}person/recent_vins`,
+
+  /* Vehicle Endpoints */
+  search: `${API_URL}vehicle/search`,
 };
 
 export const STATUS_OK = "ok";
