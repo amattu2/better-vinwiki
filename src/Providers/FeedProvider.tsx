@@ -1,5 +1,5 @@
 import React, { useState, FC, useEffect, useMemo } from "react";
-import { useUserProvider } from "./UserProvider";
+import { useAuthProvider } from "./AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
 
 export type ProviderState = {
@@ -36,7 +36,7 @@ type Props = {
 };
 
 export const FeedProvider: FC<Props> = ({ filtered, children }: Props) => {
-  const { token, user } = useUserProvider();
+  const { token, user } = useAuthProvider();
   const [state, setState] = useState<ProviderState>(defaultState);
 
   const next = () : boolean => {

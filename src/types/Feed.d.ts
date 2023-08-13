@@ -8,7 +8,7 @@ type FeedPost = {
   id: string;
   image: FeedPostImage;
   locale: string;
-  person: User;
+  person: Profile;
   post_date: string; // ISO 8601 incl. offset
   post_date_ago: string; // MMM DD, YYYY
   post_text: string;

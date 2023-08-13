@@ -1,4 +1,4 @@
-type User = {
+type Profile = {
   avatar: any; // TODO: Figure out what this is
   bio: string;
   display_name: string;
@@ -21,4 +21,8 @@ type User = {
   username: string;
   uuid: string;
   website_url: string;
-}
+};
+
+type Notification = {
+  id: number; // TODO: determine structure
+};

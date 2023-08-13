@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useUserProvider } from '../Providers/UserProvider';
+import { useAuthProvider } from '../Providers/AuthProvider';
 import { useNotificationProvider } from '../Providers/NotificationProvider';
 import { FeedProvider } from '../Providers/FeedProvider';
 import Feed from '../components/Feed';
 
 const App = () => {
-  const { authenticated, user } = useUserProvider();
+  const { authenticated, user } = useAuthProvider();
   const { count } = useNotificationProvider();
   const [filteredFeed, setFilteredFeed] = useState<boolean>(false);
 
