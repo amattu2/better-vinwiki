@@ -35,15 +35,7 @@ type Props = {
 export const NotificationProvider: FC<Props> = ({ children }: Props) => {
   const { token } = useAuthProvider();
   const [state, setState] = useState<ProviderState>(defaultState);
-  const [trigger, setTrigger] = useState<number>(null);
-
-  useEffect(() => {
-    refetch();
-  
-    setTrigger(setInterval(refetch, 30 * 1000));
-    () => clearInterval(trigger);
-  }, [])
-
+  const [trigger, setTrigger] = useState<NodeJS.Timeout>();
 
   const refetch = async () => {
     if (!token) {
@@ -68,6 +60,13 @@ export const NotificationProvider: FC<Props> = ({ children }: Props) => {
       });
     }
   };
+
+  useEffect(() => {
+    refetch();
+  
+    setTrigger(setInterval(refetch, 30 * 1000));
+    return () => clearInterval(trigger);
+  }, []) 
 
   return (
     <Context.Provider value={state}>
