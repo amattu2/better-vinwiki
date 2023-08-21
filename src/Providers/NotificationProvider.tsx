@@ -35,31 +35,39 @@ type Props = {
 export const NotificationProvider: FC<Props> = ({ children }: Props) => {
   const { token } = useAuthProvider();
   const [state, setState] = useState<ProviderState>(defaultState);
+  const [trigger, setTrigger] = useState<number>(null);
 
   useEffect(() => {
+    refetch();
+  
+    setTrigger(setInterval(refetch, 30 * 1000));
+    () => clearInterval(trigger);
+  }, [])
+
+
+  const refetch = async () => {
     if (!token) {
       return;
     }
+    
+    const response = await fetch(ENDPOINTS.notifications, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-    (async () => {
-      const response = await fetch(ENDPOINTS.notifications, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    const { notification_count, status } = await response.json();
+    const { unseen } = notification_count;
+
+    if (status === STATUS_OK) {
+      setState({
+        status: ProviderStatus.LOADED,
+        notifications: [],
+        count: unseen,
       });
-
-      const { notification_count, status } = await response.json();
-      const { unseen } = notification_count;
-      if (status === STATUS_OK) {
-        setState({
-          status: ProviderStatus.LOADED,
-          notifications: [],
-          count: unseen,
-        });
-      }
-    })();
-  }, [token]);
+    }
+  };
 
   return (
     <Context.Provider value={state}>
