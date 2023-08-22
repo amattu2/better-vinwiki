@@ -106,7 +106,7 @@ export const ProfileProvider: FC<Props> = ({ uuid, withPosts, withFollowing, chi
         setState({
           status: ProviderStatus.LOADED,
           profile: profile as Profile,
-          posts: (posts as { post: FeedPost}[])?.map(r => r?.post),
+          posts: (posts as { post: FeedPost }[])?.map(r => r?.post),
           following: following as boolean,
         });
       } else {
