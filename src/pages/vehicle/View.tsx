@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { ProviderStatus, useVehicleProvider } from "../../Providers/VehicleProvider";
 
 const View : FC = () => {
-  const { status } = useVehicleProvider();
+  const { status, vehicle, posts, following } = useVehicleProvider();
 
   if (status === ProviderStatus.LOADING) {
     return <span>Loading...</span>;
@@ -14,7 +14,20 @@ const View : FC = () => {
 
   return (
     <div>
-      Vehicle View
+      <h3>Vehicle</h3>
+      <strong>VIN:</strong> {vehicle?.vin}
+      <br />
+      <strong>Make:</strong> {vehicle?.make}
+      <br />
+      <strong>Model:</strong> {vehicle?.model}
+      <br />
+      <strong>You are following:</strong> {following ? "Yes" : "No"}
+      <h3>Posts</h3>
+      {posts?.map((post) => (
+        <div key={post.uuid}>
+          &ndash; <strong>{post.post_text ?? post.post_date_ago}</strong>
+        </div>
+      ))}      
     </div>
   );
 };

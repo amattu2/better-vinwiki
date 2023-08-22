@@ -11,7 +11,7 @@ const Controller = () => {
   }
 
   return (
-    <VehicleProvider vin={vin}>
+    <VehicleProvider vin={vin} withPosts withFollowing>
       <VehicleView />
     </VehicleProvider>
   );
