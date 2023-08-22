@@ -82,6 +82,8 @@ export const SearchProvider: FC<Props> = ({ query, children }: Props) => {
       return;
     }
 
+    const controller = new AbortController();
+    const { signal } = controller;
 
     (async () => {
       const response = await fetch(ENDPOINTS.search, {
@@ -90,9 +92,10 @@ export const SearchProvider: FC<Props> = ({ query, children }: Props) => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ query }),
-      });
+        signal,
+      }).catch(() => null);
 
-      const { status, results } = await response.json();
+      const { status, results } = await response?.json() || {};
       if (status === STATUS_OK) {
         setState((prev) => ({
           ...prev,
@@ -102,6 +105,8 @@ export const SearchProvider: FC<Props> = ({ query, children }: Props) => {
         }));
       }
     })();
+
+    return () => controller.abort();
   }, [token, query]);
 
   const value = useMemo(() => ({ ...state, next, prev }), [state]);
