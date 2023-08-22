@@ -53,6 +53,8 @@ export const FeedProvider: FC<Props> = ({ filtered, children }: Props) => {
     }
 
     setState(defaultState);
+    const controller = new AbortController();
+    const { signal } = controller;
 
     (async () => {
       const response = await fetch((filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed) + user.uuid, {
@@ -60,9 +62,10 @@ export const FeedProvider: FC<Props> = ({ filtered, children }: Props) => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      });
+        signal,
+      }).catch(() => null);
 
-      const { status, count, feed } = await response.json();
+      const { status, count, feed } = await response?.json() || {};
       if (status === STATUS_OK) {
         setState({
           status: ProviderStatus.LOADED,
@@ -71,6 +74,8 @@ export const FeedProvider: FC<Props> = ({ filtered, children }: Props) => {
         });
       }
     })();
+
+    return () => controller.abort();
   }, [filtered, token, user?.uuid]);
 
   const value = useMemo(() => ({ ...state, next, prev }), [state]);
