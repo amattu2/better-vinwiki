@@ -16,6 +16,9 @@ export const ENDPOINTS = {
 
   /* Vehicle Endpoints */
   search: `${API_URL}vehicle/search`,
+  vehicle: `${API_URL}vehicle/vin/`,
+  vehicle_feed: `${API_URL}/vehicle/feed/`,
+  vehicle_is_following: `${API_URL}vehicle/is_following/`,
 };
 
 export const STATUS_OK = "ok";
