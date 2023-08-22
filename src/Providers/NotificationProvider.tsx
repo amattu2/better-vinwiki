@@ -35,31 +35,44 @@ type Props = {
 export const NotificationProvider: FC<Props> = ({ children }: Props) => {
   const { token } = useAuthProvider();
   const [state, setState] = useState<ProviderState>(defaultState);
+  const [trigger, setTrigger] = useState<NodeJS.Timeout>();
 
-  useEffect(() => {
+  const refetch = async () => {
     if (!token) {
       return;
     }
 
-    (async () => {
-      const response = await fetch(ENDPOINTS.notifications, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    setState((prevState) => ({
+      ...prevState,
+      status: ProviderStatus.LOADING,
+    }));
+    
+    const response = await fetch(ENDPOINTS.notifications, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-      const { notification_count, status } = await response.json();
-      const { unseen } = notification_count;
-      if (status === STATUS_OK) {
-        setState({
-          status: ProviderStatus.LOADED,
-          notifications: [],
-          count: unseen,
-        });
-      }
-    })();
-  }, [token]);
+    const { notification_count, status } = await response.json();
+    const { unseen } = notification_count;
+
+    if (status === STATUS_OK) {
+      setState({
+        status: ProviderStatus.LOADED,
+        notifications: [],
+        count: unseen,
+      });
+    }
+  };
+
+  useEffect(() => {
+    refetch();
+  
+    setTrigger(setInterval(refetch, 30 * 1000));
+    return () => clearInterval(trigger);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) 
 
   return (
     <Context.Provider value={state}>
