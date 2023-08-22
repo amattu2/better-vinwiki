@@ -1,13 +1,13 @@
 name: Cloudflare Pages
 
 on:
+  workflow_dispatch:
   push:
     branches:
-      - main
       - master
     paths:
-      - "/src/**"
-      - "/public/**"
+      - "src/**"
+      - "public/**"
 
 jobs:
   certify:
