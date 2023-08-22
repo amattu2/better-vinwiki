@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { useForm } from "react-hook-form";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import { ProviderStatus, useSearchProvider } from "../../Providers/SearchProvider";
 
 type Inputs = {
@@ -39,7 +39,7 @@ const View : FC = () => {
           <ul>
             {recents.map((vehicle: Vehicle) => (
               <li key={vehicle.vin}>
-                <a href={`/vehicle/${vehicle.vin}`}>{vehicle.long_name ?? vehicle.vin}</a>
+                <Link to={`/vehicle/${vehicle.vin}`}>{vehicle.long_name ?? vehicle.vin}</Link>
               </li>
             ))}
           </ul>
@@ -56,7 +56,7 @@ const View : FC = () => {
               <ul>
                 {results.map((vehicle: Vehicle) => (
                   <li key={vehicle.vin}>
-                    <a href={`/vehicle/${vehicle.vin}`}>{vehicle.long_name ?? vehicle.vin}</a>
+                    <Link to={`/vehicle/${vehicle.vin}`}>{vehicle.long_name ?? vehicle.vin}</Link>
                   </li>
                 ))}
               </ul>
