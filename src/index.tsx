@@ -5,6 +5,7 @@ import Home from './pages';
 import Login from './pages/login/Controller';
 import Logout from './pages/logout/Controller';
 import Profile from './pages/profile/Controller';
+import Vehicle from './pages/vehicle/Controller';
 import Search from './pages/search/Controller';
 import reportWebVitals from './reportWebVitals';
 import { NotificationProvider } from './Providers/NotificationProvider';
@@ -25,6 +26,8 @@ const ProtectedRoutes = () => {
       <NotificationProvider>
         <Routes>
           <Route path="/profile/:uuid?" element={<Profile />} />
+          <Route path="/vehicle/:vin" element={<Vehicle />} />
+          <Route path="/vin/:vin" element={<Vehicle />} />
           <Route path="/search" element={<Search />} />
           <Route path="*" element={<Home />} />
         </Routes>
