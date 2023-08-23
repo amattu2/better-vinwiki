@@ -16,3 +16,9 @@ type ListResponse = List & {
     vehicles: Vehicle[];
   }
 }
+
+type ProfileLists = {
+  following: List[];
+  owned: List[];
+  other: List[];
+}

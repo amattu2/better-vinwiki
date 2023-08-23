@@ -13,6 +13,7 @@ export const ENDPOINTS = {
   posts: `${API_URL}person/posts/`,
   is_following: `${API_URL}person/is_following/`,
   recent_vins: `${API_URL}person/recent_vins`,
+  lists: `${API_URL}person/lists/`,
 
   /* Vehicle Endpoints */
   vehicle_search: `${API_URL}vehicle/search`,
