@@ -2,11 +2,26 @@ import React, { useState, FC, useEffect, useMemo } from "react";
 import { useAuthProvider } from "./AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
 
+export type SearchTypes = "all" | "vehicles" | "lists";
+
+export type VehicleResult = {
+  type: "vehicle";
+  result: Vehicle;
+};
+
+export type ListResult = {
+  type: "list";
+  result: List;
+};
+
+export type SearchResult = VehicleResult | ListResult;
+
 export type ProviderState = {
   status: ProviderStatus;
-  results: Vehicle[];
+  results: SearchResult[];
   recents?: Vehicle[];
   query?: string;
+  type?: SearchTypes;
   count: number;
   next?: () => boolean;
   prev?: () => boolean;
@@ -32,12 +47,43 @@ export const useSearchProvider = (): ProviderState => {
   return contextState;
 };
 
+const vehicleSearch = async (query: string, token: string, signal: AbortSignal) => {
+  const response = await fetch(ENDPOINTS.vehicle_search, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ query }),
+    signal,
+  }).catch(() => null);
+
+  const { status, results } = await response?.json() || {};
+
+  return status === STATUS_OK && results.vehicles ? results.vehicles : null;
+};
+
+const listSearch = async (query: string, token: string, signal: AbortSignal) => {
+  const response = await fetch(ENDPOINTS.list_search, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ query }),
+    signal,
+  }).catch(() => null);
+
+  const { status, results } = await response?.json() || {};
+
+  return status === STATUS_OK && results.lists ? results.lists : null;
+};
+
 type Props = {
   query?: string;
+  type: SearchTypes;
   children?: React.ReactNode;
 };
 
-export const SearchProvider: FC<Props> = ({ query, children }: Props) => {
+export const SearchProvider: FC<Props> = ({ query, type, children }: Props) => {
   const { token } = useAuthProvider();
   const [state, setState] = useState<ProviderState>({ ...defaultState, query });
 
@@ -49,7 +95,6 @@ export const SearchProvider: FC<Props> = ({ query, children }: Props) => {
     return false;
   };
 
-  // Fetch recent VINs
   useEffect(() => {
     if (!token) {
       setState((prev) => ({ ...prev, recents: [] }));
@@ -76,6 +121,7 @@ export const SearchProvider: FC<Props> = ({ query, children }: Props) => {
       ...defaultState,
       recents: prev.recents,
       query,
+      type,
     }));
 
     if (!token || !query) {
@@ -86,28 +132,35 @@ export const SearchProvider: FC<Props> = ({ query, children }: Props) => {
     const { signal } = controller;
 
     (async () => {
-      const response = await fetch(ENDPOINTS.search, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ query }),
-        signal,
-      }).catch(() => null);
+      const [vehicles, lists] = (await Promise.allSettled([
+        type !== "lists" ? vehicleSearch(query, token, signal) : null,
+        type !== "vehicles" ? listSearch(query, token, signal) : null,
+      ])).map((r) => r.status === "fulfilled" ? r.value : null);
 
-      const { status, results } = await response?.json() || {};
-      if (status === STATUS_OK) {
+      if (vehicles || lists) {
+        const results: SearchResult[] = [
+          ...(vehicles?.map((v: Vehicle) => ({ type: "vehicle", result: v })) ?? []),
+          ...(lists?.map((l: List) => ({ type: "list", result: l })) ?? []),
+        ].filter((r) => r !== null);
+
+        results.sort((a, b) => {
+          const aTerm = a.type === "vehicle" ? a.result?.long_name : a.result?.name;
+          const bTerm = b.type === "vehicle" ? b.result?.long_name : b.result?.name;
+
+          return aTerm?.localeCompare(bTerm ?? "") ?? 0;
+        });
+
         setState((prev) => ({
           ...prev,
           status: ProviderStatus.LOADED,
-          results: results?.vehicles,
-          count: results?.count,
+          results,
+          count: results.length,
         }));
       }
     })();
 
     return () => controller.abort();
-  }, [token, query]);
+  }, [token, type, query]);
 
   const value = useMemo(() => ({ ...state, next, prev }), [state]);
 

@@ -7,7 +7,7 @@ describe("SearchProvider General Tests", () => {
   test("should render without crashing", () => {
     render(
       <AuthProvider>
-        <SearchProvider />
+        <SearchProvider type="all" />
       </AuthProvider>
     );
   });
@@ -15,7 +15,7 @@ describe("SearchProvider General Tests", () => {
   test("should render children", () => {
     render(
       <AuthProvider>
-        <SearchProvider>
+        <SearchProvider type="all">
           <div>Test</div>
         </SearchProvider>
       </AuthProvider>

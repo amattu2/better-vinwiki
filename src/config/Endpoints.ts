@@ -15,10 +15,13 @@ export const ENDPOINTS = {
   recent_vins: `${API_URL}person/recent_vins`,
 
   /* Vehicle Endpoints */
-  search: `${API_URL}vehicle/search`,
+  vehicle_search: `${API_URL}vehicle/search`,
   vehicle: `${API_URL}vehicle/vin/`,
   vehicle_feed: `${API_URL}/vehicle/feed/`,
   vehicle_is_following: `${API_URL}vehicle/is_following/`,
+
+  /* List Endpoints */
+  list_search: `${API_URL}lists/search`,
 };
 
 export const STATUS_OK = "ok";
