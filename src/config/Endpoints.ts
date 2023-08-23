@@ -13,12 +13,18 @@ export const ENDPOINTS = {
   posts: `${API_URL}person/posts/`,
   is_following: `${API_URL}person/is_following/`,
   recent_vins: `${API_URL}person/recent_vins`,
+  lists: `${API_URL}person/lists/`,
 
   /* Vehicle Endpoints */
-  search: `${API_URL}vehicle/search`,
+  vehicle_search: `${API_URL}vehicle/search`,
   vehicle: `${API_URL}vehicle/vin/`,
   vehicle_feed: `${API_URL}/vehicle/feed/`,
   vehicle_is_following: `${API_URL}vehicle/is_following/`,
+
+  /* List Endpoints */
+  list_search: `${API_URL}lists/search`,
+  list: `${API_URL}lists/id/`,
+  list_vehicles: `${API_URL}lists/vehicles/`, // append :uuid/:count
 };
 
 export const STATUS_OK = "ok";

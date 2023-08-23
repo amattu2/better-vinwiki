@@ -6,6 +6,7 @@ export type ProviderState = {
   status: ProviderStatus;
   profile?: Profile;
   posts?: FeedPost[];
+  lists?: ProfileLists;
   following?: boolean;
 };
 
@@ -77,14 +78,38 @@ const fetchFollowing = async (uuid: Profile["uuid"], token: string): Promise<boo
   return false;
 };
 
+const fetchLists = async (uuid: Profile["uuid"], token: string): Promise<ProfileLists | null> => {
+  const response = await fetch(ENDPOINTS.lists + uuid, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const { status, lists_following, lists_my, lists_other } = await response.json();
+  if (status === STATUS_OK) {
+    return {
+      following: (lists_following as { list: List }[])?.map(r => r?.list),
+      owned: (lists_my as { list: List }[])?.map(r => r?.list),
+      other: (lists_other as { list: List }[])?.map(r => r?.list),
+    };
+  }
+
+  return null;
+};
+
 type Props = {
   uuid: Profile["uuid"];
   withPosts?: true;
   withFollowing?: true;
+  withLists?: true;
   children?: React.ReactNode;
 };
 
-export const ProfileProvider: FC<Props> = ({ uuid, withPosts, withFollowing, children }: Props) => {
+export const ProfileProvider: FC<Props> = ({
+  uuid, withPosts, withFollowing, withLists,
+  children
+}: Props) => {
   const { token, user } = useAuthProvider();
   const [state, setState] = useState<ProviderState>(defaultState);
 
@@ -96,10 +121,11 @@ export const ProfileProvider: FC<Props> = ({ uuid, withPosts, withFollowing, chi
     setState(defaultState);
 
     (async () => {
-      const [profile, posts, following] = (await Promise.allSettled([
+      const [profile, posts, following, lists] = (await Promise.allSettled([
         fetchProfile(uuid, token),
         withPosts ? fetchPosts(uuid, token) : Promise.resolve([]),
         withFollowing && uuid !== user?.uuid ? fetchFollowing(uuid, token) : Promise.resolve(false),
+        withLists ? fetchLists(uuid, token) : Promise.resolve([]),
       ])).map((r) => r.status === "fulfilled" ? r.value : null);
 
       if (profile) {
@@ -107,6 +133,7 @@ export const ProfileProvider: FC<Props> = ({ uuid, withPosts, withFollowing, chi
           status: ProviderStatus.LOADED,
           profile: profile as Profile,
           posts: (posts as { post: FeedPost }[])?.map(r => r?.post),
+          lists: lists as ProfileLists,
           following: following as boolean,
         });
       } else {
@@ -115,7 +142,7 @@ export const ProfileProvider: FC<Props> = ({ uuid, withPosts, withFollowing, chi
         });
       }
     })();
-  }, [token, uuid, withPosts, withFollowing, user?.uuid]);
+  }, [token, uuid, withPosts, withFollowing, withLists, user?.uuid]);
 
   return (
     <Context.Provider value={state}>

@@ -13,7 +13,7 @@ const Controller = () => {
   }
 
   return (
-    <ProfileProvider uuid={uuid} withPosts withFollowing>
+    <ProfileProvider uuid={uuid} withPosts withFollowing withLists>
       <ProfileView />
     </ProfileProvider>
   );
