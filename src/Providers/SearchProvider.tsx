@@ -85,7 +85,7 @@ type Props = {
 
 export const SearchProvider: FC<Props> = ({ query, type, children }: Props) => {
   const { token } = useAuthProvider();
-  const [state, setState] = useState<ProviderState>({ ...defaultState, query });
+  const [state, setState] = useState<ProviderState>({ ...defaultState, query, type });
 
   const next = () : boolean => {
     return false
