@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { ProviderStatus, useListProvider } from "../../Providers/ListProvider";
 
 const View : FC = () => {
-  const { status, list, vehicles } = useListProvider();
+  const { status, next, list, hasMore, vehicles } = useListProvider();
 
   if (status === ProviderStatus.LOADING) {
     return <span>Loading...</span>;
@@ -31,6 +31,11 @@ const View : FC = () => {
           </li>
         ))}
       </ul>
+      <br/>
+      <center>1&ndash;{vehicles?.length} of {list?.vehicle_count}</center>
+      {hasMore && (
+        <button onClick={() => next?.(250)} disabled={status === ProviderStatus.LOADING_MORE}>Load More</button>
+      )}
     </div>
   );
 };
