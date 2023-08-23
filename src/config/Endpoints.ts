@@ -22,6 +22,8 @@ export const ENDPOINTS = {
 
   /* List Endpoints */
   list_search: `${API_URL}lists/search`,
+  list: `${API_URL}lists/id/`,
+  list_vehicles: `${API_URL}lists/vehicles/`, // append :uuid/:count
 };
 
 export const STATUS_OK = "ok";

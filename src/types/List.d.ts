@@ -8,3 +8,11 @@ type List = {
   uuid: string;
   vehicle_count: number;
 };
+
+type ListResponse = List & {
+  vehicles: {
+    count: number;
+    end: boolean;
+    vehicles: Vehicle[];
+  }
+}

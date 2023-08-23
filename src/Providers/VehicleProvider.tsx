@@ -42,7 +42,7 @@ const fetchVehicle = async (vin: Vehicle["vin"], token: string): Promise<Vehicle
     return vehicle;
   }
 
-  throw new Error("Error fetching profile");
+  throw new Error("Error fetching vehicle");
 };
 
 const fetchPosts = async (vin: Vehicle["vin"], token: string): Promise<{ post: FeedPost }[]> => {
@@ -115,7 +115,7 @@ export const VehicleProvider: FC<Props> = ({ vin, withPosts, withFollowing, chil
         });
       }
     })();
-  }, [token, vin, withPosts, withFollowing]);  
+  }, [token, vin, withPosts, withFollowing]);
 
   return (
     <Context.Provider value={state}>
