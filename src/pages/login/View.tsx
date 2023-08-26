@@ -1,19 +1,28 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { Avatar, Box, Button, Container, TextField, Typography, styled } from "@mui/material";
+import { Box, Button, Container, TextField, Typography, styled } from "@mui/material";
 import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
-import { LockOutlined } from "@mui/icons-material";
 
-const StyledBox = styled(Box)({
+const StyledContainer = styled(Container)({
+  height: "100%",
+});
+
+const FormContainer = styled(Box)({
   marginTop: 8,
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
+  justifyContent: 'center',
+  height: "100%",
 });
 
 const StyledFormBox = styled(Box)({
-  marginTop: "15px",
+  marginTop: "5px",
+});
+
+const StyledTextField = styled(TextField)({
+  marginTop: "25px",
 });
 
 type Inputs = {
@@ -46,33 +55,30 @@ const LoginView = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <StyledBox>
-        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          <LockOutlined />
-        </Avatar>
-        <Typography component="h1" variant="h5">
+    <StyledContainer maxWidth="xs">
+      <FormContainer>
+        <Typography component="h1" variant="h4">
           Sign in
         </Typography>
         <StyledFormBox component="form" onSubmit={handleSubmit(onSubmit)}>
-          <TextField
+          <StyledTextField
             fullWidth
-            margin="normal"
             label="Username"
             type="text"
             autoComplete="username"
             autoFocus
             {...register("username", { required: true })}
             error={!!errors.username}
+            helperText={errors.username ? "Username is required" : ""}
           />
-          <TextField
+          <StyledTextField
             fullWidth
-            margin="normal"
             label="Password"
             type="password"
             autoComplete="current-password"
             {...register("password", { required: true })}
             error={!!errors.password}
+            helperText={errors.password ? "Password is required" : ""}
           />
           <Button
             type="submit"
@@ -83,8 +89,8 @@ const LoginView = () => {
             Sign In
           </Button>
         </StyledFormBox>
-      </StyledBox>
-    </Container>
+      </FormContainer>
+    </StyledContainer>
   );
 };
 
