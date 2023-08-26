@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useAuthProvider } from '../Providers/AuthProvider';
 import { ProviderStatus, useNotificationProvider } from '../Providers/NotificationProvider';
-import { FeedProvider } from '../Providers/FeedProvider';
-import Feed from '../components/Feed';
+import Feed from '../pages/feed/Controller';
 
 const App = () => {
   const { authenticated, user } = useAuthProvider();
   const { status, count } = useNotificationProvider();
-  const [filteredFeed, setFilteredFeed] = useState<boolean>(false);
 
   return (
     <div>
@@ -17,10 +15,7 @@ const App = () => {
       <br />
       Notification count: {status === ProviderStatus.LOADED ? count : "Loading notifications..."}
       <br />
-      <button onClick={() => setFilteredFeed(!filteredFeed)}>Toggle Filtered Feed</button>
-      <FeedProvider filtered={filteredFeed}>
-        <Feed />
-      </FeedProvider>
+      <Feed />
     </div>
   );
 }
