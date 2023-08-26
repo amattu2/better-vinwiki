@@ -29,13 +29,9 @@ const Feed : FC = () => {
       </LoadingButton>
       <hr />
       <TransitionGroup
-        items={posts.map((post) => ({
-          post,
-          key: post.uuid,
-          ref: React.createRef<HTMLElement>()
-        }))}
+        items={posts.map((post) => ({ post, key: post.uuid }))}
         render={({ post }) => (
-          <div>
+          <div key={`${post.uuid}-div`}>
             <p>{(new Date(post.post_date)).toLocaleTimeString()} &middot; {post.person.username}</p>
             <p>{post.post_text ?? post.type}</p>
           </div>
