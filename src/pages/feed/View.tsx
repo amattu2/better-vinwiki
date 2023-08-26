@@ -1,13 +1,16 @@
 import React, { FC } from 'react';
-import { ProviderStatus, useFeedProvider } from '../../Providers/FeedProvider';
 import { useLocalStorage } from 'usehooks-ts';
+import { LoadingButton } from '@mui/lab';
+import Loader from '../../components/Loader';
+import TransitionGroup from '../../components/TransitionGroup';
+import { ProviderStatus, useFeedProvider } from '../../Providers/FeedProvider';
 
 const Feed : FC = () => {
   const { status, posts, count } = useFeedProvider();
   const [filtered, setFiltered] = useLocalStorage<boolean>("filteredFeed", false);
 
   if (status === ProviderStatus.LOADING) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   return (
@@ -15,16 +18,29 @@ const Feed : FC = () => {
       <hr />
       <h1>Feed</h1>
       <b>{count} posts</b>
-      <button onClick={() => setFiltered(!filtered)}>
+      <br />
+      <LoadingButton
+        type="button"
+        loading={status === ProviderStatus.RELOADING}
+        onClick={() => setFiltered(!filtered)}
+        variant='outlined'
+      >
         {filtered ? "Show all" : "Show following"}
-      </button>
+      </LoadingButton>
       <hr />
-      {posts.map((post: FeedPost) => (
-        <div key={post.id}>
-          <span>{post.uuid} &ndash; {post.post_text}</span>
-        </div>
-      ))}
-      <hr />
+      <TransitionGroup
+        items={posts.map((post) => ({
+          post,
+          key: post.uuid,
+          ref: React.createRef<HTMLElement>()
+        }))}
+        render={({ post }) => (
+          <div>
+            <p>{(new Date(post.post_date)).toLocaleTimeString()} &middot; {post.person.username}</p>
+            <p>{post.post_text ?? post.type}</p>
+          </div>
+        )}
+      />
     </div>
   );
 };
