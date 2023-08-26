@@ -1,7 +1,20 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { Avatar, Box, Button, Container, TextField, Typography, styled } from "@mui/material";
 import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
+import { LockOutlined } from "@mui/icons-material";
+
+const StyledBox = styled(Box)({
+  marginTop: 8,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+});
+
+const StyledFormBox = styled(Box)({
+  marginTop: "15px",
+});
 
 type Inputs = {
   username: string,
@@ -33,20 +46,45 @@ const LoginView = () => {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <input type="text" placeholder="Username" {...register("username", { required: true })} />
-          {errors.username && <span>This field is required</span>}
-        </div>
-        <div>
-          <input type="password" placeholder="Password" {...register("password", { required: true })} />
-          {errors.password && <span>This field is required</span>}
-        </div>
-        <input type="submit" />
-      </form>
-    </div>
+    <Container component="main" maxWidth="xs">
+      <StyledBox>
+        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <LockOutlined />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign in
+        </Typography>
+        <StyledFormBox component="form" onSubmit={handleSubmit(onSubmit)}>
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Username"
+            type="text"
+            autoComplete="username"
+            autoFocus
+            {...register("username", { required: true })}
+            error={!!errors.username}
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Password"
+            type="password"
+            autoComplete="current-password"
+            {...register("password", { required: true })}
+            error={!!errors.password}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Sign In
+          </Button>
+        </StyledFormBox>
+      </StyledBox>
+    </Container>
   );
 };
 
