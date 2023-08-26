@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { CssBaseline } from '@mui/material';
 import Home from './pages';
 import Login from './pages/login/Controller';
 import Logout from './pages/logout/Controller';
@@ -39,6 +40,7 @@ const ProtectedRoutes = () => {
 
 root.render(
   <React.StrictMode>
+    <CssBaseline />
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
