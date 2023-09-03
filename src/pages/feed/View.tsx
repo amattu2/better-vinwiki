@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { FilterList, Public, DynamicFeed, Image, Message } from '@mui/icons-material';
-import { Alert, Box, Button, Container, Stack, ToggleButton, ToggleButtonGroup, Tooltip, Typography, styled } from '@mui/material';
+import { Alert, Box, Button, Container, Divider, Stack, ToggleButton, ToggleButtonGroup, Tooltip, Typography, styled } from '@mui/material';
 import { useLocalStorage } from 'usehooks-ts';
 import { ProviderStatus, useFeedProvider } from '../../Providers/FeedProvider';
 import { PostRouter } from '../../components/FeedPost';
@@ -120,7 +120,10 @@ const Feed : FC = () => {
                 </ToggleButton>
               </ToggleButtonGroup>
             </Stack>
-            <hr />
+            <Divider sx={{ my: 2 }} />
+
+            {/* TODO: We need a "create post" box here that has a dropdown to select the VIN you're posting to */}
+
             {status === ProviderStatus.RELOADING && (
               <Alert severity="info" sx={{ mb: 1 }}>Hang tight. We're fetching your latest feed...</Alert>
             )}
