@@ -41,7 +41,7 @@ const Feed : FC = () => {
     const topByLength = posts.sort((a, b) => b.post_text.length - a.post_text.length)?.[0];
     const topByRandom = posts[Math.floor(Math.random() * posts.length)];
 
-    if (topByComments?.comment_count > 1) {
+    if (topByComments?.comment_count > 0) {
       return { reason: "Most Comments", post: topByComments };
     }
     if (topByLength?.post_text.length > 0) {

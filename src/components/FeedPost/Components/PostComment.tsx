@@ -35,7 +35,7 @@ const PostComment: FC<Props> = ({ comment }: Props) => {
         <Typography variant="body1" fontWeight={600}>
           <StyledLink to={`/profile/${uuid}`}>@{username}</StyledLink>
         </Typography>
-        <Typography variant="body2">
+        <Typography variant="body2" color="textSecondary">
           {text}
         </Typography>
         <Typography variant="body2" fontWeight={300}>

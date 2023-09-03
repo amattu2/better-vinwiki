@@ -101,7 +101,7 @@ const TopPost: FC<Props> = ({ reason, post }: Props) => {
             {" "}
             &middot;
             {" "}
-            {post.comment_count} comments
+            {post.comment_count} {post.comment_count === 1 ? "comment" : "comments"}
           </Typography>
       </Stack>
       </StyledAuthor>
