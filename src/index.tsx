@@ -29,7 +29,7 @@ const ProtectedRoutes = () => {
       <NotificationProvider>
         <Stack direction="row">
           <Sidebar />
-          <Box sx={{ flexGrow: 1 }}>
+          <Box sx={{ flexGrow: 1, ml: "72px" }}>
             <Routes>
               <Route path="/profile/:uuid?" element={<Profile />} />
               <Route path="/vehicle/:vin" element={<Vehicle />} />
