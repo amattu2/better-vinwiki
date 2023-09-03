@@ -8,36 +8,28 @@ import { ProviderStatus, useFeedProvider } from '../../Providers/FeedProvider';
 const Feed : FC = () => {
   const { status, posts, count } = useFeedProvider();
   const [filtered, setFiltered] = useLocalStorage<boolean>("filteredFeed", false);
+  const suggestions: { profile: Profile, postCount: number }[] = useMemo(() => {
+    const profileMap: { [uuid: string]: { profile: Profile, postCount: number } } = {};
+
+    (posts.map((post) => post.person) || []).forEach((profile) => {
+      if (profileMap[profile.uuid]) {
+        profileMap[profile.uuid].postCount++;
+      } else {
+        profileMap[profile.uuid] = { profile, postCount: 1 };
+      }
+    });
+
+    return Object.values(profileMap).sort((a, b) => b.postCount - a.postCount);
+  }, [posts]);
 
   if (status === ProviderStatus.LOADING) {
     return <Loader />;
   }
 
   return (
-    <div>
-      <hr />
-      <h1>Feed</h1>
-      <b>{count} posts</b>
-      <br />
-      <LoadingButton
-        type="button"
-        loading={status === ProviderStatus.RELOADING}
-        onClick={() => setFiltered(!filtered)}
-        variant='outlined'
-      >
-        {filtered ? "Show all" : "Show following"}
-      </LoadingButton>
-      <hr />
-      <TransitionGroup
-        items={posts.map((post) => ({ post, key: post.uuid }))}
-        render={({ post }) => (
-          <div key={`${post.uuid}-div`}>
-            <p>{(new Date(post.post_date)).toLocaleTimeString()} &middot; {post.person.username}</p>
-            <p>{post.post_text ?? post.type}</p>
-          </div>
-        )}
-      />
-    </div>
+      <StyledSidebarBox>
+        {suggestions?.length > 0 && <SuggestionCard suggestions={suggestions} limit={3} />}
+      </StyledSidebarBox>
   );
 };
 
