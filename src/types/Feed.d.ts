@@ -8,6 +8,7 @@ type FeedPost = {
   id: string;
   image: FeedPostImage;
   locale: string;
+  mileage?: number;
   person: Profile;
   post_date: string; // ISO 8601 incl. offset
   post_date_ago: string; // MMM DD, YYYY
@@ -24,5 +25,13 @@ type FeedPostImage = {
   large: string; // Large URL
   poster: string; // Poster URL
   thumb: string; // Thumbnail URL
+  uuid: string;
+};
+
+type PostComment = {
+  ago: string;
+  created: string; // ISO 8601 incl. offset
+  person: Profile;
+  text: string;
   uuid: string;
 };

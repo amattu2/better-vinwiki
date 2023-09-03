@@ -1,6 +1,7 @@
 import React, { useState, FC, useEffect, useMemo } from "react";
 import { useAuthProvider } from "./AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
+import { useSessionStorage } from "usehooks-ts";
 
 export type ProviderState = {
   status: ProviderStatus;
@@ -12,6 +13,7 @@ export type ProviderState = {
 
 export enum ProviderStatus {
   LOADING = "LOADING",
+  RELOADING = "RELOADING",
   LOADED = "LOADED",
   ERROR = "ERROR",
 }
@@ -37,7 +39,11 @@ type Props = {
 
 export const FeedProvider: FC<Props> = ({ filtered, children }: Props) => {
   const { token, user } = useAuthProvider();
-  const [state, setState] = useState<ProviderState>(defaultState);
+  const [cache, setCache] = useSessionStorage<Pick<ProviderState, "posts" | "count"> | null>("FeedProvider", null);
+  const [state, setState] = useState<ProviderState>(cache
+    ? { ...defaultState, ...cache, status: ProviderStatus.RELOADING }
+    : defaultState
+  );
 
   const next = () : boolean => {
     return false
@@ -52,9 +58,13 @@ export const FeedProvider: FC<Props> = ({ filtered, children }: Props) => {
       return;
     }
 
-    setState(defaultState);
     const controller = new AbortController();
     const { signal } = controller;
+
+    setState((prev) => ({
+      ...prev,
+      status: prev.posts?.length > 0 ? ProviderStatus.RELOADING : ProviderStatus.LOADING,
+    }));
 
     (async () => {
       const response = await fetch((filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed) + user.uuid, {
@@ -77,6 +87,11 @@ export const FeedProvider: FC<Props> = ({ filtered, children }: Props) => {
 
     return () => controller.abort();
   }, [filtered, token, user?.uuid]);
+
+  useEffect(() => {
+    setCache({ posts: state?.posts, count: state?.count });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state?.posts, state?.count]);
 
   const value = useMemo(() => ({ ...state, next, prev }), [state]);
 

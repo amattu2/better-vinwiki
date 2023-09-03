@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { CssBaseline } from '@mui/material';
+import { Stack, CssBaseline, Box } from '@mui/material';
+import Sidebar from './components/Sidebar';
 import Home from './pages';
 import Login from './pages/login/Controller';
 import Logout from './pages/logout/Controller';
@@ -26,13 +27,19 @@ const ProtectedRoutes = () => {
   return (
     <AuthProvider>
       <NotificationProvider>
-        <Routes>
-          <Route path="/profile/:uuid?" element={<Profile />} />
-          <Route path="/vehicle/:vin" element={<Vehicle />} />
-          <Route path="/list/:uuid" element={<List />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="*" element={<Home />} />
-        </Routes>
+        <Stack direction="row">
+          <Sidebar />
+          <Box sx={{ flexGrow: 1 }}>
+            <Routes>
+              <Route path="/profile/:uuid?" element={<Profile />} />
+              <Route path="/vehicle/:vin" element={<Vehicle />} />
+              <Route path="/list/:uuid" element={<List />} />
+              <Route path="/post/:uuid" element={<p>Todo</p>} />
+              <Route path="/search" element={<Search />} />
+              <Route path="*" element={<Home />} />
+            </Routes>
+          </Box>
+        </Stack>
       </NotificationProvider>
     </AuthProvider>
   );
