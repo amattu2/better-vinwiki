@@ -79,13 +79,15 @@ const Sidebar: FC = () => {
         <StyledLogo src="https://api.placeholder.app/image/90x90/3b3b3b?text=BV" alt="logo" />
       </StyledLogoBox>
       <StyledAvatarBox>
-        {user?.avatar ? (
-          <StyledLogo src={user.avatar} alt="user" />
-        ) : (
-          <Avatar sx={{ width: 36, height: 36 }}>
-            {user?.username?.charAt(0).toUpperCase()}
-          </Avatar>
-        )}
+        <StyledLink to="/profile">
+          {user?.avatar ? (
+            <StyledLogo src={user.avatar} alt="user" />
+          ) : (
+            <Avatar sx={{ width: 36, height: 36 }}>
+              {user?.username?.charAt(0).toUpperCase()}
+            </Avatar>
+          )}
+        </StyledLink>
       </StyledAvatarBox>
       <StyledControlGroup direction='column' gap={1}>
         <StyledIconButton disabled={pathname === "/"}>
