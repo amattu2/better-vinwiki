@@ -7,6 +7,7 @@ import { PostRouter } from '../../components/FeedPost';
 import Loader from '../../components/Loader';
 import SuggestionCard from '../../components/ProfileSuggestions';
 import TransitionGroup from '../../components/TransitionGroup';
+import TrendingPost from '../../components/TrendingPost';
 
 const StyledBox = styled(Box)({
   padding: "16px",
@@ -28,12 +29,27 @@ const Feed : FC = () => {
   const [postFilter, setPostFilter] = useLocalStorage<FeedPost["type"] | "">("postFilter", "");
   const [limit, setLimit] = useState<number>(10);
 
-  const filteredPosts = useMemo(() => {
+  const filteredPosts: FeedPost[] = useMemo(() => {
     return posts
       .filter((p) => postFilter ? p.type === postFilter : true)
       .filter((p) => !(p.client === "vinbot" && p.person.username !== "vinbot"))
       .slice(0, limit);
   }, [posts, postFilter, limit]);
+
+  const topPost: { reason: string, post: FeedPost } = useMemo(() => {
+    const topByComments = posts.sort((a, b) => b.comment_count - a.comment_count)?.[0];
+    const topByLength = posts.sort((a, b) => b.post_text.length - a.post_text.length)?.[0];
+    const topByRandom = posts[Math.floor(Math.random() * posts.length)];
+
+    if (topByComments?.comment_count > 1) {
+      return { reason: "Most Comments", post: topByComments };
+    }
+    if (topByLength?.post_text.length > 0) {
+      return { reason: "Longest Post", post: topByLength };
+    }
+
+    return { reason: "Random Pick", post: topByRandom };
+  }, [posts]);
 
   const suggestions: { profile: Profile, postCount: number }[] = useMemo(() => {
     const profileMap: { [uuid: string]: { profile: Profile, postCount: number } } = {};
@@ -124,6 +140,7 @@ const Feed : FC = () => {
         </StyledFeedBox>
       </Container>
       <StyledSidebarBox>
+        {topPost && <TrendingPost reason={topPost.reason} post={topPost.post} />}
         {suggestions?.length > 0 && <SuggestionCard suggestions={suggestions} limit={4} />}
       </StyledSidebarBox>
     </Stack>

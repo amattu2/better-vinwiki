@@ -24,8 +24,6 @@ type Props = {
 const StyledCard = styled(Card)({
   borderRadius: "8px",
   backgroundColor: "transparent",
-  position: "sticky",
-  top: "16px",
 });
 
 const StyledCardHeader = styled(CardHeader)({
