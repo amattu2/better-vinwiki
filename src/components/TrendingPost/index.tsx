@@ -64,6 +64,7 @@ const StyledPostText = styled(Typography)({
   fontWeight: 800,
   color: "#fff",
   zIndex: 2,
+  marginRight: "auto",
 });
 
 const StyledAuthor = styled(Stack)({
