@@ -1,15 +1,15 @@
 import React, { FC } from 'react';
 import {
-  Avatar,
   Card, CardContent, CardHeader,
-  List,
-  ListItem,
+  List, ListItem,
   ListItemAvatar,
   ListItemText,
+  Typography,
   styled,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import TransitionGroup from '../TransitionGroup';
+import ProfileAvatar from '../ProfileAvatar';
 
 type ProfileSuggestion = {
   profile: Profile;
@@ -23,7 +23,9 @@ type Props = {
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",
-  backgroundColor: "transparent"
+  backgroundColor: "transparent",
+  position: "sticky",
+  top: "16px",
 });
 
 const StyledCardHeader = styled(CardHeader)({
@@ -52,24 +54,17 @@ const StyledLink = styled(Link)({
 const SuggestionItem: FC<ProfileSuggestion> = ({ profile, postCount }: ProfileSuggestion) => (
   <ListItem key={profile.uuid} divider>
     <ListItemAvatar>
-      {profile.avatar ? (
-        <Avatar
-          src={profile.avatar}
-          alt={profile.username}
-        />
-      ) : (
-        <Avatar>
-          {(profile.username.slice(0, 2) ?? "NA").toUpperCase()}
-        </Avatar>
-      )}
+      <ProfileAvatar username={profile.username} avatar={profile.avatar} />
     </ListItemAvatar>
     <ListItemText
       primary={(
         <StyledLink to={`/profile/${profile.uuid}`} target='_blank'>
-          {profile.username}
+          <Typography variant="body1" fontWeight={600}>
+            @{profile.username}
+          </Typography>
         </StyledLink>
       )}
-      secondary={`${postCount} posts`}
+      secondary={`${postCount} ${postCount === 1 ? 'post' : 'posts'}`}
     />
     <StyledLink to={`/profile/${profile.uuid}`}>
       View
