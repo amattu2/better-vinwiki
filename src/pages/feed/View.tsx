@@ -34,18 +34,21 @@ const blogPost: BlogPost = {
 };
 
 const Feed : FC = () => {
-  const { status, posts } = useFeedProvider();
+  const { status, posts, next, hasNext } = useFeedProvider();
   const [filtered, setFiltered] = useLocalStorage<boolean>("filteredFeed", false);
   const [postFilter, setPostFilter] = useLocalStorage<FeedPost["type"] | "">("postFilter", "");
   const [limit, setLimit] = useState<number>(10);
 
+  // NOTE: These are posts matching client-side filters
   const filteredPosts: FeedPost[] = useMemo(() => {
     return posts
       .filter((p) => postFilter ? p.type === postFilter : true)
       .filter((p) => !(p.client === "vinbot" && p.person.username !== "vinbot"))
       .sort((a, b) => (new Date(b.post_date)).getTime() - (new Date(a.post_date)).getTime())
-      .slice(0, limit);
-  }, [posts, postFilter, limit]);
+  }, [posts, postFilter]);
+
+  // NOTE: These posts are a subset of filteredPosts, limited by the limit state
+  const slicedPosts: FeedPost[] = useMemo(() => filteredPosts.slice(0, limit), [filteredPosts, limit]);
 
   const topPost: { reason: string, post: FeedPost } = useMemo(() => {
     const topByComments = posts.sort((a, b) => b.comment_count - a.comment_count)?.[0];
@@ -75,6 +78,14 @@ const Feed : FC = () => {
 
     return Object.values(profileMap).sort((a, b) => b.postCount - a.postCount);
   }, [filteredPosts]);
+
+  const loadMore = () => {
+    setLimit((prev) => prev + 10);
+
+    if ((limit + 11) >= filteredPosts.length) {
+      next?.();
+    }
+  };
 
   useEffect(() => {
     setLimit(10);
@@ -138,16 +149,16 @@ const Feed : FC = () => {
             {status === ProviderStatus.RELOADING && (
               <Alert severity="info" sx={{ mb: 1 }}>Hang tight. We're fetching your latest feed...</Alert>
             )}
-            {(status === ProviderStatus.LOADED && filteredPosts.length === 0) && (
+            {(status === ProviderStatus.LOADED && slicedPosts.length === 0) && (
               <Alert severity="info" sx={{ mb: 1 }}>Uh oh. We have no posts to show.</Alert>
             )}
             <TransitionGroup
-              items={filteredPosts.map((post) => ({ post, key: post.uuid }))}
+              items={slicedPosts.map((post) => ({ post, key: post.uuid }))}
               render={({ post }) => <PostRouter {...post} />}
             />
-            {(filteredPosts.length < posts.length && filteredPosts.length === limit) && (
+            {hasNext && (
               <Box sx={{ textAlign: "center", mt: 2 }}>
-                <Button variant="outlined" onClick={() => setLimit(limit + 10)}>Show More</Button>
+                <Button variant="outlined" onClick={loadMore}>Show More</Button>
               </Box>
             )}
           </Container>

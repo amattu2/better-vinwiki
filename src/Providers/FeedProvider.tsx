@@ -7,8 +7,8 @@ export type ProviderState = {
   status: ProviderStatus;
   posts: FeedPost[];
   count: number;
-  next?: () => boolean;
-  prev?: () => boolean;
+  next?: () => Promise<boolean>;
+  hasNext?: boolean;
 }
 
 export enum ProviderStatus {
@@ -34,22 +34,47 @@ export const useFeedProvider = (): ProviderState => {
 
 type Props = {
   filtered: boolean;
+  limit: number;
   children?: React.ReactNode;
 };
 
-export const FeedProvider: FC<Props> = ({ filtered, children }: Props) => {
+export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) => {
   const { token, user } = useAuthProvider();
   const [cache, setCache] = useSessionStorage<Pick<ProviderState, "posts" | "count"> | null>("FeedProvider", null);
   const [state, setState] = useState<ProviderState>(cache
     ? { ...defaultState, ...cache, status: ProviderStatus.RELOADING }
     : defaultState
   );
+  const [nextPage, setNextPage] = useState<string>("");
 
-  const next = () : boolean => {
-    return false
-  };
+  const next = async (): Promise<boolean> => {
+    if (!nextPage || !token || !user?.uuid) {
+      return false;
+    }
 
-  const prev = () : boolean => {
+    setState((prev) => ({ ...prev, status: ProviderStatus.RELOADING }));
+
+    const endpoint = `${filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed}${user?.uuid}/${limit}/${nextPage}`
+    const response = await fetch(endpoint, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).catch(() => null);
+
+    const { status, count, next_page_uuid, end, feed } = await response?.json() || {};
+    if (status === STATUS_OK) {
+      setState((prev) => ({
+        status: ProviderStatus.LOADED,
+        posts: [...prev.posts, ...feed?.map((post: any) => post.post)],
+        count: count + prev.count,
+        hasNext: !end && next_page_uuid,
+      }));
+      setNextPage(next_page_uuid && !end ? next_page_uuid : "");
+
+      return true;
+    }
+
     return false;
   };
 
@@ -67,7 +92,8 @@ export const FeedProvider: FC<Props> = ({ filtered, children }: Props) => {
     }));
 
     (async () => {
-      const response = await fetch((filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed) + user.uuid, {
+      const endpoint = `${filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed}${user.uuid}/${limit}`
+      const response = await fetch(endpoint, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -75,25 +101,28 @@ export const FeedProvider: FC<Props> = ({ filtered, children }: Props) => {
         signal,
       }).catch(() => null);
 
-      const { status, count, feed } = await response?.json() || {};
+      const { status, count, next_page_uuid, end, feed } = await response?.json() || {};
       if (status === STATUS_OK) {
         setState({
           status: ProviderStatus.LOADED,
           posts: feed?.map((post: any) => post.post),
           count: count,
+          hasNext: !end && next_page_uuid,
         });
+        setNextPage(next_page_uuid && !end ? next_page_uuid : "");
       }
     })();
 
     return () => controller.abort();
-  }, [filtered, token, user?.uuid]);
+  }, [filtered, limit, token, user?.uuid]);
 
   useEffect(() => {
     setCache({ posts: state?.posts, count: state?.count });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state?.posts, state?.count]);
 
-  const value = useMemo(() => ({ ...state, next, prev }), [state]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const value = useMemo(() => ({ ...state, next }), [state]);
 
   return (
     <Context.Provider value={value}>
