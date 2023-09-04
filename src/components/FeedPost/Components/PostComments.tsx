@@ -35,11 +35,13 @@ const PostComments: FC<Props> = ({ uuid, count }: Props) => {
   const { token } = useAuthProvider();
   const [comments, setComments] = useState<PostComment[]>([]);
 
-  // TODO: Cancel fetch on unmount
   useEffect(() => {
     if (count <= 0) {
       return;
     }
+
+    const controller = new AbortController();
+    const { signal } = controller;
 
     (async () => {
       const response = await fetch(`${ENDPOINTS.comments}${uuid}`, {
@@ -47,13 +49,16 @@ const PostComments: FC<Props> = ({ uuid, count }: Props) => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      });
+        signal,
+      }).catch(() => null);
 
-      const { status, comments } = await response.json();
+      const { status, comments } = await response?.json() || {};
       if (status === STATUS_OK) {
         setComments(comments);
       }
     })();
+
+    return () => controller.abort();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
