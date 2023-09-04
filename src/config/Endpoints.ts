@@ -8,6 +8,7 @@ export const ENDPOINTS = {
   /* Person Endpoints */
   profile: `${API_URL}person/profile/`,
   profile_search: `${API_URL}person/search/`,
+  profile_username_search: `${API_URL}person/for_username/`,
   notification_count: `${API_URL}person/notification_count/me`,
   notifications: `${API_URL}person/notifications`,
   feed: `${API_URL}person/feed/`,

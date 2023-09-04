@@ -14,18 +14,17 @@ const StyledLink = styled(Link)({
   marginRight: "2px",
 });
 
-const searchUser = async (handle: string, token: string) : Promise<Profile | null> => {
-  const response = await fetch(ENDPOINTS.profile_search + handle, {
+const searchUser = async (handle: string, token: string) : Promise<Pick<Profile, "uuid" | "first_name" | "last_name"> | null> => {
+  const response = await fetch(ENDPOINTS.profile_username_search + handle, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 
-  const { status, results } = await response.json();
-  const hasPerson = (results?.people?.length === 1 || results?.people?.[0]?.username === handle);
-  if (status === STATUS_OK && hasPerson) {
-    return results.people[0];
+  const { status, person } = await response.json();
+  if (status === STATUS_OK && !!person?.uuid) {
+    return person;
   }
 
   return null;
@@ -40,7 +39,7 @@ const searchUser = async (handle: string, token: string) : Promise<Profile | nul
  */
 const GenericText: FC<Props> = ({ handle }: Props) => {
   const { token } = useAuthProvider();
-  const [user, setUser] = useState<Profile | null>(null);
+  const [user, setUser] = useState<Pick<Profile, "uuid" | "first_name" | "last_name"> | null>(null);
 
   useEffect(() => {
     if (token) {
