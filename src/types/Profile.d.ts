@@ -23,6 +23,16 @@ type Profile = {
   website_url: string;
 };
 
-type Notification = {
-  id: number; // TODO: determine structure
+type ProfileNotification = {
+  created: string; // Unix timestamp
+  created_ago: string; // Human readable time
+  created_date: string; // ISO 8601 date with offset
+  post: Pick<FeedPost, "post_text" | "uuid">;
+  recipient_id: "string";
+  recipient_uuid: "string";
+  seen: boolean;
+  sender: Pick<Profile, "avatar" | "username" | "uuid">;
+  text: string;
+  type: "post_mention" | "origin_author"; // TODO: Add more types
+  uuid: string;
 };

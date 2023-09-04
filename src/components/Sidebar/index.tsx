@@ -4,7 +4,8 @@ import { Avatar, Badge, IconButton, Popover, Tooltip, Typography } from '@mui/ma
 import { Box, Stack, styled } from '@mui/system';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuthProvider } from '../../Providers/AuthProvider';
-import { useNotificationProvider } from '../../Providers/NotificationProvider';
+import { useNotificationCountProvider } from '../../Providers/NotificationCountProvider';
+import Notifications from '../Notifications';
 
 const StyledBox = styled(Box)({
   padding: "32px 12px",
@@ -58,7 +59,7 @@ const StyledLink = styled(Link)({
 
 const Sidebar: FC = () => {
   const { authenticated, user } = useAuthProvider();
-  const { count } = useNotificationProvider();
+  const { unseen } = useNotificationCountProvider();
   const { pathname } = useLocation();
 
   const [open, setOpen] = useState(false);
@@ -118,7 +119,7 @@ const Sidebar: FC = () => {
         </StyledIconButton>
         <IconButton onClick={openNotifications}>
           <Tooltip title="Notifications" placement="right">
-            <Badge badgeContent={count} color="error">
+            <Badge badgeContent={unseen} color="error">
               <NotificationsActive />
             </Badge>
           </Tooltip>
@@ -137,8 +138,7 @@ const Sidebar: FC = () => {
         anchorEl={anchorEl}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        {/* TODO: Display notifications */}
-        <Typography sx={{ p: 2 }}>Notifications: {count}</Typography>
+        <Notifications preload={open} />
       </Popover>
     </StyledBox>
   );

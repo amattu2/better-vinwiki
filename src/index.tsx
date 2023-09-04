@@ -11,7 +11,7 @@ import Vehicle from './pages/vehicle/Controller';
 import List from './pages/list/Controller';
 import Search from './pages/search/Controller';
 import reportWebVitals from './reportWebVitals';
-import { NotificationProvider } from './Providers/NotificationProvider';
+import { NotificationCountProvider } from './Providers/NotificationCountProvider';
 import { AuthProvider } from './Providers/AuthProvider';
 
 const root = ReactDOM.createRoot(
@@ -26,7 +26,7 @@ const ProtectedRoutes = () => {
 
   return (
     <AuthProvider>
-      <NotificationProvider>
+      <NotificationCountProvider>
         <Stack direction="row">
           <Sidebar />
           <Box sx={{ flexGrow: 1, ml: "72px" }}>
@@ -40,7 +40,7 @@ const ProtectedRoutes = () => {
             </Routes>
           </Box>
         </Stack>
-      </NotificationProvider>
+      </NotificationCountProvider>
     </AuthProvider>
   );
 };
