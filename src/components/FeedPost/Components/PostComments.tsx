@@ -35,6 +35,7 @@ const PostComments: FC<Props> = ({ uuid, count }: Props) => {
   const { token } = useAuthProvider();
   const [comments, setComments] = useState<PostComment[]>([]);
 
+  // TODO: Cancel fetch on unmount
   useEffect(() => {
     if (count <= 0) {
       return;
