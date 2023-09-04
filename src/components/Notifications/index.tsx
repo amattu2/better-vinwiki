@@ -66,8 +66,8 @@ export const Notifications: FC<Props> = ({ preload }: Props) => {
     return <CircularProgress />;
   }
 
-  if (!data) {
-    return <Typography variant="body1">No notifications</Typography>;
+  if (!data || !data.length) {
+    return <Typography variant="body1" sx={{ p: 1 }}>No notifications</Typography>;
   }
 
   return (
