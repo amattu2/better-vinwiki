@@ -13,6 +13,7 @@ type ListResponse = List & {
   vehicles: {
     count: number;
     end: boolean;
+    last_id: string;
     vehicles: Vehicle[];
   }
 }

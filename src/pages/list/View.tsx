@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { ProviderStatus, useListProvider } from "../../Providers/ListProvider";
 
 const View : FC = () => {
-  const { status, next, list, hasMore, vehicles } = useListProvider();
+  const { status, next, following, list, hasMore, vehicles } = useListProvider();
 
   if (status === ProviderStatus.LOADING) {
     return <span>Loading...</span>;
@@ -23,6 +23,8 @@ const View : FC = () => {
       <strong>{list?.vehicle_count}</strong>
       {" | Owned By: "}
       <strong>{list?.owner?.username}</strong>
+      {" | Following: "}
+      <strong>{following ? "Yes" : "No"}</strong>
       <h2>Vehicles</h2>
       <ul>
         {vehicles?.map((vehicle: Vehicle) => (
