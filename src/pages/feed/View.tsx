@@ -8,6 +8,7 @@ import Loader from '../../components/Loader';
 import SuggestionCard from '../../components/ProfileSuggestions';
 import TransitionGroup from '../../components/TransitionGroup';
 import TrendingPost from '../../components/TrendingPost';
+import BlogPostCard from '../../components/BlogPost';
 
 const StyledBox = styled(Box)({
   padding: "16px",
@@ -19,9 +20,18 @@ const StyledFeedBox = styled(StyledBox)({
 });
 
 const StyledSidebarBox = styled(StyledBox)({
-  minWidth: "370px",
+  minWidth: "400px",
   flexGrow: 1,
 });
+
+// TODO: Dynamically fetch this from the blog
+const blogPost: BlogPost = {
+  created: '2016-07-14T01:00:00.000Z',
+  title: 'Discrepancy of Data',
+  body: 'In 2001 when the Ferrari 360 Spider came out, the market premiums were more than $150k over MSRP. It was the first time in years where it made sense to have gray market cars in the US. The values were closer to MSRP in Europe and the federalization fees were only $30-40k.',
+  link: 'https://vinwiki.com/discrepancy-of-data/',
+  image: 'https://api.placeholder.app/image/350x350/E4E4D0/3b3b3b?text=LOREM',
+};
 
 const Feed : FC = () => {
   const { status, posts } = useFeedProvider();
@@ -42,7 +52,7 @@ const Feed : FC = () => {
     const topByLength = posts.sort((a, b) => b.post_text.length - a.post_text.length)?.[0];
     const topByRandom = posts[Math.floor(Math.random() * posts.length)];
 
-    if (topByComments?.comment_count > 0) {
+    if (topByComments?.comment_count > 0 && topByComments?.post_text.length > 0) {
       return { reason: "Most Comments", post: topByComments };
     }
     if (topByLength?.post_text.length > 0) {
@@ -144,6 +154,7 @@ const Feed : FC = () => {
         </StyledFeedBox>
       </Container>
       <StyledSidebarBox>
+        {blogPost && <BlogPostCard post={blogPost} />}
         {topPost && <TrendingPost reason={topPost.reason} post={topPost.post} />}
         {suggestions?.length > 0 && <SuggestionCard suggestions={suggestions} limit={4} />}
       </StyledSidebarBox>

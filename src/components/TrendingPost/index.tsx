@@ -19,7 +19,7 @@ const StyledCard = styled(Card)({
   borderRadius: "8px",
   backgroundColor: "transparent",
   marginBottom: "16px",
-  maxWidth: "400px",
+  maxWidth: "450px",
   cursor: "pointer",
 });
 
