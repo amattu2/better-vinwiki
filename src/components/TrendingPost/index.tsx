@@ -98,7 +98,7 @@ const TopPost: FC<Props> = ({ reason, post }: Props) => {
             <StyledLink to={`/profile/${post.person.uuid}`}>@{post.person.username}</StyledLink>
           </Typography>
           <Typography variant="body2">
-            {formatDateTime(new Date(post.post_date))}
+            {formatDateTime(new Date(post.post_date), true)}
             {" "}
             &middot;
             {" "}

@@ -1,10 +1,12 @@
 import React, { FC } from "react";
 import { OpenInNew } from "@mui/icons-material";
-import { Box, Card, CardContent, Grid, Typography, styled } from "@mui/material";
+import { Box, Card, CardContent, Grid, Stack, Typography, styled } from "@mui/material";
 import { Link } from "react-router-dom";
 import useProgressiveQuality from "../../hooks/useProgressiveQuality";
 import PostComments from "./Components/PostComments";
 import ProfileBit from "./Components/PostProfile";
+import GenericText from "./Components/GenericText";
+import { formatDateTime } from "../../utils/date";
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",
@@ -56,7 +58,7 @@ const StyledLink = styled(Link)({
 });
 
 const ImagePost: FC<FeedPost> = (post: FeedPost) => {
-  const { uuid, image, post_text, comment_count } = post;
+  const { uuid, image, comment_count, post_text } = post;
   const [src, { blur }] = useProgressiveQuality(image?.thumb, image?.large);
 
   return (
@@ -64,20 +66,22 @@ const ImagePost: FC<FeedPost> = (post: FeedPost) => {
       <CardContent>
         <Grid container>
           <Grid item xs={8}>
+            {/* TODO: Add expand icon on hover and click to expand */}
             <StyledImageBox>
               <StyledBackground bg={src} blur={blur} />
             </StyledImageBox>
           </Grid>
           <Grid item xs={4}>
-            <Box>
-              <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
-                {post_text}
-              </Typography>
+            <Stack gap={1.5}>
               <ProfileBit post={post} />
-            </Box>
+              <GenericText content={post_text} />
+              <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600}>
+                {formatDateTime(new Date(post.post_date))}
+              </Typography>
+            </Stack>
           </Grid>
         </Grid>
-        <PostComments uuid={uuid} count={comment_count} />
+        <PostComments key={uuid} uuid={uuid} count={comment_count} />
       </CardContent>
       <StyledLink to={`/post/${uuid}`} target="_blank" className="external-button">
         <OpenInNew />

@@ -26,7 +26,7 @@ const StyledLink = styled(Link)({
  * @param {FeedPost} post
  * @returns {JSX.Element}
  */
-const ProfileBit: FC<Props> = ({ post, filled = true }: Props) => {
+const PostProfile: FC<Props> = ({ post, filled = true }: Props) => {
   const { person, vehicle } = post;
   const { uuid, username, avatar } = person;
   const { vin } = vehicle;
@@ -52,4 +52,4 @@ const ProfileBit: FC<Props> = ({ post, filled = true }: Props) => {
   )
 };
 
-export default ProfileBit;
+export default PostProfile;

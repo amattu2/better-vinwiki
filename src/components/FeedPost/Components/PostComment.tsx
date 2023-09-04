@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Stack, Typography, styled } from "@mui/material";
 import ProfileAvatar from "../../ProfileAvatar";
 import { formatDateTime } from "../../../utils/date";
+import GenericText from "./GenericText";
 
 type Props = {
   comment: PostComment;
@@ -35,10 +36,8 @@ const PostComment: FC<Props> = ({ comment }: Props) => {
         <Typography variant="body1" fontWeight={600}>
           <StyledLink to={`/profile/${uuid}`}>@{username}</StyledLink>
         </Typography>
-        <Typography variant="body2" color="textSecondary">
-          {text}
-        </Typography>
-        <Typography variant="body2" fontWeight={300}>
+        <GenericText content={text} />
+        <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600}>
           {formatDateTime(new Date(comment.created))}
         </Typography>
       </Stack>
