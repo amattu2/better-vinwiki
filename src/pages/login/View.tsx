@@ -1,7 +1,29 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { Box, Button, Container, TextField, Typography, styled } from "@mui/material";
 import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
+
+const StyledContainer = styled(Container)({
+  height: "100%",
+});
+
+const FormContainer = styled(Box)({
+  marginTop: 8,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: "100%",
+});
+
+const StyledFormBox = styled(Box)({
+  marginTop: "5px",
+});
+
+const StyledTextField = styled(TextField)({
+  marginTop: "25px",
+});
 
 type Inputs = {
   username: string,
@@ -33,20 +55,42 @@ const LoginView = () => {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <input type="text" placeholder="Username" {...register("username", { required: true })} />
-          {errors.username && <span>This field is required</span>}
-        </div>
-        <div>
-          <input type="password" placeholder="Password" {...register("password", { required: true })} />
-          {errors.password && <span>This field is required</span>}
-        </div>
-        <input type="submit" />
-      </form>
-    </div>
+    <StyledContainer maxWidth="xs">
+      <FormContainer>
+        <Typography component="h1" variant="h4">
+          Sign in
+        </Typography>
+        <StyledFormBox component="form" onSubmit={handleSubmit(onSubmit)}>
+          <StyledTextField
+            fullWidth
+            label="Username"
+            type="text"
+            autoComplete="username"
+            autoFocus
+            {...register("username", { required: true })}
+            error={!!errors.username}
+            helperText={errors.username ? "Username is required" : ""}
+          />
+          <StyledTextField
+            fullWidth
+            label="Password"
+            type="password"
+            autoComplete="current-password"
+            {...register("password", { required: true })}
+            error={!!errors.password}
+            helperText={errors.password ? "Password is required" : ""}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Sign In
+          </Button>
+        </StyledFormBox>
+      </FormContainer>
+    </StyledContainer>
   );
 };
 

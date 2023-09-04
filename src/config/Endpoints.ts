@@ -11,7 +11,9 @@ export const ENDPOINTS = {
   feed: `${API_URL}person/feed/`,
   filtered_feed: `${API_URL}person/filtered_feed/`,
   posts: `${API_URL}person/posts/`,
+  comments: `${API_URL}post/comments/`,
   is_following: `${API_URL}person/is_following/`,
+  follow: `${API_URL}person/follow/`,
   recent_vins: `${API_URL}person/recent_vins`,
   lists: `${API_URL}person/lists/`,
 
