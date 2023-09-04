@@ -14,8 +14,8 @@ type FeedPost = {
   post_date_ago: string; // MMM DD, YYYY
   post_text: string;
   post_time: string; // Unix timestamp
-  subject_uuid: string;
-  type: "photo" | "generic";
+  subject_uuid: string; // Contains a UUID for the action item (e.g. list)
+  type: "photo" | "generic" | "list_add";
   uuid: string;
   vehicle: Vehicle;
 };

@@ -28,11 +28,17 @@ export const ENDPOINTS = {
   vehicle: `${API_URL}vehicle/vin/`,
   vehicle_feed: `${API_URL}/vehicle/feed/`,
   vehicle_is_following: `${API_URL}vehicle/is_following/`,
+  vehicle_follow: `${API_URL}vehicle/follow/`, // TODO: follow a vehicle GET :/vin
 
   /* List Endpoints */
   list_search: `${API_URL}lists/search`,
   list: `${API_URL}lists/id/`,
-  list_vehicles: `${API_URL}lists/vehicles/`, // PATH: :uuid/:count
+  list_following: `${API_URL}lists/is_following/`, // TODO: get is following implement PATH: user :uuid
+  list_followers: `${API_URL}lists/followers/`, // TODO: list the followers implement PATH: list :id
+  list_vehicles: `${API_URL}lists/vehicles/`, // PATH: vehicles in list :uuid/:count
+  list_follow: `${API_URL}lists/follow/`, // TODO: follow a list PATH: :uuid
+  list_create: `${API_URL}lists/add`, // TODO: create a list POST name and description
+  list_add_vehicle: `${API_URL}lists/addvin/`, // TODO: add a vehicle to a list GET vehicle /:uuid
 };
 
 export const STATUS_OK = "ok";
