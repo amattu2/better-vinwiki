@@ -33,6 +33,7 @@ const Feed : FC = () => {
     return posts
       .filter((p) => postFilter ? p.type === postFilter : true)
       .filter((p) => !(p.client === "vinbot" && p.person.username !== "vinbot"))
+      .sort((a, b) => (new Date(b.post_date)).getTime() - (new Date(a.post_date)).getTime())
       .slice(0, limit);
   }, [posts, postFilter, limit]);
 

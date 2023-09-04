@@ -75,10 +75,10 @@ const PostComments: FC<Props> = ({ uuid, count }: Props) => {
       {count > 0 && (
         <StyledCommentStack direction="column" spacing={1}>
           {comments.slice(0, 4).map((comment) => (
-            <>
-              <PostComment key={comment.uuid} comment={comment} />
+            <React.Fragment key={comment.uuid}>
+              <PostComment comment={comment} />
               <Divider />
-            </>
+            </React.Fragment>
           ))}
           {count > 4 && (
             <Typography variant="body2" textAlign="center">

@@ -5,8 +5,9 @@ export const ENDPOINTS = {
   authenticate: `${API_URL}auth/authenticate`,
   logout: `${API_URL}auth/logout`,
 
-  /* User Endpoints */
+  /* Person Endpoints */
   profile: `${API_URL}person/profile/`,
+  profile_search: `${API_URL}person/search/`,
   notification_count: `${API_URL}person/notification_count/me`,
   notifications: `${API_URL}person/notifications`,
   feed: `${API_URL}person/feed/`,
