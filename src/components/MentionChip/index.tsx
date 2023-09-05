@@ -53,6 +53,10 @@ const GenericText: FC<Props> = ({ handle }: Props) => {
     }
   }, [handle, token]);
 
+  if (!user) {
+    return <>@{handle}</>;
+  }
+
   return (
     <StyledLink to={user?.uuid ? `/profile/${user.uuid}` : ""}>
       <Chip
