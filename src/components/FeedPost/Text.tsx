@@ -1,34 +1,62 @@
-import { FC } from "react";
-import { Card, CardContent, Typography, styled } from "@mui/material";
-import ProfileBit from "./Components/PostProfile";
-import { OpenInNew } from "@mui/icons-material";
-import { Link } from "react-router-dom";
-import PostComments from "./Components/PostComments";
-import GenericText from "./Components/GenericText";
+import { FC, useState } from "react";
+import { Delete, MoreVert, Share } from "@mui/icons-material";
+import {
+  Card, CardContent, IconButton,
+  ListItemIcon, ListItemText, Menu,
+  MenuItem, Typography, styled
+} from "@mui/material";
+import { useAuthProvider } from "../../Providers/AuthProvider";
 import { formatDateTime } from "../../utils/date";
+import GenericText from "./Components/GenericText";
+import PostComments from "./Components/PostComments";
+import ProfileBit from "./Components/PostProfile";
+import DeletePostDialog from "./Components/DeletePostDialog";
+import { useFeedProvider } from "../../Providers/FeedProvider";
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",
   marginBottom: "8px",
   border: "1px solid #e5e5e5",
   position: "relative",
-  "&:hover .external-button": {
-    opacity: 1,
+  transition: "border-color 0.2s ease-out",
+  "&:hover": {
+    borderColor: "#bdbdbd",
+    cursor: "pointer",
   },
 });
 
-const StyledLink = styled(Link)({
+const StyledMenuButton = styled(IconButton)({
   position: "absolute",
   right: "8px",
   top: "8px",
-  cursor: "pointer",
-  color: "#838383",
-  transition: "opacity 0.3s ease-out",
-  opacity: 0,
 });
 
 const TextPost: FC<FeedPost> = (post: FeedPost) => {
-  const { uuid, comment_count, post_text } = post;
+  const { user } = useAuthProvider();
+  const { deletePost: deletePostByUUID } = useFeedProvider();
+  const { uuid, comment_count, post_text, person } = post;
+
+  const [open, setOpen] = useState<boolean>(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+
+  const menuToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+    setOpen(!open);
+  };
+
+  const confirmDelete = () => {
+    setDeleteDialogOpen(true);
+    setOpen(false);
+  };
+
+  const deletePost = async () => {
+    setDeleteDialogOpen(false);
+    const result = await deletePostByUUID?.(uuid);
+    if (!result) {
+      console.error("Failed to delete post", uuid);
+    }
+  };
 
   return (
     <StyledCard elevation={0}>
@@ -40,9 +68,31 @@ const TextPost: FC<FeedPost> = (post: FeedPost) => {
         </Typography>
         <PostComments key={uuid} uuid={uuid} count={comment_count} />
       </CardContent>
-      <StyledLink to={`/post/${uuid}`} target="_blank" className="external-button">
-        <OpenInNew />
-      </StyledLink>
+      <StyledMenuButton size="small" onClick={menuToggle}>
+        <MoreVert fontSize="small" />
+      </StyledMenuButton>
+      <Menu open={open} anchorEl={anchorEl} onClose={() => setOpen(false)}>
+        <MenuItem>
+          <ListItemIcon>
+            <Share fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Copy Link</ListItemText>
+        </MenuItem>
+        {user?.uuid === person.uuid && (
+          <MenuItem onClick={confirmDelete}>
+            <ListItemIcon>
+              <Delete fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Delete</ListItemText>
+          </MenuItem>
+        )}
+      </Menu>
+      <DeletePostDialog
+        type="post"
+        open={deleteDialogOpen}
+        onConfirm={deletePost}
+        onCancel={() => setDeleteDialogOpen(false)}
+      />
     </StyledCard>
   );
 };

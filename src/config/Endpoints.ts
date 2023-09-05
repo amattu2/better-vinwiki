@@ -30,6 +30,9 @@ export const ENDPOINTS = {
   vehicle_is_following: `${API_URL}vehicle/is_following/`,
   vehicle_follow: `${API_URL}vehicle/follow/`, // TODO: follow a vehicle GET :/vin
 
+  /* Post Endpoints */
+  post_delete: `${API_URL}post/delete/`,
+
   /* List Endpoints */
   list_search: `${API_URL}lists/search`,
   list: `${API_URL}lists/id/`,
