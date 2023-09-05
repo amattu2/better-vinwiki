@@ -71,7 +71,7 @@ const PostComments: FC<Props> = ({ uuid, count }: Props) => {
 
       {/* TODO: Stylize and activate this button */}
       <Stack direction="row" spacing={1}>
-        <TextField fullWidth label="What's on your mind?" multiline />
+        <TextField fullWidth placeholder="Reply to this post" size="small" multiline />
         <Button variant="text">
           <Send />
         </Button>

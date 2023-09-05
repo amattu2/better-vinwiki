@@ -9,6 +9,7 @@ import SuggestionCard from '../../components/ProfileSuggestions';
 import TransitionGroup from '../../components/TransitionGroup';
 import TrendingPost from '../../components/TrendingPost';
 import BlogPostCard from '../../components/BlogPost';
+import CreatePost from '../../components/CreatePost';
 
 const StyledBox = styled(Box)({
   padding: "16px",
@@ -142,9 +143,10 @@ const Feed : FC = () => {
                 </ToggleButton>
               </ToggleButtonGroup>
             </Stack>
+
             <Divider sx={{ my: 2 }} />
 
-            {/* TODO: We need a "create post" box here that has a dropdown to select the VIN you're posting to */}
+            <CreatePost />
 
             {status === ProviderStatus.RELOADING && (
               <Alert severity="info" sx={{ mb: 1 }}>Hang tight. We're fetching your latest feed...</Alert>
