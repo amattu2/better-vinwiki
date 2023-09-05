@@ -104,6 +104,7 @@ const PostComments: FC<Props> = ({ uuid, count }: Props) => {
               <Box sx={{ flexGrow: 1 }}>
                 <Skeleton />
                 <Skeleton width="60%" />
+                <Skeleton width="20%" />
               </Box>
             </Stack>
           )}
