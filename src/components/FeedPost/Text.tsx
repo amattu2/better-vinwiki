@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useRef, useState } from "react";
 import { Delete, MoreVert, Share } from "@mui/icons-material";
 import {
   Card, CardContent, IconButton,
@@ -12,6 +12,7 @@ import PostComments from "./Components/PostComments";
 import ProfileBit from "./Components/PostProfile";
 import DeletePostDialog from "./Components/DeletePostDialog";
 import { useFeedProvider } from "../../Providers/FeedProvider";
+import { useCopyToClipboard } from "usehooks-ts";
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",
@@ -31,14 +32,16 @@ const StyledMenuButton = styled(IconButton)({
   top: "8px",
 });
 
-const TextPost: FC<FeedPost> = (post: FeedPost) => {
+const TextPost: FC<FeedPostProps> = ({ isPreview, ...post }: FeedPostProps) => {
   const { user } = useAuthProvider();
   const { deletePost: deletePostByUUID } = useFeedProvider();
   const { uuid, comment_count, post_text, person } = post;
+  const rootRef = useRef<HTMLDivElement>(null);
 
   const [open, setOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+  const [_, copyValue] = useCopyToClipboard();
 
   const menuToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -58,21 +61,39 @@ const TextPost: FC<FeedPost> = (post: FeedPost) => {
     }
   };
 
+  const openPost = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (event.target !== rootRef.current) {
+      return;
+    }
+    if (isPreview) {
+      return;
+    }
+
+    window.open(`/post/${uuid}`, "_blank");
+  };
+
+  const copyPostURL = () => {
+    copyValue(`${window.location.origin}/post/${uuid}`);
+    setOpen(false);
+  };
+
   return (
-    <StyledCard elevation={0}>
-      <CardContent>
+    <StyledCard elevation={0} onClick={openPost}>
+      <CardContent ref={rootRef}>
         <ProfileBit post={post} filled={false} />
         <GenericText content={post_text} padding={"8px"} />
         <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600} paddingLeft={"8px"}>
           {formatDateTime(new Date(post.post_date))}
         </Typography>
-        <PostComments key={uuid} uuid={uuid} count={comment_count} />
+        {!isPreview && <PostComments key={uuid} uuid={uuid} count={comment_count} />}
       </CardContent>
-      <StyledMenuButton size="small" onClick={menuToggle}>
-        <MoreVert fontSize="small" />
-      </StyledMenuButton>
+      {!isPreview && (
+        <StyledMenuButton size="small" onClick={menuToggle}>
+          <MoreVert fontSize="small" />
+        </StyledMenuButton>
+      )}
       <Menu open={open} anchorEl={anchorEl} onClose={() => setOpen(false)}>
-        <MenuItem>
+        <MenuItem onClick={copyPostURL}>
           <ListItemIcon>
             <Share fontSize="small" />
           </ListItemIcon>

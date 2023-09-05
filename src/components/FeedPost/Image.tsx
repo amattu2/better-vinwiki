@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useRef, useState } from "react";
 import { AspectRatio, Delete, MoreVert, Share } from "@mui/icons-material";
 import {
   Box, Card, CardContent, Grid,
@@ -14,6 +14,7 @@ import { formatDateTime } from "../../utils/date";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { useFeedProvider } from "../../Providers/FeedProvider";
 import DeletePostDialog from "./Components/DeletePostDialog";
+import { useCopyToClipboard } from "usehooks-ts";
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",
@@ -89,16 +90,19 @@ const StyledExpandedImage = styled("img")({
   borderRadius: "8px",
 });
 
-const ImagePost: FC<FeedPost> = (post: FeedPost) => {
+const ImagePost: FC<FeedPostProps> = ({ isPreview, ...post }: FeedPostProps) => {
   const { user } = useAuthProvider();
   const { deletePost: deletePostByUUID } = useFeedProvider();
   const { uuid, image, comment_count, post_text, person } = post;
   const [src, { blur }] = useProgressiveQuality(image?.thumb, image?.large);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   const [expandedOpen, setExpandedOpen] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+  const [_, copyValue] = useCopyToClipboard();
+
 
   const menuToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -118,10 +122,26 @@ const ImagePost: FC<FeedPost> = (post: FeedPost) => {
     }
   };
 
+  const openPost = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (event.target !== rootRef.current) {
+      return;
+    }
+    if (isPreview) {
+      return;
+    }
+
+    window.open(`/post/${uuid}`, "_blank");
+  };
+
+  const copyPostURL = () => {
+    copyValue(`${window.location.origin}/post/${uuid}`);
+    setOpen(false);
+  };
+
   return (
     <>
-      <StyledCard elevation={0}>
-        <CardContent>
+      <StyledCard elevation={0} onClick={openPost}>
+        <CardContent ref={rootRef}>
           <Grid container>
             <Grid item xs={8}>
               <StyledImageBox className="image-box">
@@ -141,13 +161,15 @@ const ImagePost: FC<FeedPost> = (post: FeedPost) => {
               </Stack>
             </Grid>
           </Grid>
-          <PostComments key={uuid} uuid={uuid} count={comment_count} />
+          {!isPreview && <PostComments key={uuid} uuid={uuid} count={comment_count} />}
         </CardContent>
-        <StyledMenuButton size="small" onClick={menuToggle}>
-          <MoreVert fontSize="small" />
-        </StyledMenuButton>
+        {!isPreview && (
+          <StyledMenuButton size="small" onClick={menuToggle}>
+            <MoreVert fontSize="small" />
+          </StyledMenuButton>
+        )}
         <Menu open={open} anchorEl={anchorEl} onClose={() => setOpen(false)}>
-          <MenuItem>
+          <MenuItem onClick={copyPostURL}>
             <ListItemIcon>
               <Share fontSize="small" />
             </ListItemIcon>
