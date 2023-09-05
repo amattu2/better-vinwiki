@@ -1,4 +1,4 @@
-import React, { useState, FC, useEffect } from "react";
+import React, { useState, FC, useEffect, useRef } from "react";
 import { useAuthProvider } from "./AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
 
@@ -35,11 +35,18 @@ export const NotificationCountProvider: FC<Props> = ({ children }: Props) => {
   const { token } = useAuthProvider();
   const [state, setState] = useState<ProviderState>(defaultState);
   const [trigger, setTrigger] = useState<NodeJS.Timeout>();
+  const controllerRef = useRef<AbortController>();
 
   const refetch = async () => {
     if (!token) {
       return;
     }
+    if (controllerRef.current) {
+      controllerRef.current.abort();
+    }
+
+    controllerRef.current = new AbortController();
+    const { signal } = controllerRef.current;
 
     setState((prevState) => ({
       ...prevState,
@@ -51,10 +58,11 @@ export const NotificationCountProvider: FC<Props> = ({ children }: Props) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    });
+      signal
+    }).catch(() => null);
 
-    const { notification_count, status } = await response.json();
-    const { unseen } = notification_count;
+    const { notification_count, status } = await response?.json() || {};
+    const { unseen } = notification_count || {};
 
     if (status === STATUS_OK) {
       setState({
