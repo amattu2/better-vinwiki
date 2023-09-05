@@ -3,17 +3,17 @@ import ImagePost from "./Image";
 import VerticalImagePost from "./VerticalImage";
 import TextPost from "./Text";
 
-export const PostRouter: FC<FeedPost> = (post: FeedPost) => {
-  switch (post.type) {
+export const PostRouter: FC<FeedPostProps> = (props: FeedPostProps) => {
+  switch (props.type) {
     case "photo":
-      if (post.post_text?.length > 50) {
-        return React.createElement(VerticalImagePost, post);
+      if (props.post_text?.length > 50) {
+        return React.createElement(VerticalImagePost, props);
       }
 
-      return React.createElement(ImagePost, post);
+      return React.createElement(ImagePost, props);
     case "generic":
     case "list_add":
-      return React.createElement(TextPost, post);
+      return React.createElement(TextPost, props);
     default:
       return null;
   }
