@@ -30,11 +30,19 @@ const fetchVehicles = async (searchValue: string, token: string, controller: Rea
   }).catch(() => null);
 
   const { status, results } = await response?.json() || {};
-  if (status === STATUS_OK && results?.vehicles) {
-    return results.vehicles;
-  }
+  return status === STATUS_OK && results?.vehicles ? results.vehicles : [];
+};
 
-  return [];
+const fetchRecentVehicles = async (token: string): Promise<Vehicle[]> => {
+  const response = await fetch(ENDPOINTS.recent_vins, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const { status, recent_vins } = await response.json();
+  return status === STATUS_OK ? recent_vins : [];
 };
 
 /**
@@ -50,8 +58,15 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [options, setOptions] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [recentVehicles, setRecentVehicles] = useState<Vehicle[]>([]);
 
   const controllerRef = useRef<AbortController>(new AbortController());
+  const mergedOptions = useMemo(() => {
+    const clonedOptions = [...options];
+    clonedOptions.sort((a, b) => b.make.localeCompare(a.make));
+
+    return [...(recentVehicles || []), ...options];
+  }, [options, recentVehicles]);
 
   const onInputChange = (event: React.SyntheticEvent, value: string, reason: string) => {
     if (value.length < 3) {
@@ -87,13 +102,23 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue]);
 
+  useEffect(() => {
+    if (!token) {
+      return;
+    }
+
+    fetchRecentVehicles(token).then((v) => setRecentVehicles(v));
+  }, [token]);
+
   return (
     <Autocomplete
       autoComplete
       value={value}
       loading={loading}
-      options={options.sort((a, b) => b.make.localeCompare(a.make))}
-      groupBy={(option: Vehicle) => option.make.toUpperCase()}
+      options={mergedOptions}
+      groupBy={(option: Vehicle) => (
+        recentVehicles.find((v) => v.vin === option.vin) ? "Recents" : option.make.toUpperCase()
+      )}
       renderInput={(params) => <TextField {...params} label="Select a Vehicle" />}
       getOptionLabel={(option: Vehicle) => formatVehicleName(option)}
       onInputChange={debouncedSearch}

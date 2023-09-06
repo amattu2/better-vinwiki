@@ -105,7 +105,7 @@ const CreatePost: FC = () => {
             <Stepper activeStep={activeStep} orientation="vertical">
               <Step completed={!!selectedVehicle}>
                 <StepButton onClick={() => setActiveStep(0)}>Select a Vehicle</StepButton>
-                <StyledStepContent>
+                <StyledStepContent TransitionProps={{ unmountOnExit: false }}>
                   <Stack direction="row" gap={1} sx={{ mb: 1 }}>
                     <VehicleSearch value={selectedVehicle} onChange={selectVehicle} />
                     <Tooltip title="Advanced Search" placement="right">
@@ -156,7 +156,7 @@ const CreatePost: FC = () => {
                   <Button onClick={() => setActiveStep(3)}>Next</Button>
                 </StyledStepContent>
               </Step>
-              <Step disabled={!postText} completed={false}>
+              <Step disabled={!postText} completed={false} last>
                 <StepButton onClick={() => setActiveStep(3)}>Preview & Submit</StepButton>
                 <StyledStepContent>
                   <PostRouter {...demoPost} isPreview />
