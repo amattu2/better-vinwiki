@@ -62,11 +62,19 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
 
   const controllerRef = useRef<AbortController>(new AbortController());
   const mergedOptions = useMemo(() => {
-    const clonedOptions = [...options];
-    clonedOptions.sort((a, b) => b.make.localeCompare(a.make));
+    const cloned = [...options, value].filter((v: Vehicle | null | undefined) => v) as Vehicle[];
+    cloned.sort((a: Vehicle, b: Vehicle) => b.make.localeCompare(a.make));
 
-    return [...(recentVehicles || []), ...options];
-  }, [options, recentVehicles]);
+    recentVehicles?.forEach((v: Vehicle) => {
+      if (!!cloned.find((c: Vehicle) => c.vin === v.vin)) {
+        return;
+      }
+
+      cloned.unshift(v);
+    });
+
+    return cloned;
+  }, [options, recentVehicles, value]);
 
   const onInputChange = (event: React.SyntheticEvent, value: string, reason: string) => {
     if (value.length < 3) {
