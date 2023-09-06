@@ -1,4 +1,5 @@
 import React, { FC, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 import { AddPhotoAlternate, Cancel, PostAddOutlined, SavedSearch } from "@mui/icons-material";
 import { TabContext, TabPanel } from "@mui/lab";
 import {
@@ -12,7 +13,12 @@ import { useLockedBody } from "usehooks-ts";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { PostRouter } from "../FeedPost";
 import ProfileAvatar from "../ProfileAvatar";
-import { VehicleSearch } from "../Typeahead/VehicleSearch";
+import VehicleSearch from "../Typeahead/VehicleSearch";
+
+type PostForm = {
+  type: FeedPost["type"];
+  post_text: string;
+};
 
 const StyledCard = styled(Card)({
   padding: "16px 24px",
@@ -38,22 +44,23 @@ const StyledStepContent = styled(StepContent)({
  */
 const CreatePost: FC = () => {
   const { user } = useAuthProvider();
+
   const [expanded, setExpanded] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState<number>(0);
-
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [activePostType, setActivePostType] = useState<FeedPost["type"]>("generic");
 
+  const { register, watch, setValue } = useForm<PostForm>();
+  const postText = watch("post_text");
+
   const demoPost: FeedPost = useMemo(() => ({
     type: activePostType,
-    post_text: "This is a demo post", // TODO: update
-    image: {
-      large: "https://picsum.photos/seed/picsum/800/600",
-    },
+    post_text: postText,
+    image: { large: "https://picsum.photos/seed/picsum/800/600" }, // TODO: dynamic
     person: { ...user },
     vehicle: selectedVehicle,
     post_date: new Date().toISOString(),
-  }), [activePostType, user, selectedVehicle]) as FeedPost;
+  }), [user, activePostType, selectedVehicle, postText]) as FeedPost;
 
   const reset = () => {
     setExpand(false);
@@ -67,6 +74,11 @@ const CreatePost: FC = () => {
   const selectVehicle = (e: React.SyntheticEvent, vehicle: Vehicle | null, reason: string) => {
     setSelectedVehicle(vehicle)
   };
+
+  const setPostType = (e: React.SyntheticEvent, type: FeedPost["type"]) => {
+    setActivePostType(type);
+    setValue("type", type);
+  }
 
   useLockedBody(expanded, 'root');
 
@@ -108,49 +120,47 @@ const CreatePost: FC = () => {
                   </Button>
                 </StyledStepContent>
               </Step>
-              <Step disabled={!selectedVehicle} completed={false}>
-                <StepButton onClick={() => setActiveStep(1)}>Write your Post</StepButton>
+              <Step disabled={!selectedVehicle} completed={!!postText}>
+                <StepButton onClick={() => setActiveStep(1)}>Post Content</StepButton>
                 <StyledStepContent>
                   <StyledCard elevation={0} sx={{ p: 0 }}>
                     <TabContext value={activePostType}>
-                      <Tabs value={activePostType} onChange={(_, val) => setActivePostType(val)}>
-                        <StyledTab
-                          icon={<PostAddOutlined />}
-                          iconPosition="start"
-                          label="Post"
-                          value="generic"
-                        />
-                        <StyledTab
-                          icon={<AddPhotoAlternate />}
-                          iconPosition="start"
-                          label="Photo"
-                          value="photo"
-                        />
+                      <Tabs value={activePostType} onChange={setPostType}>
+                        <StyledTab icon={<PostAddOutlined />} iconPosition="start" label="Post" value="generic" />
+                        <StyledTab icon={<AddPhotoAlternate />} iconPosition="start" label="Photo" value="photo"/>
                       </Tabs>
                       <TabPanel value="generic">
                         {/* TODO: support typehead user tagging */}
                         <TextField
+                          {...register("post_text", { required: true })}
                           placeholder="What's on your mind?"
                           size="small"
                           multiline
                           minRows={4}
-                          maxRows={8}
+                          maxRows={6}
                           fullWidth
                         />
                       </TabPanel>
-                      <TabPanel value="photo">post text with image upload</TabPanel>
+                      <TabPanel value="photo">
+                        {/* TODO: image upload with preview and textfield */}
+                      </TabPanel>
                     </TabContext>
                   </StyledCard>
-                  <Button onClick={() => setActiveStep(2)} disabled>Next</Button>
+                  <Button onClick={() => setActiveStep(2)} disabled={!postText}>Next</Button>
                 </StyledStepContent>
               </Step>
-              <Step disabled completed={false}>
-                <StepButton onClick={() => setActiveStep(2)}>Preview & Submit</StepButton>
+              <Step disabled={!postText}>
+                <StepButton onClick={() => setActiveStep(2)}>Event Details</StepButton>
+                <StyledStepContent>
+                  {/* TODO: Inputs for location, miles, or the event date */}
+                  <Button onClick={() => setActiveStep(3)}>Next</Button>
+                </StyledStepContent>
+              </Step>
+              <Step disabled={!postText} completed={false}>
+                <StepButton onClick={() => setActiveStep(3)}>Preview & Submit</StepButton>
                 <StyledStepContent>
                   <PostRouter {...demoPost} isPreview />
-                  <Button size="small">
-                    Post
-                  </Button>
+                  <Button>Post</Button>
                 </StyledStepContent>
               </Step>
             </Stepper>
