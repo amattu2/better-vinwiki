@@ -9,6 +9,7 @@ export type ProviderState = {
   count: number;
   next?: (count: number) => Promise<boolean>;
   deletePost?: (uuid: string) => Promise<boolean>;
+  createPost?: (post: FeedPost) => Promise<boolean>;
   hasNext?: boolean;
 }
 
@@ -47,6 +48,20 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
     : defaultState
   );
   const [nextPage, setNextPage] = useState<string>("");
+
+  const createPost = async (post: FeedPost): Promise<boolean> => {
+    if (!post.uuid) {
+      return false;
+    }
+
+    setState((prev) => ({
+      ...prev,
+      posts: [post, ...prev.posts],
+      count: prev.count + 1,
+    }));
+
+    return true;
+  };
 
   const deletePost = async (uuid: string): Promise<boolean> => {
     if (!token || !uuid) {
@@ -149,7 +164,7 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
   }, [state?.posts, state?.count]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const value = useMemo(() => ({ ...state, next, deletePost }), [state]);
+  const value = useMemo(() => ({ ...state, next, deletePost, createPost }), [state]);
 
   return (
     <Context.Provider value={value}>

@@ -162,6 +162,18 @@ const VerticalImage: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: Fee
             </Box>
             <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600} textAlign="right">
               {formatDateTime(new Date(post.post_date))}
+              {post.locale && (
+                <>
+                  {" • "}
+                  {post.locale}
+                </>
+              )}
+              {(post.client && !["web", "vinbot"].includes(post.client)) && (
+                <>
+                  {" • "}
+                  {post.client}
+                </>
+              )}
             </Typography>
           </Stack>
           {!isPreview && <PostComments key={uuid} uuid={uuid} count={comment_count} />}

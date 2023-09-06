@@ -85,6 +85,18 @@ const TextPost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPost
         <GenericText content={post_text} padding={"8px"} />
         <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600} paddingLeft={"8px"}>
           {formatDateTime(new Date(post.post_date))}
+          {post.locale && (
+            <>
+              {" • "}
+              {post.locale}
+            </>
+          )}
+          {(post.client && !["web", "vinbot"].includes(post.client)) && (
+            <>
+              {" • "}
+              {post.client}
+            </>
+          )}
         </Typography>
         {!isPreview && <PostComments key={uuid} uuid={uuid} count={comment_count} />}
       </CardContent>

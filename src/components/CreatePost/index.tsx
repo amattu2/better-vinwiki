@@ -1,6 +1,9 @@
 import React, { FC, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { AddPhotoAlternate, Cancel, PostAddOutlined, SavedSearch } from "@mui/icons-material";
+import { Controller, useForm } from "react-hook-form";
+import {
+  AddPhotoAlternate, AddPhotoAlternateOutlined,
+  Cancel, PostAddOutlined, ReceiptLong, SavedSearch
+} from "@mui/icons-material";
 import { TabContext, TabPanel } from "@mui/lab";
 import {
   Backdrop, Button, Card, ClickAwayListener,
@@ -9,26 +12,36 @@ import {
   Stepper, Tab, Tabs, TextField,
   Tooltip, Typography, styled
 } from "@mui/material";
-import { useLockedBody } from "usehooks-ts";
+import { DateTimePicker } from '@mui/x-date-pickers';
+import dayjs from "dayjs";
 import { useAuthProvider } from "../../Providers/AuthProvider";
+import { ENDPOINTS, MEDIA_ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
 import { PostRouter } from "../FeedPost";
+import ImageUpload from "../ImageUpload";
+import Loader from "../Loader";
+import PlateDecoder from "../PlateDecoder/Dialog";
 import ProfileAvatar from "../ProfileAvatar";
 import VehicleSearch from "../Typeahead/VehicleSearch";
-import PlateDecoder from "../PlateDecoder/Dialog";
+import { useFeedProvider } from "../../Providers/FeedProvider";
 
 type PostForm = {
   type: FeedPost["type"];
   post_text: string;
+  event_date: FeedPost["event_date"];
+  mileage: FeedPost["mileage"];
+  locale: FeedPost["locale"];
+  image: FileList;
 };
 
-const StyledCard = styled(Card)({
+const StyledCard = styled(Card, { shouldForwardProp: (p) => p !== "expanded" })(({ expanded }: { expanded?: boolean }) => ({
+  position: expanded ? "sticky" : "relative",
+  top: expanded ? "16px" : "unset",
   padding: "16px 24px",
   borderRadius: "8px",
   margin: "8px 0",
   border: "1px solid #e5e5e5",
-  position: "relative",
   zIndex: 10,
-});
+}));
 
 const StyledTab = styled(Tab)({
   minHeight: "48px",
@@ -38,37 +51,52 @@ const StyledStepContent = styled(StepContent)({
   paddingTop: "8px !important",
 });
 
+const StyledTextField = styled(TextField)({
+  "& .MuiFormHelperText-root": {
+    marginLeft: "auto !important",
+  },
+});
+
 /**
  * A general feed call-to-action for creating a post
  *
  * @returns {JSX.Element}
  */
 const CreatePost: FC = () => {
-  const { user } = useAuthProvider();
+  const { user, token } = useAuthProvider();
+  const { createPost: addFeedPost } = useFeedProvider();
 
   const [expanded, setExpanded] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [activePostType, setActivePostType] = useState<FeedPost["type"]>("generic");
   const [plateDecoderOpen, setPlateDecoderOpen] = useState<boolean>(false);
+  const [posting, setPosting] = useState<boolean>(false);
 
-  const { register, watch, setValue } = useForm<PostForm>();
+  const { register, watch, setValue, reset, resetField, control } = useForm<PostForm>();
   const postText = watch("post_text");
+  const imageUpload = watch("image");
 
-  const demoPost: FeedPost = useMemo(() => ({
-    type: activePostType,
-    post_text: postText,
-    image: { large: "https://picsum.photos/seed/picsum/800/600" }, // TODO: dynamic
-    person: { ...user },
-    vehicle: selectedVehicle,
-    post_date: new Date().toISOString(),
-  }), [user, activePostType, selectedVehicle, postText]) as FeedPost;
+  const stepStatuses: { [step: number]: boolean | undefined } = useMemo(() => {
+    const step0 = !!selectedVehicle;
+    const step1 = (activePostType === "photo" && !!imageUpload?.[0]) || (activePostType === "generic" && !!postText);
+    const step2 = step1;
+    const step3 = step0 && step1 && step2;
 
-  const reset = () => {
+    return {
+      0: step0,
+      1: step1,
+      2: step2,
+      3: step3,
+    };
+  }, [selectedVehicle, imageUpload, postText, activePostType]);
+
+  const resetPost = () => {
     setExpand(false);
     setActiveStep(0);
     setSelectedVehicle(null);
     setActivePostType("generic");
+    reset();
   };
 
   const setExpand = (expanded: boolean) => setExpanded(expanded);
@@ -80,21 +108,101 @@ const CreatePost: FC = () => {
   const setPostType = (e: React.SyntheticEvent, type: FeedPost["type"]) => {
     setActivePostType(type);
     setValue("type", type);
-  }
+    resetField("image");
+  };
 
-  useLockedBody(expanded, 'root');
+  const generateDemoPost = (): FeedPost => ({
+    type: activePostType,
+    post_text: postText,
+    image: activePostType === "photo" && imageUpload?.[0]
+      ? { large: URL.createObjectURL(imageUpload?.[0]) }
+      : null,
+    person: { ...user },
+    mileage: watch("mileage"),
+    locale: watch("locale"),
+    vehicle: selectedVehicle,
+    event_date: watch("event_date"),
+    post_date: new Date().toISOString(),
+  } as FeedPost);
+
+  const createPost = async () => {
+    if (!token || !selectedVehicle?.vin) {
+      return;
+    }
+    if (activePostType === "generic" && !postText) {
+      return;
+    }
+    if (activePostType === "photo" && !imageUpload?.[0]) {
+      return;
+    }
+
+    setPosting(true);
+
+    let imageUUID: string | null = null;
+    if (activePostType === "photo") {
+      const formData = new FormData();
+      formData.append("media", imageUpload?.[0]);
+      formData.append("subject", "vehicle");
+      formData.append("subject_id", selectedVehicle.vin);
+
+      const response = await fetch(MEDIA_ENDPOINTS.vehicle_image_add + selectedVehicle.vin, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }).catch(() => null);
+
+      const { status, image } = await response?.json() || {};
+      if (status !== STATUS_OK || !image) {
+        setPosting(false);
+        return;
+      }
+
+      imageUUID = image.uuid;
+    }
+
+    const response = await fetch(ENDPOINTS.vehicle_post + selectedVehicle.vin, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        client: "better-vinwiki",
+        event_date: watch("event_date") ? dayjs(watch("event_date")).toISOString() : "",
+        locale: watch("locale"),
+        mileage: watch("mileage"),
+        text: watch("post_text"),
+        class_name: activePostType,
+        image_uuid: imageUUID,
+      }),
+    }).catch(() => null);
+
+    const { status, post } = await response?.json() || {};
+    if (status !== STATUS_OK || !post) {
+      setPosting(false);
+      return;
+    }
+
+    addFeedPost?.({ ...post, person: user, vehicle: selectedVehicle });
+    setPosting(false);
+    resetPost();
+  };
 
   return (
     <>
       <Backdrop open={expanded} sx={{ zIndex: 9 }} />
       <ClickAwayListener onClickAway={() => setExpand(false)}>
-        <StyledCard elevation={expanded ? 12 : 0} onFocus={() => setExpand(true)}>
+        <StyledCard expanded={expanded} elevation={expanded ? 12 : 0} onFocus={() => setExpand(true)}>
+          {(expanded && posting) && (
+            <Loader fullscreen={false} />
+          )}
           {expanded && (
             <>
               <Stack direction="row" spacing={1} alignItems="center">
                 <Typography variant="h5">Compose</Typography>
                 <Tooltip title="Cancel" placement="left">
-                  <IconButton onClick={reset} sx={{ ml: "auto !important" }}>
+                  <IconButton onClick={resetPost} sx={{ ml: "auto !important" }}>
                     <Cancel fontSize="small" />
                   </IconButton>
                 </Tooltip>
@@ -102,10 +210,9 @@ const CreatePost: FC = () => {
               <Divider sx={{ my: 1.5 }}/>
             </>
           )}
-
           {expanded && (
             <Stepper activeStep={activeStep} orientation="vertical">
-              <Step completed={!!selectedVehicle}>
+              <Step completed={stepStatuses[0]}>
                 <StepButton onClick={() => setActiveStep(0)}>Select a Vehicle</StepButton>
                 <StyledStepContent TransitionProps={{ unmountOnExit: false }}>
                   <Stack direction="row" gap={1} sx={{ mb: 1 }}>
@@ -124,52 +231,96 @@ const CreatePost: FC = () => {
                       onCancel={() => setPlateDecoderOpen(false)}
                     />
                   </Stack>
-                  <Button onClick={() => setActiveStep(1)} size="small" disabled={!selectedVehicle}>
+                  <Button onClick={() => setActiveStep(1)} size="small" disabled={!stepStatuses[0]}>
                     Next
                   </Button>
                 </StyledStepContent>
               </Step>
-              <Step disabled={!selectedVehicle} completed={!!postText}>
+              <Step disabled={!stepStatuses[0]} completed={stepStatuses[1]}>
                 <StepButton onClick={() => setActiveStep(1)}>Post Content</StepButton>
                 <StyledStepContent>
                   <StyledCard elevation={0} sx={{ p: 0 }}>
                     <TabContext value={activePostType}>
                       <Tabs value={activePostType} onChange={setPostType}>
                         <StyledTab icon={<PostAddOutlined />} iconPosition="start" label="Post" value="generic" />
-                        <StyledTab icon={<AddPhotoAlternate />} iconPosition="start" label="Photo" value="photo"/>
+                        <StyledTab icon={<AddPhotoAlternateOutlined />} iconPosition="start" label="Photo" value="photo"/>
+                        <StyledTab icon={<ReceiptLong />} iconPosition="start" label="Repair" disabled />
                       </Tabs>
                       <TabPanel value="generic">
-                        {/* TODO: support typehead user tagging */}
-                        <TextField
-                          {...register("post_text", { required: true })}
+                        {/* TODO: Add support for typeahead user tags */}
+                        <StyledTextField
+                          {...register("post_text", { required: true, maxLength: 500 })}
                           placeholder="What's on your mind?"
                           size="small"
+                          rows={6}
+                          helperText={`${500 - postText?.length || 0} of 500 characters`}
                           multiline
-                          minRows={4}
-                          maxRows={6}
                           fullWidth
                         />
                       </TabPanel>
                       <TabPanel value="photo">
-                        {/* TODO: image upload with preview and textfield */}
+                        <StyledTextField
+                          {...register("post_text", { required: true, maxLength: 500 })}
+                          placeholder="Caption this photo"
+                          size="small"
+                          helperText={`${500 - postText?.length || 0} of 500 characters`}
+                          fullWidth
+                        />
+                        <Divider sx={{ my: 1.5 }}/>
+                        <ImageUpload
+                          InputProps={register("image", { required: activePostType === "photo" })}
+                          preview={imageUpload?.[0] && URL.createObjectURL(imageUpload?.[0])}
+                          onPreviewClick={() => resetField("image")}
+                          onDrop={(e) => setValue("image", e.dataTransfer.files)}
+                        />
                       </TabPanel>
                     </TabContext>
                   </StyledCard>
-                  <Button onClick={() => setActiveStep(2)} disabled={!postText}>Next</Button>
+                  <Button onClick={() => setActiveStep(2)} disabled={!stepStatuses[1]}>Next</Button>
                 </StyledStepContent>
               </Step>
-              <Step disabled={!postText}>
-                <StepButton onClick={() => setActiveStep(2)}>Event Details</StepButton>
+              <Step disabled={!stepStatuses[1]} completed={stepStatuses[2]}>
+                <StepButton onClick={() => setActiveStep(2)}>
+                  Event Details
+                  {" "}
+                  <Typography variant="caption" color="text.secondary">(Optional)</Typography>
+                </StepButton>
                 <StyledStepContent>
-                  {/* TODO: Inputs for location, miles, or the event date */}
-                  <Button onClick={() => setActiveStep(3)}>Next</Button>
+                  <Stack direction="column" gap={1} alignItems="flex-start" sx={{ mb: 1 }}>
+                    <Controller
+                      name="event_date"
+                      control={control}
+                      render={({ field }) => (
+                        <DateTimePicker
+                          {...field}
+                          value={field.value ? dayjs(field.value) : null}
+                          slotProps={{ textField: { size: "small", placeholder: "Event Date" } }}
+                        />
+                      )}
+                    />
+                    <StyledTextField
+                      {...register("locale", { maxLength: 25 })}
+                      placeholder="Location"
+                      size="small"
+                      sx={{ width: "267px" }}
+                    />
+                    <StyledTextField
+                      {...register("mileage", { required: true })}
+                      placeholder="Odometer (mi)"
+                      size="small"
+                      type="number"
+                      inputProps={{ min: 0 }}
+                      sx={{ width: "267px" }}
+                    />
+                  </Stack>
+                  <Button onClick={() => setActiveStep(3)} disabled={!stepStatuses[2]}>Next</Button>
                 </StyledStepContent>
               </Step>
-              <Step disabled={!postText} completed={false} last>
+              <Step disabled={!stepStatuses[2]} last>
                 <StepButton onClick={() => setActiveStep(3)}>Preview & Submit</StepButton>
                 <StyledStepContent>
-                  <PostRouter {...demoPost} isPreview />
-                  <Button>Post</Button>
+                  <PostRouter {...generateDemoPost()} isPreview />
+                  <Button disabled={Object.values(stepStatuses).some((s) => !s)} onClick={createPost}>Post</Button>
                 </StyledStepContent>
               </Step>
             </Stepper>

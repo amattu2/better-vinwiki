@@ -158,6 +158,18 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPos
                 <GenericText content={post_text} />
                 <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600}>
                   {formatDateTime(new Date(post.post_date))}
+                  {post.locale && (
+                    <>
+                      {" • "}
+                      {post.locale}
+                    </>
+                  )}
+                  {(post.client && !["web", "vinbot"].includes(post.client)) && (
+                    <>
+                      {" • "}
+                      {post.client}
+                    </>
+                  )}
                 </Typography>
               </Stack>
             </Grid>
