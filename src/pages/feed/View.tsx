@@ -84,7 +84,7 @@ const Feed : FC = () => {
     setLimit((prev) => prev + 10);
 
     if ((limit + 11) >= filteredPosts.length) {
-      next?.();
+      next?.(30);
     }
   };
 

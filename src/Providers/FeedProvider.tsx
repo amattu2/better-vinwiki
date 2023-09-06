@@ -7,7 +7,7 @@ export type ProviderState = {
   status: ProviderStatus;
   posts: FeedPost[];
   count: number;
-  next?: () => Promise<boolean>;
+  next?: (count: number) => Promise<boolean>;
   deletePost?: (uuid: string) => Promise<boolean>;
   hasNext?: boolean;
 }
@@ -74,14 +74,14 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
     return true;
   };
 
-  const next = async (): Promise<boolean> => {
+  const next = async (count = limit): Promise<boolean> => {
     if (!nextPage || !token || !user?.uuid) {
       return false;
     }
 
     setState((prev) => ({ ...prev, status: ProviderStatus.RELOADING }));
 
-    const endpoint = `${filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed}${user?.uuid}/${limit}/${nextPage}`
+    const endpoint = `${filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed}${user?.uuid}/${count}/${nextPage}`
     const response = await fetch(endpoint, {
       method: "GET",
       headers: {
@@ -89,12 +89,12 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
       },
     }).catch(() => null);
 
-    const { status, count, next_page_uuid, end, feed } = await response?.json() || {};
+    const { status, count: postCount, next_page_uuid, end, feed } = await response?.json() || {};
     if (status === STATUS_OK) {
       setState((prev) => ({
         status: ProviderStatus.LOADED,
         posts: [...prev.posts, ...feed?.map((post: any) => post.post)],
-        count: count + prev.count,
+        count: postCount + prev.count,
         hasNext: !end && next_page_uuid,
       }));
       setNextPage(next_page_uuid && !end ? next_page_uuid : "");
