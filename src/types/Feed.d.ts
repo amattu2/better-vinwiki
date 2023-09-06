@@ -35,3 +35,13 @@ type PostComment = {
   text: string;
   uuid: string;
 };
+
+// NOTE: This is annotated separately because it uses outdated fields
+type PostInput = {
+  class_name: FeedPost["type"];
+  client: FeedPost["client"];
+  event_date: FeedPost["event_date"];
+  locale: FeedPost["locale"];
+  mileage: FeedPost["mileage"];
+  text: FeedPost["post_text"];
+}

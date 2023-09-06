@@ -1,7 +1,12 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { FilterList, Public, DynamicFeed, Image, Message } from '@mui/icons-material';
-import { Alert, Box, Button, Container, Divider, Stack, ToggleButton, ToggleButtonGroup, Tooltip, Typography, styled } from '@mui/material';
-import { useLocalStorage } from 'usehooks-ts';
+import {
+  Alert, Box, Container, Divider,
+  Stack, ToggleButton, ToggleButtonGroup,
+  Tooltip, Typography, styled
+} from '@mui/material';
+import { LoadingButton } from '@mui/lab';
+import { useIntersectionObserver, useLocalStorage } from 'usehooks-ts';
 import { ProviderStatus, useFeedProvider } from '../../Providers/FeedProvider';
 import { PostRouter } from '../../components/FeedPost';
 import Loader from '../../components/Loader';
@@ -9,6 +14,7 @@ import SuggestionCard from '../../components/ProfileSuggestions';
 import TransitionGroup from '../../components/TransitionGroup';
 import TrendingPost from '../../components/TrendingPost';
 import BlogPostCard from '../../components/BlogPost';
+import CreatePost from '../../components/CreatePost';
 
 const StyledBox = styled(Box)({
   padding: "16px",
@@ -35,9 +41,13 @@ const blogPost: BlogPost = {
 
 const Feed : FC = () => {
   const { status, posts, next, hasNext } = useFeedProvider();
+  const lastElementRef = useRef<HTMLDivElement>(null);
+
   const [filtered, setFiltered] = useLocalStorage<boolean>("filteredFeed", false);
   const [postFilter, setPostFilter] = useLocalStorage<FeedPost["type"] | "">("postFilter", "");
   const [limit, setLimit] = useState<number>(10);
+  const entry = useIntersectionObserver(lastElementRef, {});
+  const isVisible = !!entry?.isIntersecting;
 
   // NOTE: These are posts matching client-side filters
   const filteredPosts: FeedPost[] = useMemo(() => {
@@ -83,13 +93,20 @@ const Feed : FC = () => {
     setLimit((prev) => prev + 10);
 
     if ((limit + 11) >= filteredPosts.length) {
-      next?.();
+      next?.(30);
     }
   };
 
   useEffect(() => {
     setLimit(10);
   }, [filtered, postFilter]);
+
+  useEffect(() => {
+    if (isVisible) {
+      loadMore();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isVisible]);
 
   if (status === ProviderStatus.LOADING) {
     return <Loader />;
@@ -142,9 +159,10 @@ const Feed : FC = () => {
                 </ToggleButton>
               </ToggleButtonGroup>
             </Stack>
+
             <Divider sx={{ my: 2 }} />
 
-            {/* TODO: We need a "create post" box here that has a dropdown to select the VIN you're posting to */}
+            <CreatePost />
 
             {status === ProviderStatus.RELOADING && (
               <Alert severity="info" sx={{ mb: 1 }}>Hang tight. We're fetching your latest feed...</Alert>
@@ -154,11 +172,17 @@ const Feed : FC = () => {
             )}
             <TransitionGroup
               items={slicedPosts.map((post) => ({ post, key: post.uuid }))}
-              render={({ post }) => <PostRouter {...post} />}
+              render={({ post }, _, last) => <PostRouter {...post} ref={last ? lastElementRef : undefined} />}
             />
             {hasNext && (
               <Box sx={{ textAlign: "center", mt: 2 }}>
-                <Button variant="outlined" onClick={loadMore}>Show More</Button>
+                <LoadingButton
+                  variant="outlined"
+                  onClick={loadMore}
+                  loading={status === ProviderStatus.RELOADING}
+                >
+                  Show More
+                </LoadingButton>
               </Box>
             )}
           </Container>

@@ -1,11 +1,6 @@
 import React, { FC, Ref, forwardRef, useRef, useState } from "react";
 import { AspectRatio, Delete, MoreVert, Share } from "@mui/icons-material";
-import {
-  Box, Card, CardContent, Grid,
-  IconButton, ListItemIcon, ListItemText,
-  Menu, MenuItem, Modal, Stack,
-  Typography, styled
-} from "@mui/material";
+import { Box, Card, CardContent, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Stack, Typography, styled } from "@mui/material";
 import useProgressiveQuality from "../../hooks/useProgressiveQuality";
 import PostComments from "./Components/PostComments";
 import ProfileBit from "./Components/PostProfile";
@@ -29,8 +24,8 @@ const StyledCard = styled(Card)({
 });
 
 const StyledImageBox = styled(Box)({
-  height: "250px",
-  maxWidth: "95%",
+  height: "300px",
+  maxWidth: "100%",
   overflow: "hidden",
   borderRadius: "8px",
   position: "relative",
@@ -45,7 +40,7 @@ const StyledBackground = styled("div", {
 })(({ bg, blur }: { bg?: string, blur?: boolean }) => ({
   backgroundImage: `url(${bg})`,
   filter: blur ? "blur(6px)" : "none",
-  backgroundSize: "cover",
+  backgroundSize: "contain",
   backgroundPosition: "center",
   backgroundRepeat: "no-repeat",
   position: "absolute",
@@ -90,7 +85,15 @@ const StyledExpandedImage = styled("img")({
   borderRadius: "8px",
 });
 
-const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
+/**
+ * A extension to the Image card but oriented vertically.
+ *
+ * NOTE: This is designed for image posts with lots of text.
+ *
+ * @param {FeedPostProps} post
+ * @returns {JSX.Element}
+ */
+const VerticalImage: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
   const { user } = useAuthProvider();
   const { deletePost: deletePostByUUID } = useFeedProvider();
   const { uuid, image, comment_count, post_text, person } = post;
@@ -103,7 +106,6 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPos
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, copyValue] = useCopyToClipboard();
-
 
   const menuToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -143,37 +145,37 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPos
     <>
       <StyledCard elevation={0} onClick={openPost} ref={ref}>
         <CardContent ref={rootRef}>
-          <Grid container>
-            <Grid item xs={8}>
+          <Stack direction="column" gap={1}>
+            <Box>
+              <Stack gap={1}>
+                <ProfileBit post={post} />
+                <GenericText content={post_text} />
+              </Stack>
+            </Box>
+            <Box>
               <StyledImageBox className="image-box">
                 <StyledBackground bg={src} blur={blur} />
                 <StyledButton className="expand-button" onClick={() => setExpandedOpen(true)}>
                   <AspectRatio />
                 </StyledButton>
               </StyledImageBox>
-            </Grid>
-            <Grid item xs={4}>
-              <Stack gap={1}>
-                <ProfileBit post={post} />
-                <GenericText content={post_text} />
-                <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600}>
-                  {formatDateTime(new Date(post.post_date))}
-                  {post.locale && (
-                    <>
-                      {" • "}
-                      {post.locale}
-                    </>
-                  )}
-                  {(post.client && !["web", "vinbot"].includes(post.client)) && (
-                    <>
-                      {" • "}
-                      {post.client}
-                    </>
-                  )}
-                </Typography>
-              </Stack>
-            </Grid>
-          </Grid>
+            </Box>
+            <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600} textAlign="right">
+              {formatDateTime(new Date(post.post_date))}
+              {post.locale && (
+                <>
+                  {" • "}
+                  {post.locale}
+                </>
+              )}
+              {(post.client && !["web", "vinbot"].includes(post.client)) && (
+                <>
+                  {" • "}
+                  {post.client}
+                </>
+              )}
+            </Typography>
+          </Stack>
           {!isPreview && <PostComments key={uuid} uuid={uuid} count={comment_count} />}
         </CardContent>
         {!isPreview && (
@@ -213,4 +215,4 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPos
   );
 });
 
-export default ImagePost;
+export default VerticalImage;

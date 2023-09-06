@@ -24,9 +24,9 @@ export const formatDateTime = (date: Date, includePrefix = false) => {
   const now = new Date();
   const diff = now.getTime() - date.getTime();
 
-  if (diff < 24 * 60 * 60 * 1000) {
+  if (diff < (12 * 60 * 60 * 1000)) {
     return `${includePrefix ? "today at " : ""}${formatTime(date)}`;
   }
 
-  return `${formatDate(date)} on ${formatTime(date)}`;
+  return `${formatDate(date)} at ${formatTime(date)}`;
 }

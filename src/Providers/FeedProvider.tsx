@@ -7,7 +7,9 @@ export type ProviderState = {
   status: ProviderStatus;
   posts: FeedPost[];
   count: number;
-  next?: () => Promise<boolean>;
+  next?: (count: number) => Promise<boolean>;
+  deletePost?: (uuid: string) => Promise<boolean>;
+  createPost?: (post: FeedPost) => Promise<boolean>;
   hasNext?: boolean;
 }
 
@@ -47,14 +49,54 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
   );
   const [nextPage, setNextPage] = useState<string>("");
 
-  const next = async (): Promise<boolean> => {
+  const createPost = async (post: FeedPost): Promise<boolean> => {
+    if (!post.uuid) {
+      return false;
+    }
+
+    setState((prev) => ({
+      ...prev,
+      posts: [post, ...prev.posts],
+      count: prev.count + 1,
+    }));
+
+    return true;
+  };
+
+  const deletePost = async (uuid: string): Promise<boolean> => {
+    if (!token || !uuid) {
+      return false;
+    }
+
+    setState((prev) => ({
+      ...prev,
+      posts: prev.posts.filter((post) => post.uuid !== uuid),
+      count: prev.count - 1,
+    }));
+
+    const response = await fetch(ENDPOINTS.post_delete + uuid, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).catch(() => null);
+
+    const { status } = await response?.json() || {};
+    if (status === STATUS_OK) {
+      return true;
+    }
+
+    return true;
+  };
+
+  const next = async (count = limit): Promise<boolean> => {
     if (!nextPage || !token || !user?.uuid) {
       return false;
     }
 
     setState((prev) => ({ ...prev, status: ProviderStatus.RELOADING }));
 
-    const endpoint = `${filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed}${user?.uuid}/${limit}/${nextPage}`
+    const endpoint = `${filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed}${user?.uuid}/${count}/${nextPage}`
     const response = await fetch(endpoint, {
       method: "GET",
       headers: {
@@ -62,12 +104,12 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
       },
     }).catch(() => null);
 
-    const { status, count, next_page_uuid, end, feed } = await response?.json() || {};
+    const { status, count: postCount, next_page_uuid, end, feed } = await response?.json() || {};
     if (status === STATUS_OK) {
       setState((prev) => ({
         status: ProviderStatus.LOADED,
         posts: [...prev.posts, ...feed?.map((post: any) => post.post)],
-        count: count + prev.count,
+        count: postCount + prev.count,
         hasNext: !end && next_page_uuid,
       }));
       setNextPage(next_page_uuid && !end ? next_page_uuid : "");
@@ -122,7 +164,7 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
   }, [state?.posts, state?.count]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const value = useMemo(() => ({ ...state, next }), [state]);
+  const value = useMemo(() => ({ ...state, next, deletePost, createPost }), [state]);
 
   return (
     <Context.Provider value={value}>

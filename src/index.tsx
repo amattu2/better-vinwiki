@@ -1,18 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Stack, CssBaseline, Box } from '@mui/material';
+import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { Box, CssBaseline, Stack } from '@mui/material';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { AuthProvider } from './Providers/AuthProvider';
+import { NotificationCountProvider } from './Providers/NotificationCountProvider';
 import Sidebar from './components/Sidebar';
 import Home from './pages';
+import List from './pages/list/Controller';
 import Login from './pages/login/Controller';
 import Logout from './pages/logout/Controller';
 import Profile from './pages/profile/Controller';
-import Vehicle from './pages/vehicle/Controller';
-import List from './pages/list/Controller';
 import Search from './pages/search/Controller';
+import Vehicle from './pages/vehicle/Controller';
 import reportWebVitals from './reportWebVitals';
-import { NotificationCountProvider } from './Providers/NotificationCountProvider';
-import { AuthProvider } from './Providers/AuthProvider';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -47,14 +49,16 @@ const ProtectedRoutes = () => {
 
 root.render(
   <React.StrictMode>
-    <CssBaseline />
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/logout" element={<Logout />} />
-        <Route path="*" element={<ProtectedRoutes />} />
-      </Routes>
-    </Router>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <CssBaseline />
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="*" element={<ProtectedRoutes />} />
+        </Routes>
+      </Router>
+    </LocalizationProvider>
   </React.StrictMode>
 );
 

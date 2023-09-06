@@ -1,4 +1,5 @@
 export const API_URL: string = 'https://rest.vinwiki.com/';
+export const MEDIA_URL: string = "https://media.vinwiki.com/media/"
 
 export const ENDPOINTS = {
   /* Auth Endpoints */
@@ -25,10 +26,15 @@ export const ENDPOINTS = {
 
   /* Vehicle Endpoints */
   vehicle_search: `${API_URL}vehicle/search`,
+  plate_lookup: `${API_URL}vehicle/plate_lookup`,
   vehicle: `${API_URL}vehicle/vin/`,
   vehicle_feed: `${API_URL}/vehicle/feed/`,
   vehicle_is_following: `${API_URL}vehicle/is_following/`,
   vehicle_follow: `${API_URL}vehicle/follow/`, // TODO: follow a vehicle GET :/vin
+  vehicle_post: `${API_URL}vehicle/post/`,
+
+  /* Post Endpoints */
+  post_delete: `${API_URL}post/delete/`,
 
   /* List Endpoints */
   list_search: `${API_URL}lists/search`,
@@ -39,6 +45,11 @@ export const ENDPOINTS = {
   list_follow: `${API_URL}lists/follow/`, // TODO: follow a list PATH: :uuid
   list_create: `${API_URL}lists/add`, // TODO: create a list POST name and description
   list_add_vehicle: `${API_URL}lists/addvin/`, // TODO: add a vehicle to a list GET vehicle /:uuid
+};
+
+export const MEDIA_ENDPOINTS = {
+  /* Vehicle Endpoints */
+  vehicle_image_add: `${MEDIA_URL}add/photo/vehicle/`, // PATH: /:vin
 };
 
 export const STATUS_OK = "ok";
