@@ -14,6 +14,7 @@ import { useAuthProvider } from "../../Providers/AuthProvider";
 import { PostRouter } from "../FeedPost";
 import ProfileAvatar from "../ProfileAvatar";
 import VehicleSearch from "../Typeahead/VehicleSearch";
+import PlateDecoder from "../PlateDecoder/Dialog";
 
 type PostForm = {
   type: FeedPost["type"];
@@ -49,6 +50,7 @@ const CreatePost: FC = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [activePostType, setActivePostType] = useState<FeedPost["type"]>("generic");
+  const [plateDecoderOpen, setPlateDecoderOpen] = useState<boolean>(false);
 
   const { register, watch, setValue } = useForm<PostForm>();
   const postText = watch("post_text");
@@ -109,11 +111,18 @@ const CreatePost: FC = () => {
                   <Stack direction="row" gap={1} sx={{ mb: 1 }}>
                     <VehicleSearch value={selectedVehicle} onChange={selectVehicle} />
                     <Tooltip title="Advanced Search" placement="right">
-                      {/* TODO: Prompt for VIN search by Plate */}
-                      <IconButton>
+                      <IconButton onClick={() => setPlateDecoderOpen(true)}>
                         <SavedSearch />
                       </IconButton>
                     </Tooltip>
+                    <PlateDecoder
+                      open={plateDecoderOpen}
+                      onConfirm={(vehicle) => {
+                        setSelectedVehicle(vehicle);
+                        setPlateDecoderOpen(false);
+                      }}
+                      onCancel={() => setPlateDecoderOpen(false)}
+                    />
                   </Stack>
                   <Button onClick={() => setActiveStep(1)} size="small" disabled={!selectedVehicle}>
                     Next

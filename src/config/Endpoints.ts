@@ -25,6 +25,7 @@ export const ENDPOINTS = {
 
   /* Vehicle Endpoints */
   vehicle_search: `${API_URL}vehicle/search`,
+  plate_lookup: `${API_URL}vehicle/plate_lookup`,
   vehicle: `${API_URL}vehicle/vin/`,
   vehicle_feed: `${API_URL}/vehicle/feed/`,
   vehicle_is_following: `${API_URL}vehicle/is_following/`,
