@@ -2,7 +2,7 @@ import React, { FC, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   AddPhotoAlternate, AddPhotoAlternateOutlined,
-  Cancel, PostAddOutlined, ReceiptLong, SavedSearch
+  Cancel, PostAddOutlined, SavedSearch
 } from "@mui/icons-material";
 import { TabContext, TabPanel } from "@mui/lab";
 import {
@@ -69,7 +69,7 @@ const CreatePost: FC = () => {
   const [expanded, setExpanded] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
-  const [activePostType, setActivePostType] = useState<FeedPost["type"]>("generic");
+  const [postType, setPostType] = useState<FeedPost["type"]>("generic");
   const [plateDecoderOpen, setPlateDecoderOpen] = useState<boolean>(false);
   const [posting, setPosting] = useState<boolean>(false);
 
@@ -79,7 +79,7 @@ const CreatePost: FC = () => {
 
   const stepStatuses: { [step: number]: boolean | undefined } = useMemo(() => {
     const step0 = !!selectedVehicle;
-    const step1 = (activePostType === "photo" && !!imageUpload?.[0]) || (activePostType === "generic" && !!postText);
+    const step1 = (postType === "photo" && !!imageUpload?.[0]) || (postType === "generic" && !!postText);
     const step2 = step1;
     const step3 = step0 && step1 && step2;
 
@@ -89,13 +89,13 @@ const CreatePost: FC = () => {
       2: step2,
       3: step3,
     };
-  }, [selectedVehicle, imageUpload, postText, activePostType]);
+  }, [selectedVehicle, imageUpload, postText, postType]);
 
   const resetPost = () => {
     setExpand(false);
     setActiveStep(0);
     setSelectedVehicle(null);
-    setActivePostType("generic");
+    setPostType("generic");
     reset();
   };
 
@@ -105,16 +105,16 @@ const CreatePost: FC = () => {
     setSelectedVehicle(vehicle)
   };
 
-  const setPostType = (e: React.SyntheticEvent, type: FeedPost["type"]) => {
-    setActivePostType(type);
+  const changePostType = (e: React.SyntheticEvent, type: FeedPost["type"]) => {
+    setPostType(type);
     setValue("type", type);
     resetField("image");
   };
 
   const generateDemoPost = (): FeedPost => ({
-    type: activePostType,
+    type: postType,
     post_text: postText,
-    image: activePostType === "photo" && imageUpload?.[0]
+    image: postType === "photo" && imageUpload?.[0]
       ? { large: URL.createObjectURL(imageUpload?.[0]) }
       : null,
     person: { ...user },
@@ -129,17 +129,17 @@ const CreatePost: FC = () => {
     if (!token || !selectedVehicle?.vin) {
       return;
     }
-    if (activePostType === "generic" && !postText) {
+    if (postType === "generic" && !postText) {
       return;
     }
-    if (activePostType === "photo" && !imageUpload?.[0]) {
+    if (postType === "photo" && !imageUpload?.[0]) {
       return;
     }
 
     setPosting(true);
 
     let imageUUID: string | null = null;
-    if (activePostType === "photo") {
+    if (postType === "photo") {
       const formData = new FormData();
       formData.append("media", imageUpload?.[0]);
       formData.append("subject", "vehicle");
@@ -173,7 +173,7 @@ const CreatePost: FC = () => {
         locale: watch("locale"),
         mileage: watch("mileage"),
         text: watch("post_text"),
-        class_name: activePostType,
+        class_name: postType,
         image_uuid: imageUUID,
       }),
     }).catch(() => null);
@@ -193,7 +193,7 @@ const CreatePost: FC = () => {
     <>
       <Backdrop open={expanded} sx={{ zIndex: 9 }} />
       <ClickAwayListener onClickAway={() => setExpand(false)}>
-        <StyledCard expanded={expanded} elevation={expanded ? 12 : 0} onFocus={() => setExpand(true)}>
+        <StyledCard expanded={expanded} elevation={expanded ? 12 : 0}>
           {(expanded && posting) && (
             <Loader fullscreen={false} />
           )}
@@ -239,12 +239,12 @@ const CreatePost: FC = () => {
               <Step disabled={!stepStatuses[0]} completed={stepStatuses[1]}>
                 <StepButton onClick={() => setActiveStep(1)}>Post Content</StepButton>
                 <StyledStepContent>
-                  <StyledCard elevation={0} sx={{ p: 0 }}>
-                    <TabContext value={activePostType}>
-                      <Tabs value={activePostType} onChange={setPostType}>
-                        <StyledTab icon={<PostAddOutlined />} iconPosition="start" label="Post" value="generic" />
+                  <StyledCard elevation={4} sx={{ p: 0 }}>
+                    <TabContext value={postType}>
+                      <Tabs value={postType} onChange={changePostType}>
+                        <StyledTab icon={<PostAddOutlined />} iconPosition="start" label="Text" value="generic" />
                         <StyledTab icon={<AddPhotoAlternateOutlined />} iconPosition="start" label="Photo" value="photo"/>
-                        <StyledTab icon={<ReceiptLong />} iconPosition="start" label="Repair" disabled />
+                        {/* <StyledTab icon={<ReceiptLong />} iconPosition="start" label="Repair" disabled /> */}
                       </Tabs>
                       <TabPanel value="generic">
                         {/* TODO: Add support for typeahead user tags */}
@@ -268,7 +268,7 @@ const CreatePost: FC = () => {
                         />
                         <Divider sx={{ my: 1.5 }}/>
                         <ImageUpload
-                          InputProps={register("image", { required: activePostType === "photo" })}
+                          InputProps={register("image", { required: postType === "photo" })}
                           preview={imageUpload?.[0] && URL.createObjectURL(imageUpload?.[0])}
                           onPreviewClick={() => resetField("image")}
                           onDrop={(e) => setValue("image", e.dataTransfer.files)}
@@ -279,7 +279,7 @@ const CreatePost: FC = () => {
                   <Button onClick={() => setActiveStep(2)} disabled={!stepStatuses[1]}>Next</Button>
                 </StyledStepContent>
               </Step>
-              <Step disabled={!stepStatuses[1]} completed={stepStatuses[2]}>
+              <Step disabled={!stepStatuses[1]}>
                 <StepButton onClick={() => setActiveStep(2)}>
                   Event Details
                   {" "}
@@ -329,8 +329,8 @@ const CreatePost: FC = () => {
           {!expanded && (
             <Stack direction="row" spacing={2} alignItems="center">
               <ProfileAvatar username={user?.username || ""} avatar={user?.avatar} />
-              <TextField placeholder="Compose a new post" size="small" fullWidth />
-              <IconButton onClick={() => setActivePostType("photo")}>
+              <TextField placeholder="Compose a new post" size="small" onClick={() => setExpand(true)} fullWidth />
+              <IconButton onClick={() => { setPostType("photo"); setExpand(true); }}>
                 <AddPhotoAlternate />
               </IconButton>
             </Stack>

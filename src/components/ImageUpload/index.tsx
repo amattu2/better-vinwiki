@@ -19,12 +19,13 @@ const StyledDropzone = styled(Box)({
   color: "rgba(0, 0, 0, 0.38)",
   cursor: "pointer",
   "&:after": {
-    content: "'Drop an image here or click to select one'",
+    content: "'Drop an image here or click to find one'",
     color: "rgba(0, 0, 0, 0.38)",
     position: "absolute",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
+    fontSize: "14px",
   },
   "&:hover": {
     color: "#3b3b3b",
