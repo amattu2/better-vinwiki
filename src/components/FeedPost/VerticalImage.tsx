@@ -1,4 +1,4 @@
-import React, { FC, useRef, useState } from "react";
+import React, { FC, Ref, forwardRef, useRef, useState } from "react";
 import { AspectRatio, Delete, MoreVert, Share } from "@mui/icons-material";
 import { Box, Card, CardContent, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Stack, Typography, styled } from "@mui/material";
 import useProgressiveQuality from "../../hooks/useProgressiveQuality";
@@ -93,7 +93,7 @@ const StyledExpandedImage = styled("img")({
  * @param {FeedPostProps} post
  * @returns {JSX.Element}
  */
-const VerticalImage: FC<FeedPostProps> = ({ isPreview, ...post }: FeedPostProps) => {
+const VerticalImage: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
   const { user } = useAuthProvider();
   const { deletePost: deletePostByUUID } = useFeedProvider();
   const { uuid, image, comment_count, post_text, person } = post;
@@ -104,6 +104,7 @@ const VerticalImage: FC<FeedPostProps> = ({ isPreview, ...post }: FeedPostProps)
   const [open, setOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, copyValue] = useCopyToClipboard();
 
   const menuToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -142,7 +143,7 @@ const VerticalImage: FC<FeedPostProps> = ({ isPreview, ...post }: FeedPostProps)
 
   return (
     <>
-      <StyledCard elevation={0} onClick={openPost}>
+      <StyledCard elevation={0} onClick={openPost} ref={ref}>
         <CardContent ref={rootRef}>
           <Stack direction="column" gap={1}>
             <Box>
@@ -200,6 +201,6 @@ const VerticalImage: FC<FeedPostProps> = ({ isPreview, ...post }: FeedPostProps)
       </Modal>
     </>
   );
-};
+});
 
 export default VerticalImage;

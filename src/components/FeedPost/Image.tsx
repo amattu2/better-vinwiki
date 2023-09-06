@@ -1,4 +1,4 @@
-import React, { FC, useRef, useState } from "react";
+import React, { FC, Ref, forwardRef, useRef, useState } from "react";
 import { AspectRatio, Delete, MoreVert, Share } from "@mui/icons-material";
 import {
   Box, Card, CardContent, Grid,
@@ -90,7 +90,7 @@ const StyledExpandedImage = styled("img")({
   borderRadius: "8px",
 });
 
-const ImagePost: FC<FeedPostProps> = ({ isPreview, ...post }: FeedPostProps) => {
+const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
   const { user } = useAuthProvider();
   const { deletePost: deletePostByUUID } = useFeedProvider();
   const { uuid, image, comment_count, post_text, person } = post;
@@ -101,6 +101,7 @@ const ImagePost: FC<FeedPostProps> = ({ isPreview, ...post }: FeedPostProps) => 
   const [open, setOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, copyValue] = useCopyToClipboard();
 
 
@@ -140,7 +141,7 @@ const ImagePost: FC<FeedPostProps> = ({ isPreview, ...post }: FeedPostProps) => 
 
   return (
     <>
-      <StyledCard elevation={0} onClick={openPost}>
+      <StyledCard elevation={0} onClick={openPost} ref={ref}>
         <CardContent ref={rootRef}>
           <Grid container>
             <Grid item xs={8}>
@@ -198,6 +199,6 @@ const ImagePost: FC<FeedPostProps> = ({ isPreview, ...post }: FeedPostProps) => 
       </Modal>
     </>
   );
-};
+});
 
 export default ImagePost;

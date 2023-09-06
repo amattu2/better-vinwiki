@@ -1,4 +1,4 @@
-import { FC, useRef, useState } from "react";
+import { FC, Ref, forwardRef, useRef, useState } from "react";
 import { Delete, MoreVert, Share } from "@mui/icons-material";
 import {
   Card, CardContent, IconButton,
@@ -32,7 +32,7 @@ const StyledMenuButton = styled(IconButton)({
   top: "8px",
 });
 
-const TextPost: FC<FeedPostProps> = ({ isPreview, ...post }: FeedPostProps) => {
+const TextPost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
   const { user } = useAuthProvider();
   const { deletePost: deletePostByUUID } = useFeedProvider();
   const { uuid, comment_count, post_text, person } = post;
@@ -41,6 +41,7 @@ const TextPost: FC<FeedPostProps> = ({ isPreview, ...post }: FeedPostProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, copyValue] = useCopyToClipboard();
 
   const menuToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -78,7 +79,7 @@ const TextPost: FC<FeedPostProps> = ({ isPreview, ...post }: FeedPostProps) => {
   };
 
   return (
-    <StyledCard elevation={0} onClick={openPost}>
+    <StyledCard elevation={0} onClick={openPost} ref={ref}>
       <CardContent ref={rootRef}>
         <ProfileBit post={post} filled={false} />
         <GenericText content={post_text} padding={"8px"} />
@@ -116,6 +117,6 @@ const TextPost: FC<FeedPostProps> = ({ isPreview, ...post }: FeedPostProps) => {
       />
     </StyledCard>
   );
-};
+});
 
 export default TextPost;

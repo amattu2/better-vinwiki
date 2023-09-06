@@ -1,5 +1,6 @@
 type FeedPostProps = FeedPost & {
   isPreview?: true;
+  ref?: Ref<HTMLDivElement>;
 };
 
 type Country = {

@@ -8,7 +8,7 @@ type Base = {
 
 type Props<T extends Base> = {
   items: T[];
-  render: (item: T) => React.ReactNode;
+  render: (item: T, index: number, last: boolean) => React.ReactNode;
 };
 
 const GenericTransitionGroup = <T extends Base>({
@@ -17,9 +17,9 @@ const GenericTransitionGroup = <T extends Base>({
 }: Props<T>) => {
   return (
     <TransitionGroup>
-      {items.map((item: T) => (
+      {items.map((item: T, index: number) => (
         <Collapse key={item.key}>
-          {render(item)}
+          {render(item, index, index === items.length - 1)}
         </Collapse>
       ))}
     </TransitionGroup>
