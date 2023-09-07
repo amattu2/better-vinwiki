@@ -16,7 +16,7 @@ type Props = {
  * @returns {JSX.Element}
  */
 const GenericText: FC<Props> = ({ content, padding }: Props) => {
-  const parsedContent = reactStringReplace(content, new RegExp(/@([\w]+)/g), (match, i) => <MentionChip key={i} handle={match} />);
+  const parsedContent = reactStringReplace(content, /@([\w]+)/g, (match, i) => <MentionChip key={i} handle={match} />);
 
   return (
     <Typography component="div" variant="body2" color="textSecondary" sx={{ mb: 1, wordBreak: "break-word", padding }}>

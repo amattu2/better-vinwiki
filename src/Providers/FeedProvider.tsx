@@ -107,7 +107,7 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
     if (status === STATUS_OK) {
       setState((prev) => ({
         status: ProviderStatus.LOADED,
-        posts: [...prev.posts, ...feed?.map((post: any) => post.post)],
+        posts: [...prev.posts, ...(feed?.map((post: { post: FeedPost }) => post.post) || [])],
         count: postCount + prev.count,
         hasNext: !end && next_page_uuid,
       }));
@@ -121,7 +121,7 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
 
   useEffect(() => {
     if (!token || !user?.uuid) {
-      return;
+      return () => null;
     }
 
     const controller = new AbortController();
@@ -146,7 +146,7 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
       if (status === STATUS_OK) {
         setState({
           status: ProviderStatus.LOADED,
-          posts: feed?.map((post: any) => post.post),
+          posts: feed?.map((post: { post: FeedPost }) => post.post),
           count,
           hasNext: !end && next_page_uuid,
         });
@@ -159,10 +159,8 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
 
   useEffect(() => {
     setCache({ posts: state?.posts, count: state?.count });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state?.posts, state?.count]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const value = useMemo(() => ({ ...state, next, deletePost, createPost }), [state]);
 
   return (

@@ -42,7 +42,7 @@ const View : FC = () => {
         {list?.vehicle_count}
       </center>
       {hasMore && (
-        <button onClick={() => next?.(250)} disabled={status === ProviderStatus.LOADING_MORE}>Load More</button>
+        <button type="button" onClick={() => next?.(250)} disabled={status === ProviderStatus.LOADING_MORE}>Load More</button>
       )}
     </div>
   );

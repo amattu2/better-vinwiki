@@ -103,7 +103,6 @@ const Feed : FC = () => {
     if (isVisible) {
       loadMore();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible]);
 
   if (status === ProviderStatus.LOADING) {

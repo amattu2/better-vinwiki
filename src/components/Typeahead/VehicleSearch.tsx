@@ -107,7 +107,6 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
       setOptions(v);
       setLoading(false);
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue]);
 
   useEffect(() => {

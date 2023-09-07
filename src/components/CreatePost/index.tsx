@@ -17,11 +17,11 @@ import dayjs from "dayjs";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { ENDPOINTS, MEDIA_ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
 import { PostRouter } from "../FeedPost";
-import ImageUpload from "../ImageUpload";
+import { ImageUpload } from "../ImageUpload";
 import Loader from "../Loader";
 import PlateDecoder from "../PlateDecoder/Dialog";
 import ProfileAvatar from "../ProfileAvatar";
-import VehicleSearch from "../Typeahead/VehicleSearch";
+import { VehicleSearch } from "../Typeahead/VehicleSearch";
 import { useFeedProvider } from "../../Providers/FeedProvider";
 
 type PostForm = {
@@ -101,7 +101,7 @@ const CreatePost: FC = () => {
 
   const setExpand = (expanded: boolean) => setExpanded(expanded);
 
-  const selectVehicle = (e: React.SyntheticEvent, vehicle: Vehicle | null, reason: string) => {
+  const selectVehicle = (e: React.SyntheticEvent, vehicle: Vehicle | null) => {
     setSelectedVehicle(vehicle);
   };
 
@@ -253,7 +253,7 @@ const CreatePost: FC = () => {
                           placeholder="What's on your mind?"
                           size="small"
                           rows={6}
-                          helperText={`${500 - postText?.length || 0} of 500 characters`}
+                          helperText={`${500 - (postText?.length || 0)} of 500 characters`}
                           multiline
                           fullWidth
                         />
@@ -263,7 +263,7 @@ const CreatePost: FC = () => {
                           {...register("post_text", { required: true, maxLength: 500 })}
                           placeholder="Caption this photo"
                           size="small"
-                          helperText={`${500 - postText?.length || 0} of 500 characters`}
+                          helperText={`${500 - (postText?.length || 0)} of 500 characters`}
                           fullWidth
                         />
                         <Divider sx={{ my: 1.5 }} />

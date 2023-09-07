@@ -134,7 +134,6 @@ export const ListProvider: FC<Props> = ({ uuid, children }: Props) => {
     })();
   }, [token, uuid]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const value = useMemo(() => ({ ...state, next, hasMore }), [state, hasMore]);
 
   return (

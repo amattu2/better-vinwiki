@@ -56,10 +56,7 @@ const TextPost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPost
 
   const deletePost = async () => {
     setDeleteDialogOpen(false);
-    const result = await deletePostByUUID?.(uuid);
-    if (!result) {
-      console.error("Failed to delete post", uuid);
-    }
+    await deletePostByUUID?.(uuid);
   };
 
   const openPost = (event: React.MouseEvent<HTMLDivElement>) => {

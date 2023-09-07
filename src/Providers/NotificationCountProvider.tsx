@@ -77,7 +77,6 @@ export const NotificationCountProvider: FC<Props> = ({ children }: Props) => {
 
     setTrigger(setInterval(refetch, 30 * 1000));
     return () => clearInterval(trigger);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

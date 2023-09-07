@@ -121,7 +121,7 @@ export const SearchProvider: FC<Props> = ({ query, type, children }: Props) => {
     }));
 
     if (!token || !query) {
-      return;
+      return () => null;
     }
 
     const controller = new AbortController();

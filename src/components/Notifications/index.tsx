@@ -28,7 +28,7 @@ const StyledLink = styled(Link)({
   color: "inherit",
 });
 
-const getNotifications = async (token: string) => {
+const getNotifications = async (token: string): Promise<ProfileNotification[]> => {
   const response = await fetch(ENDPOINTS.notifications, {
     method: "GET",
     headers: {
@@ -40,6 +40,8 @@ const getNotifications = async (token: string) => {
   if (status === STATUS_OK && notifications?.length) {
     return notifications.map((notification: { notification: ProfileNotification }) => (notification.notification));
   }
+
+  return [];
 };
 
 export const Notifications: FC<Props> = ({ preload }: Props) => {
@@ -59,7 +61,6 @@ export const Notifications: FC<Props> = ({ preload }: Props) => {
       setData(notifications || []);
       setLoading(false);
     })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [preload]);
 
   if (loading) {

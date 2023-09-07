@@ -132,9 +132,10 @@ const DecoderDialog: FC<Props> = ({ open, onConfirm, onCancel }: Props) => {
             {" "}
             <Link to={`/vehicle/${selectedVehicle.vin}`} target="_blank">
               {formatVehicleName(selectedVehicle)}
-              {" ("}
+              {" "}
+              (
               {selectedVehicle.vin}
-              {")"}
+              )
             </Link>
             <IconButton onClick={clearSelection}>
               <Delete fontSize="small" />

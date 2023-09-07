@@ -35,36 +35,42 @@ const View : FC = () => {
             })}
           />
           <br />
-          <input
-            type="radio"
-            {...register("type", {
-              required: false,
-            })}
-            value="all"
-            defaultChecked={type === "all"}
-            id="radio-all"
-          />
-          <label htmlFor="radio-all">All</label>
-          <input
-            type="radio"
-            {...register("type", {
-              required: false,
-            })}
-            value="vehicles"
-            defaultChecked={type === "vehicles"}
-            id="radio-vehicles"
-          />
-          <label htmlFor="radio-vehicles">Vehicles</label>
-          <input
-            type="radio"
-            {...register("type", {
-              required: false,
-            })}
-            value="lists"
-            defaultChecked={type === "lists"}
-            id="radio-lists"
-          />
-          <label htmlFor="radio-lists">Lists</label>
+          <label htmlFor="radio-all">
+            All
+            <input
+              type="radio"
+              {...register("type", {
+                required: false,
+              })}
+              value="all"
+              defaultChecked={type === "all"}
+              id="radio-all"
+            />
+          </label>
+          <label htmlFor="radio-vehicles">
+            Vehicles
+            <input
+              type="radio"
+              {...register("type", {
+                required: false,
+              })}
+              value="vehicles"
+              defaultChecked={type === "vehicles"}
+              id="radio-vehicles"
+            />
+          </label>
+          <label htmlFor="radio-lists">
+            Lists
+            <input
+              type="radio"
+              {...register("type", {
+                required: false,
+              })}
+              value="lists"
+              defaultChecked={type === "lists"}
+              id="radio-lists"
+            />
+          </label>
           <br />
           <input type="submit" />
         </form>

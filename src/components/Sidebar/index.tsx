@@ -5,7 +5,7 @@ import { Box, Stack, styled } from '@mui/system';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuthProvider } from '../../Providers/AuthProvider';
 import { useNotificationCountProvider } from '../../Providers/NotificationCountProvider';
-import Notifications from '../Notifications';
+import { Notifications } from '../Notifications';
 
 const StyledBox = styled(Box)({
   padding: "32px 12px",

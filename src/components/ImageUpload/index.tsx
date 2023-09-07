@@ -6,6 +6,7 @@ type Props = {
   preview?: string;
   onPreviewClick?: () => void;
   onDrop?: (e: React.DragEvent<HTMLDivElement>) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   InputProps: any;
 };
 

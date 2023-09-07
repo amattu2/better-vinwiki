@@ -49,8 +49,6 @@ const LoginView = () => {
       localStorage.setItem("user", JSON.stringify(person));
       localStorage.setItem("token", token);
       navigate("/");
-    } else {
-      alert("Invalid credentials");
     }
   };
 

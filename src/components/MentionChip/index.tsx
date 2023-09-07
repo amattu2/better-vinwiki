@@ -54,7 +54,7 @@ const GenericText: FC<Props> = ({ handle }: Props) => {
   }, [handle, token]);
 
   if (!user) {
-    return (`@${handle}`);
+    return <span>{`@${handle}`}</span>;
   }
 
   return (
