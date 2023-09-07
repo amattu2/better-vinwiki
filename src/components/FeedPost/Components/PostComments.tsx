@@ -62,7 +62,7 @@ const PostComments: FC<Props> = ({ uuid, count }: Props) => {
     })();
 
     return () => controller.abort();
-  }, [token]);
+  }, [count]);
 
   return (
     <StyledCommentBox>
