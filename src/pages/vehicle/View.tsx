@@ -15,19 +15,29 @@ const View : FC = () => {
   return (
     <div>
       <h3>Vehicle</h3>
-      <strong>VIN:</strong> {vehicle?.vin}
+      <strong>VIN:</strong>
+      {' '}
+      {vehicle?.vin}
       <br />
-      <strong>Make:</strong> {vehicle?.make}
+      <strong>Make:</strong>
+      {' '}
+      {vehicle?.make}
       <br />
-      <strong>Model:</strong> {vehicle?.model}
+      <strong>Model:</strong>
+      {' '}
+      {vehicle?.model}
       <br />
-      <strong>You are following:</strong> {following ? "Yes" : "No"}
+      <strong>You are following:</strong>
+      {' '}
+      {following ? "Yes" : "No"}
       <h3>Posts</h3>
       {posts?.map((post) => (
         <div key={post.uuid}>
-          &ndash; <strong>{post.post_text ?? post.post_date_ago}</strong>
+          &ndash;
+          {' '}
+          <strong>{post.post_text ?? post.post_date_ago}</strong>
         </div>
-      ))}      
+      ))}
     </div>
   );
 };

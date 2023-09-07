@@ -15,6 +15,6 @@ const Controller = () => {
       <VehicleView />
     </VehicleProvider>
   );
-}
+};
 
 export default Controller;

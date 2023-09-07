@@ -66,7 +66,7 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
     cloned.sort((a: Vehicle, b: Vehicle) => b.make.localeCompare(a.make));
 
     recentVehicles?.forEach((v: Vehicle) => {
-      if (!!cloned.find((c: Vehicle) => c.vin === v.vin)) {
+      if (cloned.find((c: Vehicle) => c.vin === v.vin)) {
         return;
       }
 

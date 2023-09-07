@@ -6,7 +6,7 @@ import { SearchResult, ProviderStatus, useSearchProvider } from "../../Providers
 type Inputs = {
   query: string,
   type: "all" | "vehicles" | "lists",
-}
+};
 
 const View : FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -97,10 +97,16 @@ const View : FC = () => {
                         <Link to={`/vehicle/${result.vin}`}>{result.long_name ?? result.vin}</Link>
                       </li>
                     );
-                  } else if (type === "list") {
+                  } if (type === "list") {
                     return (
                       <li key={result.uuid}>
-                        <Link to={`/list/${result.uuid}`}>{result.name ?? "No name"} &ndash; {result.owner?.username}</Link>
+                        <Link to={`/list/${result.uuid}`}>
+                          {result.name ?? "No name"}
+                          {' '}
+                          &ndash;
+                          {' '}
+                          {result.owner?.username}
+                        </Link>
                       </li>
                     );
                   }

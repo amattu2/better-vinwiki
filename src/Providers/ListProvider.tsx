@@ -1,4 +1,4 @@
-import React, { useState, FC, useEffect, useMemo} from "react";
+import React, { useState, FC, useEffect, useMemo } from "react";
 import { useAuthProvider } from "./AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
 
@@ -46,7 +46,7 @@ const fetchList = async (uuid: string, token: string): Promise<ListResponse | nu
   }
 
   return null;
-}
+};
 
 const fetchFollowing = async (uuid: string, token: string): Promise<boolean> => {
   const response = await fetch(ENDPOINTS.list_following + uuid, {
@@ -62,7 +62,7 @@ const fetchFollowing = async (uuid: string, token: string): Promise<boolean> => 
   }
 
   return false;
-}
+};
 
 type Props = {
   uuid: string;
@@ -115,7 +115,7 @@ export const ListProvider: FC<Props> = ({ uuid, children }: Props) => {
       const [list, following] = (await Promise.allSettled([
         fetchList(uuid, token),
         fetchFollowing(uuid, token),
-      ])).map((r) => r.status === "fulfilled" ? r.value : null);
+      ])).map((r) => (r.status === "fulfilled" ? r.value : null));
 
       if (list) {
         const { vehicles } = list as ListResponse;

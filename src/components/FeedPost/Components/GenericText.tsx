@@ -19,10 +19,10 @@ const GenericText: FC<Props> = ({ content, padding }: Props) => {
   const parsedContent = reactStringReplace(content, new RegExp(/@([\w]+)/g), (match, i) => <MentionChip key={i} handle={match} />);
 
   return (
-    <Typography component={"div"} variant="body2" color="textSecondary" sx={{ mb: 1, wordBreak: "break-word", padding }}>
+    <Typography component="div" variant="body2" color="textSecondary" sx={{ mb: 1, wordBreak: "break-word", padding }}>
       {parsedContent}
     </Typography>
-  )
+  );
 };
 
 export default GenericText;

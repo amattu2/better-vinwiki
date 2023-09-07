@@ -85,26 +85,35 @@ const TopPost: FC<Props> = ({ reason, post }: Props) => {
       <StyledPostBox direction="column" alignItems="center" justifyContent="center">
         <StyledBackground bg={post.image?.thumb ?? post.image?.poster} />
         <StyledReasonChip>
-          Trending &ndash; {reason}
+          Trending &ndash;
+          {' '}
+          {reason}
         </StyledReasonChip>
         <StyledPostText variant="h4">
-          "{prettySubstring(post.post_text, 40)}"
+          "
+          {prettySubstring(post.post_text, 40)}
+          "
         </StyledPostText>
       </StyledPostBox>
       <StyledAuthor direction="row" gap={1}>
         <ProfileAvatar username={post.person.username} avatar={post.person.avatar} />
         <Stack direction="column" justifyContent="center">
           <Typography variant="body1" fontWeight={600}>
-            <StyledLink to={`/profile/${post.person.uuid}`}>@{post.person.username}</StyledLink>
+            <StyledLink to={`/profile/${post.person.uuid}`}>
+              @
+              {post.person.username}
+            </StyledLink>
           </Typography>
           <Typography variant="body2">
             {formatDateTime(new Date(post.post_date), true)}
             {" "}
             &middot;
             {" "}
-            {post.comment_count} {post.comment_count === 1 ? "comment" : "comments"}
+            {post.comment_count}
+            {' '}
+            {post.comment_count === 1 ? "comment" : "comments"}
           </Typography>
-      </Stack>
+        </Stack>
       </StyledAuthor>
     </StyledCard>
   );

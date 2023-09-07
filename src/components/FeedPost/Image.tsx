@@ -6,6 +6,7 @@ import {
   Menu, MenuItem, Modal, Stack,
   Typography, styled
 } from "@mui/material";
+import { useCopyToClipboard } from "usehooks-ts";
 import useProgressiveQuality from "../../hooks/useProgressiveQuality";
 import PostComments from "./Components/PostComments";
 import ProfileBit from "./Components/PostProfile";
@@ -14,7 +15,6 @@ import { formatDateTime } from "../../utils/date";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { useFeedProvider } from "../../Providers/FeedProvider";
 import DeletePostDialog from "./Components/DeletePostDialog";
-import { useCopyToClipboard } from "usehooks-ts";
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",
@@ -103,7 +103,6 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPos
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, copyValue] = useCopyToClipboard();
-
 
   const menuToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -206,7 +205,7 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPos
       </StyledCard>
       <Modal open={expandedOpen} onClose={() => setExpandedOpen(false)}>
         <StyledExpandedBox>
-          <StyledExpandedImage src={src} alt={post_text}/>
+          <StyledExpandedImage src={src} alt={post_text} />
         </StyledExpandedBox>
       </Modal>
     </>

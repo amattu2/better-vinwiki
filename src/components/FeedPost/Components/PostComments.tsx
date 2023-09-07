@@ -111,7 +111,7 @@ const PostComments: FC<Props> = ({ uuid, count }: Props) => {
         </StyledCommentStack>
       )}
     </StyledCommentBox>
-  )
+  );
 };
 
 export default PostComments;

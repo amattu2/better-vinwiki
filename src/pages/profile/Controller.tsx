@@ -17,6 +17,6 @@ const Controller = () => {
       <ProfileView />
     </ProfileProvider>
   );
-}
+};
 
 export default Controller;

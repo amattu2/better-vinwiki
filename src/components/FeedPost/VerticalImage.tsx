@@ -1,6 +1,7 @@
 import React, { FC, Ref, forwardRef, useRef, useState } from "react";
 import { AspectRatio, Delete, MoreVert, Share } from "@mui/icons-material";
 import { Box, Card, CardContent, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Stack, Typography, styled } from "@mui/material";
+import { useCopyToClipboard } from "usehooks-ts";
 import useProgressiveQuality from "../../hooks/useProgressiveQuality";
 import PostComments from "./Components/PostComments";
 import ProfileBit from "./Components/PostProfile";
@@ -9,7 +10,6 @@ import { formatDateTime } from "../../utils/date";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { useFeedProvider } from "../../Providers/FeedProvider";
 import DeletePostDialog from "./Components/DeletePostDialog";
-import { useCopyToClipboard } from "usehooks-ts";
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",
@@ -208,7 +208,7 @@ const VerticalImage: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: Fee
       </StyledCard>
       <Modal open={expandedOpen} onClose={() => setExpandedOpen(false)}>
         <StyledExpandedBox>
-          <StyledExpandedImage src={src} alt={post_text}/>
+          <StyledExpandedImage src={src} alt={post_text} />
         </StyledExpandedBox>
       </Modal>
     </>

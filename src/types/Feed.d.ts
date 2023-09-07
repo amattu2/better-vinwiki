@@ -44,4 +44,4 @@ type PostInput = {
   locale: FeedPost["locale"];
   mileage: FeedPost["mileage"];
   text: FeedPost["post_text"];
-}
+};

@@ -50,12 +50,10 @@ const Feed : FC = () => {
   const isVisible = !!entry?.isIntersecting;
 
   // NOTE: These are posts matching client-side filters
-  const filteredPosts: FeedPost[] = useMemo(() => {
-    return posts
-      .filter((p) => postFilter ? p.type === postFilter : true)
+  const filteredPosts: FeedPost[] = useMemo(() => posts
+      .filter((p) => (postFilter ? p.type === postFilter : true))
       .filter((p) => !(p.client === "vinbot" && p.person.username !== "vinbot" && !p.post_text))
-      .sort((a, b) => (new Date(b.post_date)).getTime() - (new Date(a.post_date)).getTime())
-  }, [posts, postFilter]);
+      .sort((a, b) => (new Date(b.post_date)).getTime() - (new Date(a.post_date)).getTime()), [posts, postFilter]);
 
   // NOTE: These posts are a subset of filteredPosts, limited by the limit state
   const slicedPosts: FeedPost[] = useMemo(() => filteredPosts.slice(0, limit), [filteredPosts, limit]);
@@ -125,17 +123,17 @@ const Feed : FC = () => {
                 onChange={(e, value) => setPostFilter(value || "")}
                 exclusive
               >
-                <ToggleButton value={""}>
+                <ToggleButton value="">
                   <Tooltip title="Show all post types">
                     <DynamicFeed />
                   </Tooltip>
                 </ToggleButton>
-                <ToggleButton value={"generic"}>
+                <ToggleButton value="generic">
                   <Tooltip title="Show text posts">
                     <Message />
                   </Tooltip>
                 </ToggleButton>
-                <ToggleButton value={"photo"}>
+                <ToggleButton value="photo">
                   <Tooltip title="Show image posts">
                     <Image />
                   </Tooltip>
@@ -152,7 +150,7 @@ const Feed : FC = () => {
                     <Public />
                   </Tooltip>
                 </ToggleButton>
-                <ToggleButton value={true}>
+                <ToggleButton value>
                   <Tooltip title="Show following">
                     <FilterList />
                   </Tooltip>

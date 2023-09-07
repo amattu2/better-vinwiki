@@ -15,6 +15,6 @@ const Controller = () => {
       <ListView />
     </ListProvider>
   );
-}
+};
 
 export default Controller;

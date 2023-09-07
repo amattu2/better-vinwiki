@@ -1,7 +1,7 @@
 import React, { useState, FC, useEffect, useMemo } from "react";
+import { useSessionStorage } from "usehooks-ts";
 import { useAuthProvider } from "./AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
-import { useSessionStorage } from "usehooks-ts";
 
 export type ProviderState = {
   status: ProviderStatus;
@@ -11,7 +11,7 @@ export type ProviderState = {
   deletePost?: (uuid: string) => Promise<boolean>;
   createPost?: (post: FeedPost) => Promise<boolean>;
   hasNext?: boolean;
-}
+};
 
 export enum ProviderStatus {
   LOADING = "LOADING",
@@ -45,8 +45,7 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
   const [cache, setCache] = useSessionStorage<Pick<ProviderState, "posts" | "count"> | null>("FeedProvider", null);
   const [state, setState] = useState<ProviderState>(cache
     ? { ...defaultState, ...cache, status: ProviderStatus.RELOADING }
-    : defaultState
-  );
+    : defaultState);
   const [nextPage, setNextPage] = useState<string>("");
 
   const createPost = async (post: FeedPost): Promise<boolean> => {
@@ -96,7 +95,7 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
 
     setState((prev) => ({ ...prev, status: ProviderStatus.RELOADING }));
 
-    const endpoint = `${filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed}${user?.uuid}/${count}/${nextPage}`
+    const endpoint = `${filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed}${user?.uuid}/${count}/${nextPage}`;
     const response = await fetch(endpoint, {
       method: "GET",
       headers: {
@@ -134,7 +133,7 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
     }));
 
     (async () => {
-      const endpoint = `${filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed}${user.uuid}/${limit}`
+      const endpoint = `${filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed}${user.uuid}/${limit}`;
       const response = await fetch(endpoint, {
         method: "GET",
         headers: {
@@ -148,7 +147,7 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
         setState({
           status: ProviderStatus.LOADED,
           posts: feed?.map((post: any) => post.post),
-          count: count,
+          count,
           hasNext: !end && next_page_uuid,
         });
         setNextPage(next_page_uuid && !end ? next_page_uuid : "");

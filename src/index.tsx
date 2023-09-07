@@ -24,7 +24,7 @@ const ProtectedRoutes = () => {
   const token = localStorage.getItem("token") || null;
   if (!token) {
     return <Navigate to="/login" />;
-  };
+  }
 
   return (
     <AuthProvider>

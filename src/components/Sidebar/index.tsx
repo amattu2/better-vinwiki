@@ -90,7 +90,7 @@ const Sidebar: FC = () => {
           )}
         </StyledLink>
       </StyledAvatarBox>
-      <StyledControlGroup direction='column' gap={1}>
+      <StyledControlGroup direction="column" gap={1}>
         <StyledIconButton disabled={pathname === "/"}>
           <StyledLink to="/">
             <Tooltip title="Feed" placement="right">
@@ -106,7 +106,7 @@ const Sidebar: FC = () => {
           </StyledLink>
         </StyledIconButton>
       </StyledControlGroup>
-      <StyledControlGroup direction='column' gap={1}>
+      <StyledControlGroup direction="column" gap={1}>
         <Typography variant="caption" color="textSecondary" fontWeight={600}>
           Account
         </Typography>

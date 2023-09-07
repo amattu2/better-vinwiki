@@ -16,10 +16,10 @@ type ListResponse = List & {
     last_id: string;
     vehicles: Vehicle[];
   }
-}
+};
 
 type ProfileLists = {
   following: List[];
   owned: List[];
   other: List[];
-}
+};

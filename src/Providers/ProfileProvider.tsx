@@ -89,9 +89,9 @@ const fetchLists = async (uuid: Profile["uuid"], token: string): Promise<Profile
   const { status, lists_following, lists_my, lists_other } = await response.json();
   if (status === STATUS_OK) {
     return {
-      following: (lists_following as { list: List }[])?.map(r => r?.list),
-      owned: (lists_my as { list: List }[])?.map(r => r?.list),
-      other: (lists_other as { list: List }[])?.map(r => r?.list),
+      following: (lists_following as { list: List }[])?.map((r) => r?.list),
+      owned: (lists_my as { list: List }[])?.map((r) => r?.list),
+      other: (lists_other as { list: List }[])?.map((r) => r?.list),
     };
   }
 
@@ -126,13 +126,13 @@ export const ProfileProvider: FC<Props> = ({
         withPosts ? fetchPosts(uuid, token) : Promise.resolve([]),
         withFollowing && uuid !== user?.uuid ? fetchFollowing(uuid, token) : Promise.resolve(false),
         withLists ? fetchLists(uuid, token) : Promise.resolve([]),
-      ])).map((r) => r.status === "fulfilled" ? r.value : null);
+      ])).map((r) => (r.status === "fulfilled" ? r.value : null));
 
       if (profile) {
         setState({
           status: ProviderStatus.LOADED,
           profile: profile as Profile,
-          posts: (posts as { post: FeedPost }[])?.map(r => r?.post),
+          posts: (posts as { post: FeedPost }[])?.map((r) => r?.post),
           lists: lists as ProfileLists,
           following: following as boolean,
         });

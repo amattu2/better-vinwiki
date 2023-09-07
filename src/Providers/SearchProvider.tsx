@@ -25,7 +25,7 @@ export type ProviderState = {
   count: number;
   next?: () => boolean;
   prev?: () => boolean;
-}
+};
 
 export enum ProviderStatus {
   LOADING = "LOADING",
@@ -87,13 +87,9 @@ export const SearchProvider: FC<Props> = ({ query, type, children }: Props) => {
   const { token } = useAuthProvider();
   const [state, setState] = useState<ProviderState>({ ...defaultState, query, type });
 
-  const next = () : boolean => {
-    return false
-  };
+  const next = () : boolean => false;
 
-  const prev = () : boolean => {
-    return false;
-  };
+  const prev = () : boolean => false;
 
   useEffect(() => {
     if (!token) {
@@ -135,7 +131,7 @@ export const SearchProvider: FC<Props> = ({ query, type, children }: Props) => {
       const [vehicles, lists] = (await Promise.allSettled([
         type !== "lists" ? vehicleSearch(query, token, signal) : null,
         type !== "vehicles" ? listSearch(query, token, signal) : null,
-      ])).map((r) => r.status === "fulfilled" ? r.value : null);
+      ])).map((r) => (r.status === "fulfilled" ? r.value : null));
 
       if (vehicles || lists) {
         const results: SearchResult[] = [

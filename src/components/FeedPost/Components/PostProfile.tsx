@@ -36,20 +36,24 @@ const PostProfile: FC<Props> = ({ post, filled = true }: Props) => {
       <ProfileAvatar username={username} avatar={avatar} />
       <Stack direction="column" justifyContent="center">
         <Typography variant="body1" fontWeight={600}>
-          <StyledLink to={`/profile/${uuid}`}>@{username}</StyledLink>
+          <StyledLink to={`/profile/${uuid}`}>
+            @
+            {username}
+          </StyledLink>
         </Typography>
         <Typography variant="body2">
           <StyledLink to={`/vehicle/${vin}`}>{formatVehicleName(vehicle)}</StyledLink>
           {post.mileage && (
             <>
               {" - "}
-              {formatOdometer(post.mileage)}mi
+              {formatOdometer(post.mileage)}
+              mi
             </>
           )}
         </Typography>
       </Stack>
     </StyledStack>
-  )
+  );
 };
 
 export default PostProfile;

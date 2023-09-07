@@ -5,7 +5,7 @@ import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
 export type ProviderState = {
   status: ProviderStatus;
   unseen: number;
-}
+};
 
 export enum ProviderStatus {
   LOADING = "LOADING",
@@ -78,7 +78,7 @@ export const NotificationCountProvider: FC<Props> = ({ children }: Props) => {
     setTrigger(setInterval(refetch, 30 * 1000));
     return () => clearInterval(trigger);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   return (
     <Context.Provider value={state}>

@@ -110,7 +110,7 @@ export const ImageUpload: FC<Props> = ({ InputProps, onDrop, preview, onPreviewC
       {preview ? (
         <StyledImageBox elevation={3} onClick={onPreviewClick}>
           <StyledBackground bg={preview} className="image-preview" />
-          <StyledDeleteIcon className="image-delete"/>
+          <StyledDeleteIcon className="image-delete" />
         </StyledImageBox>
       ) : (
         <StyledDropzone
@@ -132,7 +132,7 @@ export const ImageUpload: FC<Props> = ({ InputProps, onDrop, preview, onPreviewC
         }}
       />
     </Stack>
-  )
+  );
 };
 
 export default ImageUpload;

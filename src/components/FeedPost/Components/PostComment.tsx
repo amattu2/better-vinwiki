@@ -26,15 +26,18 @@ const StyledLink = styled(Link)({
  * @returns {JSX.Element}
  */
 const PostComment: FC<Props> = ({ comment }: Props) => {
-  const { person, text } = comment
-  const { uuid, username, avatar } = person
+  const { person, text } = comment;
+  const { uuid, username, avatar } = person;
 
   return (
     <StyledStack direction="row" gap={2}>
       <ProfileAvatar username={username} avatar={avatar} />
       <Stack direction="column" gap={1}>
         <Typography variant="body1" fontWeight={600}>
-          <StyledLink to={`/profile/${uuid}`}>@{username}</StyledLink>
+          <StyledLink to={`/profile/${uuid}`}>
+            @
+            {username}
+          </StyledLink>
         </Typography>
         <GenericText content={text} />
         <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600}>
@@ -42,7 +45,7 @@ const PostComment: FC<Props> = ({ comment }: Props) => {
         </Typography>
       </Stack>
     </StyledStack>
-  )
+  );
 };
 
 export default PostComment;

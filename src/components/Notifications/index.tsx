@@ -12,7 +12,7 @@ import ProfileAvatar from "../ProfileAvatar";
 
 type Props = {
   preload: boolean;
-}
+};
 
 const StyledList = styled(List)({
   maxWidth: "350px",
@@ -78,13 +78,14 @@ export const Notifications: FC<Props> = ({ preload }: Props) => {
             <ProfileAvatar username={sender.username} avatar={sender.avatar} />
           </ListItemAvatar>
           <ListItemText>
-            <StyledLink to={`/profile/${sender.uuid}`} target='_blank'>
+            <StyledLink to={`/profile/${sender.uuid}`} target="_blank">
               <Typography variant="body1" fontWeight={600}>
-                @{sender.username}
+                @
+                {sender.username}
               </Typography>
             </StyledLink>
             {["origin_author", "post_mention"].includes(type) ? (
-              <StyledLink to={`/post/${post.uuid}`} target='_blank'>
+              <StyledLink to={`/post/${post.uuid}`} target="_blank">
                 <Typography variant="body2">
                   {text}
                 </Typography>

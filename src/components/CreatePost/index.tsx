@@ -102,7 +102,7 @@ const CreatePost: FC = () => {
   const setExpand = (expanded: boolean) => setExpanded(expanded);
 
   const selectVehicle = (e: React.SyntheticEvent, vehicle: Vehicle | null, reason: string) => {
-    setSelectedVehicle(vehicle)
+    setSelectedVehicle(vehicle);
   };
 
   const changePostType = (e: React.SyntheticEvent, type: FeedPost["type"]) => {
@@ -207,7 +207,7 @@ const CreatePost: FC = () => {
                   </IconButton>
                 </Tooltip>
               </Stack>
-              <Divider sx={{ my: 1.5 }}/>
+              <Divider sx={{ my: 1.5 }} />
             </>
           )}
           {expanded && (
@@ -243,7 +243,7 @@ const CreatePost: FC = () => {
                     <TabContext value={postType}>
                       <Tabs value={postType} onChange={changePostType}>
                         <StyledTab icon={<PostAddOutlined />} iconPosition="start" label="Text" value="generic" />
-                        <StyledTab icon={<AddPhotoAlternateOutlined />} iconPosition="start" label="Photo" value="photo"/>
+                        <StyledTab icon={<AddPhotoAlternateOutlined />} iconPosition="start" label="Photo" value="photo" />
                         {/* <StyledTab icon={<ReceiptLong />} iconPosition="start" label="Repair" disabled /> */}
                       </Tabs>
                       <TabPanel value="generic">
@@ -266,7 +266,7 @@ const CreatePost: FC = () => {
                           helperText={`${500 - postText?.length || 0} of 500 characters`}
                           fullWidth
                         />
-                        <Divider sx={{ my: 1.5 }}/>
+                        <Divider sx={{ my: 1.5 }} />
                         <ImageUpload
                           InputProps={register("image", { required: postType === "photo" })}
                           preview={imageUpload?.[0] && URL.createObjectURL(imageUpload?.[0])}

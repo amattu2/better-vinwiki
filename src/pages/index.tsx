@@ -1,8 +1,6 @@
 import React from 'react';
-import PostFeed from '../pages/feed/Controller';
+import PostFeed from "./feed/Controller";
 
-const Home = () => {
-  return <PostFeed />;
-}
+const Home = () => <PostFeed />;
 
 export default Home;
