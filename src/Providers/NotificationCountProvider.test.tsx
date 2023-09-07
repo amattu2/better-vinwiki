@@ -1,35 +1,35 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { NotificationProvider, useNotificationProvider } from "./NotificationProvider";
+import { NotificationCountProvider, useNotificationCountProvider } from "./NotificationCountProvider";
 import { AuthProvider } from "./AuthProvider";
 
-describe("NotificationProvider General Tests", () => {
+describe("NotificationCountProvider General Tests", () => {
   test("should render without crashing", () => {
     render(
       <AuthProvider>
-        <NotificationProvider />
-      </AuthProvider>
+        <NotificationCountProvider />
+      </AuthProvider>,
     );
   });
 
   test("should render children", () => {
     render(
       <AuthProvider>
-        <NotificationProvider>
+        <NotificationCountProvider>
           <div>Test</div>
-        </NotificationProvider>
-      </AuthProvider>
+        </NotificationCountProvider>
+      </AuthProvider>,
     );
 
     const test = screen.getByText(/test/i);
     expect(test).toBeInTheDocument();
   });
 
-  test("should throw error if useNotificationProvider is used outside of NotificationProvider", () => {
+  test("should throw error if useNotificationCountProvider is used outside of NotificationCountProvider", () => {
     const spy = jest.spyOn(console, "error").mockImplementation(() => {});
 
     expect(() => {
-      render(<div>{JSON.stringify(useNotificationProvider())}</div>);
+      render(<div>{JSON.stringify(useNotificationCountProvider())}</div>);
     }).toThrowError();
 
     spy.mockRestore();

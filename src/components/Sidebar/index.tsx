@@ -1,10 +1,14 @@
 import React, { FC, useState } from 'react';
 import { DashboardOutlined, Logout, NotificationsActive, Person2Outlined, SearchOutlined } from '@mui/icons-material';
-import { Avatar, Badge, IconButton, Popover, Tooltip, Typography } from '@mui/material';
-import { Box, Stack, styled } from '@mui/system';
+import {
+  Avatar, Badge, IconButton, Popover,
+  Tooltip, Typography,
+  Box, Stack, styled,
+} from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuthProvider } from '../../Providers/AuthProvider';
-import { useNotificationProvider } from '../../Providers/NotificationProvider';
+import { useNotificationCountProvider } from '../../Providers/NotificationCountProvider';
+import { Notifications } from '../Notifications';
 
 const StyledBox = styled(Box)({
   padding: "32px 12px",
@@ -43,7 +47,7 @@ const StyledControlGroup = styled(Stack)({
   textAlign: "center",
   "&:last-of-type": {
     position: "absolute",
-    bottom: "32px"
+    bottom: "32px",
   },
 });
 
@@ -58,7 +62,7 @@ const StyledLink = styled(Link)({
 
 const Sidebar: FC = () => {
   const { authenticated, user } = useAuthProvider();
-  const { count } = useNotificationProvider();
+  const { unseen } = useNotificationCountProvider();
   const { pathname } = useLocation();
 
   const [open, setOpen] = useState(false);
@@ -89,7 +93,7 @@ const Sidebar: FC = () => {
           )}
         </StyledLink>
       </StyledAvatarBox>
-      <StyledControlGroup direction='column' gap={1}>
+      <StyledControlGroup direction="column" gap={1}>
         <StyledIconButton disabled={pathname === "/"}>
           <StyledLink to="/">
             <Tooltip title="Feed" placement="right">
@@ -105,7 +109,7 @@ const Sidebar: FC = () => {
           </StyledLink>
         </StyledIconButton>
       </StyledControlGroup>
-      <StyledControlGroup direction='column' gap={1}>
+      <StyledControlGroup direction="column" gap={1}>
         <Typography variant="caption" color="textSecondary" fontWeight={600}>
           Account
         </Typography>
@@ -118,7 +122,7 @@ const Sidebar: FC = () => {
         </StyledIconButton>
         <IconButton onClick={openNotifications}>
           <Tooltip title="Notifications" placement="right">
-            <Badge badgeContent={count} color="error">
+            <Badge badgeContent={unseen} color="error">
               <NotificationsActive />
             </Badge>
           </Tooltip>
@@ -137,8 +141,7 @@ const Sidebar: FC = () => {
         anchorEl={anchorEl}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        {/* TODO: Display notifications */}
-        <Typography sx={{ p: 2 }}>Notifications: {count}</Typography>
+        <Notifications preload={open} />
       </Popover>
     </StyledBox>
   );

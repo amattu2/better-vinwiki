@@ -1,7 +1,7 @@
 type FeedPost = {
   client: string;
   comment_count: number;
-  data: any;
+  data: never; // TODO: Figure out what this is
   dest_url: string;
   event_date: string; // ISO 8601 incl. offset
   event_time: string; // Unix timestamp
@@ -14,8 +14,8 @@ type FeedPost = {
   post_date_ago: string; // MMM DD, YYYY
   post_text: string;
   post_time: string; // Unix timestamp
-  subject_uuid: string;
-  type: "photo" | "generic";
+  subject_uuid: string; // Contains a UUID for the action item (e.g. list)
+  type: "photo" | "generic" | "list_add";
   uuid: string;
   vehicle: Vehicle;
 };
@@ -34,4 +34,14 @@ type PostComment = {
   person: Profile;
   text: string;
   uuid: string;
+};
+
+// NOTE: This is annotated separately because it uses outdated fields
+type PostInput = {
+  class_name: FeedPost["type"];
+  client: FeedPost["client"];
+  event_date: FeedPost["event_date"];
+  locale: FeedPost["locale"];
+  mileage: FeedPost["mileage"];
+  text: FeedPost["post_text"];
 };

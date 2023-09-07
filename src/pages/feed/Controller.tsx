@@ -7,10 +7,10 @@ const Controller = () => {
   const filteredFeed = useReadLocalStorage<boolean>("filteredFeed");
 
   return (
-    <FeedProvider filtered={!!filteredFeed}>
+    <FeedProvider filtered={!!filteredFeed} limit={30}>
       <FeedView />
     </FeedProvider>
   );
-}
+};
 
 export default Controller;

@@ -1,15 +1,17 @@
 import React, { useState, FC, useEffect, useMemo } from "react";
+import { useSessionStorage } from "usehooks-ts";
 import { useAuthProvider } from "./AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
-import { useSessionStorage } from "usehooks-ts";
 
 export type ProviderState = {
   status: ProviderStatus;
   posts: FeedPost[];
   count: number;
-  next?: () => boolean;
-  prev?: () => boolean;
-}
+  next?: (count: number) => Promise<boolean>;
+  deletePost?: (uuid: string) => Promise<boolean>;
+  createPost?: (post: FeedPost) => Promise<boolean>;
+  hasNext?: boolean;
+};
 
 export enum ProviderStatus {
   LOADING = "LOADING",
@@ -34,28 +36,92 @@ export const useFeedProvider = (): ProviderState => {
 
 type Props = {
   filtered: boolean;
+  limit: number;
   children?: React.ReactNode;
 };
 
-export const FeedProvider: FC<Props> = ({ filtered, children }: Props) => {
+export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) => {
   const { token, user } = useAuthProvider();
   const [cache, setCache] = useSessionStorage<Pick<ProviderState, "posts" | "count"> | null>("FeedProvider", null);
   const [state, setState] = useState<ProviderState>(cache
     ? { ...defaultState, ...cache, status: ProviderStatus.RELOADING }
-    : defaultState
-  );
+    : defaultState);
+  const [nextPage, setNextPage] = useState<string>("");
 
-  const next = () : boolean => {
-    return false
+  const createPost = async (post: FeedPost): Promise<boolean> => {
+    if (!post.uuid) {
+      return false;
+    }
+
+    setState((prev) => ({
+      ...prev,
+      posts: [post, ...prev.posts],
+      count: prev.count + 1,
+    }));
+
+    return true;
   };
 
-  const prev = () : boolean => {
+  const deletePost = async (uuid: string): Promise<boolean> => {
+    if (!token || !uuid) {
+      return false;
+    }
+
+    setState((prev) => ({
+      ...prev,
+      posts: prev.posts.filter((post) => post.uuid !== uuid),
+      count: prev.count - 1,
+    }));
+
+    const response = await fetch(ENDPOINTS.post_delete + uuid, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).catch(() => null);
+
+    const { status } = await response?.json() || {};
+    if (status === STATUS_OK) {
+      return true;
+    }
+
+    return true;
+  };
+
+  const next = async (count = limit): Promise<boolean> => {
+    if (!nextPage || !token || !user?.uuid) {
+      return false;
+    }
+
+    setState((prev) => ({ ...prev, status: ProviderStatus.RELOADING }));
+
+    const endpoint = `${filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed}${user?.uuid}/${count}/${nextPage}`;
+    const response = await fetch(endpoint, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).catch(() => null);
+
+    const { status, count: postCount, next_page_uuid, end, feed } = await response?.json() || {};
+    if (status === STATUS_OK) {
+      setState((prev) => ({
+        status: ProviderStatus.LOADED,
+        posts: [...prev.posts, ...(feed?.map((post: { post: FeedPost }) => post.post) || [])],
+        count: postCount + prev.count,
+        hasNext: !end && next_page_uuid,
+      }));
+      setNextPage(next_page_uuid && !end ? next_page_uuid : "");
+
+      return true;
+    }
+
     return false;
   };
 
   useEffect(() => {
     if (!token || !user?.uuid) {
-      return;
+      return () => null;
     }
 
     const controller = new AbortController();
@@ -67,7 +133,8 @@ export const FeedProvider: FC<Props> = ({ filtered, children }: Props) => {
     }));
 
     (async () => {
-      const response = await fetch((filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed) + user.uuid, {
+      const endpoint = `${filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed}${user.uuid}/${limit}`;
+      const response = await fetch(endpoint, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -75,25 +142,26 @@ export const FeedProvider: FC<Props> = ({ filtered, children }: Props) => {
         signal,
       }).catch(() => null);
 
-      const { status, count, feed } = await response?.json() || {};
+      const { status, count, next_page_uuid, end, feed } = await response?.json() || {};
       if (status === STATUS_OK) {
         setState({
           status: ProviderStatus.LOADED,
-          posts: feed?.map((post: any) => post.post),
-          count: count,
+          posts: feed?.map((post: { post: FeedPost }) => post.post),
+          count,
+          hasNext: !end && next_page_uuid,
         });
+        setNextPage(next_page_uuid && !end ? next_page_uuid : "");
       }
     })();
 
     return () => controller.abort();
-  }, [filtered, token, user?.uuid]);
+  }, [filtered, limit, token, user?.uuid]);
 
   useEffect(() => {
     setCache({ posts: state?.posts, count: state?.count });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state?.posts, state?.count]);
 
-  const value = useMemo(() => ({ ...state, next, prev }), [state]);
+  const value = useMemo(() => ({ ...state, next, deletePost, createPost }), [state]);
 
   return (
     <Context.Provider value={value}>

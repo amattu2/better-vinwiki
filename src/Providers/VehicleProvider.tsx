@@ -1,4 +1,4 @@
-import React, { useState, FC, useEffect} from "react";
+import React, { useState, FC, useEffect } from "react";
 import { useAuthProvider } from "./AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
 
@@ -100,13 +100,13 @@ export const VehicleProvider: FC<Props> = ({ vin, withPosts, withFollowing, chil
         fetchVehicle(vin, token),
         withPosts ? fetchPosts(vin, token) : Promise.resolve([]),
         withFollowing ? fetchFollowing(vin, token) : Promise.resolve(false),
-      ])).map((r) => r.status === "fulfilled" ? r.value : null);
+      ])).map((r) => (r.status === "fulfilled" ? r.value : null));
 
       if (vehicle) {
         setState({
           status: ProviderStatus.LOADED,
           vehicle: vehicle as VehicleResponse,
-          posts: (posts as { post: FeedPost}[])?.map(r => r?.post),
+          posts: (posts as { post: FeedPost }[])?.map((r) => r?.post),
           following: following as boolean,
         });
       } else {

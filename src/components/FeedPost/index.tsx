@@ -1,14 +1,20 @@
-import React, { FC } from "react";
+import React, { FC, Ref, forwardRef } from "react";
 import ImagePost from "./Image";
+import VerticalImagePost from "./VerticalImage";
 import TextPost from "./Text";
 
-export const PostRouter: FC<FeedPost> = (post: FeedPost) => {
-  switch (post.type) {
+export const PostRouter: FC<FeedPostProps> = forwardRef((props: FeedPostProps, ref: Ref<HTMLDivElement>) => {
+  switch (props.type) {
     case "photo":
-      return React.createElement(ImagePost, post);
+      if (props.post_text?.length > 50) {
+        return <VerticalImagePost {...props} ref={ref} />;
+      }
+
+      return <ImagePost {...props} ref={ref} />;
     case "generic":
-      return React.createElement(TextPost, post);
+    case "list_add":
+      return <TextPost {...props} ref={ref} />;
     default:
       return null;
   }
-};
+});

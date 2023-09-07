@@ -8,7 +8,7 @@ describe("ProfileProvider General Tests", () => {
     render(
       <AuthProvider>
         <ProfileProvider uuid="ABC" />
-      </AuthProvider>
+      </AuthProvider>,
     );
   });
 
@@ -18,7 +18,7 @@ describe("ProfileProvider General Tests", () => {
         <ProfileProvider uuid="123-UUID-Does-Not-Exist">
           <div>Test</div>
         </ProfileProvider>
-      </AuthProvider>
+      </AuthProvider>,
     );
 
     const test = screen.getByText(/test/i);

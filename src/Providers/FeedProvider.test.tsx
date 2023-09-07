@@ -7,18 +7,18 @@ describe("FeedProvider General Tests", () => {
   test("should render without crashing", () => {
     render(
       <AuthProvider>
-        <FeedProvider filtered />
-      </AuthProvider>
+        <FeedProvider filtered limit={25} />
+      </AuthProvider>,
     );
   });
 
   test("should render children", () => {
     render(
       <AuthProvider>
-        <FeedProvider filtered>
+        <FeedProvider filtered limit={25}>
           <div>Test</div>
         </FeedProvider>
-      </AuthProvider>
+      </AuthProvider>,
     );
 
     const test = screen.getByText(/test/i);

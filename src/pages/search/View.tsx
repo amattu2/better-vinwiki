@@ -6,7 +6,7 @@ import { SearchResult, ProviderStatus, useSearchProvider } from "../../Providers
 type Inputs = {
   query: string,
   type: "all" | "vehicles" | "lists",
-}
+};
 
 const View : FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -17,7 +17,7 @@ const View : FC = () => {
   const onSubmit = async ({ query, type }: Inputs) => {
     setSearch({
       q: query,
-      type
+      type,
     });
   };
 
@@ -31,40 +31,46 @@ const View : FC = () => {
             placeholder="Search Query"
             {...register("query", {
               required: false,
-              value: query
+              value: query,
             })}
           />
           <br />
-          <input
-            type="radio"
-            {...register("type", {
-              required: false,
-            })}
-            value="all"
-            defaultChecked={type === "all"}
-            id="radio-all"
-          />
-          <label htmlFor="radio-all">All</label>
-          <input
-            type="radio"
-            {...register("type", {
-              required: false,
-            })}
-            value="vehicles"
-            defaultChecked={type === "vehicles"}
-            id="radio-vehicles"
-          />
-          <label htmlFor="radio-vehicles">Vehicles</label>
-          <input
-            type="radio"
-            {...register("type", {
-              required: false,
-            })}
-            value="lists"
-            defaultChecked={type === "lists"}
-            id="radio-lists"
-          />
-          <label htmlFor="radio-lists">Lists</label>
+          <label htmlFor="radio-all">
+            All
+            <input
+              type="radio"
+              {...register("type", {
+                required: false,
+              })}
+              value="all"
+              defaultChecked={type === "all"}
+              id="radio-all"
+            />
+          </label>
+          <label htmlFor="radio-vehicles">
+            Vehicles
+            <input
+              type="radio"
+              {...register("type", {
+                required: false,
+              })}
+              value="vehicles"
+              defaultChecked={type === "vehicles"}
+              id="radio-vehicles"
+            />
+          </label>
+          <label htmlFor="radio-lists">
+            Lists
+            <input
+              type="radio"
+              {...register("type", {
+                required: false,
+              })}
+              value="lists"
+              defaultChecked={type === "lists"}
+              id="radio-lists"
+            />
+          </label>
           <br />
           <input type="submit" />
         </form>
@@ -97,10 +103,16 @@ const View : FC = () => {
                         <Link to={`/vehicle/${result.vin}`}>{result.long_name ?? result.vin}</Link>
                       </li>
                     );
-                  } else if (type === "list") {
+                  } if (type === "list") {
                     return (
                       <li key={result.uuid}>
-                        <Link to={`/list/${result.uuid}`}>{result.name ?? "No name"} &ndash; {result.owner?.username}</Link>
+                        <Link to={`/list/${result.uuid}`}>
+                          {result.name ?? "No name"}
+                          {' '}
+                          &ndash;
+                          {' '}
+                          {result.owner?.username}
+                        </Link>
                       </li>
                     );
                   }

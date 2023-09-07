@@ -1,13 +1,20 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { FilterList, Public, DynamicFeed, Image, Message } from '@mui/icons-material';
-import { Alert, Box, Button, Container, Divider, Stack, ToggleButton, ToggleButtonGroup, Tooltip, Typography, styled } from '@mui/material';
-import { useLocalStorage } from 'usehooks-ts';
+import {
+  Alert, Box, Container, Divider,
+  Stack, ToggleButton, ToggleButtonGroup,
+  Tooltip, Typography, styled,
+} from '@mui/material';
+import { LoadingButton } from '@mui/lab';
+import { useIntersectionObserver, useLocalStorage } from 'usehooks-ts';
 import { ProviderStatus, useFeedProvider } from '../../Providers/FeedProvider';
 import { PostRouter } from '../../components/FeedPost';
 import Loader from '../../components/Loader';
 import SuggestionCard from '../../components/ProfileSuggestions';
 import TransitionGroup from '../../components/TransitionGroup';
 import TrendingPost from '../../components/TrendingPost';
+import BlogPostCard from '../../components/BlogPost';
+import CreatePost from '../../components/CreatePost';
 
 const StyledBox = styled(Box)({
   padding: "16px",
@@ -19,29 +26,44 @@ const StyledFeedBox = styled(StyledBox)({
 });
 
 const StyledSidebarBox = styled(StyledBox)({
-  minWidth: "370px",
+  minWidth: "400px",
   flexGrow: 1,
 });
 
+// TODO: Dynamically fetch this from the blog
+const blogPost: BlogPost = {
+  created: '2016-07-14T01:00:00.000Z',
+  title: 'Discrepancy of Data',
+  body: 'In 2001 when the Ferrari 360 Spider came out, the market premiums were more than $150k over MSRP. It was the first time in years where it made sense to have gray market cars in the US. The values were closer to MSRP in Europe and the federalization fees were only $30-40k.',
+  link: 'https://vinwiki.com/discrepancy-of-data/',
+  image: 'https://api.placeholder.app/image/350x350/E4E4D0/3b3b3b?text=LOREM',
+};
+
 const Feed : FC = () => {
-  const { status, posts } = useFeedProvider();
+  const { status, posts, next, hasNext } = useFeedProvider();
+  const lastElementRef = useRef<HTMLDivElement>(null);
+
   const [filtered, setFiltered] = useLocalStorage<boolean>("filteredFeed", false);
   const [postFilter, setPostFilter] = useLocalStorage<FeedPost["type"] | "">("postFilter", "");
   const [limit, setLimit] = useState<number>(10);
+  const entry = useIntersectionObserver(lastElementRef, {});
+  const isVisible = !!entry?.isIntersecting;
 
-  const filteredPosts: FeedPost[] = useMemo(() => {
-    return posts
-      .filter((p) => postFilter ? p.type === postFilter : true)
-      .filter((p) => !(p.client === "vinbot" && p.person.username !== "vinbot"))
-      .slice(0, limit);
-  }, [posts, postFilter, limit]);
+  // NOTE: These are posts matching client-side filters
+  const filteredPosts: FeedPost[] = useMemo(() => posts
+    .filter((p) => (postFilter ? p.type === postFilter : true))
+    .filter((p) => !(p.client === "vinbot" && p.person.username !== "vinbot" && !p.post_text))
+    .sort((a, b) => (new Date(b.post_date)).getTime() - (new Date(a.post_date)).getTime()), [posts, postFilter]);
+
+  // NOTE: These posts are a subset of filteredPosts, limited by the limit state
+  const slicedPosts: FeedPost[] = useMemo(() => filteredPosts.slice(0, limit), [filteredPosts, limit]);
 
   const topPost: { reason: string, post: FeedPost } = useMemo(() => {
     const topByComments = posts.sort((a, b) => b.comment_count - a.comment_count)?.[0];
     const topByLength = posts.sort((a, b) => b.post_text.length - a.post_text.length)?.[0];
     const topByRandom = posts[Math.floor(Math.random() * posts.length)];
 
-    if (topByComments?.comment_count > 0) {
+    if (topByComments?.comment_count > 0 && topByComments?.post_text.length > 0) {
       return { reason: "Most Comments", post: topByComments };
     }
     if (topByLength?.post_text.length > 0) {
@@ -65,9 +87,23 @@ const Feed : FC = () => {
     return Object.values(profileMap).sort((a, b) => b.postCount - a.postCount);
   }, [filteredPosts]);
 
+  const loadMore = () => {
+    setLimit((prev) => prev + 10);
+
+    if ((limit + 11) >= filteredPosts.length) {
+      next?.(30);
+    }
+  };
+
   useEffect(() => {
     setLimit(10);
   }, [filtered, postFilter]);
+
+  useEffect(() => {
+    if (isVisible) {
+      loadMore();
+    }
+  }, [isVisible]);
 
   if (status === ProviderStatus.LOADING) {
     return <Loader />;
@@ -86,17 +122,17 @@ const Feed : FC = () => {
                 onChange={(e, value) => setPostFilter(value || "")}
                 exclusive
               >
-                <ToggleButton value={""}>
+                <ToggleButton value="">
                   <Tooltip title="Show all post types">
                     <DynamicFeed />
                   </Tooltip>
                 </ToggleButton>
-                <ToggleButton value={"generic"}>
+                <ToggleButton value="generic">
                   <Tooltip title="Show text posts">
                     <Message />
                   </Tooltip>
                 </ToggleButton>
-                <ToggleButton value={"photo"}>
+                <ToggleButton value="photo">
                   <Tooltip title="Show image posts">
                     <Image />
                   </Tooltip>
@@ -113,36 +149,44 @@ const Feed : FC = () => {
                     <Public />
                   </Tooltip>
                 </ToggleButton>
-                <ToggleButton value={true}>
+                <ToggleButton value>
                   <Tooltip title="Show following">
                     <FilterList />
                   </Tooltip>
                 </ToggleButton>
               </ToggleButtonGroup>
             </Stack>
+
             <Divider sx={{ my: 2 }} />
 
-            {/* TODO: We need a "create post" box here that has a dropdown to select the VIN you're posting to */}
+            <CreatePost />
 
             {status === ProviderStatus.RELOADING && (
               <Alert severity="info" sx={{ mb: 1 }}>Hang tight. We're fetching your latest feed...</Alert>
             )}
-            {(status === ProviderStatus.LOADED && filteredPosts.length === 0) && (
+            {(status === ProviderStatus.LOADED && slicedPosts.length === 0) && (
               <Alert severity="info" sx={{ mb: 1 }}>Uh oh. We have no posts to show.</Alert>
             )}
             <TransitionGroup
-              items={filteredPosts.map((post) => ({ post, key: post.uuid }))}
-              render={({ post }) => <PostRouter {...post} />}
+              items={slicedPosts.map((post) => ({ post, key: post.uuid }))}
+              render={({ post }, _, last) => <PostRouter {...post} ref={last ? lastElementRef : undefined} />}
             />
-            {(filteredPosts.length < posts.length && filteredPosts.length === limit) && (
+            {hasNext && (
               <Box sx={{ textAlign: "center", mt: 2 }}>
-                <Button variant="outlined" onClick={() => setLimit(limit + 10)}>Show More</Button>
+                <LoadingButton
+                  variant="outlined"
+                  onClick={loadMore}
+                  loading={status === ProviderStatus.RELOADING}
+                >
+                  Show More
+                </LoadingButton>
               </Box>
             )}
           </Container>
         </StyledFeedBox>
       </Container>
       <StyledSidebarBox>
+        {blogPost && <BlogPostCard post={blogPost} />}
         {topPost && <TrendingPost reason={topPost.reason} post={topPost.post} />}
         {suggestions?.length > 0 && <SuggestionCard suggestions={suggestions} limit={4} />}
       </StyledSidebarBox>

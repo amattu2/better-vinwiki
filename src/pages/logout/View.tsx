@@ -13,7 +13,7 @@ const LogoutView = () => {
         localStorage.clear();
         navigate("/login");
       }
-    }
+    };
 
     logout();
   }, [navigate]);

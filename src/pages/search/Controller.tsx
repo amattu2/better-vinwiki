@@ -14,6 +14,6 @@ const Controller = () => {
       <SearchView />
     </SearchProvider>
   );
-}
+};
 
 export default Controller;

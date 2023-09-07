@@ -8,7 +8,7 @@ describe("SearchProvider General Tests", () => {
     render(
       <AuthProvider>
         <SearchProvider type="all" />
-      </AuthProvider>
+      </AuthProvider>,
     );
   });
 
@@ -18,7 +18,7 @@ describe("SearchProvider General Tests", () => {
         <SearchProvider type="all">
           <div>Test</div>
         </SearchProvider>
-      </AuthProvider>
+      </AuthProvider>,
     );
 
     const test = screen.getByText(/test/i);

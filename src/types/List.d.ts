@@ -13,12 +13,13 @@ type ListResponse = List & {
   vehicles: {
     count: number;
     end: boolean;
+    last_id: string;
     vehicles: Vehicle[];
   }
-}
+};
 
 type ProfileLists = {
   following: List[];
   owned: List[];
   other: List[];
-}
+};
