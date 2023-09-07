@@ -15,6 +15,7 @@ import TransitionGroup from '../../components/TransitionGroup';
 import TrendingPost from '../../components/TrendingPost';
 import BlogPostCard from '../../components/BlogPost';
 import CreatePost from '../../components/CreatePost';
+import { ScrollToTop } from '../../components/ScrollToTop';
 
 const StyledBox = styled(Box)({
   padding: "16px",
@@ -190,6 +191,7 @@ const Feed : FC = () => {
         {topPost && <TrendingPost reason={topPost.reason} post={topPost.post} />}
         {suggestions?.length > 0 && <SuggestionCard suggestions={suggestions} limit={4} />}
       </StyledSidebarBox>
+      <ScrollToTop />
     </Stack>
   );
 };
