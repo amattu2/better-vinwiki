@@ -56,13 +56,15 @@ const PostComments: FC<Props> = ({ uuid, count }: Props) => {
 
       const { status, comments } = await response?.json() || {};
       if (status === STATUS_OK) {
+        comments?.sort((a: PostComment, b: PostComment) => (new Date(b.created).getTime() - new Date(a.created).getTime()));
+
         setComments(comments);
         setLoading(false);
       }
     })();
 
     return () => controller.abort();
-  }, [token]);
+  }, [count]);
 
   return (
     <StyledCommentBox>
