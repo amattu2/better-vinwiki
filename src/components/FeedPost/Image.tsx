@@ -4,8 +4,9 @@ import {
   Box, Card, CardContent, Grid,
   IconButton, ListItemIcon, ListItemText,
   Menu, MenuItem, Modal, Stack,
-  Typography, styled
+  Typography, styled,
 } from "@mui/material";
+import { useCopyToClipboard } from "usehooks-ts";
 import useProgressiveQuality from "../../hooks/useProgressiveQuality";
 import PostComments from "./Components/PostComments";
 import ProfileBit from "./Components/PostProfile";
@@ -14,7 +15,6 @@ import { formatDateTime } from "../../utils/date";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { useFeedProvider } from "../../Providers/FeedProvider";
 import DeletePostDialog from "./Components/DeletePostDialog";
-import { useCopyToClipboard } from "usehooks-ts";
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",
@@ -41,7 +41,7 @@ const StyledImageBox = styled(Box)({
 });
 
 const StyledBackground = styled("div", {
-  shouldForwardProp: (p) => p !== "bg" && p !== "blur"
+  shouldForwardProp: (p) => p !== "bg" && p !== "blur",
 })(({ bg, blur }: { bg?: string, blur?: boolean }) => ({
   backgroundImage: `url(${bg})`,
   filter: blur ? "blur(6px)" : "none",
@@ -56,7 +56,7 @@ const StyledBackground = styled("div", {
   zIndex: 1,
   transition: "filter 0.3s ease-out",
   "&:hover": {
-    filter: "brightness(0.8)"
+    filter: "brightness(0.8)",
   },
 }));
 
@@ -104,7 +104,6 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPos
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, copyValue] = useCopyToClipboard();
 
-
   const menuToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
     setOpen(!open);
@@ -117,10 +116,7 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPos
 
   const deletePost = async () => {
     setDeleteDialogOpen(false);
-    const result = await deletePostByUUID?.(uuid);
-    if (!result) {
-      console.error("Failed to delete post", uuid);
-    }
+    await deletePostByUUID?.(uuid);
   };
 
   const openPost = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -206,7 +202,7 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPos
       </StyledCard>
       <Modal open={expandedOpen} onClose={() => setExpandedOpen(false)}>
         <StyledExpandedBox>
-          <StyledExpandedImage src={src} alt={post_text}/>
+          <StyledExpandedImage src={src} alt={post_text} />
         </StyledExpandedBox>
       </Modal>
     </>

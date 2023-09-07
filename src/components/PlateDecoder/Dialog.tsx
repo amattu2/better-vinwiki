@@ -97,7 +97,7 @@ const DecoderDialog: FC<Props> = ({ open, onConfirm, onCancel }: Props) => {
             fullWidth
             variant="outlined"
             size="small"
-            defaultValue={""}
+            defaultValue=""
             onClick={(e) => e.stopPropagation()}
             SelectProps={{ MenuProps: { disablePortal: true } }}
             label="Select a country"
@@ -113,7 +113,7 @@ const DecoderDialog: FC<Props> = ({ open, onConfirm, onCancel }: Props) => {
             fullWidth
             variant="outlined"
             size="small"
-            defaultValue={""}
+            defaultValue=""
             onClick={(e) => e.stopPropagation()}
             SelectProps={{ MenuProps: { disablePortal: true } }}
             disabled={!Territories[watch("country")]}
@@ -126,17 +126,19 @@ const DecoderDialog: FC<Props> = ({ open, onConfirm, onCancel }: Props) => {
             ))}
           </StyledTextField>
         </Form>
-        {!!selectedVehicle ? (
+        {selectedVehicle ? (
           <Typography variant="body2" sx={{ mt: 1 }}>
             Found Match &ndash;
             {" "}
             <Link to={`/vehicle/${selectedVehicle.vin}`} target="_blank">
               {formatVehicleName(selectedVehicle)}
               {" "}
-              ({selectedVehicle.vin})
+              (
+              {selectedVehicle.vin}
+              )
             </Link>
             <IconButton onClick={clearSelection}>
-              <Delete fontSize="small"></Delete>
+              <Delete fontSize="small" />
             </IconButton>
           </Typography>
         ) : (
@@ -147,7 +149,7 @@ const DecoderDialog: FC<Props> = ({ open, onConfirm, onCancel }: Props) => {
       </DialogContent>
       <DialogActions>
         <LoadingButton onClick={onConfirmWrapper} loading={loading}>
-          {!!selectedVehicle ? `Select ${formatVehicleName(selectedVehicle)}` : "Lookup"}
+          {selectedVehicle ? `Select ${formatVehicleName(selectedVehicle)}` : "Lookup"}
         </LoadingButton>
         <Button onClick={onCancel} autoFocus>Cancel</Button>
       </DialogActions>

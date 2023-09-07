@@ -39,7 +39,7 @@ const PostComments: FC<Props> = ({ uuid, count }: Props) => {
   useEffect(() => {
     if (count <= 0) {
       setLoading(false);
-      return;
+      return () => null;
     }
 
     const controller = new AbortController();
@@ -62,7 +62,6 @@ const PostComments: FC<Props> = ({ uuid, count }: Props) => {
     })();
 
     return () => controller.abort();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   return (
@@ -111,7 +110,7 @@ const PostComments: FC<Props> = ({ uuid, count }: Props) => {
         </StyledCommentStack>
       )}
     </StyledCommentBox>
-  )
+  );
 };
 
 export default PostComments;

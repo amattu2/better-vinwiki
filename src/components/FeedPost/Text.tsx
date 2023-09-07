@@ -1,10 +1,11 @@
-import { FC, Ref, forwardRef, useRef, useState } from "react";
+import React, { FC, Ref, forwardRef, useRef, useState } from "react";
 import { Delete, MoreVert, Share } from "@mui/icons-material";
 import {
   Card, CardContent, IconButton,
   ListItemIcon, ListItemText, Menu,
-  MenuItem, Typography, styled
+  MenuItem, Typography, styled,
 } from "@mui/material";
+import { useCopyToClipboard } from "usehooks-ts";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { formatDateTime } from "../../utils/date";
 import GenericText from "./Components/GenericText";
@@ -12,7 +13,6 @@ import PostComments from "./Components/PostComments";
 import ProfileBit from "./Components/PostProfile";
 import DeletePostDialog from "./Components/DeletePostDialog";
 import { useFeedProvider } from "../../Providers/FeedProvider";
-import { useCopyToClipboard } from "usehooks-ts";
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",
@@ -56,10 +56,7 @@ const TextPost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPost
 
   const deletePost = async () => {
     setDeleteDialogOpen(false);
-    const result = await deletePostByUUID?.(uuid);
-    if (!result) {
-      console.error("Failed to delete post", uuid);
-    }
+    await deletePostByUUID?.(uuid);
   };
 
   const openPost = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -82,8 +79,8 @@ const TextPost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPost
     <StyledCard elevation={0} onClick={openPost} ref={ref}>
       <CardContent ref={rootRef}>
         <ProfileBit post={post} filled={false} />
-        <GenericText content={post_text} padding={"8px"} />
-        <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600} paddingLeft={"8px"}>
+        <GenericText content={post_text} padding="8px" />
+        <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600} paddingLeft="8px">
           {formatDateTime(new Date(post.post_date))}
           {post.locale && (
             <>

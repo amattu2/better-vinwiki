@@ -4,4 +4,4 @@ type BlogPost = {
   body: string;
   link: string;
   image: string;
-}
+};

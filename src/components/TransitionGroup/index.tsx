@@ -14,16 +14,14 @@ type Props<T extends Base> = {
 const GenericTransitionGroup = <T extends Base>({
   items,
   render,
-}: Props<T>) => {
-  return (
-    <TransitionGroup>
-      {items.map((item: T, index: number) => (
-        <Collapse key={item.key}>
-          {render(item, index, index === items.length - 1)}
-        </Collapse>
-      ))}
-    </TransitionGroup>
+}: Props<T>) => (
+  <TransitionGroup>
+    {items.map((item: T, index: number) => (
+      <Collapse key={item.key}>
+        {render(item, index, index === items.length - 1)}
+      </Collapse>
+    ))}
+  </TransitionGroup>
   );
-};
 
 export default GenericTransitionGroup;

@@ -35,7 +35,7 @@ const StyledCardHeader = styled(CardHeader)({
 const StyledList = styled(List)({
   "& .MuiCollapse-root:last-child li": {
     borderBottom: "none",
-  }
+  },
 });
 
 const StyledCardContent = styled(CardContent)({
@@ -56,9 +56,10 @@ const SuggestionItem: FC<ProfileSuggestion> = ({ profile, postCount }: ProfileSu
     </ListItemAvatar>
     <ListItemText
       primary={(
-        <StyledLink to={`/profile/${profile.uuid}`} target='_blank'>
+        <StyledLink to={`/profile/${profile.uuid}`} target="_blank">
           <Typography variant="body1" fontWeight={600}>
-            @{profile.username}
+            @
+            {profile.username}
           </Typography>
         </StyledLink>
       )}
@@ -70,23 +71,21 @@ const SuggestionItem: FC<ProfileSuggestion> = ({ profile, postCount }: ProfileSu
   </ListItem>
 );
 
-const SuggestionCard: FC<Props> = ({ suggestions, limit }: Props) => {
-  return (
-    <StyledCard raised>
-      <StyledCardHeader
-        title="In this feed"
-        titleTypographyProps={{ variant: 'h6' }}
-      />
-      <StyledCardContent>
-        <StyledList>
-          <TransitionGroup
-            items={suggestions.slice(0, limit).map((suggestion) => ({ suggestion, key: suggestion.profile.uuid }))}
-            render={({ suggestion }) => <SuggestionItem {...suggestion} />}
-          />
-        </StyledList>
-      </StyledCardContent>
-    </StyledCard>
-  );
-};
+const SuggestionCard: FC<Props> = ({ suggestions, limit }: Props) => (
+  <StyledCard raised>
+    <StyledCardHeader
+      title="In this feed"
+      titleTypographyProps={{ variant: 'h6' }}
+    />
+    <StyledCardContent>
+      <StyledList>
+        <TransitionGroup
+          items={suggestions.slice(0, limit).map((suggestion) => ({ suggestion, key: suggestion.profile.uuid }))}
+          render={({ suggestion }) => <SuggestionItem {...suggestion} />}
+        />
+      </StyledList>
+    </StyledCardContent>
+  </StyledCard>
+);
 
 export default SuggestionCard;

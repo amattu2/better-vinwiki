@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useRef, useState } from "react";
+import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { Autocomplete, Stack, TextField, Typography, debounce } from "@mui/material";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
@@ -66,7 +66,7 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
     cloned.sort((a: Vehicle, b: Vehicle) => b.make.localeCompare(a.make));
 
     recentVehicles?.forEach((v: Vehicle) => {
-      if (!!cloned.find((c: Vehicle) => c.vin === v.vin)) {
+      if (cloned.find((c: Vehicle) => c.vin === v.vin)) {
         return;
       }
 
@@ -107,7 +107,6 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
       setOptions(v);
       setLoading(false);
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue]);
 
   useEffect(() => {

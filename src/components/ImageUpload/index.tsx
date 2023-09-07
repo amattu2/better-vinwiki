@@ -6,6 +6,7 @@ type Props = {
   preview?: string;
   onPreviewClick?: () => void;
   onDrop?: (e: React.DragEvent<HTMLDivElement>) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   InputProps: any;
 };
 
@@ -51,7 +52,7 @@ const StyledImageBox = styled(Paper)({
   },
   "&:hover .image-preview": {
     filter: "blur(2px) brightness(0.6)",
-  }
+  },
 });
 
 const StyledBackground = styled("div", { shouldForwardProp: (p) => p !== "bg" && p !== "blur" })(({ bg, blur }: { bg?: string, blur?: boolean }) => ({
@@ -110,7 +111,7 @@ export const ImageUpload: FC<Props> = ({ InputProps, onDrop, preview, onPreviewC
       {preview ? (
         <StyledImageBox elevation={3} onClick={onPreviewClick}>
           <StyledBackground bg={preview} className="image-preview" />
-          <StyledDeleteIcon className="image-delete"/>
+          <StyledDeleteIcon className="image-delete" />
         </StyledImageBox>
       ) : (
         <StyledDropzone
@@ -132,7 +133,7 @@ export const ImageUpload: FC<Props> = ({ InputProps, onDrop, preview, onPreviewC
         }}
       />
     </Stack>
-  )
+  );
 };
 
 export default ImageUpload;

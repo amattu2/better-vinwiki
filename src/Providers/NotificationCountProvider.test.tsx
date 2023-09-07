@@ -8,7 +8,7 @@ describe("NotificationCountProvider General Tests", () => {
     render(
       <AuthProvider>
         <NotificationCountProvider />
-      </AuthProvider>
+      </AuthProvider>,
     );
   });
 
@@ -18,7 +18,7 @@ describe("NotificationCountProvider General Tests", () => {
         <NotificationCountProvider>
           <div>Test</div>
         </NotificationCountProvider>
-      </AuthProvider>
+      </AuthProvider>,
     );
 
     const test = screen.getByText(/test/i);

@@ -8,7 +8,7 @@ describe("ListProvider General Tests", () => {
     render(
       <AuthProvider>
         <ListProvider uuid="AABB-FAKE-LIST-Id" />
-      </AuthProvider>
+      </AuthProvider>,
     );
   });
 
@@ -18,7 +18,7 @@ describe("ListProvider General Tests", () => {
         <ListProvider uuid="">
           <div>Test</div>
         </ListProvider>
-      </AuthProvider>
+      </AuthProvider>,
     );
 
     const test = screen.getByText(/test/i);

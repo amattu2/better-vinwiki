@@ -11,6 +11,6 @@ const Controller = () => {
       <FeedView />
     </FeedProvider>
   );
-}
+};
 
 export default Controller;

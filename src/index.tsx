@@ -17,14 +17,14 @@ import Vehicle from './pages/vehicle/Controller';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById('root') as HTMLElement,
 );
 
 const ProtectedRoutes = () => {
   const token = localStorage.getItem("token") || null;
   if (!token) {
     return <Navigate to="/login" />;
-  };
+  }
 
   return (
     <AuthProvider>
@@ -59,7 +59,7 @@ root.render(
         </Routes>
       </Router>
     </LocalizationProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 reportWebVitals();

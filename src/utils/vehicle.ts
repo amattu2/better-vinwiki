@@ -21,6 +21,4 @@ export const formatVehicleName = ({ year, make, model }: Vehicle) => {
   return result.replace(/\s+$/, "");
 };
 
-export const formatOdometer = (mileage: number) => {
-  return (new Intl.NumberFormat('en-US', { maximumSignificantDigits: 3 }).format(mileage)) || 0;
-};
+export const formatOdometer = (mileage: number) => (new Intl.NumberFormat('en-US', { maximumSignificantDigits: 3 }).format(mileage)) || 0;

@@ -1,5 +1,5 @@
 export const API_URL: string = 'https://rest.vinwiki.com/';
-export const MEDIA_URL: string = "https://media.vinwiki.com/media/"
+export const MEDIA_URL: string = "https://media.vinwiki.com/media/";
 
 export const ENDPOINTS = {
   /* Auth Endpoints */

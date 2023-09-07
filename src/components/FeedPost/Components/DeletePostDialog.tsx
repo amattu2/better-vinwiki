@@ -25,7 +25,8 @@ const DeletePostDialog: FC<Props> = ({ type, open, onConfirm, onCancel }: Props)
     <DialogContent>
       <DialogContentText>
         Are you sure you want to delete this
-        {type === "post" ? " post" : " comment"}?
+        {type === "post" ? " post" : " comment"}
+        ?
         This action cannot be undone.
       </DialogContentText>
     </DialogContent>

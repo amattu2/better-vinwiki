@@ -38,7 +38,7 @@ const StyledImageBox = styled(Paper)({
 });
 
 const StyledBackground = styled("div", {
-  shouldForwardProp: (p) => p !== "bg" && p !== "blur"
+  shouldForwardProp: (p) => p !== "bg" && p !== "blur",
 })(({ bg, blur }: { bg?: string, blur?: boolean }) => ({
   backgroundImage: `url(${bg})`,
   filter: blur ? "blur(6px)" : "none",
@@ -53,30 +53,28 @@ const StyledBackground = styled("div", {
   transition: "filter 0.3s ease-out",
 }));
 
-const TopPost: FC<Props> = ({ post }: Props) => {
-  return (
-    <StyledCard raised>
-      <Stack direction="row" spacing={2} sx={{ padding: "16px" }} alignItems="center">
-        <StyledImageBox elevation={3}>
-          <StyledBackground bg={post.image} blur />
-        </StyledImageBox>
-        <Stack direction="column" spacing={1} sx={{ py: 1.5}}>
-          <Typography variant="caption" component="p" color="textSecondary">
-            A blog post you might like
-          </Typography>
-          <Typography variant="subtitle1" component="h2" fontWeight={600}>
-            {post.title}
-          </Typography>
-          <Typography variant="body2" component="p" fontSize={13}>
-            {prettySubstring(post.body, 80)}
-          </Typography>
-          <Link to={post.link} target='_blank'>
-            <Button>Read More</Button>
-          </Link>
-        </Stack>
+const TopPost: FC<Props> = ({ post }: Props) => (
+  <StyledCard raised>
+    <Stack direction="row" spacing={2} sx={{ padding: "16px" }} alignItems="center">
+      <StyledImageBox elevation={3}>
+        <StyledBackground bg={post.image} blur />
+      </StyledImageBox>
+      <Stack direction="column" spacing={1} sx={{ py: 1.5 }}>
+        <Typography variant="caption" component="p" color="textSecondary">
+          A blog post you might like
+        </Typography>
+        <Typography variant="subtitle1" component="h2" fontWeight={600}>
+          {post.title}
+        </Typography>
+        <Typography variant="body2" component="p" fontSize={13}>
+          {prettySubstring(post.body, 80)}
+        </Typography>
+        <Link to={post.link} target="_blank">
+          <Button>Read More</Button>
+        </Link>
       </Stack>
-    </StyledCard>
-  );
-};
+    </Stack>
+  </StyledCard>
+);
 
 export default TopPost;

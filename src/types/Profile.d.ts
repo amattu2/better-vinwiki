@@ -1,5 +1,5 @@
 type Profile = {
-  avatar: any; // TODO: Figure out what this is
+  avatar: never; // TODO: Figure out what this is
   bio: string;
   display_name: string;
   email: string;
@@ -12,7 +12,7 @@ type Profile = {
   last_name: string;
   location: string;
   post_count: number;
-  profile: any; // TODO: Figure out what this is
+  profile: never; // TODO: Figure out what this is
   profile_picture_uuid: string;
   social_facebook: string;
   social_instagram: string;

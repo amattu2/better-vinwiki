@@ -8,7 +8,7 @@ describe("FeedProvider General Tests", () => {
     render(
       <AuthProvider>
         <FeedProvider filtered limit={25} />
-      </AuthProvider>
+      </AuthProvider>,
     );
   });
 
@@ -18,7 +18,7 @@ describe("FeedProvider General Tests", () => {
         <FeedProvider filtered limit={25}>
           <div>Test</div>
         </FeedProvider>
-      </AuthProvider>
+      </AuthProvider>,
     );
 
     const test = screen.getByText(/test/i);

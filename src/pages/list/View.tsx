@@ -16,7 +16,7 @@ const View : FC = () => {
     <div>
       <h1>{list?.name}</h1>
       <p>{list?.description}</p>
-      <br/>
+      <br />
       {"Followers: "}
       <strong>{list?.follower_count}</strong>
       {" | Vehicles: "}
@@ -33,10 +33,16 @@ const View : FC = () => {
           </li>
         ))}
       </ul>
-      <br/>
-      <center>1&ndash;{vehicles?.length} of {list?.vehicle_count}</center>
+      <br />
+      <center>
+        1&ndash;
+        {vehicles?.length}
+        {' '}
+        of
+        {list?.vehicle_count}
+      </center>
       {hasMore && (
-        <button onClick={() => next?.(250)} disabled={status === ProviderStatus.LOADING_MORE}>Load More</button>
+        <button type="button" onClick={() => next?.(250)} disabled={status === ProviderStatus.LOADING_MORE}>Load More</button>
       )}
     </div>
   );

@@ -1,10 +1,6 @@
 import React from "react";
 import LogoutView from "./View";
 
-const LogoutController = () => {
-  return (
-    <LogoutView />
-  );
-}
+const LogoutController = () => <LogoutView />;
 
 export default LogoutController;

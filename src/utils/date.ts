@@ -1,17 +1,13 @@
-export const formatDate = (date: Date) => {
-  return date.toLocaleDateString('en-US', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-}
+export const formatDate = (date: Date) => date.toLocaleDateString('en-US', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
 
-export const formatTime = (date: Date) => {
-  return date.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: 'numeric',
-  });
-}
+export const formatTime = (date: Date) => date.toLocaleTimeString('en-US', {
+  hour: 'numeric',
+  minute: 'numeric',
+});
 
 /**
  * Parse a Date object into a formatted date and time string
@@ -29,4 +25,4 @@ export const formatDateTime = (date: Date, includePrefix = false) => {
   }
 
   return `${formatDate(date)} at ${formatTime(date)}`;
-}
+};
