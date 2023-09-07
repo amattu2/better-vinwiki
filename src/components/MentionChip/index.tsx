@@ -1,8 +1,7 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC } from "react";
 import { Link } from "react-router-dom";
 import { Avatar, Chip, styled } from "@mui/material";
-import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
-import { useAuthProvider } from "../../Providers/AuthProvider";
+import useUsernameLookup, { LookupStatus } from "../../hooks/useUsernameLookup";
 
 type Props = {
   handle: string;
@@ -14,22 +13,6 @@ const StyledLink = styled(Link)({
   marginRight: "2px",
 });
 
-const searchUser = async (handle: string, token: string) : Promise<Pick<Profile, "uuid" | "first_name" | "last_name"> | null> => {
-  const response = await fetch(ENDPOINTS.profile_username_search + handle, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const { status, person } = await response.json();
-  if (status === STATUS_OK && !!person?.uuid) {
-    return person;
-  }
-
-  return null;
-};
-
 /**
  * A generic text/body display for Feed Post or Comment
  * parsing for @mentions
@@ -38,31 +21,15 @@ const searchUser = async (handle: string, token: string) : Promise<Pick<Profile,
  * @returns {JSX.Element}
  */
 const GenericText: FC<Props> = ({ handle }: Props) => {
-  const { token } = useAuthProvider();
-  const [user, setUser] = useState<Pick<Profile, "uuid" | "first_name" | "last_name"> | null>(null);
+  const [status, { uuid }] = useUsernameLookup(handle);
 
-  useEffect(() => {
-    if (token) {
-      searchUser(handle, token).then((user) => {
-        if (!user) {
-          return;
-        }
-
-        setUser(user);
-      });
-    }
-  }, [handle, token]);
-
-  if (!user) {
+  if (status !== LookupStatus.Success || !uuid) {
     return <span>{`@${handle}`}</span>;
   }
 
   return (
-    <StyledLink to={user?.uuid ? `/profile/${user.uuid}` : ""}>
-      <Chip
-        avatar={<Avatar>{handle.charAt(0).toUpperCase()}</Avatar>}
-        label={handle}
-      />
+    <StyledLink to={`/profile/${uuid}`}>
+      <Chip avatar={<Avatar>{handle.charAt(0).toUpperCase()}</Avatar>} label={handle} />
     </StyledLink>
   );
 };
