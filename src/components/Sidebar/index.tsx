@@ -1,7 +1,10 @@
 import React, { FC, useState } from 'react';
 import { DashboardOutlined, Logout, NotificationsActive, Person2Outlined, SearchOutlined } from '@mui/icons-material';
-import { Avatar, Badge, IconButton, Popover, Tooltip, Typography } from '@mui/material';
-import { Box, Stack, styled } from '@mui/system';
+import {
+  Avatar, Badge, IconButton, Popover,
+  Tooltip, Typography,
+  Box, Stack, styled,
+} from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuthProvider } from '../../Providers/AuthProvider';
 import { useNotificationCountProvider } from '../../Providers/NotificationCountProvider';
@@ -44,7 +47,7 @@ const StyledControlGroup = styled(Stack)({
   textAlign: "center",
   "&:last-of-type": {
     position: "absolute",
-    bottom: "32px"
+    bottom: "32px",
   },
 });
 

@@ -108,7 +108,7 @@ type Props = {
 
 export const ProfileProvider: FC<Props> = ({
   uuid, withPosts, withFollowing, withLists,
-  children
+  children,
 }: Props) => {
   const { token, user } = useAuthProvider();
   const [state, setState] = useState<ProviderState>(defaultState);

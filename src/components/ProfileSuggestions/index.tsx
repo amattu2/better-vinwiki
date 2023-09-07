@@ -35,7 +35,7 @@ const StyledCardHeader = styled(CardHeader)({
 const StyledList = styled(List)({
   "& .MuiCollapse-root:last-child li": {
     borderBottom: "none",
-  }
+  },
 });
 
 const StyledCardContent = styled(CardContent)({

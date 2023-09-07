@@ -20,8 +20,8 @@ const GenericTransitionGroup = <T extends Base>({
       <Collapse key={item.key}>
         {render(item, index, index === items.length - 1)}
       </Collapse>
-      ))}
+    ))}
   </TransitionGroup>
-);
+  );
 
 export default GenericTransitionGroup;

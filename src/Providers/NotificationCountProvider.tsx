@@ -58,7 +58,7 @@ export const NotificationCountProvider: FC<Props> = ({ children }: Props) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      signal
+      signal,
     }).catch(() => null);
 
     const { notification_count, status } = await response?.json() || {};

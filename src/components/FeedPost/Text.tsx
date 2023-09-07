@@ -1,9 +1,9 @@
-import { FC, Ref, forwardRef, useRef, useState } from "react";
+import React, { FC, Ref, forwardRef, useRef, useState } from "react";
 import { Delete, MoreVert, Share } from "@mui/icons-material";
 import {
   Card, CardContent, IconButton,
   ListItemIcon, ListItemText, Menu,
-  MenuItem, Typography, styled
+  MenuItem, Typography, styled,
 } from "@mui/material";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useAuthProvider } from "../../Providers/AuthProvider";

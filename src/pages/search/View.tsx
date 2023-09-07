@@ -17,7 +17,7 @@ const View : FC = () => {
   const onSubmit = async ({ query, type }: Inputs) => {
     setSearch({
       q: query,
-      type
+      type,
     });
   };
 
@@ -31,7 +31,7 @@ const View : FC = () => {
             placeholder="Search Query"
             {...register("query", {
               required: false,
-              value: query
+              value: query,
             })}
           />
           <br />

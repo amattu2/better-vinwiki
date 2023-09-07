@@ -4,7 +4,7 @@ import {
   Box, Card, CardContent, Grid,
   IconButton, ListItemIcon, ListItemText,
   Menu, MenuItem, Modal, Stack,
-  Typography, styled
+  Typography, styled,
 } from "@mui/material";
 import { useCopyToClipboard } from "usehooks-ts";
 import useProgressiveQuality from "../../hooks/useProgressiveQuality";
@@ -41,7 +41,7 @@ const StyledImageBox = styled(Box)({
 });
 
 const StyledBackground = styled("div", {
-  shouldForwardProp: (p) => p !== "bg" && p !== "blur"
+  shouldForwardProp: (p) => p !== "bg" && p !== "blur",
 })(({ bg, blur }: { bg?: string, blur?: boolean }) => ({
   backgroundImage: `url(${bg})`,
   filter: blur ? "blur(6px)" : "none",
@@ -56,7 +56,7 @@ const StyledBackground = styled("div", {
   zIndex: 1,
   transition: "filter 0.3s ease-out",
   "&:hover": {
-    filter: "brightness(0.8)"
+    filter: "brightness(0.8)",
   },
 }));
 

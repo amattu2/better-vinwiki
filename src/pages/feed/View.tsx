@@ -3,7 +3,7 @@ import { FilterList, Public, DynamicFeed, Image, Message } from '@mui/icons-mate
 import {
   Alert, Box, Container, Divider,
   Stack, ToggleButton, ToggleButtonGroup,
-  Tooltip, Typography, styled
+  Tooltip, Typography, styled,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useIntersectionObserver, useLocalStorage } from 'usehooks-ts';
@@ -51,9 +51,9 @@ const Feed : FC = () => {
 
   // NOTE: These are posts matching client-side filters
   const filteredPosts: FeedPost[] = useMemo(() => posts
-      .filter((p) => (postFilter ? p.type === postFilter : true))
-      .filter((p) => !(p.client === "vinbot" && p.person.username !== "vinbot" && !p.post_text))
-      .sort((a, b) => (new Date(b.post_date)).getTime() - (new Date(a.post_date)).getTime()), [posts, postFilter]);
+    .filter((p) => (postFilter ? p.type === postFilter : true))
+    .filter((p) => !(p.client === "vinbot" && p.person.username !== "vinbot" && !p.post_text))
+    .sort((a, b) => (new Date(b.post_date)).getTime() - (new Date(a.post_date)).getTime()), [posts, postFilter]);
 
   // NOTE: These posts are a subset of filteredPosts, limited by the limit state
   const slicedPosts: FeedPost[] = useMemo(() => filteredPosts.slice(0, limit), [filteredPosts, limit]);

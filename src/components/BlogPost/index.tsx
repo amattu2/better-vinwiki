@@ -38,7 +38,7 @@ const StyledImageBox = styled(Paper)({
 });
 
 const StyledBackground = styled("div", {
-  shouldForwardProp: (p) => p !== "bg" && p !== "blur"
+  shouldForwardProp: (p) => p !== "bg" && p !== "blur",
 })(({ bg, blur }: { bg?: string, blur?: boolean }) => ({
   backgroundImage: `url(${bg})`,
   filter: blur ? "blur(6px)" : "none",

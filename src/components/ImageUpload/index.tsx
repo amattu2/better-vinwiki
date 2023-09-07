@@ -52,7 +52,7 @@ const StyledImageBox = styled(Paper)({
   },
   "&:hover .image-preview": {
     filter: "blur(2px) brightness(0.6)",
-  }
+  },
 });
 
 const StyledBackground = styled("div", { shouldForwardProp: (p) => p !== "bg" && p !== "blur" })(({ bg, blur }: { bg?: string, blur?: boolean }) => ({

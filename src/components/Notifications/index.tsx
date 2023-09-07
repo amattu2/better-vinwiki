@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from "react";
 import {
   CircularProgress, List, ListItem,
   ListItemAvatar, ListItemText, Typography,
-  styled
+  styled,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useAuthProvider } from "../../Providers/AuthProvider";
