@@ -67,16 +67,16 @@ const fetchLists = async (uuid: Profile["uuid"], token: string): Promise<Profile
 };
 
 const View : FC = () => {
-  const { token, user } = useAuthProvider();
+  const { token, profile } = useAuthProvider();
   const { vehicles } = useRecentVehicles();
   const navigate = useNavigate();
 
   // TODO: this is just a demo test
   const [lists, setLists] = useState<ProfileLists | null>(null);
   useEffect(() => {
-    if (!user?.uuid || !token) return;
+    if (!profile?.uuid || !token) return;
 
-    fetchLists(user.uuid, token).then(setLists);
+    fetchLists(profile.uuid, token).then(setLists);
   }, []);
 
   const [searchType, setSearchType] = useState<"vehicle" | "list" | "person">("vehicle");

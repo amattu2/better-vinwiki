@@ -33,7 +33,7 @@ const StyledMenuButton = styled(IconButton)({
 });
 
 const TextPost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
-  const { user } = useAuthProvider();
+  const { profile } = useAuthProvider();
   const { deletePost: deletePostByUUID } = useFeedProvider();
   const { uuid, comment_count, post_text, person } = post;
   const rootRef = useRef<HTMLDivElement>(null);
@@ -109,7 +109,7 @@ const TextPost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPost
           </ListItemIcon>
           <ListItemText>Copy Link</ListItemText>
         </MenuItem>
-        {user?.uuid === person.uuid && (
+        {profile?.uuid === person.uuid && (
           <MenuItem onClick={confirmDelete}>
             <ListItemIcon>
               <Delete fontSize="small" />

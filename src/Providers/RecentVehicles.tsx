@@ -33,7 +33,7 @@ type Props = {
 };
 
 export const RecentVehiclesProvider: FC<Props> = ({ count = 10, children }: Props) => {
-  const { token, user } = useAuthProvider();
+  const { token, profile } = useAuthProvider();
   const [state, setState] = useState<ProviderState>(defaultState);
   const [trigger, setTrigger] = useState<NodeJS.Timeout>();
   const controllerRef = useRef<AbortController>();
@@ -54,7 +54,7 @@ export const RecentVehiclesProvider: FC<Props> = ({ count = 10, children }: Prop
       status: ProviderStatus.LOADING,
     }));
 
-    const response = await fetch(`${ENDPOINTS.recent_vins}${user.uuid}/${count}`, {
+    const response = await fetch(`${ENDPOINTS.recent_vins}${profile.uuid}/${count}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,

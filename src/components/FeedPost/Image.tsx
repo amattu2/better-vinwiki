@@ -91,7 +91,7 @@ const StyledExpandedImage = styled("img")({
 });
 
 const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
-  const { user } = useAuthProvider();
+  const { profile } = useAuthProvider();
   const { deletePost: deletePostByUUID } = useFeedProvider();
   const { uuid, image, comment_count, post_text, person } = post;
   const [src, { blur }] = useProgressiveQuality(image?.thumb, image?.large);
@@ -184,7 +184,7 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPos
             </ListItemIcon>
             <ListItemText>Copy Link</ListItemText>
           </MenuItem>
-          {user?.uuid === person.uuid && (
+          {profile?.uuid === person.uuid && (
             <MenuItem onClick={confirmDelete}>
               <ListItemIcon>
                 <Delete fontSize="small" />

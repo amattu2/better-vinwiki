@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { useLocalStorage } from "usehooks-ts";
 import { Box, Button, Container, TextField, Typography, styled } from "@mui/material";
 import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
 
@@ -32,6 +33,10 @@ type Inputs = {
 
 const LoginView = () => {
   const navigate = useNavigate();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_profile, setProfile] = useLocalStorage<Profile | null>("profile", null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_token, setToken] = useLocalStorage<string>("token", "");
   const { register, handleSubmit, formState } = useForm<Inputs>();
   const { errors } = formState;
 
@@ -46,8 +51,8 @@ const LoginView = () => {
 
     const { person, token: { token }, status } = await response.json();
     if (status === STATUS_OK) {
-      localStorage.setItem("user", JSON.stringify(person));
-      localStorage.setItem("token", token);
+      setProfile(person);
+      setToken(token);
       navigate("/");
     }
   };

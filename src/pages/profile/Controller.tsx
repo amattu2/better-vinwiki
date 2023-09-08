@@ -6,10 +6,10 @@ import { useAuthProvider } from "../../Providers/AuthProvider";
 
 const Controller = () => {
   const { uuid } = useParams();
-  const { user } = useAuthProvider();
+  const { profile } = useAuthProvider();
 
   if (!uuid) {
-    return <Navigate to={`/profile/${user?.uuid}`} />;
+    return <Navigate to={`/profile/${profile?.uuid}`} />;
   }
 
   return (

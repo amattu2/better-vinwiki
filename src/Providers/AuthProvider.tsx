@@ -1,9 +1,10 @@
 import React, { useState, FC, useEffect } from "react";
+import { useLocalStorage } from "usehooks-ts";
 
 type AuthenticatedState = {
   status: ProviderStatus.LOADED;
   authenticated: true;
-  user: Profile;
+  profile: Profile;
   token: string;
 };
 
@@ -11,7 +12,7 @@ type UnauthenticatedState = {
   status: ProviderStatus;
   authenticated: false;
   token?: null;
-  user?: null;
+  profile?: null;
 };
 
 export type ProviderState = UnauthenticatedState | AuthenticatedState;
@@ -41,26 +42,26 @@ type Props = {
 };
 
 export const AuthProvider: FC<Props> = ({ children }: Props) => {
-  const user : Profile = JSON.parse(localStorage.getItem("user") || "{}");
-  const token : string = localStorage.getItem("token") || "";
-  const [state, setState] = useState<ProviderState>(user && user.id ? {
+  const [profile, setProfile] = useLocalStorage<Profile | null>("profile", null);
+  const [token, setToken] = useLocalStorage<string>("token", "");
+  const [state, setState] = useState<ProviderState>(profile?.uuid ? {
     status: ProviderStatus.LOADED,
     authenticated: true,
-    user,
+    profile,
     token,
   } : defaultState);
 
   useEffect(() => {
-    if (state.authenticated && state.user) {
-      localStorage.setItem("user", JSON.stringify(state.user));
-      localStorage.setItem("token", state.token);
+    if (state.authenticated && state.profile) {
+      setProfile(state.profile);
+      setToken(state.token);
       return;
     }
 
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     setState(defaultState);
-  }, [state.authenticated, state.user, state.token]);
+  }, [state.authenticated, state.profile, state.token]);
 
   return (
     <Context.Provider value={state}>
