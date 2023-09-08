@@ -116,7 +116,7 @@ export const AuthProvider: FC<Props> = ({ children }: Props) => {
     })();
 
     (async () => {
-      if (profile?.profileLists?.following?.length && profile?.profileLists?.owned?.length) {
+      if (profile?.profileLists?.following && profile?.profileLists?.owned) {
         return;
       }
 
