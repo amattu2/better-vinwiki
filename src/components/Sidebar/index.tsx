@@ -1,9 +1,12 @@
 import React, { FC, useState } from 'react';
-import { Code, DashboardOutlined, Logout, NotificationsActive, Person2Outlined, SearchOutlined } from '@mui/icons-material';
+import {
+  Code, DashboardOutlined, Logout, NotificationsActive,
+  PeopleOutline, Person2Outlined, SearchOutlined,
+} from '@mui/icons-material';
 import {
   Avatar, Badge, IconButton, Popover,
   Tooltip, Typography,
-  Box, Stack, styled,
+  Box, Stack, styled, Drawer,
 } from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuthProvider } from '../../Providers/AuthProvider';
@@ -67,10 +70,15 @@ const Sidebar: FC = () => {
 
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
   const openNotifications = (e: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(e.currentTarget);
     setOpen(true);
+  };
+
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
   };
 
   if (!authenticated) {
@@ -100,6 +108,11 @@ const Sidebar: FC = () => {
               <DashboardOutlined />
             </Tooltip>
           </StyledLink>
+        </StyledIconButton>
+        <StyledIconButton onClick={toggleDrawer}>
+          <Tooltip title="Following" placement="right">
+            <PeopleOutline />
+          </Tooltip>
         </StyledIconButton>
         <StyledIconButton disabled={pathname === "/search"}>
           <StyledLink to="/search">
@@ -150,6 +163,9 @@ const Sidebar: FC = () => {
       >
         <Notifications preload={open} />
       </Popover>
+      <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer}>
+        {/* TODO: List of followers */}
+      </Drawer>
     </StyledBox>
   );
 };
