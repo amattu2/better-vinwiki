@@ -71,6 +71,7 @@ const SuggestionItem: FC<List> = (list: List) => {
             </Stack>
           </>
         )}
+        secondaryTypographyProps={{ component: "div" }}
       />
       <StyledLink to={`/list/${uuid}`}>
         View
