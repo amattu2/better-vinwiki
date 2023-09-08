@@ -35,7 +35,7 @@ type Inputs = {
 const LoginView = () => {
   const navigate = useNavigate();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_profile, setProfile] = useLocalStorage<Profile | null>("profile", null);
+  const [_profile, setProfile] = useLocalStorage<AuthProfile | null>("profile", null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_token, setToken] = useLocalStorage<string>("token", "");
   const [loading, setLoading] = useState<boolean>(false);

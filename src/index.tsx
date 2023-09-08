@@ -16,7 +16,6 @@ import Profile from './pages/profile/Controller';
 import Search from './pages/search/Controller';
 import Vehicle from './pages/vehicle/Controller';
 import reportWebVitals from './reportWebVitals';
-import { RecentVehiclesProvider } from './Providers/RecentVehicles';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -24,28 +23,27 @@ const root = ReactDOM.createRoot(
 
 const ProtectedRoutes = () => {
   const token = useReadLocalStorage<string>("token");
-  if (!token) {
+  const profile = useReadLocalStorage<AuthProfile | null>("profile");
+  if (!token || !profile?.uuid) {
     return <Navigate to="/login" />;
   }
 
   return (
     <AuthProvider>
       <NotificationCountProvider>
-        <RecentVehiclesProvider>
-          <Stack direction="row">
-            <Sidebar />
-            <Box sx={{ flexGrow: 1, ml: "72px" }}>
-              <Routes>
-                <Route path="/profile/:uuid?" element={<Profile />} />
-                <Route path="/vehicle/:vin" element={<Vehicle />} />
-                <Route path="/list/:uuid" element={<List />} />
-                <Route path="/post/:uuid" element={<p>Todo</p>} />
-                <Route path="/search" element={<Search />} />
-                <Route path="*" element={<Home />} />
-              </Routes>
-            </Box>
-          </Stack>
-        </RecentVehiclesProvider>
+        <Stack direction="row">
+          <Sidebar />
+          <Box sx={{ flexGrow: 1, ml: "72px" }}>
+            <Routes>
+              <Route path="/profile/:uuid?" element={<Profile />} />
+              <Route path="/vehicle/:vin" element={<Vehicle />} />
+              <Route path="/list/:uuid" element={<List />} />
+              <Route path="/post/:uuid" element={<p>Todo</p>} />
+              <Route path="/search" element={<Search />} />
+              <Route path="*" element={<Home />} />
+            </Routes>
+          </Box>
+        </Stack>
       </NotificationCountProvider>
     </AuthProvider>
   );

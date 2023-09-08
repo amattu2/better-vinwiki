@@ -26,3 +26,5 @@ type VehicleData = {
   trim: string;
   year: string;
 };
+
+type VehicleFollower = VehicleResponse;

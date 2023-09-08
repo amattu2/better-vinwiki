@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { Autocomplete, Stack, TextField, Typography, debounce } from "@mui/material";
 import { useAuthProvider } from "../../Providers/AuthProvider";
-import { useRecentVehicles } from "../../Providers/RecentVehicles";
 import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
 import { formatVehicleName } from "../../utils/vehicle";
 
@@ -42,8 +41,8 @@ const fetchVehicles = async (searchValue: string, token: string, controller: Rea
  * @returns {JSX.Element}
  */
 export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
-  const { token } = useAuthProvider();
-  const { vehicles: recentVehicles } = useRecentVehicles();
+  const { token, profile } = useAuthProvider();
+  const { followingVehicles: recentVehicles } = profile || {};
 
   const [searchValue, setSearchValue] = useState<string>("");
   const [options, setOptions] = useState<Vehicle[]>([]);

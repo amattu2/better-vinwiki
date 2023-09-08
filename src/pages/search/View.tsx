@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from "react";
+import React, { FC, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -9,11 +9,10 @@ import {
 import { TabContext, TabPanel } from "@mui/lab";
 import { List, Badge, DirectionsCar, PersonSearch, Search } from "@mui/icons-material";
 import { useAuthProvider } from "../../Providers/AuthProvider";
-import { useRecentVehicles } from "../../Providers/RecentVehicles";
 import PlateDecoder from "../../components/PlateDecoder/Dialog";
 import VehicleSuggestion from "../../components/SuggestionCards/VehicleSuggestion";
-import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
 import ListSuggestion from "../../components/SuggestionCards/ListSuggestion";
+import { sortVehicles } from "../../utils/vehicle";
 
 const StyledBox = styled(Box)({
   padding: "16px",
@@ -46,38 +45,10 @@ const StyledPanel = styled(TabPanel)({
   padding: 0,
 });
 
-const fetchLists = async (uuid: Profile["uuid"], token: string): Promise<ProfileLists | null> => {
-  const response = await fetch(`${ENDPOINTS.lists}${uuid}/10`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const { status, lists_following, lists_my, lists_other } = await response.json();
-  if (status === STATUS_OK) {
-    return {
-      following: (lists_following)?.map((r: { list: List }) => r?.list),
-      owned: (lists_my)?.map((r: { list: List }) => r?.list),
-      other: (lists_other)?.map((r: { list: List }) => r?.list),
-    };
-  }
-
-  return null;
-};
-
 const View : FC = () => {
-  const { token, profile } = useAuthProvider();
-  const { vehicles } = useRecentVehicles();
+  const { profile } = useAuthProvider();
+  const { followingVehicles: vehicles, profileLists: lists } = profile || {};
   const navigate = useNavigate();
-
-  // TODO: this is just a demo test
-  const [lists, setLists] = useState<ProfileLists | null>(null);
-  useEffect(() => {
-    if (!profile?.uuid || !token) return;
-
-    fetchLists(profile.uuid, token).then(setLists);
-  }, []);
 
   const [searchType, setSearchType] = useState<"vehicle" | "list" | "person">("vehicle");
   const [plateDecoderOpen, setPlateDecoderOpen] = useState<boolean>(false);
@@ -179,7 +150,7 @@ const View : FC = () => {
         </StyledSearchBox>
       </Container>
       <StyledSidebarBox>
-        {vehicles && <VehicleSuggestion suggestions={vehicles} limit={4} />}
+        {vehicles && <VehicleSuggestion suggestions={sortVehicles(vehicles)} limit={4} />}
         {lists && <ListSuggestion suggestions={lists} limit={4} />}
       </StyledSidebarBox>
     </Stack>

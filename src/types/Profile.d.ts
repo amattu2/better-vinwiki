@@ -12,7 +12,7 @@ type Profile = {
   last_name: string;
   location: string;
   post_count: number;
-  profile: never; // TODO: Figure out what this is
+  // profile: never;
   profile_picture_uuid: string;
   social_facebook: string;
   social_instagram: string;
@@ -21,6 +21,13 @@ type Profile = {
   username: string;
   uuid: string;
   website_url: string;
+};
+
+type AuthProfile = Profile & {
+  followingProfiles?: ProfileFollower[];
+  followingVehicles?: VehicleFollower[];
+  recentVehicles?: Vehicle[];
+  profileLists?: ProfileLists;
 };
 
 type ProfileNotification = {
@@ -34,5 +41,15 @@ type ProfileNotification = {
   sender: Pick<Profile, "avatar" | "username" | "uuid">;
   text: string;
   type: "post_mention" | "origin_author"; // TODO: Add more types
+  uuid: string;
+};
+
+type ProfileFollower = {
+  avatar: string;
+  first_name: string;
+  follower_count: number;
+  id: number;
+  profile_picture_uuid: string;
+  username: string;
   uuid: string;
 };

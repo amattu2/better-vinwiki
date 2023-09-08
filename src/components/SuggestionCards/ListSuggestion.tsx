@@ -105,7 +105,7 @@ const ListSuggestion: FC<Props> = ({ suggestions, limit }: Props) => {
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            {(owned?.length > 0) ? (
+            {(owned?.length) ? (
               <TransitionGroup
                 items={owned.slice(0, limit).map((suggestion: List) => ({ suggestion, key: suggestion.uuid }))}
                 render={({ suggestion }) => <SuggestionItem {...suggestion} />}
@@ -129,7 +129,7 @@ const ListSuggestion: FC<Props> = ({ suggestions, limit }: Props) => {
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            {(following?.length > 0) ? (
+            {(following?.length) ? (
               <TransitionGroup
                 items={following.slice(0, limit).map((suggestion: List) => ({ suggestion, key: suggestion.uuid }))}
                 render={({ suggestion }) => <SuggestionItem {...suggestion} />}

@@ -21,4 +21,6 @@ export const formatVehicleName = ({ year, make, model }: Vehicle) => {
   return result.replace(/\s+$/, "");
 };
 
+export const sortVehicles = (vehicles: Vehicle[]) => vehicles.sort((a, b) => a.long_name.localeCompare(b.long_name));
+
 export const formatOdometer = (mileage: number) => (new Intl.NumberFormat('en-US', { maximumSignificantDigits: 3 }).format(mileage)) || 0;
