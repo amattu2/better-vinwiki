@@ -27,4 +27,8 @@ type VehicleData = {
   year: string;
 };
 
+type PlateDecodeResponse = Pick<Vehicle, "make" | "model" | "trim" | "year" | "vin"> & {
+  description: string;
+};
+
 type VehicleFollower = VehicleResponse;

@@ -226,7 +226,7 @@ const CreatePost: FC = () => {
                     <PlateDecoder
                       open={plateDecoderOpen}
                       onConfirm={(vehicle) => {
-                        setSelectedVehicle(vehicle);
+                        setSelectedVehicle(vehicle as unknown as Vehicle);
                         setPlateDecoderOpen(false);
                       }}
                       onCancel={() => setPlateDecoderOpen(false)}

@@ -104,7 +104,7 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
       loading={loading}
       options={mergedOptions}
       groupBy={(option: Vehicle) => (
-        recentVehicles?.find((v) => v.vin === option.vin) ? "Recents" : option.make.toUpperCase()
+        recentVehicles?.find((v) => v.vin === option.vin) ? "Recents & Following" : option.make.toUpperCase()
       )}
       renderInput={(params) => <TextField {...params} label="Search by VIN or Description" />}
       getOptionLabel={(option: Vehicle) => formatVehicleName(option)}

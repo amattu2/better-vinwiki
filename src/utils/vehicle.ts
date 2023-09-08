@@ -1,10 +1,10 @@
 /**
  * General Vehicle Description Formatter
  *
- * @param {Vehicle} vehicle
+ * @param {Vehicle | PlateDecodeResponse} vehicle
  * @returns Formatted Vehicle String
  */
-export const formatVehicleName = ({ year, make, model }: Vehicle) => {
+export const formatVehicleName = ({ year, make, model }: Vehicle | PlateDecodeResponse) => {
   let result = "";
 
   if (year && year.toString().length === 4) {
