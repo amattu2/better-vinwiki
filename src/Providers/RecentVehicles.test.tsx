@@ -1,14 +1,13 @@
-// TODO: remove
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { SearchProvider, useSearchProvider } from "./SearchProvider";
+import { RecentVehiclesProvider, useRecentVehicles } from "./RecentVehicles";
 import { AuthProvider } from "./AuthProvider";
 
-describe("SearchProvider General Tests", () => {
+describe("RecentVehiclesProvider General Tests", () => {
   test("should render without crashing", () => {
     render(
       <AuthProvider>
-        <SearchProvider type="all" />
+        <RecentVehiclesProvider />
       </AuthProvider>,
     );
   });
@@ -16,9 +15,9 @@ describe("SearchProvider General Tests", () => {
   test("should render children", () => {
     render(
       <AuthProvider>
-        <SearchProvider type="all">
+        <RecentVehiclesProvider>
           <div>Test</div>
-        </SearchProvider>
+        </RecentVehiclesProvider>
       </AuthProvider>,
     );
 
@@ -26,11 +25,11 @@ describe("SearchProvider General Tests", () => {
     expect(test).toBeInTheDocument();
   });
 
-  test("should throw error if useSearchProvider is used outside of SearchProvider", () => {
+  test("should throw error if useRecentVehicles is used outside of RecentVehiclesProvider", () => {
     const spy = jest.spyOn(console, "error").mockImplementation(() => {});
 
     expect(() => {
-      render(<div>{JSON.stringify(useSearchProvider())}</div>);
+      render(<div>{JSON.stringify(useRecentVehicles())}</div>);
     }).toThrowError();
 
     spy.mockRestore();

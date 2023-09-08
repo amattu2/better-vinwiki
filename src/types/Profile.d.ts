@@ -1,5 +1,5 @@
 type Profile = {
-  avatar: never; // TODO: Figure out what this is
+  avatar: string;
   bio: string;
   display_name: string;
   email: string;

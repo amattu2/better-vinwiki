@@ -45,6 +45,7 @@ const StyledCard = styled(Card, { shouldForwardProp: (p) => p !== "expanded" })(
 
 const StyledTab = styled(Tab)({
   minHeight: "48px",
+  textTransform: "none",
 });
 
 const StyledStepContent = styled(StepContent)({

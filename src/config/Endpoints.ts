@@ -18,8 +18,8 @@ export const ENDPOINTS = {
   comments: `${API_URL}post/comments/`,
   is_following: `${API_URL}person/is_following/`,
   follow: `${API_URL}person/follow/`,
-  recent_vins: `${API_URL}person/recent_vins`,
-  lists: `${API_URL}person/lists/`,
+  recent_vins: `${API_URL}person/recent_vins/`, // PATH: :uuid/:count
+  lists: `${API_URL}person/lists/`, // PATH: :uuid/:count
   following_vehicles: `${API_URL}person/following_vehicles/`, // TODO: implement (vehicles following)
   following: `${API_URL}person/following/`, // TODO: implement (user following)
   followers: `${API_URL}person/followers/`, // TODO: implement (people following user)

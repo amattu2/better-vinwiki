@@ -10,7 +10,7 @@ import { useIntersectionObserver, useLocalStorage } from 'usehooks-ts';
 import { ProviderStatus, useFeedProvider } from '../../Providers/FeedProvider';
 import { PostRouter } from '../../components/FeedPost';
 import Loader from '../../components/Loader';
-import SuggestionCard from '../../components/ProfileSuggestions';
+import SuggestionCard from '../../components/SuggestionCards/ProfileSuggestion';
 import TransitionGroup from '../../components/TransitionGroup';
 import TrendingPost from '../../components/TrendingPost';
 import BlogPostCard from '../../components/BlogPost';
