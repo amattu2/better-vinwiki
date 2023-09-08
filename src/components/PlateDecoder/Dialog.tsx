@@ -1,9 +1,9 @@
 import React, { FC, useState } from "react";
-import { Delete } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
   Button, Dialog, DialogActions,
-  DialogContent, DialogTitle, IconButton, List, ListItem, ListItemAvatar, ListItemText, MenuItem,
+  DialogContent, DialogTitle, List, ListItem,
+  ListItemAvatar, ListItemText, MenuItem,
   TextField, Typography, styled,
 } from "@mui/material";
 import { Form, useForm } from "react-hook-form";
