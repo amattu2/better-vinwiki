@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useLocalStorage } from "usehooks-ts";
 import { Box, Button, Container, TextField, Typography, styled } from "@mui/material";
 import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
+import Loader from "../../components/Loader";
 
 const StyledContainer = styled(Container)({
   height: "100%",
@@ -37,10 +38,14 @@ const LoginView = () => {
   const [_profile, setProfile] = useLocalStorage<Profile | null>("profile", null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_token, setToken] = useLocalStorage<string>("token", "");
+  const [loading, setLoading] = useState<boolean>(false);
+
   const { register, handleSubmit, formState } = useForm<Inputs>();
   const { errors } = formState;
 
   const onSubmit = async ({ username, password }: Inputs) => {
+    setLoading(true);
+
     const response = await fetch(ENDPOINTS.authenticate, {
       method: "POST",
       headers: {
@@ -55,10 +60,13 @@ const LoginView = () => {
       setToken(token);
       navigate("/");
     }
+
+    setLoading(false);
   };
 
   return (
     <StyledContainer maxWidth="xs">
+      {loading && <Loader />}
       <FormContainer>
         <Typography component="h1" variant="h4">
           Sign in

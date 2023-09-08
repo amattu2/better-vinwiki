@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ENDPOINTS } from "../../config/Endpoints";
+import Loader from "../../components/Loader";
 
 const LogoutView = () => {
   const navigate = useNavigate();
@@ -16,13 +17,9 @@ const LogoutView = () => {
     };
 
     logout();
-  }, [navigate]);
+  }, []);
 
-  return (
-    <div>
-      Logging out...
-    </div>
-  );
+  return <Loader />;
 };
 
 export default LogoutView;
