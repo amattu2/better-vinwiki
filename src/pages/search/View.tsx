@@ -4,7 +4,9 @@ import { useForm } from "react-hook-form";
 import {
   Box,
   Card, Container, Divider, IconButton,
-  Pagination, Paper, Skeleton, Stack, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tabs,
+  Pagination, Paper, Skeleton, Stack, Tab,
+  Table, TableBody, TableCell, TableContainer,
+  TableHead, TableRow, Tabs,
   TextField, Tooltip, Typography, styled,
 } from "@mui/material";
 import { TabContext, TabPanel } from "@mui/lab";
@@ -62,7 +64,7 @@ const StyledVehicleImg = styled("img")({
 });
 
 const NoSearchResults: FC = () => (
-  <Typography variant="caption" textAlign="center" color="textSecondary">Bummer... No results found</Typography>
+  <Typography variant="caption" textAlign="center" color="textSecondary">No results found</Typography>
 );
 
 const VehicleSkeleton: FC = () => (
@@ -191,66 +193,75 @@ const View : FC = () => {
 
             <TabContext value={searchType}>
               <StyledPanel value="Vehicle">
-                <Stack direction="column" gap={1}>
-                  <Paper elevation={0}>
-                    <TableContainer>
-                      <Table>
-                        <TableHead>
+                <StyledCard elevation={3} sx={{ padding: 0 }}>
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell sx={{ textAlign: "center" }}>Preview</TableCell>
+                          <TableCell>Year</TableCell>
+                          <TableCell>Make</TableCell>
+                          <TableCell>Model</TableCell>
+                          <TableCell>Trim</TableCell>
+                          <TableCell>VIN</TableCell>
+                          <TableCell>Options</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {(status === LookupStatus.Success && paginatedResults.length === 0) && (
                           <TableRow>
-                            <TableCell />
-                            <TableCell>Year</TableCell>
-                            <TableCell>Make</TableCell>
-                            <TableCell>Model</TableCell>
-                            <TableCell>Trim</TableCell>
-                            <TableCell>VIN</TableCell>
-                            <TableCell />
+                            <TableCell colSpan={7} sx={{ textAlign: "center" }}>
+                              <NoSearchResults />
+                            </TableCell>
                           </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {(status === LookupStatus.Success && paginatedResults.length === 0) && (
-                            <TableRow>
-                              <TableCell colSpan={7} sx={{ textAlign: "center" }}>
-                                <NoSearchResults />
-                              </TableCell>
-                            </TableRow>
-                          )}
-                          {(status === LookupStatus.Success && paginatedResults.length > 0) && (
-                            paginatedResults.map((result) => {
-                              const { year, make, model, trim, vin, icon_photo } = result as Vehicle;
+                        )}
+                        {(status === LookupStatus.Success && paginatedResults.length > 0) && (
+                          paginatedResults.map((result) => {
+                            const { year, make, model, trim, vin, icon_photo } = result as Vehicle;
 
-                              return (
-                                <TableRow key={vin}>
-                                  <TableCell>
-                                    <StyledVehicleImg src={icon_photo} alt={formatVehicleName(result as Vehicle)} />
-                                  </TableCell>
-                                  <TableCell>{year}</TableCell>
-                                  <TableCell>{make}</TableCell>
-                                  <TableCell>{model}</TableCell>
-                                  <TableCell>{trim}</TableCell>
-                                  <TableCell>{vin}</TableCell>
-                                  <TableCell>
-                                    <Link to={`/vehicle/${vin}`}>
-                                      View
-                                    </Link>
-                                  </TableCell>
-                                </TableRow>
-                              );
-                            })
-                          )}
-                          {(status === LookupStatus.Loading) && (
-                            <>
-                              <VehicleSkeleton />
-                              <VehicleSkeleton />
-                              <VehicleSkeleton />
-                              <VehicleSkeleton />
-                              <VehicleSkeleton />
-                            </>
-                          )}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                  </Paper>
-                </Stack>
+                            return (
+                              <TableRow key={vin}>
+                                <TableCell>
+                                  <StyledVehicleImg src={icon_photo} alt={formatVehicleName(result as Vehicle)} />
+                                </TableCell>
+                                <TableCell>{year}</TableCell>
+                                <TableCell>{make}</TableCell>
+                                <TableCell>{model}</TableCell>
+                                <TableCell>{trim || "-"}</TableCell>
+                                <TableCell>{vin}</TableCell>
+                                <TableCell>
+                                  <Link to={`/vehicle/${vin}`}>
+                                    View
+                                  </Link>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })
+                        )}
+                        {(status === LookupStatus.Loading) && (
+                          <>
+                            <VehicleSkeleton />
+                            <VehicleSkeleton />
+                            <VehicleSkeleton />
+                            <VehicleSkeleton />
+                            <VehicleSkeleton />
+                          </>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </StyledCard>
+                <StyledPagination
+                  count={Math.ceil(resultCount / 10) || 1}
+                  page={page}
+                  onChange={(e, page) => handlePageChange(page)}
+                  variant="outlined"
+                  shape="rounded"
+                />
+              </StyledPanel>
+              <StyledPanel value="Profile">
+                {/* TODO: show profiles matching result */}
+                {status}
                 <StyledPagination
                   count={Math.ceil(resultCount / 10) || 1}
                   page={page}
@@ -262,17 +273,6 @@ const View : FC = () => {
               <StyledPanel value="List">
                 {/* TODO: show my lists and following */}
                 {/* https://dribbble.com/shots/11462972-Advanced-Search */}
-                {status}
-                <StyledPagination
-                  count={Math.ceil(resultCount / 10) || 1}
-                  page={page}
-                  onChange={(e, page) => handlePageChange(page)}
-                  variant="outlined"
-                  shape="rounded"
-                />
-              </StyledPanel>
-              <StyledPanel value="Profile">
-                {/* TODO: show profiles matching result */}
                 {status}
                 <StyledPagination
                   count={Math.ceil(resultCount / 10) || 1}
