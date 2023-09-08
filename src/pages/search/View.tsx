@@ -1,6 +1,8 @@
 import React, { FC, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { Badge, DirectionsCar, List, PersonSearch, Search } from "@mui/icons-material";
+import { TabContext, TabPanel } from "@mui/lab";
 import {
   Box,
   Card, Container, Divider, IconButton,
@@ -9,14 +11,13 @@ import {
   TableHead, TableRow, Tabs,
   TextField, Tooltip, Typography, styled,
 } from "@mui/material";
-import { TabContext, TabPanel } from "@mui/lab";
-import { List, Badge, DirectionsCar, PersonSearch, Search } from "@mui/icons-material";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import PlateDecoder from "../../components/PlateDecoder/Dialog";
-import VehicleSuggestion from "../../components/SuggestionCards/VehicleSuggestion";
+import { ScrollToTop } from "../../components/ScrollToTop";
 import ListSuggestion from "../../components/SuggestionCards/ListSuggestion";
+import VehicleSuggestion from "../../components/SuggestionCards/VehicleSuggestion";
+import { LookupStatus, SearchResult, SearchType, useSearch } from "../../hooks/useSearch";
 import { formatVehicleName, sortVehicles } from "../../utils/vehicle";
-import { useSearch, SearchType, LookupStatus, SearchResult } from "../../hooks/useSearch";
 
 const StyledBox = styled(Box)({
   padding: "16px",
@@ -296,6 +297,7 @@ const View : FC = () => {
         {vehicles && <VehicleSuggestion suggestions={sortVehicles(vehicles)} limit={4} />}
         {lists && <ListSuggestion suggestions={lists} limit={4} />}
       </StyledSidebarBox>
+      <ScrollToTop />
     </Stack>
   );
 };

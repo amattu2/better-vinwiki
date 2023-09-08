@@ -160,14 +160,15 @@ const Feed : FC = () => {
 
             <Divider sx={{ my: 2 }} />
 
-            <CreatePost />
-
             {status === ProviderStatus.RELOADING && (
               <Alert severity="info" sx={{ mb: 1 }}>Hang tight. We're fetching your latest feed...</Alert>
             )}
             {(status === ProviderStatus.LOADED && slicedPosts.length === 0) && (
               <Alert severity="info" sx={{ mb: 1 }}>Uh oh. We have no posts to show.</Alert>
             )}
+
+            <CreatePost />
+
             <TransitionGroup
               items={slicedPosts.map((post) => ({ post, key: post.uuid }))}
               render={({ post }, _, last) => <PostRouter {...post} ref={last ? lastElementRef : undefined} />}

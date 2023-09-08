@@ -24,7 +24,6 @@ type Props = {
 const StyledCard = styled(Card)({
   borderRadius: "8px",
   backgroundColor: "transparent",
-  maxWidth: "450px",
   marginBottom: "16px",
 });
 
