@@ -1,9 +1,10 @@
 import React, { FC, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import {
   Box,
   Card, Container, Divider, IconButton,
-  Pagination, Stack, Tab, Tabs,
+  Pagination, Paper, Skeleton, Stack, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tabs,
   TextField, Tooltip, Typography, styled,
 } from "@mui/material";
 import { TabContext, TabPanel } from "@mui/lab";
@@ -12,7 +13,8 @@ import { useAuthProvider } from "../../Providers/AuthProvider";
 import PlateDecoder from "../../components/PlateDecoder/Dialog";
 import VehicleSuggestion from "../../components/SuggestionCards/VehicleSuggestion";
 import ListSuggestion from "../../components/SuggestionCards/ListSuggestion";
-import { sortVehicles } from "../../utils/vehicle";
+import { formatVehicleName, sortVehicles } from "../../utils/vehicle";
+import { useSearch, SearchType, LookupStatus, SearchResult } from "../../hooks/useSearch";
 
 const StyledBox = styled(Box)({
   padding: "16px",
@@ -45,31 +47,98 @@ const StyledPanel = styled(TabPanel)({
   padding: 0,
 });
 
+const StyledPagination = styled(Pagination)({
+  width: "100%",
+  marginTop: "16px",
+  "& .MuiPagination-ul": {
+    justifyContent: "center",
+  },
+});
+
+const StyledVehicleImg = styled("img")({
+  borderRadius: "8px",
+  width: "75px",
+  height: "75px",
+});
+
+const NoSearchResults: FC = () => (
+  <Typography variant="caption" textAlign="center" color="textSecondary">Bummer... No results found</Typography>
+);
+
+const VehicleSkeleton: FC = () => (
+  <TableRow>
+    <TableCell>
+      <Skeleton variant="rectangular" width={75} height={75} animation="wave" />
+    </TableCell>
+    <TableCell>
+      <Skeleton variant="text" animation="wave" />
+    </TableCell>
+    <TableCell>
+      <Skeleton variant="text" animation="wave" />
+    </TableCell>
+    <TableCell>
+      <Skeleton variant="text" animation="wave" />
+    </TableCell>
+    <TableCell>
+      <Skeleton variant="text" animation="wave" />
+    </TableCell>
+    <TableCell>
+      <Skeleton variant="text" animation="wave" />
+    </TableCell>
+    <TableCell>
+      <Skeleton variant="text" animation="wave" />
+    </TableCell>
+  </TableRow>
+);
+
 const View : FC = () => {
+  const navigate = useNavigate();
   const { profile } = useAuthProvider();
   const { followingVehicles: vehicles, profileLists: lists } = profile || {};
-  const navigate = useNavigate();
+  const { register, handleSubmit } = useForm<{ query: string }>();
 
-  const [searchType, setSearchType] = useState<"vehicle" | "list" | "person">("vehicle");
+  const [searchType, setSearchType] = useState<SearchType>("Vehicle");
   const [plateDecoderOpen, setPlateDecoderOpen] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
+  const [status, results, setQuery] = useSearch(searchType, 100);
+
+  const paginatedResults: SearchResult<SearchType> = useMemo(() => {
+    if (results.length === 0) {
+      return [];
+    }
+
+    return results.slice((page - 1) * 10, page * 10);
+  }, [results, page]);
+
+  const resultCount: number = useMemo(() => (status === LookupStatus.Success ? results.length : 0), [status, results]);
 
   const placeholder: string = useMemo(() => {
     switch (searchType) {
-      case "vehicle":
+      case "Vehicle":
         return "VIN or Vehicle Description";
-      case "list":
+      case "List":
         return "list name";
       default:
         return "Username or Email";
     }
   }, [searchType]);
 
-  const searchChange = (event: React.SyntheticEvent, newValue: "vehicle" | "list" | "person") => {
+  const searchChange = (event: React.SyntheticEvent, newValue: SearchType) => {
     setSearchType(newValue);
-    // TODO: fetch data
+    setPage(1);
   };
 
-  const onDecoderSelect = (vehicle: Vehicle | null) => {
+  const handleSearch = (data: { query: string }) => {
+    setQuery(data.query);
+    setPage(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setPage(page);
+    window.scrollTo(0, 0);
+  };
+
+  const onDecoderSelect = (vehicle: PlateDecodeResponse | null) => {
     if (!vehicle) {
       return;
     }
@@ -88,56 +157,130 @@ const View : FC = () => {
               <StyledCard elevation={3}>
                 <Stack direction="column" spacing={2}>
                   <Tabs value={searchType} variant="fullWidth" onChange={searchChange} centered>
-                    <StyledTab value="vehicle" label="Vehicles" icon={<DirectionsCar />} iconPosition="start" />
-                    <StyledTab value="person" label="Profiles" icon={<PersonSearch />} iconPosition="start" />
-                    <StyledTab value="list" label="Lists" icon={<List />} iconPosition="start" />
+                    <StyledTab value="Vehicle" label="Vehicles" icon={<DirectionsCar />} iconPosition="start" />
+                    <StyledTab value="Profile" label="Profiles" icon={<PersonSearch />} iconPosition="start" />
+                    <StyledTab value="List" label="Lists" icon={<List />} iconPosition="start" />
                   </Tabs>
 
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <TextField placeholder={`Search by ${placeholder}`} size="small" fullWidth />
-                    {searchType === "vehicle" && (
-                      <Tooltip title="Advanced Search" placement="right">
-                        <IconButton onClick={() => setPlateDecoderOpen(true)}>
-                          <Badge />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-                    <IconButton>
-                      <Search />
-                    </IconButton>
-                  </Stack>
+                  <form onSubmit={handleSubmit(handleSearch)}>
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <TextField {...register("query")} placeholder={`Search by ${placeholder}`} size="small" fullWidth />
+                      {searchType === "Vehicle" && (
+                        <Tooltip title="Advanced Search" placement="right">
+                          <IconButton onClick={() => setPlateDecoderOpen(true)}>
+                            <Badge />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                      <IconButton type="submit">
+                        <Search />
+                      </IconButton>
+                    </Stack>
+                  </form>
                 </Stack>
               </StyledCard>
             </Stack>
 
             <Divider sx={{ my: 3 }} textAlign="center">
               <Typography variant="h5">
-                0
+                {resultCount}
                 {" "}
                 Results
               </Typography>
             </Divider>
 
             <TabContext value={searchType}>
-              <StyledPanel value="vehicle">
-                {/* TODO: Show recents here but make sure it's collapsable */}
-                <Stack direction="column" spacing={1}>
-                  <StyledCard elevation={2}>
-                    aaa
-                  </StyledCard>
-                </Stack>
+              <StyledPanel value="Vehicle">
+                <Stack direction="column" gap={1}>
+                  <Paper elevation={0}>
+                    <TableContainer>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell />
+                            <TableCell>Year</TableCell>
+                            <TableCell>Make</TableCell>
+                            <TableCell>Model</TableCell>
+                            <TableCell>Trim</TableCell>
+                            <TableCell>VIN</TableCell>
+                            <TableCell />
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {(status === LookupStatus.Success && paginatedResults.length === 0) && (
+                            <TableRow>
+                              <TableCell colSpan={7} sx={{ textAlign: "center" }}>
+                                <NoSearchResults />
+                              </TableCell>
+                            </TableRow>
+                          )}
+                          {(status === LookupStatus.Success && paginatedResults.length > 0) && (
+                            paginatedResults.map((result) => {
+                              const { year, make, model, trim, vin, icon_photo } = result as Vehicle;
 
-                <Pagination count={1} variant="outlined" shape="rounded" />
+                              return (
+                                <TableRow key={vin}>
+                                  <TableCell>
+                                    <StyledVehicleImg src={icon_photo} alt={formatVehicleName(result as Vehicle)} />
+                                  </TableCell>
+                                  <TableCell>{year}</TableCell>
+                                  <TableCell>{make}</TableCell>
+                                  <TableCell>{model}</TableCell>
+                                  <TableCell>{trim}</TableCell>
+                                  <TableCell>{vin}</TableCell>
+                                  <TableCell>
+                                    <Link to={`/vehicle/${vin}`}>
+                                      View
+                                    </Link>
+                                  </TableCell>
+                                </TableRow>
+                              );
+                            })
+                          )}
+                          {(status === LookupStatus.Loading) && (
+                            <>
+                              <VehicleSkeleton />
+                              <VehicleSkeleton />
+                              <VehicleSkeleton />
+                              <VehicleSkeleton />
+                              <VehicleSkeleton />
+                            </>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Paper>
+                </Stack>
+                <StyledPagination
+                  count={Math.ceil(resultCount / 10) || 1}
+                  page={page}
+                  onChange={(e, page) => handlePageChange(page)}
+                  variant="outlined"
+                  shape="rounded"
+                />
               </StyledPanel>
-              <StyledPanel value="list">
+              <StyledPanel value="List">
                 {/* TODO: show my lists and following */}
-                lists
-                <Pagination count={1} variant="outlined" shape="rounded" />
+                {/* https://dribbble.com/shots/11462972-Advanced-Search */}
+                {status}
+                <StyledPagination
+                  count={Math.ceil(resultCount / 10) || 1}
+                  page={page}
+                  onChange={(e, page) => handlePageChange(page)}
+                  variant="outlined"
+                  shape="rounded"
+                />
               </StyledPanel>
-              <StyledPanel value="person">
+              <StyledPanel value="Profile">
                 {/* TODO: show profiles matching result */}
-                users
-                <Pagination count={1} variant="outlined" shape="rounded" />
+                {status}
+                <StyledPagination
+                  count={Math.ceil(resultCount / 10) || 1}
+                  page={page}
+                  onChange={(e, page) => handlePageChange(page)}
+                  variant="outlined"
+                  shape="rounded"
+                />
               </StyledPanel>
             </TabContext>
 
