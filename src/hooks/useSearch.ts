@@ -100,6 +100,7 @@ export const useSearch = (type: SearchType, limit = 25): [
     }
 
     setStatus(LookupStatus.Loading);
+    setData([]);
 
     const controller = new AbortController();
     const { signal } = controller;

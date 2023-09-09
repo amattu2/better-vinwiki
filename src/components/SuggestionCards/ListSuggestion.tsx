@@ -4,11 +4,8 @@ import {
   AccordionDetails,
   AccordionSummary,
   Card, CardContent, CardHeader,
-  Chip,
-  List, ListItem,
-  ListItemText,
-  Stack,
-  Typography,
+  Chip, ListItem, ListItemText,
+  Stack, Typography,
   styled,
 } from '@mui/material';
 import { ExpandMore } from '@mui/icons-material';
