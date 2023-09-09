@@ -1,0 +1,36 @@
+openapi: "3.0.2"
+info:
+  title: API documentation
+  description: An unofficial source of VINwiki Rest API documentation.
+    This document is a work-in-progress and may not contain every endpoint available.
+  version: "1.0.0"
+servers:
+  - url: https://rest.vinwiki.com
+    description: Production API Server
+paths:
+  /logout:
+    post:
+      operationId: /logout
+      summary: Logout from VINwiki
+      description: TBD
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+          headers:
+            Authorization:
+              $ref: '#/components/headers/Authorization'
+components:
+  headers:
+    Authorization:
+      description: HTTP Auth Bearer Token
+      schema:
+        type: string
+      example: 10
