@@ -20,6 +20,7 @@ import { LookupStatus, SearchResult, SearchType, useSearch } from "../../hooks/u
 import { formatVehicleName, sortVehicles } from "../../utils/vehicle";
 import ProfileAvatar from "../../components/ProfileAvatar";
 import Repeater from "../../components/Repeater";
+import GenericText from "../../components/FeedPost/Components/GenericText";
 
 const StyledBox = styled(Box)({
   padding: "16px",
@@ -350,7 +351,7 @@ const View : FC = () => {
                             <Grid item xs={8}>
                               <Box flexGrow={1}>
                                 <Typography variant="h5">{name}</Typography>
-                                <Typography variant="body2">{description}</Typography>
+                                <GenericText content={description} />
                               </Box>
                               <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
                                 <Chip label={`${vehicle_count} vehicles`} />
