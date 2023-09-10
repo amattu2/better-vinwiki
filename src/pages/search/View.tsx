@@ -1,11 +1,12 @@
 import React, { FC, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { Badge, DirectionsCar, List, PersonSearch, Search } from "@mui/icons-material";
+import { Badge, DirectionsCar, PersonSearch, Search } from "@mui/icons-material";
 import { TabContext, TabPanel } from "@mui/lab";
 import {
   Box,
   Card, CardActionArea, CardContent, Chip, Container, Divider, Grid, IconButton,
+  List, ListItem, ListItemAvatar, ListItemText,
   Pagination, Skeleton, Stack, Tab,
   Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Tabs,
@@ -140,6 +141,18 @@ const ListSkeleton: FC = () => (
   </StyledListCard>
 );
 
+const ProfileSkeleton: FC = () => (
+  <ListItem divider>
+    <ListItemAvatar>
+      <Skeleton variant="rounded" width={40} height={40} animation="wave" />
+    </ListItemAvatar>
+    <ListItemText
+      primary={<Skeleton variant="text" animation="wave" width={200} />}
+      secondary={<Skeleton variant="text" animation="wave" width={150} />}
+    />
+  </ListItem>
+);
+
 const View : FC = () => {
   const navigate = useNavigate();
   const { profile } = useAuthProvider();
@@ -149,12 +162,8 @@ const View : FC = () => {
   const [searchType, setSearchType] = useState<SearchType>("Vehicle");
   const [plateDecoderOpen, setPlateDecoderOpen] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
-  const [perPage, setPerPage] = useState<number>(10);
+  const [perPage, setPerPage] = useState<number>(15);
   const [status, results, setQuery] = useSearch(searchType, 100);
-
-  // TODO: when switching search types, the old data is still in the results array
-  // we might need to also return the "result datatype" from the useSearch hook
-  // and rely on that instead of searchType for our local conditions
 
   const paginatedResults: SearchResult<SearchType> = useMemo(() => {
     if (results.length === 0) {
@@ -180,7 +189,7 @@ const View : FC = () => {
   const searchChange = (event: React.SyntheticEvent, type: SearchType) => {
     setSearchType(type);
     setPage(1);
-    setPerPage(type === "List" ? 30 : 10);
+    setPerPage(type === "Vehicle" ? 15 : 30);
   };
 
   const handleSearch = (data: { query: string }) => {
@@ -309,8 +318,33 @@ const View : FC = () => {
                 />
               </StyledPanel>
               <StyledPanel value="Profile">
-                {/* TODO: show profiles matching result */}
-                {status}
+                <List>
+                  {(status === LookupStatus.Loading) && (<Repeater count={8} Component={ProfileSkeleton} />)}
+                  {(status === LookupStatus.Success && paginatedResults.length === 0) && (
+                    <NoSearchResults />
+                  )}
+                  {(status === LookupStatus.Success && paginatedResults.length > 0) && (
+                    paginatedResults.map((result) => {
+                      const { uuid, username, avatar, display_name } = result as ProfileSearchResult;
+
+                      if (!uuid || !username) {
+                        return null;
+                      }
+
+                      return (
+                        <ListItem key={uuid} component={StyledLink} to={`/profile/${uuid}`} divider>
+                          <ListItemAvatar>
+                            <ProfileAvatar username={username} avatar={avatar} />
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={display_name && <Typography variant="body1" fontWeight={600}>{display_name}</Typography>}
+                            secondary={`@${username}`}
+                          />
+                        </ListItem>
+                      );
+                    })
+                  )}
+                </List>
                 <StyledPagination
                   count={Math.ceil(resultCount / perPage) || 1}
                   page={page}

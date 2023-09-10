@@ -44,12 +44,6 @@ type ProfileNotification = {
   uuid: string;
 };
 
-type ProfileFollower = {
-  avatar: string;
-  first_name: string;
-  follower_count: number;
-  id: number;
-  profile_picture_uuid: string;
-  username: string;
-  uuid: string;
-};
+type ProfileFollower = Pick<Profile, "id" | "avatar" | "username" | "uuid" | "first_name" | "follower_count" | "profile_picture_uuid">;
+
+type ProfileSearchResult = Pick<Profile, "display_name" | "avatar" | "username" | "uuid">;
