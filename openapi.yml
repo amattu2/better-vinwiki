@@ -6,13 +6,107 @@ info:
   version: "1.0.0"
 servers:
   - url: https://rest.vinwiki.com
-    description: Production API Server
+    description: Production REST API
+  - url: https://media.vinwiki.com/media
+    description: Production Media API
+security:
+  - BearerAuth: []
+
 paths:
-  /logout:
+
+  #
+  # Authentication
+  # tags: authentication
+  #
+
+  /auth/authenticate:
+    post:
+      operationId: /authenticate
+      tags:
+        - authentication
+      security: []
+      summary: Login
+      description: Perform a login request and receive HTTP Bearer token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login:
+                  type: string
+                  example: username
+                  description: Username or Email Address accepted
+                password:
+                  type: string
+                  example: password123
+      responses:
+        "200":
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  person:
+                    $ref: '#/components/schemas/Profile'
+                  token:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        description: The HTTP Bearer token for API requests
+
+  /auth/register:
+    post:
+      operationId: /register
+      tags:
+        - authentication
+      security: []
+      summary: Register
+      description: Register a new user account. This endpoint does not create a Bearer Token for you.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: example@example.com
+                  description: Account email address
+                login:
+                  type: string
+                  example: username
+                  description: Account Username
+                password:
+                  type: string
+                  example: password123
+      responses:
+        "200":
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+        # TODO: error response
+
+  /auth/logout:
     post:
       operationId: /logout
-      summary: Logout from VINwiki
-      description: TBD
+      tags:
+        - authentication
+      summary: Logout
+      description: Logout from REST service and invalidate HTTP Bearer token
       responses:
         "200":
           description: Successful query
@@ -24,13 +118,451 @@ paths:
                   status:
                     type: string
                     example: ok
-          headers:
-            Authorization:
-              $ref: '#/components/headers/Authorization'
+
+  #
+  # People / Profiles
+  # tags: profiles
+  #
+
+  /person/profile/{uuid}:
+    get:
+      operationId: /person/profile
+      tags:
+        - profiles
+      security: []
+      summary: Profile
+      description: Get a profile of person with the `:uuid`
+        No auth is currently required, likely by accident.
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  profile:
+                    $ref: "#/components/schemas/Profile"
+
+  /person/search/{unknown}/{count}:
+    post:
+      operationId: /person/search
+      tags:
+        - profiles
+      security: []
+      summary: Profile Search
+      description: Search for profiles matching `query`
+        No auth is currently required, likely by accident.
+      parameters:
+        - $ref: "#components/parameters/unknown"
+        - $ref: "#components/parameters/pagination_count"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  example: benmourside
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  results:
+                    type: object
+                    properties:
+                      people:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Profile"
+
+  /person/for_username/{username}:
+    get:
+      operationId: /person/for_username
+      tags:
+        - profiles
+      security: []
+      summary: Username Search
+      description: Attempts to find a single person by their username.
+        No auth is currently required, likely by accident.
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  person:
+                    $ref: "#/components/schemas/Profile"
+
+  /person/notification_count:
+    get:
+      operationId: /person/notification_count
+      tags:
+        - profiles
+      summary: Unread Notifications
+      description: Returns the number of unread notifications for the authenticated user
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  notification_count:
+                    type: object
+                    properties:
+                      unread:
+                        type: number
+                        example: 2
+
+  /person/notifications/{unknown}/{count}:
+    get:
+      operationId: /person/notifications
+      tags:
+        - profiles
+      summary: Notifications
+      description: Returns the notifications for a user. Includes both read and unread
+      parameters:
+        - $ref: "#components/parameters/unknown"
+        - $ref: "#components/parameters/pagination_count"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  qty:
+                    type: number
+                    example: 100
+                  notifications:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        notification:
+                          type: object
+                          $ref: "#/components/schemas/ProfileNotification"
+
+  /person/feed/{uuid}/{count}/{next_post_uuid}:
+    get:
+      operationId: /person/feed
+      tags:
+        - profiles
+      summary: Post Feed
+      description: Returns the post Feed curated for the user. All path parameters are optional
+        and `profile_uuid` can be substituted with the value `me` to fetch for the current user.
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+        - $ref: "#components/parameters/pagination_count"
+        - $ref: "#components/parameters/next_post_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  end:
+                    type: boolean
+                    description: No more posts
+                  count:
+                    type: number
+                    example: 100
+                  next_page_uuid:
+                    type: string
+                    description: The post `uuid` to start the next page at
+                  since_post_uuid:
+                    type: string
+                    description: The post `uuid` that the prev page started at
+                  feed:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        post:
+                          type: object
+                          $ref: "#/components/schemas/FeedPost"
+
+  /person/filtered_feed/{uuid}/{count}/{next_post_uuid}:
+    get:
+      operationId: /person/filtered_feed
+      tags:
+        - profiles
+      summary: Filtered Post Feed
+      description: Returns the post Feed curated based on the people and vehicles the user is following.
+        All path parameters are optional and `profile_uuid` can be substituted with the value `me` to fetch for the current user.
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+        - $ref: "#components/parameters/pagination_count"
+        - $ref: "#components/parameters/next_post_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  end:
+                    type: boolean
+                    description: No more posts
+                  count:
+                    type: number
+                    example: 100
+                  next_page_uuid:
+                    type: string
+                    description: The post `uuid` to start the next page at
+                  since_post_uuid:
+                    type: string
+                    description: The post `uuid` that the prev page started at
+                  feed:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        post:
+                          type: object
+                          $ref: "#/components/schemas/FeedPost"
+
 components:
-  headers:
-    Authorization:
-      description: HTTP Auth Bearer Token
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+  parameters:
+    profile_uuid:
+      name: uuid
+      description: The `uuid` of the profile to fetch content for
+      in: path
+      required: true
       schema:
         type: string
-      example: 10
+        example: f81d4fae-7dec-11d0-a765-00a0c91e6bf6
+    next_post_uuid:
+      name: next_post_uuid
+      description: The `uuid` of the first post in the next set of posts
+      in: path
+      required: true
+      schema:
+        type: string
+        example: f81d4fae-7dec-11d0-a765-00a0c91e6bf6
+    unknown:
+      name: unknown
+      description: The contents of this parameter is unknown, but must be provided for pagination.
+      in: path
+      required: true
+      schema:
+        type: number
+        example: 0
+    pagination_count:
+      name: count
+      description: An optional result count limit. If omitted,
+        the API returns a consistent number of results that vary by endpoint.
+      in: path
+      required: true
+      schema:
+        type: number
+        example: 100
+  schemas:
+    ProfileNotification:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+        created_ago:
+          type: string
+        created_date:
+          type: string
+          format: date-time
+        post:
+          $ref: '#/components/schemas/FeedPost'
+        recipient_id:
+          type: string
+        recipient_uuid:
+          type: string
+        seen:
+          type: boolean
+        sender:
+          $ref: '#/components/schemas/Profile'
+        text:
+          type: string
+        type:
+          type: string
+          enum: [post_mention, origin_author]
+        uuid:
+          type: string
+    FeedPost:
+      type: object
+      properties:
+        client:
+          type: string
+        comment_count:
+          type: integer
+          format: int32
+        data:
+          type: object
+        dest_url:
+          type: string
+        event_date:
+          type: string
+          format: date-time
+        event_time:
+          type: string
+          format: date-time
+        id:
+          type: string
+        image:
+          $ref: '#/components/schemas/FeedPostImage'
+        locale:
+          type: string
+        mileage:
+          type: integer
+          format: int32
+        person:
+          $ref: '#/components/schemas/Profile'
+        post_date:
+          type: string
+          format: date-time
+        post_date_ago:
+          type: string
+        post_text:
+          type: string
+        post_time:
+          type: string
+          format: date-time
+        subject_uuid:
+          type: string
+        type:
+          type: string
+          enum: [photo, generic, list_add]
+        uuid:
+          type: string
+        vehicle:
+          $ref: '#/components/schemas/Vehicle'
+    FeedPostImage:
+      type: object
+      properties:
+        id:
+          type: string
+        large:
+          type: string
+        poster:
+          type: string
+        thumb:
+          type: string
+        uuid:
+          type: string
+    Profile:
+      type: object
+      description: A profile/person model. See the Better-VINwiki `Profile` Type for the full set of values
+        Please be aware that certain API endpoints return abbreviated versions of this object.
+      properties:
+        avatar:
+          type: string
+        bio:
+          type: string
+        display_name:
+          type: string
+        email:
+          type: string
+          format: email
+        first_name:
+          type: string
+        follower_count:
+          type: integer
+          format: int32
+        following_count:
+          type: integer
+          format: int32
+        following_vehicle_count:
+          type: integer
+          format: int32
+        full_name:
+          type: string
+        id:
+          type: integer
+          format: int64
+        last_name:
+          type: string
+        location:
+          type: string
+        post_count:
+          type: integer
+          format: int32
+        profile_picture_uuid:
+          type: string
+        social_facebook:
+          type: string
+        social_instagram:
+          type: string
+        social_linkedin:
+          type: string
+        social_twitter:
+          type: string
+        username:
+          type: string
+        uuid:
+          type: string
+        website_url:
+          type: string
+    Vehicle:
+      type: object
+      description: A profile/person model. See the Better-VINwiki `Profile` Type for the full set of values
+        Please be aware that certain API endpoints return abbreviated versions of this object.
+      properties:
+        icon_photo:
+          type: string
+        long_name:
+          type: string
+        make:
+          type: string
+        model:
+          type: string
+        trim:
+          type: string
+        vin:
+          type: string
+        year:
+          type: string

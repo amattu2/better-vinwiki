@@ -8,14 +8,13 @@ export const ENDPOINTS = {
 
   /* Person Endpoints */
   profile: `${API_URL}person/profile/`,
-  profile_search: `${API_URL}person/search/`, // POST { query } PATH: unknown/:count
+  profile_search: `${API_URL}person/search/`,
   profile_username_search: `${API_URL}person/for_username/`,
   notification_count: `${API_URL}person/notification_count/me`,
   notifications: `${API_URL}person/notifications`,
-  feed: `${API_URL}person/feed/`, // PATH: me/:count/:last_id
-  filtered_feed: `${API_URL}person/filtered_feed/`, // PATH: me/:count/:last_id
+  feed: `${API_URL}person/feed/`,
+  filtered_feed: `${API_URL}person/filtered_feed/`,
   posts: `${API_URL}person/posts/`,
-  comments: `${API_URL}post/comments/`,
   is_following: `${API_URL}person/is_following/`,
   follow: `${API_URL}person/follow/`,
   recent_vins: `${API_URL}person/recent_vins/`, // PATH: :uuid/:count
@@ -35,6 +34,7 @@ export const ENDPOINTS = {
 
   /* Post Endpoints */
   post_delete: `${API_URL}post/delete/`,
+  comments: `${API_URL}post/comments/`,
 
   /* List Endpoints */
   list_search: `${API_URL}lists/search`, // POST { query }
