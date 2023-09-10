@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { useReadLocalStorage } from 'usehooks-ts';
 import { Box, CssBaseline, Stack } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -21,8 +22,9 @@ const root = ReactDOM.createRoot(
 );
 
 const ProtectedRoutes = () => {
-  const token = localStorage.getItem("token") || null;
-  if (!token) {
+  const token = useReadLocalStorage<string>("token");
+  const profile = useReadLocalStorage<AuthProfile | null>("profile");
+  if (!token || !profile?.uuid) {
     return <Navigate to="/login" />;
   }
 

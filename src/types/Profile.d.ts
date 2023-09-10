@@ -1,5 +1,5 @@
 type Profile = {
-  avatar: never; // TODO: Figure out what this is
+  avatar: string;
   bio: string;
   display_name: string;
   email: string;
@@ -12,7 +12,7 @@ type Profile = {
   last_name: string;
   location: string;
   post_count: number;
-  profile: never; // TODO: Figure out what this is
+  // profile: never;
   profile_picture_uuid: string;
   social_facebook: string;
   social_instagram: string;
@@ -21,6 +21,13 @@ type Profile = {
   username: string;
   uuid: string;
   website_url: string;
+};
+
+type AuthProfile = Profile & {
+  followingProfiles?: ProfileFollower[];
+  followingVehicles?: VehicleFollower[];
+  recentVehicles?: Vehicle[];
+  profileLists?: ProfileLists;
 };
 
 type ProfileNotification = {
@@ -36,3 +43,7 @@ type ProfileNotification = {
   type: "post_mention" | "origin_author"; // TODO: Add more types
   uuid: string;
 };
+
+type ProfileFollower = Pick<Profile, "id" | "avatar" | "username" | "uuid" | "first_name" | "follower_count" | "profile_picture_uuid">;
+
+type ProfileSearchResult = Pick<Profile, "display_name" | "avatar" | "username" | "uuid">;

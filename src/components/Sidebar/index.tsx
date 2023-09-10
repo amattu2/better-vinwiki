@@ -61,7 +61,7 @@ const StyledLink = styled(Link)({
 });
 
 const Sidebar: FC = () => {
-  const { authenticated, user } = useAuthProvider();
+  const { authenticated, profile } = useAuthProvider();
   const { unseen } = useNotificationCountProvider();
   const { pathname } = useLocation();
 
@@ -84,11 +84,11 @@ const Sidebar: FC = () => {
       </StyledLogoBox>
       <StyledAvatarBox>
         <StyledLink to="/profile">
-          {user?.avatar ? (
-            <StyledLogo src={user.avatar} alt="user" />
+          {profile?.avatar ? (
+            <StyledLogo src={profile.avatar} alt="user" />
           ) : (
             <Avatar sx={{ width: 36, height: 36 }}>
-              {user?.username?.charAt(0).toUpperCase()}
+              {profile?.username?.charAt(0).toUpperCase()}
             </Avatar>
           )}
         </StyledLink>

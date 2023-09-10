@@ -3,17 +3,21 @@ import { KeyboardArrowUp } from '@mui/icons-material';
 import { Grow, Fab, styled, Box } from '@mui/material';
 import useScrollDirection, { ScrollDirection } from '../../hooks/useScrollDirection';
 
+type Props = {
+  topGap?: boolean;
+};
+
 const StyledFabBox = styled(Box)({
   position: "fixed",
   bottom: "16px",
   right: "16px",
 });
 
-export const ScrollToTop: FC = () => {
+export const ScrollToTop: FC<Props> = ({ topGap = true } : Props) => {
   const [direction, { offset, innerHeight }] = useScrollDirection();
 
   const isVisible: boolean = useMemo(() => (
-    offset > innerHeight && direction === ScrollDirection.Up
+    (!topGap ? offset > 0 : offset > innerHeight) && direction === ScrollDirection.Up
   ), [offset, direction]);
 
   const onClick = () => {

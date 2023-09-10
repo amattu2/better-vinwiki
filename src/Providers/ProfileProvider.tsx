@@ -110,7 +110,7 @@ export const ProfileProvider: FC<Props> = ({
   uuid, withPosts, withFollowing, withLists,
   children,
 }: Props) => {
-  const { token, user } = useAuthProvider();
+  const { token, profile: authProfile } = useAuthProvider();
   const [state, setState] = useState<ProviderState>(defaultState);
 
   useEffect(() => {
@@ -124,7 +124,7 @@ export const ProfileProvider: FC<Props> = ({
       const [profile, posts, following, lists] = (await Promise.allSettled([
         fetchProfile(uuid, token),
         withPosts ? fetchPosts(uuid, token) : Promise.resolve([]),
-        withFollowing && uuid !== user?.uuid ? fetchFollowing(uuid, token) : Promise.resolve(false),
+        withFollowing && uuid !== authProfile?.uuid ? fetchFollowing(uuid, token) : Promise.resolve(false),
         withLists ? fetchLists(uuid, token) : Promise.resolve([]),
       ])).map((r) => (r.status === "fulfilled" ? r.value : null));
 
@@ -142,7 +142,7 @@ export const ProfileProvider: FC<Props> = ({
         });
       }
     })();
-  }, [token, uuid, withPosts, withFollowing, withLists, user?.uuid]);
+  }, [token, uuid, withPosts, withFollowing, withLists]);
 
   return (
     <Context.Provider value={state}>

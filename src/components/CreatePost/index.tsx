@@ -45,6 +45,7 @@ const StyledCard = styled(Card, { shouldForwardProp: (p) => p !== "expanded" })(
 
 const StyledTab = styled(Tab)({
   minHeight: "48px",
+  textTransform: "none",
 });
 
 const StyledStepContent = styled(StepContent)({
@@ -63,7 +64,7 @@ const StyledTextField = styled(TextField)({
  * @returns {JSX.Element}
  */
 const CreatePost: FC = () => {
-  const { user, token } = useAuthProvider();
+  const { profile, token } = useAuthProvider();
   const { createPost: addFeedPost } = useFeedProvider();
 
   const [expanded, setExpanded] = useState<boolean>(false);
@@ -117,7 +118,7 @@ const CreatePost: FC = () => {
     image: postType === "photo" && imageUpload?.[0]
       ? { large: URL.createObjectURL(imageUpload?.[0]) }
       : null,
-    person: { ...user },
+    person: { ...profile },
     mileage: watch("mileage"),
     locale: watch("locale"),
     vehicle: selectedVehicle,
@@ -184,7 +185,7 @@ const CreatePost: FC = () => {
       return;
     }
 
-    addFeedPost?.({ ...post, person: user, vehicle: selectedVehicle });
+    addFeedPost?.({ ...post, person: profile, vehicle: selectedVehicle });
     setPosting(false);
     resetPost();
   };
@@ -225,7 +226,7 @@ const CreatePost: FC = () => {
                     <PlateDecoder
                       open={plateDecoderOpen}
                       onConfirm={(vehicle) => {
-                        setSelectedVehicle(vehicle);
+                        setSelectedVehicle(vehicle as unknown as Vehicle);
                         setPlateDecoderOpen(false);
                       }}
                       onCancel={() => setPlateDecoderOpen(false)}
@@ -328,7 +329,7 @@ const CreatePost: FC = () => {
 
           {!expanded && (
             <Stack direction="row" spacing={2} alignItems="center">
-              <ProfileAvatar username={user?.username || ""} avatar={user?.avatar} />
+              <ProfileAvatar username={profile?.username || ""} avatar={profile?.avatar} />
               <TextField placeholder="Compose a new post" size="small" onClick={() => setExpand(true)} fullWidth />
               <IconButton onClick={() => { setPostType("photo"); setExpand(true); }}>
                 <AddPhotoAlternate />

@@ -8,7 +8,7 @@ export const ENDPOINTS = {
 
   /* Person Endpoints */
   profile: `${API_URL}person/profile/`,
-  profile_search: `${API_URL}person/search/`,
+  profile_search: `${API_URL}person/search/`, // POST { query } PATH: unknown/:count
   profile_username_search: `${API_URL}person/for_username/`,
   notification_count: `${API_URL}person/notification_count/me`,
   notifications: `${API_URL}person/notifications`,
@@ -18,14 +18,14 @@ export const ENDPOINTS = {
   comments: `${API_URL}post/comments/`,
   is_following: `${API_URL}person/is_following/`,
   follow: `${API_URL}person/follow/`,
-  recent_vins: `${API_URL}person/recent_vins`,
-  lists: `${API_URL}person/lists/`,
-  following_vehicles: `${API_URL}person/following_vehicles/`, // TODO: implement (vehicles following)
+  recent_vins: `${API_URL}person/recent_vins/`, // PATH: :uuid/:count
+  lists: `${API_URL}person/lists/`, // PATH: :uuid/:count
+  following_vehicles: `${API_URL}person/following_vehicles/`, // PATH: :uuid
   following: `${API_URL}person/following/`, // TODO: implement (user following)
   followers: `${API_URL}person/followers/`, // TODO: implement (people following user)
 
   /* Vehicle Endpoints */
-  vehicle_search: `${API_URL}vehicle/search`,
+  vehicle_search: `${API_URL}vehicle/search/`, // POST { query } PATH: unknown/:count
   plate_lookup: `${API_URL}vehicle/plate_lookup`,
   vehicle: `${API_URL}vehicle/vin/`,
   vehicle_feed: `${API_URL}/vehicle/feed/`,
@@ -37,7 +37,7 @@ export const ENDPOINTS = {
   post_delete: `${API_URL}post/delete/`,
 
   /* List Endpoints */
-  list_search: `${API_URL}lists/search`,
+  list_search: `${API_URL}lists/search`, // POST { query }
   list: `${API_URL}lists/id/`,
   list_following: `${API_URL}lists/is_following/`,
   list_followers: `${API_URL}lists/followers/`, // TODO: list the followers implement PATH: list :id

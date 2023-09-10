@@ -41,7 +41,7 @@ type Props = {
 };
 
 export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) => {
-  const { token, user } = useAuthProvider();
+  const { token, profile } = useAuthProvider();
   const [cache, setCache] = useSessionStorage<Pick<ProviderState, "posts" | "count"> | null>("FeedProvider", null);
   const [state, setState] = useState<ProviderState>(cache
     ? { ...defaultState, ...cache, status: ProviderStatus.RELOADING }
@@ -89,13 +89,13 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
   };
 
   const next = async (count = limit): Promise<boolean> => {
-    if (!nextPage || !token || !user?.uuid) {
+    if (!nextPage || !token || !profile?.uuid) {
       return false;
     }
 
     setState((prev) => ({ ...prev, status: ProviderStatus.RELOADING }));
 
-    const endpoint = `${filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed}${user?.uuid}/${count}/${nextPage}`;
+    const endpoint = `${filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed}${profile?.uuid}/${count}/${nextPage}`;
     const response = await fetch(endpoint, {
       method: "GET",
       headers: {
@@ -120,7 +120,7 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
   };
 
   useEffect(() => {
-    if (!token || !user?.uuid) {
+    if (!token || !profile?.uuid) {
       return () => null;
     }
 
@@ -133,7 +133,7 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
     }));
 
     (async () => {
-      const endpoint = `${filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed}${user.uuid}/${limit}`;
+      const endpoint = `${filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed}${profile.uuid}/${limit}`;
       const response = await fetch(endpoint, {
         method: "GET",
         headers: {
@@ -155,7 +155,7 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
     })();
 
     return () => controller.abort();
-  }, [filtered, limit, token, user?.uuid]);
+  }, [filtered, limit, token]);
 
   useEffect(() => {
     setCache({ posts: state?.posts, count: state?.count });

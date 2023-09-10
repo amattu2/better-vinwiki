@@ -1,9 +1,9 @@
 import React, { FC, useState } from "react";
-import { Delete } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
   Button, Dialog, DialogActions,
-  DialogContent, DialogTitle, IconButton, MenuItem,
+  DialogContent, DialogTitle, List, ListItem,
+  ListItemAvatar, ListItemText, MenuItem,
   TextField, Typography, styled,
 } from "@mui/material";
 import { Form, useForm } from "react-hook-form";
@@ -12,10 +12,11 @@ import { useAuthProvider } from "../../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
 import { Countries, Territories } from "../../config/Locations";
 import { formatVehicleName } from "../../utils/vehicle";
+import ProfileAvatar from "../ProfileAvatar";
 
 type Props = {
   open: boolean;
-  onConfirm?: (vehicle: Vehicle | null) => void;
+  onConfirm?: (vehicle: PlateDecodeResponse | null) => void;
   onCancel?: () => void;
 };
 
@@ -35,7 +36,39 @@ const StyledTextField = styled(TextField)({
   marginTop: "18px !important",
 });
 
-const plateLookup = async (token: string, data: Fields): Promise<Vehicle | null> => {
+const StyledLink = styled(Link)({
+  textDecoration: "none",
+  color: "inherit",
+});
+
+const ResultItem : FC<{ vehicle: PlateDecodeResponse, onCancel: () => void }> = ({ vehicle, onCancel }) => {
+  const { description, vin } = vehicle;
+
+  return (
+    <List>
+      <ListItem>
+        <ListItemAvatar>
+          <ProfileAvatar username={description} />
+        </ListItemAvatar>
+        <ListItemText
+          primary={(
+            <StyledLink to={`/vehicle/${vin}`}>
+              <Typography variant="body1" fontWeight={600}>
+                {formatVehicleName(vehicle)}
+              </Typography>
+            </StyledLink>
+          )}
+          secondary={vin}
+        />
+        <Button onClick={onCancel}>
+          Not It
+        </Button>
+      </ListItem>
+    </List>
+  );
+};
+
+const plateLookup = async (token: string, data: Fields): Promise<PlateDecodeResponse | null> => {
   const response = await fetch(ENDPOINTS.plate_lookup, {
     method: "POST",
     headers: {
@@ -57,7 +90,7 @@ const plateLookup = async (token: string, data: Fields): Promise<Vehicle | null>
 const DecoderDialog: FC<Props> = ({ open, onConfirm, onCancel }: Props) => {
   const { token } = useAuthProvider();
   const { control, register, watch } = useForm<Fields>();
-  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  const [selectedVehicle, setSelectedVehicle] = useState<PlateDecodeResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const onConfirmWrapper = async () => {
@@ -127,20 +160,7 @@ const DecoderDialog: FC<Props> = ({ open, onConfirm, onCancel }: Props) => {
           </StyledTextField>
         </Form>
         {selectedVehicle ? (
-          <Typography variant="body2" sx={{ mt: 1 }}>
-            Found Match &ndash;
-            {" "}
-            <Link to={`/vehicle/${selectedVehicle.vin}`} target="_blank">
-              {formatVehicleName(selectedVehicle)}
-              {" "}
-              (
-              {selectedVehicle.vin}
-              )
-            </Link>
-            <IconButton onClick={clearSelection}>
-              <Delete fontSize="small" />
-            </IconButton>
-          </Typography>
+          <ResultItem vehicle={selectedVehicle} onCancel={clearSelection} />
         ) : (
           <Typography variant="body2" sx={{ mt: 1 }}>
             No matches found

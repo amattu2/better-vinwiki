@@ -33,18 +33,6 @@ const fetchVehicles = async (searchValue: string, token: string, controller: Rea
   return status === STATUS_OK && results?.vehicles ? results.vehicles : [];
 };
 
-const fetchRecentVehicles = async (token: string): Promise<Vehicle[]> => {
-  const response = await fetch(ENDPOINTS.recent_vins, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const { status, recent_vins } = await response.json();
-  return status === STATUS_OK ? recent_vins : [];
-};
-
 /**
  * A autocomplete/typeahead search component for Vehicles
  * that handles debouncing and fetching results from the API
@@ -53,12 +41,12 @@ const fetchRecentVehicles = async (token: string): Promise<Vehicle[]> => {
  * @returns {JSX.Element}
  */
 export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
-  const { token } = useAuthProvider();
+  const { token, profile } = useAuthProvider();
+  const { followingVehicles: recentVehicles } = profile || {};
 
   const [searchValue, setSearchValue] = useState<string>("");
   const [options, setOptions] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [recentVehicles, setRecentVehicles] = useState<Vehicle[]>([]);
 
   const controllerRef = useRef<AbortController>(new AbortController());
   const mergedOptions = useMemo(() => {
@@ -109,14 +97,6 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
     });
   }, [searchValue]);
 
-  useEffect(() => {
-    if (!token) {
-      return;
-    }
-
-    fetchRecentVehicles(token).then((v) => setRecentVehicles(v));
-  }, [token]);
-
   return (
     <Autocomplete
       autoComplete
@@ -124,7 +104,7 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
       loading={loading}
       options={mergedOptions}
       groupBy={(option: Vehicle) => (
-        recentVehicles.find((v) => v.vin === option.vin) ? "Recents" : option.make.toUpperCase()
+        recentVehicles?.find((v) => v.vin === option.vin) ? "Recents & Following" : option.make.toUpperCase()
       )}
       renderInput={(params) => <TextField {...params} label="Search by VIN or Description" />}
       getOptionLabel={(option: Vehicle) => formatVehicleName(option)}
