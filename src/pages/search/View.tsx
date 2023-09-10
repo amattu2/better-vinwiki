@@ -98,29 +98,18 @@ const NoSearchResults: FC = () => (
   </Typography>
 );
 
+const TableCellSkeleton: FC = () => (
+  <TableCell>
+    <Skeleton variant="text" animation="wave" />
+  </TableCell>
+);
+
 const VehicleSkeleton: FC = () => (
   <TableRow>
     <TableCell>
       <Skeleton variant="rectangular" width={75} height={75} animation="wave" />
     </TableCell>
-    <TableCell>
-      <Skeleton variant="text" animation="wave" />
-    </TableCell>
-    <TableCell>
-      <Skeleton variant="text" animation="wave" />
-    </TableCell>
-    <TableCell>
-      <Skeleton variant="text" animation="wave" />
-    </TableCell>
-    <TableCell>
-      <Skeleton variant="text" animation="wave" />
-    </TableCell>
-    <TableCell>
-      <Skeleton variant="text" animation="wave" />
-    </TableCell>
-    <TableCell>
-      <Skeleton variant="text" animation="wave" />
-    </TableCell>
+    <Repeater count={6} Component={TableCellSkeleton} />
   </TableRow>
 );
 
