@@ -617,12 +617,299 @@ paths:
                         list:
                           type: object
                           $ref: "#/components/schemas/List"
+
+  #
+  # Vehicles
+  # tags: vehicles
+  #
+
+  /vehicle/vin/{vin}:
+    get:
+      operationId: /vehicle/vin
+      tags:
+        - vehicles
+      summary: Vehicle
+      description: Get a vehicle by `vin`
+      parameters:
+        - $ref: "#components/parameters/vehicle_vin"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  vehicle:
+                    $ref: "#/components/schemas/Vehicle"
+
+  /vehicle/search/{unknown}/{count}:
+    post:
+      operationId: /vehicle/search
+      tags:
+        - vehicles
+      summary: Vehicle Search
+      description: Search for vehicles matching `query`.
+        Supports VIN or Vehicle Description as query.
+      parameters:
+        - $ref: "#components/parameters/unknown"
+        - $ref: "#components/parameters/pagination_count"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  example: 2011 BMW 335i
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  results:
+                    type: object
+                    properties:
+                      vehicles:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Vehicle"
+                  term:
+                    type: string
+                    description: The extracted search terms from `query`
+                  count:
+                    type: number
+                    example: 100
+
+  /vehicle/feed/{vin}/{count}/{next_post_uuid}:
+    get:
+      operationId: /vehicle/feed
+      tags:
+        - vehicles
+      summary: Vehicle Post Feed
+      description: Returns the post Feed curated for the vehicle. `next_post_uuid` and `count` are optional parameters
+      parameters:
+        - $ref: "#components/parameters/vehicle_vin"
+        - $ref: "#components/parameters/pagination_count"
+        - $ref: "#components/parameters/next_post_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  end:
+                    type: boolean
+                    description: No more posts
+                  count:
+                    type: number
+                    example: 100
+                  next_page_uuid:
+                    type: string
+                    description: The post `uuid` to start the next page at
+                  since_post_uuid:
+                    type: string
+                    description: The post `uuid` that the prev page started at
+                  feed:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        post:
+                          type: object
+                          $ref: "#/components/schemas/FeedPost"
+
+  /vehicle/is_following/{vin}:
+    get:
+      operationId: /vehicle/is_following
+      tags:
+        - vehicles
+      summary: Is Following
+      description: Provides information on if if the authenticated user is following `vin`
+      parameters:
+        - $ref: "#components/parameters/vehicle_vin"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  following:
+                    type: boolean
+
+  /vehicle/follow/{vin}:
+    post:
+      operationId: /vehicle/follow
+      tags:
+        - vehicles
+      summary: Follow Vehicle
+      description: Follow or unfollow `vin`. The REST API will automatically perform the opposite action of the current following state.
+        Supports either GET or POST requests
+      parameters:
+        - $ref: "#components/parameters/vehicle_vin"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  follow_result:
+                    type: object
+                    properties:
+                      vin:
+                        type: string
+                      state:
+                        enum: ["following", "unfollowing"]
+                      message:
+                        type: string
+                        description: A user-friendly description of the action status
+                        example: "You are now following xyz"
+
+  /vehicle/post/{vin}:
+    post:
+      operationId: /vehicle/post
+      tags:
+        - vehicles
+      summary: Create Post
+      description: Create a new post attached to `vin`
+        All known providable fields are listed in the schema. May support more fields
+        than currently listed.
+      parameters:
+        - $ref: "#components/parameters/vehicle_vin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - client
+                - class_name
+              properties:
+                client:
+                  type: string
+                  description: A client identifier string
+                event_date:
+                  type: string
+                  format: date-time
+                  description: The date of the event the post is about
+                locale:
+                  type: string
+                  description: The location of the event the post is about
+                mileage:
+                  type: integer
+                  format: int32
+                  description: The mileage of the vehicle at the time of the event
+                class_name:
+                  enum: [photo, generic]
+                  description: The type of post to create. If `photo`,
+                    a image must be uploaded to the media service.
+                    See `add/photo/vehicle` under media service.
+                text:
+                  type: string
+                  description: The text content of the post. Known as `post_text` everywhere else.
+                image_uuid:
+                  type: string
+                  description: The UUID of the image to attach to the post. Required if `class_name` is `photo`
+                    Returned from the media service when uploading an image.
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  post:
+                    type: object
+                    $ref: "#/components/schemas/FeedPost"
+
+  /vehicle/plate_lookup:
+    post:
+      operationId: /vehicle/plate_lookup
+      tags:
+        - vehicles
+      summary: Decode Plate (PL82VIN)
+      description: Create a new post attached to `vin`
+        All known providable fields are listed in the schema. May support more fields
+        than currently listed.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - plate
+                - country
+              properties:
+                plate:
+                  type: string
+                  description: The license plate of the vehicle to decode
+                country:
+                  enum: ["US", "UK"]
+                  description: The country of the license plate
+                state:
+                  type: string
+                  description: The 2-letter state code of the license plate if applicable
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  plate_lookup:
+                    type: object
+                    $ref: "#/components/schemas/Vehicle"
+
 components:
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
   parameters:
+    vehicle_vin:
+      name: vin
+      description: The `vin` of the vehicle to fetch content for or against
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 1GNEK13Z43J126164
     profile_uuid:
       name: uuid
       description: The `uuid` of the profile to fetch content for or against
@@ -804,7 +1091,7 @@ components:
           type: string
     Vehicle:
       type: object
-      description: A profile/person model. See the Better-VINwiki `Profile` Type for the full set of values
+      description: A vehicle data model. See the Better-VINwiki `Vehicle` Type for the full set of values
         Please be aware that certain API endpoints return abbreviated versions of this object.
       properties:
         icon_photo:

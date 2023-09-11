@@ -24,13 +24,13 @@ export const ENDPOINTS = {
   lists: `${API_URL}person/lists/`,
 
   /* Vehicle Endpoints */
-  vehicle_search: `${API_URL}vehicle/search/`, // POST { query } PATH: unknown/:count
-  plate_lookup: `${API_URL}vehicle/plate_lookup`,
   vehicle: `${API_URL}vehicle/vin/`,
+  vehicle_search: `${API_URL}vehicle/search/`,
   vehicle_feed: `${API_URL}/vehicle/feed/`,
   vehicle_is_following: `${API_URL}vehicle/is_following/`,
-  vehicle_follow: `${API_URL}vehicle/follow/`, // TODO: follow a vehicle GET :/vin
+  vehicle_follow: `${API_URL}vehicle/follow/`,
   vehicle_post: `${API_URL}vehicle/post/`,
+  plate_lookup: `${API_URL}vehicle/plate_lookup`,
 
   /* Post Endpoints */
   post_delete: `${API_URL}post/delete/`,
