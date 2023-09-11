@@ -134,7 +134,7 @@ paths:
       description: Get a profile of person with the `:uuid`
         No auth is currently required, likely by accident.
       parameters:
-        - $ref: "#components/parameters/profile_uuid"
+        - $ref: "#/components/parameters/profile_uuid"
       responses:
         "200":
           description: Successful query
@@ -159,8 +159,8 @@ paths:
       description: Search for profiles matching `query`
         No auth is currently required, likely by accident.
       parameters:
-        - $ref: "#components/parameters/unknown"
-        - $ref: "#components/parameters/pagination_count"
+        - $ref: "#/components/parameters/unknown"
+        - $ref: "#/components/parameters/pagination_count"
       requestBody:
         required: true
         content:
@@ -252,8 +252,8 @@ paths:
       summary: Notifications
       description: Returns the notifications for a user. Includes both read and unread
       parameters:
-        - $ref: "#components/parameters/unknown"
-        - $ref: "#components/parameters/pagination_count"
+        - $ref: "#/components/parameters/unknown"
+        - $ref: "#/components/parameters/pagination_count"
       responses:
         "200":
           description: Successful query
@@ -274,7 +274,6 @@ paths:
                       type: object
                       properties:
                         notification:
-                          type: object
                           $ref: "#/components/schemas/ProfileNotification"
 
   /person/feed/{uuid}/{count}/{next_post_uuid}:
@@ -286,9 +285,9 @@ paths:
       description: Returns the post Feed curated for the user. All path parameters are optional
         and `profile_uuid` can be substituted with the value `me` to fetch for the current user.
       parameters:
-        - $ref: "#components/parameters/profile_uuid"
-        - $ref: "#components/parameters/pagination_count"
-        - $ref: "#components/parameters/next_post_uuid"
+        - $ref: "#/components/parameters/profile_uuid"
+        - $ref: "#/components/parameters/pagination_count"
+        - $ref: "#/components/parameters/next_post_uuid"
       responses:
         "200":
           description: Successful query
@@ -318,7 +317,6 @@ paths:
                       type: object
                       properties:
                         post:
-                          type: object
                           $ref: "#/components/schemas/FeedPost"
 
   /person/filtered_feed/{uuid}/{count}/{next_post_uuid}:
@@ -330,9 +328,9 @@ paths:
       description: Returns the post Feed curated based on the people and vehicles the user is following.
         All path parameters are optional and `profile_uuid` can be substituted with the value `me` to fetch for the current user.
       parameters:
-        - $ref: "#components/parameters/profile_uuid"
-        - $ref: "#components/parameters/pagination_count"
-        - $ref: "#components/parameters/next_post_uuid"
+        - $ref: "#/components/parameters/profile_uuid"
+        - $ref: "#/components/parameters/pagination_count"
+        - $ref: "#/components/parameters/next_post_uuid"
       responses:
         "200":
           description: Successful query
@@ -362,7 +360,6 @@ paths:
                       type: object
                       properties:
                         post:
-                          type: object
                           $ref: "#/components/schemas/FeedPost"
 
   /person/posts/{uuid}/{count}/{next_post_uuid}:
@@ -374,9 +371,9 @@ paths:
         description: Returns the posts created by `uuid` user
           All path parameters are optional and `profile_uuid` can be substituted with the value `me` to fetch for the current user.
         parameters:
-          - $ref: "#components/parameters/profile_uuid"
-          - $ref: "#components/parameters/pagination_count"
-          - $ref: "#components/parameters/next_post_uuid"
+          - $ref: "#/components/parameters/profile_uuid"
+          - $ref: "#/components/parameters/pagination_count"
+          - $ref: "#/components/parameters/next_post_uuid"
         responses:
           "200":
             description: Successful query
@@ -406,7 +403,6 @@ paths:
                         type: object
                         properties:
                           post:
-                            type: object
                             $ref: "#/components/schemas/FeedPost"
 
   /person/is_following/{uuid}:
@@ -417,7 +413,7 @@ paths:
       summary: Is Following
       description: Provides information on if if the authenticated user is following `uuid`
       parameters:
-        - $ref: "#components/parameters/profile_uuid"
+        - $ref: "#/components/parameters/profile_uuid"
       responses:
         "200":
           description: Successful query
@@ -441,7 +437,7 @@ paths:
       description: Follow or unfollow `uuid`. The REST API will automatically perform the opposite action of the current following state.
         Supports either GET or POST requests
       parameters:
-        - $ref: "#components/parameters/profile_uuid"
+        - $ref: "#/components/parameters/profile_uuid"
       responses:
         "200":
           description: Successful query
@@ -473,7 +469,7 @@ paths:
       summary: Following Profiles
       description: Provides a list of profiles the path `uuid` profile is following
       parameters:
-        - $ref: "#components/parameters/profile_uuid"
+        - $ref: "#/components/parameters/profile_uuid"
       responses:
         "200":
           description: Successful query
@@ -498,7 +494,7 @@ paths:
       summary: Profile Followers
       description: Provides a list of profiles that is following the `uuid` profile
       parameters:
-        - $ref: "#components/parameters/profile_uuid"
+        - $ref: "#/components/parameters/profile_uuid"
       responses:
         "200":
           description: Successful query
@@ -523,7 +519,7 @@ paths:
       summary: Following Vehicles
       description: Provides a list of vehicles that the `uuid` profile is following
       parameters:
-        - $ref: "#components/parameters/profile_uuid"
+        - $ref: "#/components/parameters/profile_uuid"
       responses:
         "200":
           description: Successful query
@@ -548,8 +544,8 @@ paths:
       summary: Recent Vehicle Interactions
       description: Provides a list of vehicles that the `uuid` profile has posted to recently
       parameters:
-        - $ref: "#components/parameters/profile_uuid"
-        - $ref: "#components/parameters/pagination_count"
+        - $ref: "#/components/parameters/profile_uuid"
+        - $ref: "#/components/parameters/pagination_count"
       responses:
         "200":
           description: Successful query
@@ -577,8 +573,8 @@ paths:
       summary: Profile Lists
       description: Provides all of the Vehicle Lists that the profile `uuid` is associated with.
       parameters:
-        - $ref: "#components/parameters/profile_uuid"
-        - $ref: "#components/parameters/pagination_count"
+        - $ref: "#/components/parameters/profile_uuid"
+        - $ref: "#/components/parameters/pagination_count"
       responses:
         "200":
           description: Successful query
@@ -597,7 +593,6 @@ paths:
                       type: object
                       properties:
                         list:
-                          type: object
                           $ref: "#/components/schemas/List"
                   lists_my:
                     type: array
@@ -606,7 +601,6 @@ paths:
                       type: object
                       properties:
                         list:
-                          type: object
                           $ref: "#/components/schemas/List"
                   lists_other:
                     type: array
@@ -615,7 +609,6 @@ paths:
                       type: object
                       properties:
                         list:
-                          type: object
                           $ref: "#/components/schemas/List"
 
   #
@@ -631,7 +624,7 @@ paths:
       summary: Vehicle
       description: Get a vehicle by `vin`
       parameters:
-        - $ref: "#components/parameters/vehicle_vin"
+        - $ref: "#/components/parameters/vehicle_vin"
       responses:
         "200":
           description: Successful query
@@ -655,8 +648,8 @@ paths:
       description: Search for vehicles matching `query`.
         Supports VIN or Vehicle Description as query.
       parameters:
-        - $ref: "#components/parameters/unknown"
-        - $ref: "#components/parameters/pagination_count"
+        - $ref: "#/components/parameters/unknown"
+        - $ref: "#/components/parameters/pagination_count"
       requestBody:
         required: true
         content:
@@ -700,9 +693,9 @@ paths:
       summary: Vehicle Post Feed
       description: Returns the post Feed curated for the vehicle. `next_post_uuid` and `count` are optional parameters
       parameters:
-        - $ref: "#components/parameters/vehicle_vin"
-        - $ref: "#components/parameters/pagination_count"
-        - $ref: "#components/parameters/next_post_uuid"
+        - $ref: "#/components/parameters/vehicle_vin"
+        - $ref: "#/components/parameters/pagination_count"
+        - $ref: "#/components/parameters/next_post_uuid"
       responses:
         "200":
           description: Successful query
@@ -732,7 +725,6 @@ paths:
                       type: object
                       properties:
                         post:
-                          type: object
                           $ref: "#/components/schemas/FeedPost"
 
   /vehicle/is_following/{vin}:
@@ -743,7 +735,7 @@ paths:
       summary: Is Following
       description: Provides information on if if the authenticated user is following `vin`
       parameters:
-        - $ref: "#components/parameters/vehicle_vin"
+        - $ref: "#/components/parameters/vehicle_vin"
       responses:
         "200":
           description: Successful query
@@ -767,7 +759,7 @@ paths:
       description: Follow or unfollow `vin`. The REST API will automatically perform the opposite action of the current following state.
         Supports either GET or POST requests
       parameters:
-        - $ref: "#components/parameters/vehicle_vin"
+        - $ref: "#/components/parameters/vehicle_vin"
       responses:
         "200":
           description: Successful query
@@ -799,7 +791,7 @@ paths:
       summary: Vehicle Followers
       description: Provides a list of profiles that is following the `vin` vehicle
       parameters:
-        - $ref: "#components/parameters/vehicle_vin"
+        - $ref: "#/components/parameters/vehicle_vin"
       responses:
         "200":
           description: Successful query
@@ -826,7 +818,7 @@ paths:
         All known providable fields are listed in the schema. May support more fields
         than currently listed.
       parameters:
-        - $ref: "#components/parameters/vehicle_vin"
+        - $ref: "#/components/parameters/vehicle_vin"
       requestBody:
         required: true
         content:
@@ -875,7 +867,6 @@ paths:
                     type: string
                     example: ok
                   post:
-                    type: object
                     $ref: "#/components/schemas/FeedPost"
 
   /vehicle/plate_lookup:
@@ -918,7 +909,6 @@ paths:
                     type: string
                     example: ok
                   plate_lookup:
-                    type: object
                     $ref: "#/components/schemas/Vehicle"
 
   #
@@ -934,7 +924,7 @@ paths:
       summary: List
       description: Get a list by `uuid`
       parameters:
-        - $ref: "#components/parameters/list_uuid"
+        - $ref: "#/components/parameters/list_uuid"
       responses:
         "200":
           description: Successful query
@@ -947,7 +937,6 @@ paths:
                     type: string
                     example: ok
                   list:
-                    description: This object also includes an initial set of `vehicles`
                     $ref: "#/components/schemas/List"
 
   /lists/search:
@@ -1001,7 +990,7 @@ paths:
       summary: Is Following
       description: Provides information on if if the authenticated user is following `uuid`
       parameters:
-        - $ref: "#components/parameters/list_uuid"
+        - $ref: "#/components/parameters/list_uuid"
       responses:
         "200":
           description: Successful query
@@ -1025,7 +1014,7 @@ paths:
       description: Follow or unfollow list by `uuid`. The REST API will automatically perform the opposite action of the current following state.
         Supports either GET or POST requests
       parameters:
-        - $ref: "#components/parameters/list_uuid"
+        - $ref: "#/components/parameters/list_uuid"
       responses:
         "200":
           description: Successful query
@@ -1048,7 +1037,7 @@ paths:
       summary: Followers of List
       description: Provides profiles of the path `uuid` list is being followed by
       parameters:
-        - $ref: "#components/parameters/list_uuid"
+        - $ref: "#/components/parameters/list_uuid"
       responses:
         "200":
           description: Successful query
@@ -1073,9 +1062,9 @@ paths:
       summary: Vehicles In List
       description: Provides the vehicles of the path `uuid` list
       parameters:
-        - $ref: "#components/parameters/list_uuid"
-        - $ref: "#components/parameters/pagination_count"
-        - $ref: "#components/parameters/last_list_vehicle_id"
+        - $ref: "#/components/parameters/list_uuid"
+        - $ref: "#/components/parameters/pagination_count"
+        - $ref: "#/components/parameters/last_list_vehicle_id"
       responses:
         "200":
           description: Successful query
@@ -1148,7 +1137,7 @@ paths:
       summary: List Delete
       description: Delete a list by `uuid`. Must be owned by the authenticated user.
       parameters:
-        - $ref: "#components/parameters/list_uuid"
+        - $ref: "#/components/parameters/list_uuid"
       responses:
         "200":
           description: Successful query
@@ -1172,8 +1161,8 @@ paths:
       description: Add a vehicle to a list.
         Does not need to be owned by the authenticated user.
       parameters:
-        - $ref: "#components/parameters/list_uuid"
-        - $ref: "#components/parameters/vehicle_vin"
+        - $ref: "#/components/parameters/list_uuid"
+        - $ref: "#/components/parameters/vehicle_vin"
       responses:
         "200":
           description: Successful query
@@ -1195,14 +1184,14 @@ paths:
 
   /add/photo/vehicle/{vin}:
     post:
-      operationId: /lists/add
+      operationId: /add/photo/vehicle
       tags:
         - media
         - vehicles
       summary: Upload Photo
       description: Upload a new Vehicle photo to the media service. See Media Server URL.
       parameters:
-        - $ref: "#components/parameters/vehicle_vin"
+        - $ref: "#/components/parameters/vehicle_vin"
       requestBody:
         required: true
         content:
