@@ -365,6 +365,214 @@ paths:
                           type: object
                           $ref: "#/components/schemas/FeedPost"
 
+  /person/is_following/{uuid}:
+    get:
+      operationId: /person/is_following
+      tags:
+        - profiles
+      summary: Is Following
+      description: Provides information on if if the authenticated user is following `uuid`
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  following:
+                    type: boolean
+
+  /person/follow/{uuid}:
+    post:
+      operationId: /person/follow
+      tags:
+        - profiles
+      summary: Follow User
+      description: Follow or unfollow `uuid`. The REST API will automatically perform the opposite action of the current following state.
+        Supports either GET or POST requests
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  follow_result:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                      state:
+                        enum: ["following", "unfollowing"]
+                      message:
+                        type: string
+                        description: A user-friendly description of the action status
+                        example: "You are now following xyz"
+
+  /person/following/{uuid}:
+    get:
+      operationId: /person/following
+      tags:
+        - profiles
+      summary: Following Profiles
+      description: Provides a list of profiles the path `uuid` profile is following
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  following:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Profile"
+
+  /person/followers/{uuid}:
+    get:
+      operationId: /person/followers
+      tags:
+        - profiles
+      summary: Profile Followers
+      description: Provides a list of profiles that is following the `uuid` profile
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  followers:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Profile"
+
+  /person/following_vehicles/{uuid}:
+    get:
+      operationId: /person/following_vehicles
+      tags:
+        - profiles
+      summary: Following Vehicles
+      description: Provides a list of vehicles that the `uuid` profile is following
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  vehicles_following:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Vehicle"
+
+  /person/recent_vins/{uuid}/{count}:
+    get:
+      operationId: /person/recent_vins
+      tags:
+        - profiles
+      summary: Recent Vehicle Interactions
+      description: Provides a list of vehicles that the `uuid` profile has posted to recently
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+        - $ref: "#components/parameters/pagination_count"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  qty:
+                    type: number
+                    example: 5
+                  recent_vins:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Vehicle"
+
+  /person/lists/{uuid}/{count}:
+    get:
+      operationId: /person/lists
+      tags:
+        - profiles
+      summary: Profile Lists
+      description: Provides all of the Vehicle Lists that the profile `uuid` is associated with.
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+        - $ref: "#components/parameters/pagination_count"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  lists_following:
+                    type: array
+                    description: An array of lists the `uuid` is following
+                    items:
+                      type: object
+                      properties:
+                        list:
+                          type: object
+                          $ref: "#/components/schemas/List"
+                  lists_my:
+                    type: array
+                    description: An array of lists the `uuid` owns
+                    items:
+                      type: object
+                      properties:
+                        list:
+                          type: object
+                          $ref: "#/components/schemas/List"
+                  lists_other:
+                    type: array
+                    description: Unknown relationship to `uuid`
+                    items:
+                      type: object
+                      properties:
+                        list:
+                          type: object
+                          $ref: "#/components/schemas/List"
 components:
   securitySchemes:
     BearerAuth:
@@ -373,7 +581,7 @@ components:
   parameters:
     profile_uuid:
       name: uuid
-      description: The `uuid` of the profile to fetch content for
+      description: The `uuid` of the profile to fetch content for or against
       in: path
       required: true
       schema:
@@ -453,6 +661,7 @@ components:
           format: date-time
         id:
           type: string
+          deprecated: true
         image:
           $ref: '#/components/schemas/FeedPostImage'
         locale:
@@ -486,6 +695,7 @@ components:
       properties:
         id:
           type: string
+          deprecated: true
         large:
           type: string
         poster:
@@ -524,6 +734,7 @@ components:
         id:
           type: integer
           format: int64
+          deprecated: true
         last_name:
           type: string
         location:
@@ -566,3 +777,26 @@ components:
           type: string
         year:
           type: string
+    List:
+      type: object
+      properties:
+        created_date:
+          type: string
+          format: date-time
+        created_time:
+          type: integer
+          format: int32
+        description:
+          type: string
+        follower_count:
+          type: integer
+          format: int32
+        name:
+          type: string
+        owner:
+          $ref: '#/components/schemas/Profile'
+        uuid:
+          type: string
+        vehicle_count:
+          type: integer
+          format: int32

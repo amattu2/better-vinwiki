@@ -17,11 +17,11 @@ export const ENDPOINTS = {
   posts: `${API_URL}person/posts/`,
   is_following: `${API_URL}person/is_following/`,
   follow: `${API_URL}person/follow/`,
-  recent_vins: `${API_URL}person/recent_vins/`, // PATH: :uuid/:count
-  lists: `${API_URL}person/lists/`, // PATH: :uuid/:count
-  following_vehicles: `${API_URL}person/following_vehicles/`, // PATH: :uuid
-  following: `${API_URL}person/following/`, // TODO: implement (user following)
-  followers: `${API_URL}person/followers/`, // TODO: implement (people following user)
+  following: `${API_URL}person/following/`,
+  followers: `${API_URL}person/followers/`,
+  following_vehicles: `${API_URL}person/following_vehicles/`,
+  recent_vins: `${API_URL}person/recent_vins/`,
+  lists: `${API_URL}person/lists/`,
 
   /* Vehicle Endpoints */
   vehicle_search: `${API_URL}vehicle/search/`, // POST { query } PATH: unknown/:count
