@@ -38,14 +38,16 @@ export const ENDPOINTS = {
   comments: `${API_URL}post/comments/`,
 
   /* List Endpoints */
-  list_search: `${API_URL}lists/search`, // POST { query }
   list: `${API_URL}lists/id/`,
-  list_following: `${API_URL}lists/is_following/`,
-  list_followers: `${API_URL}lists/followers/`, // TODO: list the followers implement PATH: list :id
+  list_search: `${API_URL}lists/search`,
+  list_is_following: `${API_URL}lists/is_following/`,
+  list_follow: `${API_URL}lists/follow/`,
+  list_followers: `${API_URL}lists/followers/`,
   list_vehicles: `${API_URL}lists/vehicles/`,
-  list_follow: `${API_URL}lists/follow/`, // TODO: follow a list PATH: :uuid
-  list_create: `${API_URL}lists/add`, // TODO: create a list POST name and description
-  list_add_vehicle: `${API_URL}lists/addvin/`, // TODO: add a vehicle to a list GET vehicle /:uuid
+  list_create: `${API_URL}lists/add`,
+  list_delete: `${API_URL}lists/delete/`,
+  list_add_vehicle: `${API_URL}lists/addvin/`,
+  // TODO: List Vehicle Removal...
 };
 
 export const MEDIA_ENDPOINTS = {

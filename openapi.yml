@@ -921,6 +921,273 @@ paths:
                     type: object
                     $ref: "#/components/schemas/Vehicle"
 
+  #
+  # Lists
+  # tags: lists
+  #
+
+  /lists/id/{uuid}:
+    get:
+      operationId: /lists/id
+      tags:
+        - lists
+      summary: List
+      description: Get a list by `uuid`
+      parameters:
+        - $ref: "#components/parameters/list_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  list:
+                    description: This object also includes an initial set of `vehicles`
+                    $ref: "#/components/schemas/List"
+
+  /lists/search:
+    post:
+      operationId: /lists/search
+      tags:
+        - lists
+      summary: List Search
+      description: Search for Vehicle Lists matching `query`.
+        Unlike Profile and Vehicle equivalents, this endpoint does not support pagination.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  example:  BMW 3-Series
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  results:
+                    type: object
+                    properties:
+                      lists:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/List"
+                  term:
+                    type: string
+                    description: The extracted search terms from `query`
+                  count:
+                    type: number
+                    example: 100
+
+  /lists/is_following/{uuid}:
+    get:
+      operationId: /lists/is_following
+      tags:
+        - lists
+      summary: Is Following
+      description: Provides information on if if the authenticated user is following `uuid`
+      parameters:
+        - $ref: "#components/parameters/list_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  is_following:
+                    type: boolean
+
+  /lists/follow/{uuid}:
+    post:
+      operationId: /lists/follow
+      tags:
+        - lists
+      summary: Follow a List
+      description: Follow or unfollow list by `uuid`. The REST API will automatically perform the opposite action of the current following state.
+        Supports either GET or POST requests
+      parameters:
+        - $ref: "#components/parameters/list_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  following_status:
+                    type: boolean
+
+  /lists/followers/{uuid}:
+    get:
+      operationId: /lists/followers
+      tags:
+        - lists
+      summary: Followers of List
+      description: Provides profiles of the path `uuid` list is being followed by
+      parameters:
+        - $ref: "#components/parameters/list_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  following:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Profile"
+
+  /lists/vehicles/{uuid}/{count}/{last_id}:
+    get:
+      operationId: /lists/vehicles
+      tags:
+        - lists
+      summary: Vehicles In List
+      description: Provides the vehicles of the path `uuid` list
+      parameters:
+        - $ref: "#components/parameters/list_uuid"
+        - $ref: "#components/parameters/pagination_count"
+        - $ref: "#components/parameters/last_list_vehicle_id"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  end:
+                    type: boolean
+                    description: No more posts
+                  count:
+                    type: number
+                    example: 100
+                    description: The count of results returned
+                  total:
+                    type: number
+                    example: 250
+                    description: The total number of results available
+                  last_id:
+                    type: string
+                    description: The `id` of the vehicle to start the next page at
+                  vehicles:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Vehicle"
+
+  /lists/add:
+    post:
+      operationId: /lists/add
+      tags:
+        - lists
+      summary: List Create
+      description: Create a new Vehicle List with the provided `name` and `description`
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "My List"
+                description:
+                  type: string
+                  example: "A list of my favorite vehicles"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  list:
+                    $ref: "#/components/schemas/List"
+
+  /lists/delete/{uuid}:
+    post:
+      operationId: /lists/delete
+      tags:
+        - lists
+      summary: List Delete
+      description: Delete a list by `uuid`. Must be owned by the authenticated user.
+      parameters:
+        - $ref: "#components/parameters/list_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  deleted:
+                    type: boolean
+
+  /lists/addvin/{uuid}/{vin}:
+    post:
+      operationId: /lists/addvin
+      tags:
+        - lists
+      summary: List Add Vehicle
+      description: Add a vehicle to a list.
+        Does not need to be owned by the authenticated user.
+      parameters:
+        - $ref: "#components/parameters/list_uuid"
+        - $ref: "#components/parameters/vehicle_vin"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  list:
+                    $ref: "#/components/schemas/List"
+
 components:
   securitySchemes:
     BearerAuth:
@@ -943,6 +1210,22 @@ components:
       schema:
         type: string
         example: f81d4fae-7dec-11d0-a765-00a0c91e6bf6
+    list_uuid:
+      name: uuid
+      description: The `uuid` of the list to fetch content for or against
+      in: path
+      required: true
+      schema:
+        type: string
+        example: f81d4fae-7dec-11d0-a765-00a0c91e6bf6
+    last_list_vehicle_id:
+      name: last_id
+      description: The `id` of the vehicle to start the next page at
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 123456
     next_post_uuid:
       name: next_post_uuid
       description: The `uuid` of the first post in the next set of posts
