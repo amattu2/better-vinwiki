@@ -1188,6 +1188,54 @@ paths:
                   list:
                     $ref: "#/components/schemas/List"
 
+  #
+  # Media API
+  # tags: media, ...
+  #
+
+  /add/photo/vehicle/{vin}:
+    post:
+      operationId: /lists/add
+      tags:
+        - media
+        - vehicles
+      summary: Upload Photo
+      description: Upload a new Vehicle photo to the media service. See Media Server URL.
+      parameters:
+        - $ref: "#components/parameters/vehicle_vin"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - media
+                - subject
+                - subject_id
+              properties:
+                media:
+                  type: string
+                  format: binary
+                subject:
+                  enum: ["vehicle"]
+                subject_id:
+                  type: string
+                  description: The `vin` of the vehicle to attach the image to
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  image:
+                    $ref: "#/components/schemas/FeedPostImage"
+
 components:
   securitySchemes:
     BearerAuth:
