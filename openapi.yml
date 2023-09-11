@@ -365,6 +365,50 @@ paths:
                           type: object
                           $ref: "#/components/schemas/FeedPost"
 
+  /person/posts/{uuid}/{count}/{next_post_uuid}:
+      get:
+        operationId: /person/posts
+        tags:
+          - profiles
+        summary: Person Post Feed
+        description: Returns the posts created by `uuid` user
+          All path parameters are optional and `profile_uuid` can be substituted with the value `me` to fetch for the current user.
+        parameters:
+          - $ref: "#components/parameters/profile_uuid"
+          - $ref: "#components/parameters/pagination_count"
+          - $ref: "#components/parameters/next_post_uuid"
+        responses:
+          "200":
+            description: Successful query
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: string
+                      example: ok
+                    end:
+                      type: boolean
+                      description: No more posts
+                    count:
+                      type: number
+                      example: 100
+                    next_page_uuid:
+                      type: string
+                      description: The post `uuid` to start the next page at
+                    since_post_uuid:
+                      type: string
+                      description: The post `uuid` that the prev page started at
+                    feed:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          post:
+                            type: object
+                            $ref: "#/components/schemas/FeedPost"
+
   /person/is_following/{uuid}:
     get:
       operationId: /person/is_following
