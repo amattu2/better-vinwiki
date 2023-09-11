@@ -791,6 +791,31 @@ paths:
                         description: A user-friendly description of the action status
                         example: "You are now following xyz"
 
+  /vehicle/followers/{vin}:
+    get:
+      operationId: /vehicle/followers
+      tags:
+        - vehicles
+      summary: Vehicle Followers
+      description: Provides a list of profiles that is following the `vin` vehicle
+      parameters:
+        - $ref: "#components/parameters/vehicle_vin"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  followers:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Profile"
+
   /vehicle/post/{vin}:
     post:
       operationId: /vehicle/post

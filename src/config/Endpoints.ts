@@ -29,6 +29,7 @@ export const ENDPOINTS = {
   vehicle_feed: `${API_URL}/vehicle/feed/`,
   vehicle_is_following: `${API_URL}vehicle/is_following/`,
   vehicle_follow: `${API_URL}vehicle/follow/`,
+  vehicle_followers: `${API_URL}vehicle/followers/`,
   vehicle_post: `${API_URL}vehicle/post/`,
   plate_lookup: `${API_URL}vehicle/plate_lookup`,
 
