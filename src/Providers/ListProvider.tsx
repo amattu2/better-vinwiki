@@ -49,7 +49,7 @@ const fetchList = async (uuid: string, token: string): Promise<ListResponse | nu
 };
 
 const fetchFollowing = async (uuid: string, token: string): Promise<boolean> => {
-  const response = await fetch(ENDPOINTS.list_following + uuid, {
+  const response = await fetch(ENDPOINTS.list_is_following + uuid, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,

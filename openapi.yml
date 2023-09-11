@@ -1,0 +1,1489 @@
+openapi: "3.0.2"
+info:
+  title: API documentation
+  description: An unofficial source of VINwiki Rest API documentation.
+    This document is a work-in-progress and may not contain every endpoint available.
+  version: "1.0.0"
+servers:
+  - url: https://rest.vinwiki.com
+    description: Production REST API
+  - url: https://media.vinwiki.com/media
+    description: Production Media API
+security:
+  - BearerAuth: []
+
+paths:
+
+  #
+  # Authentication
+  # tags: authentication
+  #
+
+  /auth/authenticate:
+    post:
+      operationId: /authenticate
+      tags:
+        - authentication
+      security: []
+      summary: Login
+      description: Perform a login request and receive HTTP Bearer token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login:
+                  type: string
+                  example: username
+                  description: Username or Email Address accepted
+                password:
+                  type: string
+                  example: password123
+      responses:
+        "200":
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  person:
+                    $ref: '#/components/schemas/Profile'
+                  token:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        description: The HTTP Bearer token for API requests
+
+  /auth/register:
+    post:
+      operationId: /register
+      tags:
+        - authentication
+      security: []
+      summary: Register
+      description: Register a new user account. This endpoint does not create a Bearer Token for you.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: example@example.com
+                  description: Account email address
+                login:
+                  type: string
+                  example: username
+                  description: Account Username
+                password:
+                  type: string
+                  example: password123
+      responses:
+        "200":
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+        # TODO: error response
+
+  /auth/logout:
+    post:
+      operationId: /logout
+      tags:
+        - authentication
+      summary: Logout
+      description: Logout from REST service and invalidate HTTP Bearer token
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  #
+  # People / Profiles
+  # tags: profiles
+  #
+
+  /person/profile/{uuid}:
+    get:
+      operationId: /person/profile
+      tags:
+        - profiles
+      security: []
+      summary: Profile
+      description: Get a profile of person with the `:uuid`
+        No auth is currently required, likely by accident.
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  profile:
+                    $ref: "#/components/schemas/Profile"
+
+  /person/search/{unknown}/{count}:
+    post:
+      operationId: /person/search
+      tags:
+        - profiles
+      security: []
+      summary: Profile Search
+      description: Search for profiles matching `query`
+        No auth is currently required, likely by accident.
+      parameters:
+        - $ref: "#components/parameters/unknown"
+        - $ref: "#components/parameters/pagination_count"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  example: benmourside
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  results:
+                    type: object
+                    properties:
+                      people:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Profile"
+
+  /person/for_username/{username}:
+    get:
+      operationId: /person/for_username
+      tags:
+        - profiles
+      security: []
+      summary: Username Search
+      description: Attempts to find a single person by their username.
+        No auth is currently required, likely by accident.
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  person:
+                    $ref: "#/components/schemas/Profile"
+
+  /person/notification_count:
+    get:
+      operationId: /person/notification_count
+      tags:
+        - profiles
+      summary: Unread Notifications
+      description: Returns the number of unread notifications for the authenticated user
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  notification_count:
+                    type: object
+                    properties:
+                      unread:
+                        type: number
+                        example: 2
+
+  /person/notifications/{unknown}/{count}:
+    get:
+      operationId: /person/notifications
+      tags:
+        - profiles
+      summary: Notifications
+      description: Returns the notifications for a user. Includes both read and unread
+      parameters:
+        - $ref: "#components/parameters/unknown"
+        - $ref: "#components/parameters/pagination_count"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  qty:
+                    type: number
+                    example: 100
+                  notifications:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        notification:
+                          type: object
+                          $ref: "#/components/schemas/ProfileNotification"
+
+  /person/feed/{uuid}/{count}/{next_post_uuid}:
+    get:
+      operationId: /person/feed
+      tags:
+        - profiles
+      summary: Post Feed
+      description: Returns the post Feed curated for the user. All path parameters are optional
+        and `profile_uuid` can be substituted with the value `me` to fetch for the current user.
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+        - $ref: "#components/parameters/pagination_count"
+        - $ref: "#components/parameters/next_post_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  end:
+                    type: boolean
+                    description: No more posts
+                  count:
+                    type: number
+                    example: 100
+                  next_page_uuid:
+                    type: string
+                    description: The post `uuid` to start the next page at
+                  since_post_uuid:
+                    type: string
+                    description: The post `uuid` that the prev page started at
+                  feed:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        post:
+                          type: object
+                          $ref: "#/components/schemas/FeedPost"
+
+  /person/filtered_feed/{uuid}/{count}/{next_post_uuid}:
+    get:
+      operationId: /person/filtered_feed
+      tags:
+        - profiles
+      summary: Filtered Post Feed
+      description: Returns the post Feed curated based on the people and vehicles the user is following.
+        All path parameters are optional and `profile_uuid` can be substituted with the value `me` to fetch for the current user.
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+        - $ref: "#components/parameters/pagination_count"
+        - $ref: "#components/parameters/next_post_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  end:
+                    type: boolean
+                    description: No more posts
+                  count:
+                    type: number
+                    example: 100
+                  next_page_uuid:
+                    type: string
+                    description: The post `uuid` to start the next page at
+                  since_post_uuid:
+                    type: string
+                    description: The post `uuid` that the prev page started at
+                  feed:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        post:
+                          type: object
+                          $ref: "#/components/schemas/FeedPost"
+
+  /person/posts/{uuid}/{count}/{next_post_uuid}:
+      get:
+        operationId: /person/posts
+        tags:
+          - profiles
+        summary: Person Post Feed
+        description: Returns the posts created by `uuid` user
+          All path parameters are optional and `profile_uuid` can be substituted with the value `me` to fetch for the current user.
+        parameters:
+          - $ref: "#components/parameters/profile_uuid"
+          - $ref: "#components/parameters/pagination_count"
+          - $ref: "#components/parameters/next_post_uuid"
+        responses:
+          "200":
+            description: Successful query
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: string
+                      example: ok
+                    end:
+                      type: boolean
+                      description: No more posts
+                    count:
+                      type: number
+                      example: 100
+                    next_page_uuid:
+                      type: string
+                      description: The post `uuid` to start the next page at
+                    since_post_uuid:
+                      type: string
+                      description: The post `uuid` that the prev page started at
+                    feed:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          post:
+                            type: object
+                            $ref: "#/components/schemas/FeedPost"
+
+  /person/is_following/{uuid}:
+    get:
+      operationId: /person/is_following
+      tags:
+        - profiles
+      summary: Is Following
+      description: Provides information on if if the authenticated user is following `uuid`
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  following:
+                    type: boolean
+
+  /person/follow/{uuid}:
+    post:
+      operationId: /person/follow
+      tags:
+        - profiles
+      summary: Follow User
+      description: Follow or unfollow `uuid`. The REST API will automatically perform the opposite action of the current following state.
+        Supports either GET or POST requests
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  follow_result:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                      state:
+                        enum: ["following", "unfollowing"]
+                      message:
+                        type: string
+                        description: A user-friendly description of the action status
+                        example: "You are now following xyz"
+
+  /person/following/{uuid}:
+    get:
+      operationId: /person/following
+      tags:
+        - profiles
+      summary: Following Profiles
+      description: Provides a list of profiles the path `uuid` profile is following
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  following:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Profile"
+
+  /person/followers/{uuid}:
+    get:
+      operationId: /person/followers
+      tags:
+        - profiles
+      summary: Profile Followers
+      description: Provides a list of profiles that is following the `uuid` profile
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  followers:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Profile"
+
+  /person/following_vehicles/{uuid}:
+    get:
+      operationId: /person/following_vehicles
+      tags:
+        - profiles
+      summary: Following Vehicles
+      description: Provides a list of vehicles that the `uuid` profile is following
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  vehicles_following:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Vehicle"
+
+  /person/recent_vins/{uuid}/{count}:
+    get:
+      operationId: /person/recent_vins
+      tags:
+        - profiles
+      summary: Recent Vehicle Interactions
+      description: Provides a list of vehicles that the `uuid` profile has posted to recently
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+        - $ref: "#components/parameters/pagination_count"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  qty:
+                    type: number
+                    example: 5
+                  recent_vins:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Vehicle"
+
+  /person/lists/{uuid}/{count}:
+    get:
+      operationId: /person/lists
+      tags:
+        - profiles
+      summary: Profile Lists
+      description: Provides all of the Vehicle Lists that the profile `uuid` is associated with.
+      parameters:
+        - $ref: "#components/parameters/profile_uuid"
+        - $ref: "#components/parameters/pagination_count"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  lists_following:
+                    type: array
+                    description: An array of lists the `uuid` is following
+                    items:
+                      type: object
+                      properties:
+                        list:
+                          type: object
+                          $ref: "#/components/schemas/List"
+                  lists_my:
+                    type: array
+                    description: An array of lists the `uuid` owns
+                    items:
+                      type: object
+                      properties:
+                        list:
+                          type: object
+                          $ref: "#/components/schemas/List"
+                  lists_other:
+                    type: array
+                    description: Unknown relationship to `uuid`
+                    items:
+                      type: object
+                      properties:
+                        list:
+                          type: object
+                          $ref: "#/components/schemas/List"
+
+  #
+  # Vehicles
+  # tags: vehicles
+  #
+
+  /vehicle/vin/{vin}:
+    get:
+      operationId: /vehicle/vin
+      tags:
+        - vehicles
+      summary: Vehicle
+      description: Get a vehicle by `vin`
+      parameters:
+        - $ref: "#components/parameters/vehicle_vin"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  vehicle:
+                    $ref: "#/components/schemas/Vehicle"
+
+  /vehicle/search/{unknown}/{count}:
+    post:
+      operationId: /vehicle/search
+      tags:
+        - vehicles
+      summary: Vehicle Search
+      description: Search for vehicles matching `query`.
+        Supports VIN or Vehicle Description as query.
+      parameters:
+        - $ref: "#components/parameters/unknown"
+        - $ref: "#components/parameters/pagination_count"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  example: 2011 BMW 335i
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  results:
+                    type: object
+                    properties:
+                      vehicles:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Vehicle"
+                  term:
+                    type: string
+                    description: The extracted search terms from `query`
+                  count:
+                    type: number
+                    example: 100
+
+  /vehicle/feed/{vin}/{count}/{next_post_uuid}:
+    get:
+      operationId: /vehicle/feed
+      tags:
+        - vehicles
+      summary: Vehicle Post Feed
+      description: Returns the post Feed curated for the vehicle. `next_post_uuid` and `count` are optional parameters
+      parameters:
+        - $ref: "#components/parameters/vehicle_vin"
+        - $ref: "#components/parameters/pagination_count"
+        - $ref: "#components/parameters/next_post_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  end:
+                    type: boolean
+                    description: No more posts
+                  count:
+                    type: number
+                    example: 100
+                  next_page_uuid:
+                    type: string
+                    description: The post `uuid` to start the next page at
+                  since_post_uuid:
+                    type: string
+                    description: The post `uuid` that the prev page started at
+                  feed:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        post:
+                          type: object
+                          $ref: "#/components/schemas/FeedPost"
+
+  /vehicle/is_following/{vin}:
+    get:
+      operationId: /vehicle/is_following
+      tags:
+        - vehicles
+      summary: Is Following
+      description: Provides information on if if the authenticated user is following `vin`
+      parameters:
+        - $ref: "#components/parameters/vehicle_vin"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  following:
+                    type: boolean
+
+  /vehicle/follow/{vin}:
+    post:
+      operationId: /vehicle/follow
+      tags:
+        - vehicles
+      summary: Follow Vehicle
+      description: Follow or unfollow `vin`. The REST API will automatically perform the opposite action of the current following state.
+        Supports either GET or POST requests
+      parameters:
+        - $ref: "#components/parameters/vehicle_vin"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  follow_result:
+                    type: object
+                    properties:
+                      vin:
+                        type: string
+                      state:
+                        enum: ["following", "unfollowing"]
+                      message:
+                        type: string
+                        description: A user-friendly description of the action status
+                        example: "You are now following xyz"
+
+  /vehicle/followers/{vin}:
+    get:
+      operationId: /vehicle/followers
+      tags:
+        - vehicles
+      summary: Vehicle Followers
+      description: Provides a list of profiles that is following the `vin` vehicle
+      parameters:
+        - $ref: "#components/parameters/vehicle_vin"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  followers:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Profile"
+
+  /vehicle/post/{vin}:
+    post:
+      operationId: /vehicle/post
+      tags:
+        - vehicles
+      summary: Create Post
+      description: Create a new post attached to `vin`
+        All known providable fields are listed in the schema. May support more fields
+        than currently listed.
+      parameters:
+        - $ref: "#components/parameters/vehicle_vin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - client
+                - class_name
+              properties:
+                client:
+                  type: string
+                  description: A client identifier string
+                event_date:
+                  type: string
+                  format: date-time
+                  description: The date of the event the post is about
+                locale:
+                  type: string
+                  description: The location of the event the post is about
+                mileage:
+                  type: integer
+                  format: int32
+                  description: The mileage of the vehicle at the time of the event
+                class_name:
+                  enum: [photo, generic]
+                  description: The type of post to create. If `photo`,
+                    a image must be uploaded to the media service.
+                    See `add/photo/vehicle` under media service.
+                text:
+                  type: string
+                  description: The text content of the post. Known as `post_text` everywhere else.
+                image_uuid:
+                  type: string
+                  description: The UUID of the image to attach to the post. Required if `class_name` is `photo`
+                    Returned from the media service when uploading an image.
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  post:
+                    type: object
+                    $ref: "#/components/schemas/FeedPost"
+
+  /vehicle/plate_lookup:
+    post:
+      operationId: /vehicle/plate_lookup
+      tags:
+        - vehicles
+      summary: Decode Plate (PL82VIN)
+      description: Create a new post attached to `vin`
+        All known providable fields are listed in the schema. May support more fields
+        than currently listed.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - plate
+                - country
+              properties:
+                plate:
+                  type: string
+                  description: The license plate of the vehicle to decode
+                country:
+                  enum: ["US", "UK"]
+                  description: The country of the license plate
+                state:
+                  type: string
+                  description: The 2-letter state code of the license plate if applicable
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  plate_lookup:
+                    type: object
+                    $ref: "#/components/schemas/Vehicle"
+
+  #
+  # Lists
+  # tags: lists
+  #
+
+  /lists/id/{uuid}:
+    get:
+      operationId: /lists/id
+      tags:
+        - lists
+      summary: List
+      description: Get a list by `uuid`
+      parameters:
+        - $ref: "#components/parameters/list_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  list:
+                    description: This object also includes an initial set of `vehicles`
+                    $ref: "#/components/schemas/List"
+
+  /lists/search:
+    post:
+      operationId: /lists/search
+      tags:
+        - lists
+      summary: List Search
+      description: Search for Vehicle Lists matching `query`.
+        Unlike Profile and Vehicle equivalents, this endpoint does not support pagination.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  example:  BMW 3-Series
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  results:
+                    type: object
+                    properties:
+                      lists:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/List"
+                  term:
+                    type: string
+                    description: The extracted search terms from `query`
+                  count:
+                    type: number
+                    example: 100
+
+  /lists/is_following/{uuid}:
+    get:
+      operationId: /lists/is_following
+      tags:
+        - lists
+      summary: Is Following
+      description: Provides information on if if the authenticated user is following `uuid`
+      parameters:
+        - $ref: "#components/parameters/list_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  is_following:
+                    type: boolean
+
+  /lists/follow/{uuid}:
+    post:
+      operationId: /lists/follow
+      tags:
+        - lists
+      summary: Follow a List
+      description: Follow or unfollow list by `uuid`. The REST API will automatically perform the opposite action of the current following state.
+        Supports either GET or POST requests
+      parameters:
+        - $ref: "#components/parameters/list_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  following_status:
+                    type: boolean
+
+  /lists/followers/{uuid}:
+    get:
+      operationId: /lists/followers
+      tags:
+        - lists
+      summary: Followers of List
+      description: Provides profiles of the path `uuid` list is being followed by
+      parameters:
+        - $ref: "#components/parameters/list_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  following:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Profile"
+
+  /lists/vehicles/{uuid}/{count}/{last_id}:
+    get:
+      operationId: /lists/vehicles
+      tags:
+        - lists
+      summary: Vehicles In List
+      description: Provides the vehicles of the path `uuid` list
+      parameters:
+        - $ref: "#components/parameters/list_uuid"
+        - $ref: "#components/parameters/pagination_count"
+        - $ref: "#components/parameters/last_list_vehicle_id"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  end:
+                    type: boolean
+                    description: No more posts
+                  count:
+                    type: number
+                    example: 100
+                    description: The count of results returned
+                  total:
+                    type: number
+                    example: 250
+                    description: The total number of results available
+                  last_id:
+                    type: string
+                    description: The `id` of the vehicle to start the next page at
+                  vehicles:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Vehicle"
+
+  /lists/add:
+    post:
+      operationId: /lists/add
+      tags:
+        - lists
+      summary: List Create
+      description: Create a new Vehicle List with the provided `name` and `description`
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "My List"
+                description:
+                  type: string
+                  example: "A list of my favorite vehicles"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  list:
+                    $ref: "#/components/schemas/List"
+
+  /lists/delete/{uuid}:
+    post:
+      operationId: /lists/delete
+      tags:
+        - lists
+      summary: List Delete
+      description: Delete a list by `uuid`. Must be owned by the authenticated user.
+      parameters:
+        - $ref: "#components/parameters/list_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  deleted:
+                    type: boolean
+
+  /lists/addvin/{uuid}/{vin}:
+    post:
+      operationId: /lists/addvin
+      tags:
+        - lists
+      summary: List Add Vehicle
+      description: Add a vehicle to a list.
+        Does not need to be owned by the authenticated user.
+      parameters:
+        - $ref: "#components/parameters/list_uuid"
+        - $ref: "#components/parameters/vehicle_vin"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  list:
+                    $ref: "#/components/schemas/List"
+
+  #
+  # Media API
+  # tags: media, ...
+  #
+
+  /add/photo/vehicle/{vin}:
+    post:
+      operationId: /lists/add
+      tags:
+        - media
+        - vehicles
+      summary: Upload Photo
+      description: Upload a new Vehicle photo to the media service. See Media Server URL.
+      parameters:
+        - $ref: "#components/parameters/vehicle_vin"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - media
+                - subject
+                - subject_id
+              properties:
+                media:
+                  type: string
+                  format: binary
+                subject:
+                  enum: ["vehicle"]
+                subject_id:
+                  type: string
+                  description: The `vin` of the vehicle to attach the image to
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  image:
+                    $ref: "#/components/schemas/FeedPostImage"
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+  parameters:
+    vehicle_vin:
+      name: vin
+      description: The `vin` of the vehicle to fetch content for or against
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 1GNEK13Z43J126164
+    profile_uuid:
+      name: uuid
+      description: The `uuid` of the profile to fetch content for or against
+      in: path
+      required: true
+      schema:
+        type: string
+        example: f81d4fae-7dec-11d0-a765-00a0c91e6bf6
+    list_uuid:
+      name: uuid
+      description: The `uuid` of the list to fetch content for or against
+      in: path
+      required: true
+      schema:
+        type: string
+        example: f81d4fae-7dec-11d0-a765-00a0c91e6bf6
+    last_list_vehicle_id:
+      name: last_id
+      description: The `id` of the vehicle to start the next page at
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 123456
+    next_post_uuid:
+      name: next_post_uuid
+      description: The `uuid` of the first post in the next set of posts
+      in: path
+      required: true
+      schema:
+        type: string
+        example: f81d4fae-7dec-11d0-a765-00a0c91e6bf6
+    unknown:
+      name: unknown
+      description: The contents of this parameter is unknown, but must be provided for pagination.
+      in: path
+      required: true
+      schema:
+        type: number
+        example: 0
+    pagination_count:
+      name: count
+      description: An optional result count limit. If omitted,
+        the API returns a consistent number of results that vary by endpoint.
+      in: path
+      required: true
+      schema:
+        type: number
+        example: 100
+  schemas:
+    ProfileNotification:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+        created_ago:
+          type: string
+        created_date:
+          type: string
+          format: date-time
+        post:
+          $ref: '#/components/schemas/FeedPost'
+        recipient_id:
+          type: string
+        recipient_uuid:
+          type: string
+        seen:
+          type: boolean
+        sender:
+          $ref: '#/components/schemas/Profile'
+        text:
+          type: string
+        type:
+          type: string
+          enum: [post_mention, origin_author]
+        uuid:
+          type: string
+    FeedPost:
+      type: object
+      properties:
+        client:
+          type: string
+        comment_count:
+          type: integer
+          format: int32
+        data:
+          type: object
+        dest_url:
+          type: string
+        event_date:
+          type: string
+          format: date-time
+        event_time:
+          type: string
+          format: date-time
+        id:
+          type: string
+          deprecated: true
+        image:
+          $ref: '#/components/schemas/FeedPostImage'
+        locale:
+          type: string
+        mileage:
+          type: integer
+          format: int32
+        person:
+          $ref: '#/components/schemas/Profile'
+        post_date:
+          type: string
+          format: date-time
+        post_date_ago:
+          type: string
+        post_text:
+          type: string
+        post_time:
+          type: string
+          format: date-time
+        subject_uuid:
+          type: string
+        type:
+          type: string
+          enum: [photo, generic, list_add]
+        uuid:
+          type: string
+        vehicle:
+          $ref: '#/components/schemas/Vehicle'
+    FeedPostImage:
+      type: object
+      properties:
+        id:
+          type: string
+          deprecated: true
+        large:
+          type: string
+        poster:
+          type: string
+        thumb:
+          type: string
+        uuid:
+          type: string
+    Profile:
+      type: object
+      description: A profile/person model. See the Better-VINwiki `Profile` Type for the full set of values
+        Please be aware that certain API endpoints return abbreviated versions of this object.
+      properties:
+        avatar:
+          type: string
+        bio:
+          type: string
+        display_name:
+          type: string
+        email:
+          type: string
+          format: email
+        first_name:
+          type: string
+        follower_count:
+          type: integer
+          format: int32
+        following_count:
+          type: integer
+          format: int32
+        following_vehicle_count:
+          type: integer
+          format: int32
+        full_name:
+          type: string
+        id:
+          type: integer
+          format: int64
+          deprecated: true
+        last_name:
+          type: string
+        location:
+          type: string
+        post_count:
+          type: integer
+          format: int32
+        profile_picture_uuid:
+          type: string
+        social_facebook:
+          type: string
+        social_instagram:
+          type: string
+        social_linkedin:
+          type: string
+        social_twitter:
+          type: string
+        username:
+          type: string
+        uuid:
+          type: string
+        website_url:
+          type: string
+    Vehicle:
+      type: object
+      description: A vehicle data model. See the Better-VINwiki `Vehicle` Type for the full set of values
+        Please be aware that certain API endpoints return abbreviated versions of this object.
+      properties:
+        icon_photo:
+          type: string
+        long_name:
+          type: string
+        make:
+          type: string
+        model:
+          type: string
+        trim:
+          type: string
+        vin:
+          type: string
+        year:
+          type: string
+    List:
+      type: object
+      properties:
+        created_date:
+          type: string
+          format: date-time
+        created_time:
+          type: integer
+          format: int32
+        description:
+          type: string
+        follower_count:
+          type: integer
+          format: int32
+        name:
+          type: string
+        owner:
+          $ref: '#/components/schemas/Profile'
+        uuid:
+          type: string
+        vehicle_count:
+          type: integer
+          format: int32

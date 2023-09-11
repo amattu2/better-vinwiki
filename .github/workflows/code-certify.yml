@@ -3,6 +3,11 @@ name: Certify Build
 on:
   pull_request:
     branches: "*"
+    paths:
+      - "src/**"
+      - "public/**"
+      - "*.json"
+      - "*.js"
 
 permissions:
   contents: read
