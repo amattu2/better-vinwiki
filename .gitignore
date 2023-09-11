@@ -3,14 +3,15 @@ __pycache__/
 node_modules/
 vendor/
 bin/
-docs/
 build/
 dist/
 coverage/
+.openapi-generator/
 
 # Specific Files
 thunderEnvironment.json
 thunderActivity.json
+.openapi-generator-ignore
 
 # File Types
 *.ini

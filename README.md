@@ -38,12 +38,21 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 # VINwiki REST API Docs
 
 The OpenAPI Documentation for the VINwiki REST API can be found [here](./openapi.yml).
-Please read the disclaimer on information accuracy. This documentation was derived
-from unofficial means and is not affiliated with or approved by VINwiki.com
-in any way.
+This documentation was derived from unofficial means and is not affiliated with
+or approved by VINwiki.com in any way.
 
-Please Note: The Schema definitions for API types were translated from TypeScript
-to OpenAPI spec using GitHub Copilot and may not be 100% accurate.
+To generate the documentation, run the following command:
+
+```bash
+npm run docs:make
+```
+
+Due to compatibility issues with the OpenAPI Generator, the generated
+documentation uses the old `html` template.
+
+> **Note**: The Schema definitions for API types were translated from TypeScript
+> to OpenAPI spec and may not be 100% accurate, please refer to the [src/types](./src/types)
+> for most accurate definitions.
 
 # Dependencies
 

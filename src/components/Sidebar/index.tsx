@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { DashboardOutlined, Logout, NotificationsActive, Person2Outlined, SearchOutlined } from '@mui/icons-material';
+import { Code, DashboardOutlined, Logout, NotificationsActive, Person2Outlined, SearchOutlined } from '@mui/icons-material';
 import {
   Avatar, Badge, IconButton, Popover,
   Tooltip, Typography,
@@ -126,6 +126,13 @@ const Sidebar: FC = () => {
               <NotificationsActive />
             </Badge>
           </Tooltip>
+        </IconButton>
+        <IconButton>
+          <StyledLink to="documentation" target="_blank">
+            <Tooltip title="API Documentation" placement="right">
+              <Code />
+            </Tooltip>
+          </StyledLink>
         </IconButton>
         <IconButton>
           <StyledLink to="/logout">
