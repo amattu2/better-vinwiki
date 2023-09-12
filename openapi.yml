@@ -11,7 +11,21 @@ servers:
     description: Production Media API
 security:
   - BearerAuth: []
-
+tags:
+  - name: authentication
+    description: Authentication endpoints
+  - name: profiles
+    description: Profile related endpoints
+  - name: vehicles
+    description: Vehicle related endpoints
+  - name: lists
+    description: Vehicle List endpoints
+  - name: posts
+    description: Feed post endpoints
+  - name: comments
+    description: Post comment endpoints
+  - name: media
+    description: Media related endpoints
 paths:
 
   #
@@ -1273,11 +1287,13 @@ paths:
   # Posts
   # tags: posts
   #
+
   /post/comments/{uuid}:
     get:
       operationId: /post/comments
       tags:
         - posts
+        - comments
       summary: Post Comments
       description: Fetch the comments for post `uuid`
       parameters:
@@ -1299,6 +1315,104 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/FeedPostComment"
+
+  /post/comment/{uuid}:
+    post:
+      operationId: /post/comment
+      tags:
+        - posts
+        - comments
+      summary: Create a Comment
+      description: Create a comment on post `uuid`
+      parameters:
+        - $ref: "#/components/parameters/post_uuid"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  example: abc 123 this is my post comment
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  uuid:
+                    type: string
+                    description: The UUID of the comment
+                  comment:
+                    type: string
+                    description: The text of the comment
+
+  /post/delete_comment/{uuid}:
+    post:
+      operationId: /post/delete_comment
+      tags:
+        - posts
+        - comments
+      summary: Delete a Comment
+      description: Delete the comment `uuid` on a post.
+      parameters:
+        - $ref: "#/components/parameters/comment_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  result:
+                    enum: ["deleted"]
+
+  /comment/report/{uuid}/{reason}:
+    post:
+      operationId: /comment/report
+      tags:
+        - comments
+      summary: Report a Comment
+      description: >
+        Report the comment by `uuid`. Reasons:
+         * 0 - Incorrect
+         * 1 - Offends me
+         * 2 - Puts someone in danger
+         * 3 - Violates ToS
+
+        Please note the URL is different from the other comment endpoints.
+      parameters:
+        - $ref: "#/components/parameters/comment_uuid"
+        - name: reason
+          description: The reason for reporting the post
+          in: path
+          required: true
+          schema:
+            enum: [0, 1, 2, 3]
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  report:
+                    $ref: "#/components/schemas/Report"
 
   /post/delete/{uuid}:
     post:
@@ -1475,6 +1589,14 @@ components:
       type: http
       scheme: bearer
   parameters:
+    comment_uuid:
+      name: uuid
+      description: The `uuid` of the comment to interact with
+      in: path
+      required: true
+      schema:
+        type: string
+        example: f81d4fae-7dec-11d0-a765-00a0c91e6bf6
     post_uuid:
       name: uuid
       description: The `uuid` of the post to interact with
@@ -1782,3 +1904,18 @@ components:
           type: string
         uuid:
           type: string
+    Report:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        reason_id:
+          type: string
+        reason:
+          type: string
+          example: "Incorrect"
+        person:
+          $ref: '#/components/schemas/Profile'
+        comment:
+          $ref: '#/components/schemas/FeedPostComment'

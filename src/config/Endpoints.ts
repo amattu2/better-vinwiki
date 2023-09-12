@@ -40,6 +40,9 @@ export const ENDPOINTS = {
   post_delete: `${API_URL}post/delete/`,
   post_report: `${API_URL}post/report/`,
   comments: `${API_URL}post/comments/`,
+  post_comment_create: `${API_URL}post/comment/`,
+  post_comment_delete: `${API_URL}post/delete_comment/`,
+  post_comment_report: `${API_URL}comment/report/`,
 
   /* List Endpoints */
   list: `${API_URL}lists/id/`,

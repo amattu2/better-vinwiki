@@ -203,6 +203,13 @@ font-style: italic;
   <li><a href="#/logout"><code><span class="http-method">post</span> /auth/logout</code></a></li>
   <li><a href="#/register"><code><span class="http-method">post</span> /auth/register</code></a></li>
   </ul>
+  <h4><a href="#Comments">Comments</a></h4>
+  <ul>
+  <li><a href="#/comment/report"><code><span class="http-method">post</span> /comment/report/{uuid}/{reason}</code></a></li>
+  <li><a href="#/post/comment"><code><span class="http-method">post</span> /post/comment/{uuid}</code></a></li>
+  <li><a href="#/post/comments"><code><span class="http-method">get</span> /post/comments/{uuid}</code></a></li>
+  <li><a href="#/post/deleteComment"><code><span class="http-method">post</span> /post/delete_comment/{uuid}</code></a></li>
+  </ul>
   <h4><a href="#Lists">Lists</a></h4>
   <ul>
   <li><a href="#/lists/add"><code><span class="http-method">post</span> /lists/add</code></a></li>
@@ -223,8 +230,10 @@ font-style: italic;
   </ul>
   <h4><a href="#Posts">Posts</a></h4>
   <ul>
+  <li><a href="#/post/comment"><code><span class="http-method">post</span> /post/comment/{uuid}</code></a></li>
   <li><a href="#/post/comments"><code><span class="http-method">get</span> /post/comments/{uuid}</code></a></li>
   <li><a href="#/post/delete"><code><span class="http-method">post</span> /post/delete/{uuid}</code></a></li>
+  <li><a href="#/post/deleteComment"><code><span class="http-method">post</span> /post/delete_comment/{uuid}</code></a></li>
   <li><a href="#/post/report"><code><span class="http-method">post</span> /post/report/{uuid}/{reason}</code></a></li>
   </ul>
   <h4><a href="#Profiles">Profiles</a></h4>
@@ -432,6 +441,387 @@ font-style: italic;
     <h4 class="field-label">200</h4>
     Successful request
         <a href="#_register_200_response">_register_200_response</a>
+  </div> <!-- method -->
+  <hr/>
+  <h1><a name="Comments">Comments</a></h1>
+  <div class="method"><a name="/comment/report"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /comment/report/{uuid}/{reason}</code></pre></div>
+    <div class="method-summary">Report a Comment (<span class="nickname">/comment/report</span>)</div>
+    <div class="method-notes"><p>Report the comment by <code>uuid</code>. Reasons:</p>
+<ul>
+<li>0 - Incorrect</li>
+<li>1 - Offends me</li>
+<li>2 - Puts someone in danger</li>
+<li>3 - Violates ToS</li>
+</ul>
+<p>Please note the URL is different from the other comment endpoints.</p>
+</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">uuid (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The <code>uuid</code> of the comment to interact with default: null </div><div class="param">reason (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The reason for reporting the post default: null </div>
+    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#_comment_report_200_response">_comment_report_200_response</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "report" : {
+    "reason" : "Incorrect",
+    "person" : {
+      "bio" : "bio",
+      "last_name" : "last_name",
+      "avatar" : "avatar",
+      "display_name" : "display_name",
+      "follower_count" : 0,
+      "uuid" : "uuid",
+      "following_vehicle_count" : 1,
+      "social_instagram" : "social_instagram",
+      "social_linkedin" : "social_linkedin",
+      "full_name" : "full_name",
+      "social_twitter" : "social_twitter",
+      "website_url" : "website_url",
+      "following_count" : 6,
+      "social_facebook" : "social_facebook",
+      "profile_picture_uuid" : "profile_picture_uuid",
+      "location" : "location",
+      "id" : 5,
+      "post_count" : 5,
+      "first_name" : "first_name",
+      "email" : "email",
+      "username" : "username"
+    },
+    "comment" : {
+      "created" : "2000-01-23T04:56:07.000+00:00",
+      "person" : {
+        "bio" : "bio",
+        "last_name" : "last_name",
+        "avatar" : "avatar",
+        "display_name" : "display_name",
+        "follower_count" : 0,
+        "uuid" : "uuid",
+        "following_vehicle_count" : 1,
+        "social_instagram" : "social_instagram",
+        "social_linkedin" : "social_linkedin",
+        "full_name" : "full_name",
+        "social_twitter" : "social_twitter",
+        "website_url" : "website_url",
+        "following_count" : 6,
+        "social_facebook" : "social_facebook",
+        "profile_picture_uuid" : "profile_picture_uuid",
+        "location" : "location",
+        "id" : 5,
+        "post_count" : 5,
+        "first_name" : "first_name",
+        "email" : "email",
+        "username" : "username"
+      },
+      "ago" : "ago",
+      "text" : "text",
+      "uuid" : "uuid"
+    },
+    "id" : 0,
+    "reason_id" : "reason_id"
+  },
+  "status" : "ok"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful query
+        <a href="#_comment_report_200_response">_comment_report_200_response</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="/post/comment"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /post/comment/{uuid}</code></pre></div>
+    <div class="method-summary">Create a Comment (<span class="nickname">/post/comment</span>)</div>
+    <div class="method-notes">Create a comment on post <code>uuid</code></div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">uuid (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The <code>uuid</code> of the post to interact with default: null </div>
+    </div>  <!-- field-items -->
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">_post_comment_request <a href="#_post_comment_request">_post_comment_request</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#_post_comment_200_response">_post_comment_200_response</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "comment" : "comment",
+  "uuid" : "uuid",
+  "status" : "ok"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful query
+        <a href="#_post_comment_200_response">_post_comment_200_response</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="/post/comments"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /post/comments/{uuid}</code></pre></div>
+    <div class="method-summary">Post Comments (<span class="nickname">/post/comments</span>)</div>
+    <div class="method-notes">Fetch the comments for post <code>uuid</code></div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">uuid (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The <code>uuid</code> of the post to interact with default: null </div>
+    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#_post_comments_200_response">_post_comments_200_response</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "comments" : [ {
+    "created" : "2000-01-23T04:56:07.000+00:00",
+    "person" : {
+      "bio" : "bio",
+      "last_name" : "last_name",
+      "avatar" : "avatar",
+      "display_name" : "display_name",
+      "follower_count" : 0,
+      "uuid" : "uuid",
+      "following_vehicle_count" : 1,
+      "social_instagram" : "social_instagram",
+      "social_linkedin" : "social_linkedin",
+      "full_name" : "full_name",
+      "social_twitter" : "social_twitter",
+      "website_url" : "website_url",
+      "following_count" : 6,
+      "social_facebook" : "social_facebook",
+      "profile_picture_uuid" : "profile_picture_uuid",
+      "location" : "location",
+      "id" : 5,
+      "post_count" : 5,
+      "first_name" : "first_name",
+      "email" : "email",
+      "username" : "username"
+    },
+    "ago" : "ago",
+    "text" : "text",
+    "uuid" : "uuid"
+  }, {
+    "created" : "2000-01-23T04:56:07.000+00:00",
+    "person" : {
+      "bio" : "bio",
+      "last_name" : "last_name",
+      "avatar" : "avatar",
+      "display_name" : "display_name",
+      "follower_count" : 0,
+      "uuid" : "uuid",
+      "following_vehicle_count" : 1,
+      "social_instagram" : "social_instagram",
+      "social_linkedin" : "social_linkedin",
+      "full_name" : "full_name",
+      "social_twitter" : "social_twitter",
+      "website_url" : "website_url",
+      "following_count" : 6,
+      "social_facebook" : "social_facebook",
+      "profile_picture_uuid" : "profile_picture_uuid",
+      "location" : "location",
+      "id" : 5,
+      "post_count" : 5,
+      "first_name" : "first_name",
+      "email" : "email",
+      "username" : "username"
+    },
+    "ago" : "ago",
+    "text" : "text",
+    "uuid" : "uuid"
+  } ],
+  "post" : {
+    "comment_count" : 0,
+    "image" : {
+      "large" : "large",
+      "thumb" : "thumb",
+      "id" : "id",
+      "poster" : "poster",
+      "uuid" : "uuid"
+    },
+    "data" : "{}",
+    "dest_url" : "dest_url",
+    "subject_uuid" : "subject_uuid",
+    "locale" : "locale",
+    "type" : "photo",
+    "uuid" : "uuid",
+    "post_text" : "post_text",
+    "post_time" : "2000-01-23T04:56:07.000+00:00",
+    "vehicle" : {
+      "icon_photo" : "icon_photo",
+      "trim" : "trim",
+      "year" : "year",
+      "model" : "model",
+      "vin" : "vin",
+      "make" : "make",
+      "long_name" : "long_name"
+    },
+    "post_date_ago" : "post_date_ago",
+    "person" : {
+      "bio" : "bio",
+      "last_name" : "last_name",
+      "avatar" : "avatar",
+      "display_name" : "display_name",
+      "follower_count" : 0,
+      "uuid" : "uuid",
+      "following_vehicle_count" : 1,
+      "social_instagram" : "social_instagram",
+      "social_linkedin" : "social_linkedin",
+      "full_name" : "full_name",
+      "social_twitter" : "social_twitter",
+      "website_url" : "website_url",
+      "following_count" : 6,
+      "social_facebook" : "social_facebook",
+      "profile_picture_uuid" : "profile_picture_uuid",
+      "location" : "location",
+      "id" : 5,
+      "post_count" : 5,
+      "first_name" : "first_name",
+      "email" : "email",
+      "username" : "username"
+    },
+    "post_date" : "2000-01-23T04:56:07.000+00:00",
+    "event_date" : "2000-01-23T04:56:07.000+00:00",
+    "client" : "client",
+    "id" : "id",
+    "event_time" : "2000-01-23T04:56:07.000+00:00",
+    "mileage" : 6
+  },
+  "status" : "ok"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful query
+        <a href="#_post_comments_200_response">_post_comments_200_response</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="/post/deleteComment"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /post/delete_comment/{uuid}</code></pre></div>
+    <div class="method-summary">Delete a Comment (<span class="nickname">/post/deleteComment</span>)</div>
+    <div class="method-notes">Delete the comment <code>uuid</code> on a post.</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">uuid (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The <code>uuid</code> of the comment to interact with default: null </div>
+    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#_post_delete_comment_200_response">_post_delete_comment_200_response</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "result" : "deleted",
+  "status" : "ok"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful query
+        <a href="#_post_delete_comment_200_response">_post_delete_comment_200_response</a>
   </div> <!-- method -->
   <hr/>
   <h1><a name="Lists">Lists</a></h1>
@@ -1320,6 +1710,66 @@ font-style: italic;
   </div> <!-- method -->
   <hr/>
   <h1><a name="Posts">Posts</a></h1>
+  <div class="method"><a name="/post/comment"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /post/comment/{uuid}</code></pre></div>
+    <div class="method-summary">Create a Comment (<span class="nickname">/post/comment</span>)</div>
+    <div class="method-notes">Create a comment on post <code>uuid</code></div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">uuid (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The <code>uuid</code> of the post to interact with default: null </div>
+    </div>  <!-- field-items -->
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">_post_comment_request <a href="#_post_comment_request">_post_comment_request</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#_post_comment_200_response">_post_comment_200_response</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "comment" : "comment",
+  "uuid" : "uuid",
+  "status" : "ok"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful query
+        <a href="#_post_comment_200_response">_post_comment_200_response</a>
+  </div> <!-- method -->
+  <hr/>
   <div class="method"><a name="/post/comments"/>
     <div class="method-path">
     <a class="up" href="#__Methods">Up</a>
@@ -1524,6 +1974,53 @@ font-style: italic;
     <h4 class="field-label">200</h4>
     Successful query
         <a href="#_register_200_response">_register_200_response</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="/post/deleteComment"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /post/delete_comment/{uuid}</code></pre></div>
+    <div class="method-summary">Delete a Comment (<span class="nickname">/post/deleteComment</span>)</div>
+    <div class="method-notes">Delete the comment <code>uuid</code> on a post.</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">uuid (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The <code>uuid</code> of the comment to interact with default: null </div>
+    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#_post_delete_comment_200_response">_post_delete_comment_200_response</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "result" : "deleted",
+  "status" : "ok"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful query
+        <a href="#_post_delete_comment_200_response">_post_delete_comment_200_response</a>
   </div> <!-- method -->
   <hr/>
   <div class="method"><a name="/post/report"/>
@@ -4359,11 +4856,13 @@ font-style: italic;
     <li><a href="#ProfilePicture"><code>ProfilePicture</code> - </a></li>
     <li><a href="#ProfilePicture_image"><code>ProfilePicture_image</code> - </a></li>
     <li><a href="#ProfilePicture_image_files"><code>ProfilePicture_image_files</code> - </a></li>
+    <li><a href="#Report"><code>Report</code> - </a></li>
     <li><a href="#Vehicle"><code>Vehicle</code> - </a></li>
     <li><a href="#_add_photo_vehicle_200_response"><code>_add_photo_vehicle_200_response</code> - </a></li>
     <li><a href="#_authenticate_200_response"><code>_authenticate_200_response</code> - </a></li>
     <li><a href="#_authenticate_200_response_token"><code>_authenticate_200_response_token</code> - </a></li>
     <li><a href="#_authenticate_request"><code>_authenticate_request</code> - </a></li>
+    <li><a href="#_comment_report_200_response"><code>_comment_report_200_response</code> - </a></li>
     <li><a href="#_lists_add_request"><code>_lists_add_request</code> - </a></li>
     <li><a href="#_lists_delete_200_response"><code>_lists_delete_200_response</code> - </a></li>
     <li><a href="#_lists_follow_200_response"><code>_lists_follow_200_response</code> - </a></li>
@@ -4395,7 +4894,10 @@ font-style: italic;
     <li><a href="#_person_search_200_response_results"><code>_person_search_200_response_results</code> - </a></li>
     <li><a href="#_person_search_request"><code>_person_search_request</code> - </a></li>
     <li><a href="#_photo_vehicle_200_response"><code>_photo_vehicle_200_response</code> - </a></li>
+    <li><a href="#_post_comment_200_response"><code>_post_comment_200_response</code> - </a></li>
+    <li><a href="#_post_comment_request"><code>_post_comment_request</code> - </a></li>
     <li><a href="#_post_comments_200_response"><code>_post_comments_200_response</code> - </a></li>
+    <li><a href="#_post_delete_comment_200_response"><code>_post_delete_comment_200_response</code> - </a></li>
     <li><a href="#_register_200_response"><code>_register_200_response</code> - </a></li>
     <li><a href="#_register_request"><code>_register_request</code> - </a></li>
     <li><a href="#_vehicle_follow_200_response"><code>_vehicle_follow_200_response</code> - </a></li>
@@ -4557,6 +5059,17 @@ font-style: italic;
     </div>  <!-- field-items -->
   </div>
   <div class="model">
+    <h3><a name="Report"><code>Report</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id (optional)</div><div class="param-desc"><span class="param-type"><a href="#long">Long</a></span>  format: int64</div>
+<div class="param">reason_id (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">reason (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">person (optional)</div><div class="param-desc"><span class="param-type"><a href="#Profile">Profile</a></span>  </div>
+<div class="param">comment (optional)</div><div class="param-desc"><span class="param-type"><a href="#FeedPostComment">FeedPostComment</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
     <h3><a name="Vehicle"><code>Vehicle</code> - </a> <a class="up" href="#__Models">Up</a></h3>
     <div class='model-description'>A vehicle data model. See the Better-VINwiki <code>Vehicle</code> Type for the full set of values Please be aware that certain API endpoints return abbreviated versions of this object.</div>
     <div class="field-items">
@@ -4599,6 +5112,14 @@ font-style: italic;
     <div class="field-items">
       <div class="param">login (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Username or Email Address accepted </div>
 <div class="param">password (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="_comment_report_200_response"><code>_comment_report_200_response</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">status (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">report (optional)</div><div class="param-desc"><span class="param-type"><a href="#Report">Report</a></span>  </div>
     </div>  <!-- field-items -->
   </div>
   <div class="model">
@@ -4879,12 +5400,38 @@ font-style: italic;
     </div>  <!-- field-items -->
   </div>
   <div class="model">
+    <h3><a name="_post_comment_200_response"><code>_post_comment_200_response</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">status (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">uuid (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The UUID of the comment </div>
+<div class="param">comment (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The text of the comment </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="_post_comment_request"><code>_post_comment_request</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">text (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
     <h3><a name="_post_comments_200_response"><code>_post_comments_200_response</code> - </a> <a class="up" href="#__Models">Up</a></h3>
     <div class='model-description'></div>
     <div class="field-items">
       <div class="param">status (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
 <div class="param">post (optional)</div><div class="param-desc"><span class="param-type"><a href="#FeedPost">FeedPost</a></span>  </div>
 <div class="param">comments (optional)</div><div class="param-desc"><span class="param-type"><a href="#FeedPostComment">array[FeedPostComment]</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="_post_delete_comment_200_response"><code>_post_delete_comment_200_response</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">status (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">result (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">deleted</div>
     </div>  <!-- field-items -->
   </div>
   <div class="model">
