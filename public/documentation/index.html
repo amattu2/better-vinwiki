@@ -189,7 +189,7 @@ font-style: italic;
     <div class="license-url">http://apache.org/licenses/LICENSE-2.0.html</div>
   <h2>Access</h2>
     <ol>
-      <li>HTTP Basic Authentication</li>
+      <li>HTTP Bearer Token authentication</li>
     </ol>
 
   <h2><a name="__Methods">Methods</a></h2>
@@ -218,6 +218,14 @@ font-style: italic;
   <h4><a href="#Media">Media</a></h4>
   <ul>
   <li><a href="#/add/photo/vehicle"><code><span class="http-method">post</span> /add/photo/vehicle/{vin}</code></a></li>
+  <li><a href="#/photo/person"><code><span class="http-method">post</span> /photo/person/{uuid}</code></a></li>
+  <li><a href="#/photo/vehicle"><code><span class="http-method">post</span> /photo/vehicle/{vin}</code></a></li>
+  </ul>
+  <h4><a href="#Posts">Posts</a></h4>
+  <ul>
+  <li><a href="#/post/comments"><code><span class="http-method">get</span> /post/comments/{uuid}</code></a></li>
+  <li><a href="#/post/delete"><code><span class="http-method">post</span> /post/delete/{uuid}</code></a></li>
+  <li><a href="#/post/report"><code><span class="http-method">post</span> /post/report/{uuid}/{reason}</code></a></li>
   </ul>
   <h4><a href="#Profiles">Profiles</a></h4>
   <ul>
@@ -228,18 +236,22 @@ font-style: italic;
   <li><a href="#/person/following"><code><span class="http-method">get</span> /person/following/{uuid}</code></a></li>
   <li><a href="#/person/followingVehicles"><code><span class="http-method">get</span> /person/following_vehicles/{uuid}</code></a></li>
   <li><a href="#/person/forUsername"><code><span class="http-method">get</span> /person/for_username/{username}</code></a></li>
+  <li><a href="#/person/id"><code><span class="http-method">post</span> /person/id/{uuid}</code></a></li>
   <li><a href="#/person/isFollowing"><code><span class="http-method">get</span> /person/is_following/{uuid}</code></a></li>
   <li><a href="#/person/lists"><code><span class="http-method">get</span> /person/lists/{uuid}/{count}</code></a></li>
   <li><a href="#/person/notificationCount"><code><span class="http-method">get</span> /person/notification_count</code></a></li>
   <li><a href="#/person/notifications"><code><span class="http-method">get</span> /person/notifications/{unknown}/{count}</code></a></li>
   <li><a href="#/person/posts"><code><span class="http-method">get</span> /person/posts/{uuid}/{count}/{next_post_uuid}</code></a></li>
   <li><a href="#/person/profile"><code><span class="http-method">get</span> /person/profile/{uuid}</code></a></li>
+  <li><a href="#/person/profilePicture"><code><span class="http-method">get</span> /person/profile_picture/{uuid}</code></a></li>
   <li><a href="#/person/recentVins"><code><span class="http-method">get</span> /person/recent_vins/{uuid}/{count}</code></a></li>
   <li><a href="#/person/search"><code><span class="http-method">post</span> /person/search/{unknown}/{count}</code></a></li>
+  <li><a href="#/photo/person"><code><span class="http-method">post</span> /photo/person/{uuid}</code></a></li>
   </ul>
   <h4><a href="#Vehicles">Vehicles</a></h4>
   <ul>
   <li><a href="#/add/photo/vehicle"><code><span class="http-method">post</span> /add/photo/vehicle/{vin}</code></a></li>
+  <li><a href="#/photo/vehicle"><code><span class="http-method">post</span> /photo/vehicle/{vin}</code></a></li>
   <li><a href="#/vehicle/feed"><code><span class="http-method">get</span> /vehicle/feed/{vin}/{count}/{next_post_uuid}</code></a></li>
   <li><a href="#/vehicle/follow"><code><span class="http-method">post</span> /vehicle/follow/{vin}</code></a></li>
   <li><a href="#/vehicle/followers"><code><span class="http-method">get</span> /vehicle/followers/{vin}</code></a></li>
@@ -247,6 +259,7 @@ font-style: italic;
   <li><a href="#/vehicle/plateLookup"><code><span class="http-method">post</span> /vehicle/plate_lookup</code></a></li>
   <li><a href="#/vehicle/post"><code><span class="http-method">post</span> /vehicle/post/{vin}</code></a></li>
   <li><a href="#/vehicle/search"><code><span class="http-method">post</span> /vehicle/search/{unknown}/{count}</code></a></li>
+  <li><a href="#/vehicle/update"><code><span class="http-method">post</span> /vehicle/vin/{vin}</code></a></li>
   <li><a href="#/vehicle/vin"><code><span class="http-method">get</span> /vehicle/vin/{vin}</code></a></li>
   </ul>
 
@@ -1155,6 +1168,419 @@ font-style: italic;
         <a href="#_add_photo_vehicle_200_response">_add_photo_vehicle_200_response</a>
   </div> <!-- method -->
   <hr/>
+  <div class="method"><a name="/photo/person"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /photo/person/{uuid}</code></pre></div>
+    <div class="method-summary">Upload Profile Photo (<span class="nickname">/photo/person</span>)</div>
+    <div class="method-notes">Upload a new Profile photo to the media service. See Media Server URL.</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">uuid (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The <code>uuid</code> of the profile to fetch content for or against default: null </div>
+    </div>  <!-- field-items -->
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>multipart/form-data</code></li>
+    </ul>
+
+
+
+
+    <h3 class="field-label">Form parameters</h3>
+    <div class="field-items">
+      <div class="param">media (required)</div>
+
+      <div class="param-desc"><span class="param-type">Form Parameter</span> &mdash;  default: null format: binary</div>
+    </div>  <!-- field-items -->
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#ProfilePicture">ProfilePicture</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "subject_id" : "subject_id",
+  "image" : {
+    "files" : {
+      "small" : "small",
+      "medium_sq" : "medium_sq",
+      "original" : "original",
+      "large" : "large",
+      "medium" : "medium",
+      "small_sq" : "small_sq"
+    },
+    "uuid" : "uuid"
+  },
+  "lng" : 6.027456183070403,
+  "subject" : "person",
+  "base_url" : "https://media.vinwiki.com/data",
+  "uuid" : "f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
+  "lat" : 0.8008281904610115,
+  "status" : "ok"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful query
+        <a href="#ProfilePicture">ProfilePicture</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="/photo/vehicle"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /photo/vehicle/{vin}</code></pre></div>
+    <div class="method-summary">Upload Vehicle Photo (<span class="nickname">/photo/vehicle</span>)</div>
+    <div class="method-notes">Upload a new Vehicle photo to the media service. See Media Server URL. This is different than uploading a Post photo.</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">vin (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The <code>vin</code> of the vehicle to fetch content for or against default: null </div>
+    </div>  <!-- field-items -->
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>multipart/form-data</code></li>
+    </ul>
+
+
+
+
+    <h3 class="field-label">Form parameters</h3>
+    <div class="field-items">
+      <div class="param">media (required)</div>
+
+      <div class="param-desc"><span class="param-type">Form Parameter</span> &mdash;  default: null format: binary</div>
+    </div>  <!-- field-items -->
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#_photo_vehicle_200_response">_photo_vehicle_200_response</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "image" : {
+    "subject_id" : "subject_id",
+    "image" : {
+      "files" : {
+        "small" : "small",
+        "medium_sq" : "medium_sq",
+        "original" : "original",
+        "large" : "large",
+        "medium" : "medium",
+        "small_sq" : "small_sq"
+      },
+      "uuid" : "uuid"
+    },
+    "lng" : 6.027456183070403,
+    "subject" : "person",
+    "base_url" : "https://media.vinwiki.com/data",
+    "uuid" : "f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
+    "lat" : 0.8008281904610115,
+    "status" : "ok"
+  },
+  "status" : "ok"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful query
+        <a href="#_photo_vehicle_200_response">_photo_vehicle_200_response</a>
+  </div> <!-- method -->
+  <hr/>
+  <h1><a name="Posts">Posts</a></h1>
+  <div class="method"><a name="/post/comments"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /post/comments/{uuid}</code></pre></div>
+    <div class="method-summary">Post Comments (<span class="nickname">/post/comments</span>)</div>
+    <div class="method-notes">Fetch the comments for post <code>uuid</code></div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">uuid (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The <code>uuid</code> of the post to interact with default: null </div>
+    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#_post_comments_200_response">_post_comments_200_response</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "comments" : [ {
+    "created" : "2000-01-23T04:56:07.000+00:00",
+    "person" : {
+      "bio" : "bio",
+      "last_name" : "last_name",
+      "avatar" : "avatar",
+      "display_name" : "display_name",
+      "follower_count" : 0,
+      "uuid" : "uuid",
+      "following_vehicle_count" : 1,
+      "social_instagram" : "social_instagram",
+      "social_linkedin" : "social_linkedin",
+      "full_name" : "full_name",
+      "social_twitter" : "social_twitter",
+      "website_url" : "website_url",
+      "following_count" : 6,
+      "social_facebook" : "social_facebook",
+      "profile_picture_uuid" : "profile_picture_uuid",
+      "location" : "location",
+      "id" : 5,
+      "post_count" : 5,
+      "first_name" : "first_name",
+      "email" : "email",
+      "username" : "username"
+    },
+    "ago" : "ago",
+    "text" : "text",
+    "uuid" : "uuid"
+  }, {
+    "created" : "2000-01-23T04:56:07.000+00:00",
+    "person" : {
+      "bio" : "bio",
+      "last_name" : "last_name",
+      "avatar" : "avatar",
+      "display_name" : "display_name",
+      "follower_count" : 0,
+      "uuid" : "uuid",
+      "following_vehicle_count" : 1,
+      "social_instagram" : "social_instagram",
+      "social_linkedin" : "social_linkedin",
+      "full_name" : "full_name",
+      "social_twitter" : "social_twitter",
+      "website_url" : "website_url",
+      "following_count" : 6,
+      "social_facebook" : "social_facebook",
+      "profile_picture_uuid" : "profile_picture_uuid",
+      "location" : "location",
+      "id" : 5,
+      "post_count" : 5,
+      "first_name" : "first_name",
+      "email" : "email",
+      "username" : "username"
+    },
+    "ago" : "ago",
+    "text" : "text",
+    "uuid" : "uuid"
+  } ],
+  "post" : {
+    "comment_count" : 0,
+    "image" : {
+      "large" : "large",
+      "thumb" : "thumb",
+      "id" : "id",
+      "poster" : "poster",
+      "uuid" : "uuid"
+    },
+    "data" : "{}",
+    "dest_url" : "dest_url",
+    "subject_uuid" : "subject_uuid",
+    "locale" : "locale",
+    "type" : "photo",
+    "uuid" : "uuid",
+    "post_text" : "post_text",
+    "post_time" : "2000-01-23T04:56:07.000+00:00",
+    "vehicle" : {
+      "icon_photo" : "icon_photo",
+      "trim" : "trim",
+      "year" : "year",
+      "model" : "model",
+      "vin" : "vin",
+      "make" : "make",
+      "long_name" : "long_name"
+    },
+    "post_date_ago" : "post_date_ago",
+    "person" : {
+      "bio" : "bio",
+      "last_name" : "last_name",
+      "avatar" : "avatar",
+      "display_name" : "display_name",
+      "follower_count" : 0,
+      "uuid" : "uuid",
+      "following_vehicle_count" : 1,
+      "social_instagram" : "social_instagram",
+      "social_linkedin" : "social_linkedin",
+      "full_name" : "full_name",
+      "social_twitter" : "social_twitter",
+      "website_url" : "website_url",
+      "following_count" : 6,
+      "social_facebook" : "social_facebook",
+      "profile_picture_uuid" : "profile_picture_uuid",
+      "location" : "location",
+      "id" : 5,
+      "post_count" : 5,
+      "first_name" : "first_name",
+      "email" : "email",
+      "username" : "username"
+    },
+    "post_date" : "2000-01-23T04:56:07.000+00:00",
+    "event_date" : "2000-01-23T04:56:07.000+00:00",
+    "client" : "client",
+    "id" : "id",
+    "event_time" : "2000-01-23T04:56:07.000+00:00",
+    "mileage" : 6
+  },
+  "status" : "ok"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful query
+        <a href="#_post_comments_200_response">_post_comments_200_response</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="/post/delete"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /post/delete/{uuid}</code></pre></div>
+    <div class="method-summary">Delete Post (<span class="nickname">/post/delete</span>)</div>
+    <div class="method-notes">Delete the post <code>uuid</code>. You must own the post to delete it.</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">uuid (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The <code>uuid</code> of the post to interact with default: null </div>
+    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#_register_200_response">_register_200_response</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "status" : "ok"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful query
+        <a href="#_register_200_response">_register_200_response</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="/post/report"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /post/report/{uuid}/{reason}</code></pre></div>
+    <div class="method-summary">Report Post (<span class="nickname">/post/report</span>)</div>
+    <div class="method-notes"><p>Report the post <code>uuid</code>. Reasons:</p>
+<ul>
+<li>0 - Incorrect</li>
+<li>1 - Offends me</li>
+<li>2 - Puts someone in danger</li>
+<li>3 - Violates ToS</li>
+</ul>
+</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">uuid (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The <code>uuid</code> of the post to interact with default: null </div><div class="param">reason (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The reason for reporting the post default: null </div>
+    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#_register_200_response">_register_200_response</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "status" : "ok"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful query
+        <a href="#_register_200_response">_register_200_response</a>
+  </div> <!-- method -->
+  <hr/>
   <h1><a name="Profiles">Profiles</a></h1>
   <div class="method"><a name="/person/feed"/>
     <div class="method-path">
@@ -1861,6 +2287,62 @@ font-style: italic;
     <h4 class="field-label">200</h4>
     Successful query
         <a href="#_person_for_username_200_response">_person_for_username_200_response</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="/person/id"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /person/id/{uuid}</code></pre></div>
+    <div class="method-summary">Profile Update (<span class="nickname">/person/id</span>)</div>
+    <div class="method-notes">Update the <code>uuid</code> profile with the provided fields. Not all fields are supported. Generally <code>bio</code>, <code>display_name</code>, <code>website_url</code>, etc. The response body contains the updated profile and the status <code>status</code> field combined with the profile object.</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">uuid (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The <code>uuid</code> of the profile to fetch content for or against default: null </div>
+    </div>  <!-- field-items -->
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">Profile <a href="#Profile">Profile</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#_person_id_200_response">_person_id_200_response</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>null</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful query
+        <a href="#_person_id_200_response">_person_id_200_response</a>
   </div> <!-- method -->
   <hr/>
   <div class="method"><a name="/person/isFollowing"/>
@@ -2676,6 +3158,69 @@ font-style: italic;
         <a href="#_person_profile_200_response">_person_profile_200_response</a>
   </div> <!-- method -->
   <hr/>
+  <div class="method"><a name="/person/profilePicture"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /person/profile_picture/{uuid}</code></pre></div>
+    <div class="method-summary">Get Profile Picture (<span class="nickname">/person/profilePicture</span>)</div>
+    <div class="method-notes">Returns the current profile picture for the <code>uuid</code> profile</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">uuid (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The <code>uuid</code> of the profile to fetch content for or against default: null </div>
+    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#ProfilePicture">ProfilePicture</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "subject_id" : "subject_id",
+  "image" : {
+    "files" : {
+      "small" : "small",
+      "medium_sq" : "medium_sq",
+      "original" : "original",
+      "large" : "large",
+      "medium" : "medium",
+      "small_sq" : "small_sq"
+    },
+    "uuid" : "uuid"
+  },
+  "lng" : 6.027456183070403,
+  "subject" : "person",
+  "base_url" : "https://media.vinwiki.com/data",
+  "uuid" : "f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
+  "lat" : 0.8008281904610115,
+  "status" : "ok"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful query
+        <a href="#ProfilePicture">ProfilePicture</a>
+  </div> <!-- method -->
+  <hr/>
   <div class="method"><a name="/person/recentVins"/>
     <div class="method-path">
     <a class="up" href="#__Methods">Up</a>
@@ -2849,6 +3394,80 @@ font-style: italic;
         <a href="#_person_search_200_response">_person_search_200_response</a>
   </div> <!-- method -->
   <hr/>
+  <div class="method"><a name="/photo/person"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /photo/person/{uuid}</code></pre></div>
+    <div class="method-summary">Upload Profile Photo (<span class="nickname">/photo/person</span>)</div>
+    <div class="method-notes">Upload a new Profile photo to the media service. See Media Server URL.</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">uuid (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The <code>uuid</code> of the profile to fetch content for or against default: null </div>
+    </div>  <!-- field-items -->
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>multipart/form-data</code></li>
+    </ul>
+
+
+
+
+    <h3 class="field-label">Form parameters</h3>
+    <div class="field-items">
+      <div class="param">media (required)</div>
+
+      <div class="param-desc"><span class="param-type">Form Parameter</span> &mdash;  default: null format: binary</div>
+    </div>  <!-- field-items -->
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#ProfilePicture">ProfilePicture</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "subject_id" : "subject_id",
+  "image" : {
+    "files" : {
+      "small" : "small",
+      "medium_sq" : "medium_sq",
+      "original" : "original",
+      "large" : "large",
+      "medium" : "medium",
+      "small_sq" : "small_sq"
+    },
+    "uuid" : "uuid"
+  },
+  "lng" : 6.027456183070403,
+  "subject" : "person",
+  "base_url" : "https://media.vinwiki.com/data",
+  "uuid" : "f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
+  "lat" : 0.8008281904610115,
+  "status" : "ok"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful query
+        <a href="#ProfilePicture">ProfilePicture</a>
+  </div> <!-- method -->
+  <hr/>
   <h1><a name="Vehicles">Vehicles</a></h1>
   <div class="method"><a name="/add/photo/vehicle"/>
     <div class="method-path">
@@ -2916,6 +3535,83 @@ font-style: italic;
     <h4 class="field-label">200</h4>
     Successful query
         <a href="#_add_photo_vehicle_200_response">_add_photo_vehicle_200_response</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="/photo/vehicle"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /photo/vehicle/{vin}</code></pre></div>
+    <div class="method-summary">Upload Vehicle Photo (<span class="nickname">/photo/vehicle</span>)</div>
+    <div class="method-notes">Upload a new Vehicle photo to the media service. See Media Server URL. This is different than uploading a Post photo.</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">vin (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The <code>vin</code> of the vehicle to fetch content for or against default: null </div>
+    </div>  <!-- field-items -->
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>multipart/form-data</code></li>
+    </ul>
+
+
+
+
+    <h3 class="field-label">Form parameters</h3>
+    <div class="field-items">
+      <div class="param">media (required)</div>
+
+      <div class="param-desc"><span class="param-type">Form Parameter</span> &mdash;  default: null format: binary</div>
+    </div>  <!-- field-items -->
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#_photo_vehicle_200_response">_photo_vehicle_200_response</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "image" : {
+    "subject_id" : "subject_id",
+    "image" : {
+      "files" : {
+        "small" : "small",
+        "medium_sq" : "medium_sq",
+        "original" : "original",
+        "large" : "large",
+        "medium" : "medium",
+        "small_sq" : "small_sq"
+      },
+      "uuid" : "uuid"
+    },
+    "lng" : 6.027456183070403,
+    "subject" : "person",
+    "base_url" : "https://media.vinwiki.com/data",
+    "uuid" : "f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
+    "lat" : 0.8008281904610115,
+    "status" : "ok"
+  },
+  "status" : "ok"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful query
+        <a href="#_photo_vehicle_200_response">_photo_vehicle_200_response</a>
   </div> <!-- method -->
   <hr/>
   <div class="method"><a name="/vehicle/feed"/>
@@ -3535,6 +4231,64 @@ font-style: italic;
         <a href="#_vehicle_search_200_response">_vehicle_search_200_response</a>
   </div> <!-- method -->
   <hr/>
+  <div class="method"><a name="/vehicle/update"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /vehicle/vin/{vin}</code></pre></div>
+    <div class="method-summary">Vehicle Update (<span class="nickname">/vehicle/update</span>)</div>
+    <div class="method-notes">Update the <code>vin</code> vehicle with the provided fields. <code>image_uuid</code> can be omitted without removing the current primary image.</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">vin (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The <code>vin</code> of the vehicle to fetch content for or against default: null </div>
+    </div>  <!-- field-items -->
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">_vehicle_update_request <a href="#_vehicle_update_request">_vehicle_update_request</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#_register_200_response">_register_200_response</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "status" : "ok"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful query
+        <a href="#_register_200_response">_register_200_response</a>
+  </div> <!-- method -->
+  <hr/>
   <div class="method"><a name="/vehicle/vin"/>
     <div class="method-path">
     <a class="up" href="#__Methods">Up</a>
@@ -3597,10 +4351,14 @@ font-style: italic;
   <h3>Table of Contents</h3>
   <ol>
     <li><a href="#FeedPost"><code>FeedPost</code> - </a></li>
+    <li><a href="#FeedPostComment"><code>FeedPostComment</code> - </a></li>
     <li><a href="#FeedPostImage"><code>FeedPostImage</code> - </a></li>
     <li><a href="#List"><code>List</code> - </a></li>
     <li><a href="#Profile"><code>Profile</code> - </a></li>
     <li><a href="#ProfileNotification"><code>ProfileNotification</code> - </a></li>
+    <li><a href="#ProfilePicture"><code>ProfilePicture</code> - </a></li>
+    <li><a href="#ProfilePicture_image"><code>ProfilePicture_image</code> - </a></li>
+    <li><a href="#ProfilePicture_image_files"><code>ProfilePicture_image_files</code> - </a></li>
     <li><a href="#Vehicle"><code>Vehicle</code> - </a></li>
     <li><a href="#_add_photo_vehicle_200_response"><code>_add_photo_vehicle_200_response</code> - </a></li>
     <li><a href="#_authenticate_200_response"><code>_authenticate_200_response</code> - </a></li>
@@ -3623,6 +4381,7 @@ font-style: italic;
     <li><a href="#_person_following_200_response"><code>_person_following_200_response</code> - </a></li>
     <li><a href="#_person_following_vehicles_200_response"><code>_person_following_vehicles_200_response</code> - </a></li>
     <li><a href="#_person_for_username_200_response"><code>_person_for_username_200_response</code> - </a></li>
+    <li><a href="#_person_id_200_response"><code>_person_id_200_response</code> - </a></li>
     <li><a href="#_person_is_following_200_response"><code>_person_is_following_200_response</code> - </a></li>
     <li><a href="#_person_lists_200_response"><code>_person_lists_200_response</code> - </a></li>
     <li><a href="#_person_lists_200_response_lists_following_inner"><code>_person_lists_200_response_lists_following_inner</code> - </a></li>
@@ -3635,6 +4394,8 @@ font-style: italic;
     <li><a href="#_person_search_200_response"><code>_person_search_200_response</code> - </a></li>
     <li><a href="#_person_search_200_response_results"><code>_person_search_200_response_results</code> - </a></li>
     <li><a href="#_person_search_request"><code>_person_search_request</code> - </a></li>
+    <li><a href="#_photo_vehicle_200_response"><code>_photo_vehicle_200_response</code> - </a></li>
+    <li><a href="#_post_comments_200_response"><code>_post_comments_200_response</code> - </a></li>
     <li><a href="#_register_200_response"><code>_register_200_response</code> - </a></li>
     <li><a href="#_register_request"><code>_register_request</code> - </a></li>
     <li><a href="#_vehicle_follow_200_response"><code>_vehicle_follow_200_response</code> - </a></li>
@@ -3646,6 +4407,7 @@ font-style: italic;
     <li><a href="#_vehicle_search_200_response"><code>_vehicle_search_200_response</code> - </a></li>
     <li><a href="#_vehicle_search_200_response_results"><code>_vehicle_search_200_response_results</code> - </a></li>
     <li><a href="#_vehicle_search_request"><code>_vehicle_search_request</code> - </a></li>
+    <li><a href="#_vehicle_update_request"><code>_vehicle_update_request</code> - </a></li>
     <li><a href="#_vehicle_vin_200_response"><code>_vehicle_vin_200_response</code> - </a></li>
   </ol>
 
@@ -3674,6 +4436,17 @@ font-style: italic;
         <div class="param-enum">photo</div><div class="param-enum">generic</div><div class="param-enum">list_add</div>
 <div class="param">uuid (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
 <div class="param">vehicle (optional)</div><div class="param-desc"><span class="param-type"><a href="#Vehicle">Vehicle</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="FeedPostComment"><code>FeedPostComment</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">ago (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">created (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+<div class="param">person (optional)</div><div class="param-desc"><span class="param-type"><a href="#Profile">Profile</a></span>  </div>
+<div class="param">text (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">uuid (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
     </div>  <!-- field-items -->
   </div>
   <div class="model">
@@ -3745,6 +4518,42 @@ font-style: italic;
         <div class="param-enum-header">Enum:</div>
         <div class="param-enum">post_mention</div><div class="param-enum">origin_author</div>
 <div class="param">uuid (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="ProfilePicture"><code>ProfilePicture</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">status (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">image (optional)</div><div class="param-desc"><span class="param-type"><a href="#ProfilePicture_image">ProfilePicture_image</a></span>  </div>
+<div class="param">lat (optional)</div><div class="param-desc"><span class="param-type"><a href="#number">BigDecimal</a></span>  </div>
+<div class="param">lng (optional)</div><div class="param-desc"><span class="param-type"><a href="#number">BigDecimal</a></span>  </div>
+<div class="param">subject (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">person</div>
+<div class="param">subject_id (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">uuid (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">base_url (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="ProfilePicture_image"><code>ProfilePicture_image</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">uuid (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">files (optional)</div><div class="param-desc"><span class="param-type"><a href="#ProfilePicture_image_files">ProfilePicture_image_files</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="ProfilePicture_image_files"><code>ProfilePicture_image_files</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">large (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">medium (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">medium_sq (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">small (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">small_sq (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">original (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
     </div>  <!-- field-items -->
   </div>
   <div class="model">
@@ -3939,6 +4748,34 @@ font-style: italic;
     </div>  <!-- field-items -->
   </div>
   <div class="model">
+    <h3><a name="_person_id_200_response"><code>_person_id_200_response</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">avatar (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">bio (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">display_name (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">email (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  format: email</div>
+<div class="param">first_name (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">follower_count (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  format: int32</div>
+<div class="param">following_count (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  format: int32</div>
+<div class="param">following_vehicle_count (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  format: int32</div>
+<div class="param">full_name (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">id (optional)</div><div class="param-desc"><span class="param-type"><a href="#long">Long</a></span>  format: int64</div>
+<div class="param">last_name (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">location (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">post_count (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  format: int32</div>
+<div class="param">profile_picture_uuid (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">social_facebook (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">social_instagram (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">social_linkedin (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">social_twitter (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">username (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">uuid (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">website_url (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">status (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
     <h3><a name="_person_is_following_200_response"><code>_person_is_following_200_response</code> - </a> <a class="up" href="#__Models">Up</a></h3>
     <div class='model-description'></div>
     <div class="field-items">
@@ -4031,6 +4868,23 @@ font-style: italic;
     <div class='model-description'></div>
     <div class="field-items">
       <div class="param">query (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="_photo_vehicle_200_response"><code>_photo_vehicle_200_response</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">status (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">image (optional)</div><div class="param-desc"><span class="param-type"><a href="#ProfilePicture">ProfilePicture</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="_post_comments_200_response"><code>_post_comments_200_response</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">status (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">post (optional)</div><div class="param-desc"><span class="param-type"><a href="#FeedPost">FeedPost</a></span>  </div>
+<div class="param">comments (optional)</div><div class="param-desc"><span class="param-type"><a href="#FeedPostComment">array[FeedPostComment]</a></span>  </div>
     </div>  <!-- field-items -->
   </div>
   <div class="model">
@@ -4132,6 +4986,17 @@ font-style: italic;
     <div class='model-description'></div>
     <div class="field-items">
       <div class="param">query (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="_vehicle_update_request"><code>_vehicle_update_request</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">year </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">make </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">model </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">trim (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">image_uuid (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The UUID of the image to mark as primary. Optional </div>
     </div>  <!-- field-items -->
   </div>
   <div class="model">

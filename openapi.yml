@@ -611,6 +611,55 @@ paths:
                         list:
                           $ref: "#/components/schemas/List"
 
+  /person/id/{uuid}:
+    post:
+      operationId: /person/id
+      tags:
+        - profiles
+      summary: Profile Update
+      description: Update the `uuid` profile with the provided fields.
+        Not all fields are supported. Generally `bio`, `display_name`, `website_url`, etc.
+        The response body contains the updated profile and the status `status` field
+        combined with the profile object.
+      parameters:
+        - $ref: "#/components/parameters/profile_uuid"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Profile"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Profile"
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        example: ok
+
+  /person/profile_picture/{uuid}:
+    get:
+      operationId: /person/profile_picture
+      tags:
+        - profiles
+      summary: Get Profile Picture
+      description: Returns the current profile picture for the `uuid` profile
+      parameters:
+        - $ref: "#/components/parameters/profile_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfilePicture"
+
   #
   # Vehicles
   # tags: vehicles
@@ -638,6 +687,49 @@ paths:
                     example: ok
                   vehicle:
                     $ref: "#/components/schemas/Vehicle"
+    post:
+      operationId: /vehicle/update
+      tags:
+        - vehicles
+      summary: Vehicle Update
+      description: Update the `vin` vehicle with the provided fields.
+        `image_uuid` can be omitted without removing the current primary image.
+      parameters:
+        - $ref: "#/components/parameters/vehicle_vin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - year
+                - make
+                - model
+              properties:
+                year:
+                  type: string
+                make:
+                  type: string
+                model:
+                  type: string
+                trim:
+                  type: string
+                image_uuid:
+                  type: string
+                  description: The UUID of the image to mark as primary. Optional
+
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
 
   /vehicle/search/{unknown}/{count}:
     post:
@@ -1178,6 +1270,91 @@ paths:
                     $ref: "#/components/schemas/List"
 
   #
+  # Posts
+  # tags: posts
+  #
+  /post/comments/{uuid}:
+    get:
+      operationId: /post/comments
+      tags:
+        - posts
+      summary: Post Comments
+      description: Fetch the comments for post `uuid`
+      parameters:
+        - $ref: "#/components/parameters/post_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  post:
+                    $ref: "#/components/schemas/FeedPost"
+                  comments:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FeedPostComment"
+
+  /post/delete/{uuid}:
+    post:
+      operationId: /post/delete
+      tags:
+        - posts
+      summary: Delete Post
+      description: Delete the post `uuid`.
+        You must own the post to delete it.
+      parameters:
+        - $ref: "#/components/parameters/post_uuid"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /post/report/{uuid}/{reason}:
+    post:
+      operationId: /post/report
+      tags:
+        - posts
+      summary: Report Post
+      description: >
+        Report the post `uuid`. Reasons:
+         * 0 - Incorrect
+         * 1 - Offends me
+         * 2 - Puts someone in danger
+         * 3 - Violates ToS
+      parameters:
+        - $ref: "#/components/parameters/post_uuid"
+        - name: reason
+          description: The reason for reporting the post
+          in: path
+          required: true
+          schema:
+            enum: [0, 1, 2, 3]
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  #
   # Media API
   # tags: media, ...
   #
@@ -1225,12 +1402,87 @@ paths:
                   image:
                     $ref: "#/components/schemas/FeedPostImage"
 
+  /photo/vehicle/{vin}:
+    post:
+      operationId: /photo/vehicle
+      tags:
+        - media
+        - vehicles
+      summary: Upload Vehicle Photo
+      description: Upload a new Vehicle photo to the media service. See Media Server URL.
+        This is different than uploading a Post photo.
+      parameters:
+        - $ref: "#/components/parameters/vehicle_vin"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - media
+              properties:
+                media:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  image:
+                    $ref: "#/components/schemas/ProfilePicture"
+
+  /photo/person/{uuid}:
+    post:
+      operationId: /photo/person
+      tags:
+        - media
+        - profiles
+      summary: Upload Profile Photo
+      description: Upload a new Profile photo to the media service. See Media Server URL.
+      parameters:
+        - $ref: "#/components/parameters/profile_uuid"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - media
+              properties:
+                media:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfilePicture"
+
 components:
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
   parameters:
+    post_uuid:
+      name: uuid
+      description: The `uuid` of the post to interact with
+      in: path
+      required: true
+      schema:
+        type: string
+        example: f81d4fae-7dec-11d0-a765-00a0c91e6bf6
     vehicle_vin:
       name: vin
       description: The `vin` of the vehicle to fetch content for or against
@@ -1476,3 +1728,57 @@ components:
         vehicle_count:
           type: integer
           format: int32
+    ProfilePicture:
+      type: object
+      properties:
+        status:
+          type: string
+          example: ok
+        image:
+          type: object
+          properties:
+            uuid:
+              type: string
+            files:
+              type: object
+              properties:
+                large:
+                  type: string
+                medium:
+                  type: string
+                medium_sq:
+                  type: string
+                small:
+                  type: string
+                small_sq:
+                  type: string
+                original:
+                  type: string
+        lat:
+          type: number
+        lng:
+          type: number
+        subject:
+          enum: ["person"]
+        subject_id:
+          type: string
+        uuid:
+          type: string
+          example: f81d4fae-7dec-11d0-a765-00a0c91e6bf6
+        base_url:
+          type: string
+          example: https://media.vinwiki.com/data
+    FeedPostComment:
+      type: object
+      properties:
+        ago:
+          type: string
+        created:
+          type: string
+          format: date-time
+        person:
+          $ref: '#/components/schemas/Profile'
+        text:
+          type: string
+        uuid:
+          type: string
