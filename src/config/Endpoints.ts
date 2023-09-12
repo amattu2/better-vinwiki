@@ -8,6 +8,8 @@ export const ENDPOINTS = {
 
   /* Person Endpoints */
   profile: `${API_URL}person/profile/`,
+  profile_update: `${API_URL}person/id/`,
+  profile_picture: `${API_URL}person/profile_picture/`,
   profile_search: `${API_URL}person/search/`,
   profile_username_search: `${API_URL}person/for_username/`,
   notification_count: `${API_URL}person/notification_count/me`,
@@ -25,6 +27,7 @@ export const ENDPOINTS = {
 
   /* Vehicle Endpoints */
   vehicle: `${API_URL}vehicle/vin/`,
+  vehicle_update: `${API_URL}vehicle/vin/`,
   vehicle_search: `${API_URL}vehicle/search/`,
   vehicle_feed: `${API_URL}/vehicle/feed/`,
   vehicle_is_following: `${API_URL}vehicle/is_following/`,
@@ -35,7 +38,11 @@ export const ENDPOINTS = {
 
   /* Post Endpoints */
   post_delete: `${API_URL}post/delete/`,
+  post_report: `${API_URL}post/report/`,
   comments: `${API_URL}post/comments/`,
+  post_comment_create: `${API_URL}post/comment/`,
+  post_comment_delete: `${API_URL}post/delete_comment/`,
+  post_comment_report: `${API_URL}comment/report/`,
 
   /* List Endpoints */
   list: `${API_URL}lists/id/`,
@@ -52,7 +59,8 @@ export const ENDPOINTS = {
 
 export const MEDIA_ENDPOINTS = {
   /* Vehicle Endpoints */
-  vehicle_image_add: `${MEDIA_URL}add/photo/vehicle/`, // PATH: /:vin
+  vehicle_image_add: `${MEDIA_URL}add/photo/vehicle/`,
+  person_image_add: `${MEDIA_URL}photo/person/`,
 };
 
 export const STATUS_OK = "ok";
