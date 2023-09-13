@@ -37,7 +37,7 @@ const StyledPostBox = styled(Stack)({
 
 const StyledBackground = styled("div", { shouldForwardProp: (p) => p !== "bg" })(({ bg }: { bg?: string }) => ({
   backgroundImage: bg ? `url(${bg})` : "linear-gradient(to bottom left, #a18cd1 0%, #fbc2eb 100%)",
-  filter: bg ? "blur(6px)" : "none",
+  filter: bg ? "blur(6px) brightness(0.8)" : "none",
   backgroundSize: "cover",
   backgroundPosition: "center",
   backgroundRepeat: "no-repeat",
