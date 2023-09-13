@@ -46,6 +46,7 @@ export const ENDPOINTS = {
 
   /* List Endpoints */
   list: `${API_URL}lists/id/`,
+  list_update: `${API_URL}lists/id/`,
   list_search: `${API_URL}lists/search`,
   list_is_following: `${API_URL}lists/is_following/`,
   list_follow: `${API_URL}lists/follow/`,

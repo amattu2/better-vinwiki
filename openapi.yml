@@ -1044,6 +1044,40 @@ paths:
                     example: ok
                   list:
                     $ref: "#/components/schemas/List"
+    post:
+      operationId: /lists/update
+      tags:
+        - lists
+      summary: List Update
+      description: Update a list by `uuid`. You must own the list to update it.
+      parameters:
+        - $ref: "#/components/parameters/list_uuid"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "My List"
+                description:
+                  type: string
+                  example: "A list of my favorite vehicles"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  list:
+                    $ref: "#/components/schemas/List"
 
   /lists/search:
     post:
