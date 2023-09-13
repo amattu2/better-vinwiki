@@ -59,7 +59,7 @@ const Feed : FC = () => {
   // NOTE: These posts are a subset of filteredPosts, limited by the limit state
   const slicedPosts: FeedPost[] = useMemo(() => filteredPosts.slice(0, limit), [filteredPosts, limit]);
 
-  const topPost: { reason: string, post: FeedPost } = useMemo(() => {
+  const topPost: { reason: string, post: FeedPost } | null = useMemo(() => {
     const topByComments = posts.sort((a, b) => b.comment_count - a.comment_count)?.[0];
     const topByLength = posts.sort((a, b) => b.post_text.length - a.post_text.length)?.[0];
     const topByRandom = posts[Math.floor(Math.random() * posts.length)];
@@ -70,8 +70,11 @@ const Feed : FC = () => {
     if (topByLength?.post_text.length > 0) {
       return { reason: "Longest Post", post: topByLength };
     }
+    if (topByRandom?.post_text.length > 0) {
+      return { reason: "Random Pick", post: topByRandom };
+    }
 
-    return { reason: "Random Pick", post: topByRandom };
+    return null;
   }, [posts]);
 
   const suggestions: { profile: Profile, postCount: number }[] = useMemo(() => {
