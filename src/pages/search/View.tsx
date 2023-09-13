@@ -225,22 +225,19 @@ const View : FC = () => {
                     <StyledTab value="Profile" label="Profiles" icon={<PersonSearch />} iconPosition="start" />
                     <StyledTab value="List" label="Lists" icon={<List />} iconPosition="start" />
                   </Tabs>
-
-                  <form onSubmit={handleSubmit(handleSearch)}>
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <TextField {...register("query")} placeholder={`Search by ${placeholder}`} size="small" fullWidth />
-                      {searchType === "Vehicle" && (
-                        <Tooltip title="Advanced Search" placement="right">
-                          <IconButton onClick={() => setPlateDecoderOpen(true)}>
-                            <Badge />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-                      <IconButton type="submit">
-                        <Search />
-                      </IconButton>
-                    </Stack>
-                  </form>
+                  <Stack component="form" direction="row" spacing={1} alignItems="center" onSubmit={handleSubmit(handleSearch)}>
+                    <TextField {...register("query")} placeholder={`Search by ${placeholder}`} size="small" fullWidth />
+                    {searchType === "Vehicle" && (
+                      <Tooltip title="Advanced Search" placement="right">
+                        <IconButton onClick={() => setPlateDecoderOpen(true)}>
+                          <Badge />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                    <IconButton type="submit">
+                      <Search />
+                    </IconButton>
+                  </Stack>
                 </Stack>
               </StyledCard>
             </Stack>
