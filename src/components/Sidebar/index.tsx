@@ -5,13 +5,15 @@ import {
 } from '@mui/icons-material';
 import {
   Avatar, Badge, IconButton, Popover,
-  Tooltip, Typography,
-  Box, Stack, styled, Drawer,
+  Tooltip, Typography, Box, Stack,
+  styled, Drawer, List, ListItem,
+  ListItemAvatar, ListItemText, Divider,
 } from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuthProvider } from '../../Providers/AuthProvider';
 import { useNotificationCountProvider } from '../../Providers/NotificationCountProvider';
 import { Notifications } from '../Notifications';
+import ProfileAvatar from '../ProfileAvatar';
 
 const StyledBox = styled(Box)({
   padding: "32px 12px",
@@ -61,6 +63,16 @@ const StyledIconButton = styled(IconButton)({
 const StyledLink = styled(Link)({
   color: "inherit",
   textDecoration: "none",
+});
+
+const StyledDrawer = styled(Drawer)({
+  "& .MuiDrawer-paper": {
+    width: "350px",
+  },
+});
+
+const StyledList = styled(List)({
+  paddingTop: "0",
 });
 
 const Sidebar: FC = () => {
@@ -163,9 +175,39 @@ const Sidebar: FC = () => {
       >
         <Notifications preload={open} />
       </Popover>
-      <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer}>
-        {/* TODO: List of followers */}
-      </Drawer>
+      <StyledDrawer anchor="left" open={drawerOpen} onClose={toggleDrawer}>
+        <Typography variant="h6" fontWeight={600} padding="16px">Following &ndash; Quick Look</Typography>
+        <Divider />
+        <StyledList>
+          {(profile?.followingProfiles?.length === 0) && (
+            <ListItem>
+              <ListItemText
+                primary="You are not following anyone."
+                secondary="Follow someone to see their posts."
+              />
+            </ListItem>
+          )}
+          {profile?.followingProfiles?.map((result: ProfileFollower) => {
+            const { uuid, username, avatar, follower_count } = result;
+
+            if (!uuid || !username) {
+              return null;
+            }
+
+            return (
+              <ListItem key={uuid} component={StyledLink} to={`/profile/${uuid}`} onClick={toggleDrawer} divider>
+                <ListItemAvatar>
+                  <ProfileAvatar username={username} avatar={avatar} />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={<Typography variant="body1" fontWeight={600}>{`@${username}`}</Typography>}
+                  secondary={`${follower_count} followers`}
+                />
+              </ListItem>
+            );
+          })}
+        </StyledList>
+      </StyledDrawer>
     </StyledBox>
   );
 };
