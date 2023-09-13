@@ -50,14 +50,14 @@ const CommentSkeleton: FC = () => (
  */
 const PostComments: FC<Props> = ({ uuid, count }: Props) => {
   const { token, profile } = useAuthProvider();
-  const { register, watch, setValue } = useForm<CommentForm>();
+  const { register, watch, handleSubmit, setValue } = useForm<CommentForm>();
   const isFormValid = useMemo(() => watch("text")?.length > 0 && watch("text")?.length <= 500, [watch("text")]);
 
   const [comments, setComments] = useState<PostComment[]>([]);
   const [loading, setLoading] = useState<boolean>(count > 0);
   const [creating, setCreating] = useState<boolean>(false);
 
-  const createComment = async () => {
+  const createComment = async ({ text }: CommentForm) => {
     if (!isFormValid || creating) {
       return;
     }
@@ -69,7 +69,7 @@ const PostComments: FC<Props> = ({ uuid, count }: Props) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ text: watch("text") }),
+      body: JSON.stringify({ text }),
     }).catch(() => null);
 
     const { status, uuid: commentUuid, comment } = await response?.json() || {};
@@ -126,7 +126,7 @@ const PostComments: FC<Props> = ({ uuid, count }: Props) => {
         {count > 0 && ` (${count})`}
       </Typography>
 
-      <Stack direction="row" spacing={1}>
+      <Stack direction="row" spacing={1} component="form" onSubmit={handleSubmit(createComment)}>
         <TextField
           fullWidth
           placeholder="Reply to this post"
@@ -134,7 +134,7 @@ const PostComments: FC<Props> = ({ uuid, count }: Props) => {
           inputProps={{ maxLength: 500 }}
           {...register("text", { required: true })}
         />
-        <Button variant="text" disabled={!isFormValid || creating} onClick={createComment}>
+        <Button variant="text" disabled={!isFormValid || creating} type="submit">
           <Send />
         </Button>
       </Stack>
