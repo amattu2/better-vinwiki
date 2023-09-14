@@ -9,8 +9,9 @@ Top Features:
 - Individual post page with comments (Similar to Reddit)
 - Profile pages with comprehensive information on Activity, Vehicles, Lists, etc
 - Integrated Vehicle, List, & Person search functionality
+- Enhanced post parsing w/ support for OBD-ii Codes, `@mentions`, `#VIN`, and more
 
-> **Note**: This application uses the native rest.vinwiki.com API,
+> **Note**: This application uses the native vinwiki.com API,
 > but is not affiliated with VINwiki.com in any way.
 
 # Usage

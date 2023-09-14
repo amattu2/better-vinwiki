@@ -3,7 +3,7 @@
  *
  * e.g. `OBDII["P0000"] === "No trouble code"`
  */
-export const OBDII: { [obd2: string]: string } = {
+export const OBDii: { [obd2: string]: string } = {
   P0000: 'No trouble code',
   P0001: 'Fuel Volume Regulator Control Circuit / Open',
   P0002: 'Fuel Volume Regulator Control Circuit Range/Performance',

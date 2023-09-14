@@ -8,10 +8,10 @@ type Props = {
 };
 
 /**
- * A generic text/body display for Feed Post or Comment
- * parsing for @mentions
+ * A `@mention` chip that links to a user's profile if they exist.
+ * Otherwise, it just displays the handle.
  *
- * @param {FeedPost} post
+ * @param {Props} props
  * @returns {JSX.Element}
  */
 const MentionChip: FC<Props> = ({ handle }: Props) => {
@@ -27,6 +27,8 @@ const MentionChip: FC<Props> = ({ handle }: Props) => {
       avatar={<Avatar>{handle.charAt(0).toUpperCase()}</Avatar>}
       label={handle}
       to={`/profile/${uuid}`}
+      size="small"
+      data-testid="mention-chip"
     />
   );
 };

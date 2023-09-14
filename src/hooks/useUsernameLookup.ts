@@ -22,6 +22,8 @@ const useUsernameLookup = (username: Profile["username"]): [LookupStatus, { uuid
   const [cache, setCache] = useSessionStorage<Cache>("usernameLookupCache", {});
   const cachedValue: Profile["uuid"] | null = cache[username] || null;
 
+  // TODO: Two identical mentions will cause two network requests
+  // find a way to prevent the 2nd request while the 1st is still loading
   const [status, setStatus] = useState<LookupStatus>(cachedValue ? LookupStatus.Success : LookupStatus.Loading);
   const [uuid, setUUID] = useState<Profile["uuid"] | null>(cachedValue);
 
