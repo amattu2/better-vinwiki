@@ -10,7 +10,7 @@ import { useCopyToClipboard } from "usehooks-ts";
 import useProgressiveQuality from "../../hooks/useProgressiveQuality";
 import PostComments from "./Components/PostComments";
 import ProfileBit from "./Components/PostProfile";
-import GenericText from "./Components/GenericText";
+import GenericText from "../GenericText/GenericText";
 import { formatDateTime } from "../../utils/date";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { useFeedProvider } from "../../Providers/FeedProvider";

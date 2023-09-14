@@ -8,7 +8,7 @@ import {
 import { useCopyToClipboard } from "usehooks-ts";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { formatDateTime } from "../../utils/date";
-import GenericText from "./Components/GenericText";
+import GenericText from "../GenericText/GenericText";
 import PostComments from "./Components/PostComments";
 import ProfileBit from "./Components/PostProfile";
 import DeletePostDialog from "./Components/DeletePostDialog";

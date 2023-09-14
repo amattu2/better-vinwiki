@@ -1,9 +1,9 @@
-import React, { FC, Ref, forwardRef } from "react";
+import React, { Ref, forwardRef } from "react";
 import ImagePost from "./Image";
 import VerticalImagePost from "./VerticalImage";
 import TextPost from "./Text";
 
-export const PostRouter: FC<FeedPostProps> = forwardRef((props: FeedPostProps, ref: Ref<HTMLDivElement>) => {
+export default forwardRef((props: FeedPostProps, ref: Ref<HTMLDivElement>) => {
   switch (props.type) {
     case "photo":
       if (props.post_text?.length > 50) {

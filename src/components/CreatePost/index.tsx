@@ -16,8 +16,8 @@ import { DateTimePicker } from '@mui/x-date-pickers';
 import dayjs from "dayjs";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { ENDPOINTS, MEDIA_ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
-import { PostRouter } from "../FeedPost";
 import { ImageUpload } from "../ImageUpload";
+import FeedPost from "../FeedPost";
 import Loader from "../Loader";
 import PlateDecoder from "../PlateDecoder/Dialog";
 import ProfileAvatar from "../ProfileAvatar";
@@ -320,7 +320,7 @@ const CreatePost: FC = () => {
               <Step disabled={!stepStatuses[2]} last>
                 <StepButton onClick={() => setActiveStep(3)}>Preview & Submit</StepButton>
                 <StyledStepContent>
-                  <PostRouter {...generateDemoPost()} isPreview />
+                  <FeedPost {...generateDemoPost()} isPreview />
                   <Button disabled={Object.values(stepStatuses).some((s) => !s)} onClick={createPost}>Post</Button>
                 </StyledStepContent>
               </Step>
