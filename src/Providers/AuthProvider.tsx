@@ -26,7 +26,7 @@ export enum ProviderStatus {
 
 const defaultState: ProviderState = { status: ProviderStatus.LOADING, authenticated: false };
 
-const Context = React.createContext<ProviderState | null>(null);
+export const Context = React.createContext<ProviderState | null>(null);
 
 export const useAuthProvider = (): ProviderState => {
   const contextState = React.useContext(Context);

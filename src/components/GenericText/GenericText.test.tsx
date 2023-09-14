@@ -1,13 +1,24 @@
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import { MemoryRouter } from "react-router-dom";
-import { render } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import GenericText from "./GenericText";
+import { ProviderState, Context as AuthCtx } from "../../Providers/AuthProvider";
+import { STATUS_ERROR, STATUS_OK } from "../../config/Endpoints";
 
-const TestParent: FC<{ children: React.ReactNode }> = ({ children }) => (
-  <MemoryRouter>
-    {children}
-  </MemoryRouter>
-);
+const TestParent: FC<{ children: React.ReactNode }> = ({ children }) => {
+  const value = useMemo(() => ({
+    authenticated: true,
+    token: "ABC-EXAMPLE-TOKEN",
+  }), []) as ProviderState;
+
+  return (
+    <MemoryRouter>
+      <AuthCtx.Provider value={value}>
+        {children}
+      </AuthCtx.Provider>
+    </MemoryRouter>
+  );
+};
 
 describe("GenericText > Plain text", () => {
   it("renders empty text nominally", () => {
@@ -42,6 +53,60 @@ describe("GenericText > Plain text", () => {
     const { getByTestId } = render(<GenericText content={text} />);
 
     expect(getByTestId("generic-text-body")).toHaveTextContent(text);
+  });
+});
+
+describe("GenericText > Mention Chips", () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+    window.sessionStorage.clear();
+  });
+
+  it("renders a single mention chip nominally", async () => {
+    jest.spyOn(global, "fetch").mockImplementation(() => Promise.resolve({
+      json: () => Promise.resolve({ status: STATUS_OK, person: { uuid: "AAA-UUID-1234" } }),
+    } as Response));
+
+    const { getByTestId } = render(
+      <TestParent>
+        <GenericText content="hey @xyz your UUID better be AAA-UUID-1234" />
+      </TestParent>,
+    );
+
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(getByTestId("mention-chip")).toBeInTheDocument());
+    expect(getByTestId("mention-chip")).toHaveAttribute("href", "/profile/AAA-UUID-1234");
+  });
+
+  it("renders multiple mention chips without errors", async () => {
+    jest.spyOn(global, "fetch").mockImplementation(() => Promise.resolve({
+      json: () => Promise.resolve({ status: STATUS_OK, person: { uuid: Math.random().toString() } }),
+    } as Response));
+
+    const { getAllByTestId } = render(
+      <TestParent>
+        <GenericText content="hey @personone and @fourfivesix check this out" />
+      </TestParent>,
+    );
+
+    await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(getAllByTestId("mention-chip").length).toBe(2));
+  });
+
+  it("does nothing for non-existent users", async () => {
+    jest.spyOn(global, "fetch").mockImplementation(() => Promise.resolve({
+      json: () => Promise.resolve({ status: STATUS_ERROR, person: null }),
+    } as Response));
+
+    const { container, queryByTestId } = render(
+      <TestParent>
+        <GenericText content="hey @carrotman you don't exist" />
+      </TestParent>,
+    );
+
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(queryByTestId("mention-chip")).not.toBeInTheDocument());
+    expect(container.querySelector("span")).toHaveTextContent("@carrotman");
   });
 });
 
@@ -118,24 +183,24 @@ describe("GenericText > Hyperlinks", () => {
   });
 });
 
-describe("GenericText > VINs", () => {
+describe("GenericText > Vehicle Chips", () => {
   const validVINs = [
-    "#1GNEK13Z22R298984",
-    "#2G1FP22G3Y2100001",
-    "#3VWCM31Y25M360000",
-    "#4T1BE46KX7U522000",
-    "#5FNRL387X7B400001",
-    "#JN1AZ34D13T101000",
-    "#KMHDN45D11U100001",
-    "#1C4BJWEG2DL500001",
-    "#1G1YY22G2X5100001",
-    "#1FAFP45X9XF200001",
+    "1GNEK13Z22R298984",
+    "2G1FP22G3Y2100001",
+    "3VWCM31Y25M360000",
+    "4T1BE46KX7U522000",
+    "5FNRL387X7B400001",
+    "JN1AZ34D13T101000",
+    "KMHDN45D11U100001",
+    "1C4BJWEG2DL500001",
+    "1G1YY22G2X5100001",
+    "1FAFP45X9XF200001",
   ];
 
   it.each(validVINs)("identifies VIN %s without errors", (text) => {
     const { getByTestId } = render(
       <TestParent>
-        <GenericText content={`text message prefix ${text} text suffix`} />
+        <GenericText content={`text message prefix #${text} text suffix`} />
       </TestParent>,
     );
 

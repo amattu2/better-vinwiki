@@ -27,6 +27,7 @@ export const HyperlinkRegex = /(https:\/\/[^\s]+)/g;
  *
  * Matches
  * - `#VIN` only
+ * - Must be uppercase
  */
 export const VinRegex = /(#[A-HJ-NPR-Z0-9]{17})/g;
 
