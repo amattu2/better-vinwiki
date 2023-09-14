@@ -5,6 +5,7 @@ export const ENDPOINTS = {
   /* Auth Endpoints */
   authenticate: `${API_URL}auth/authenticate`,
   logout: `${API_URL}auth/logout`,
+  // TODO: Password Change Endpoint...
 
   /* Person Endpoints */
   profile: `${API_URL}person/profile/`,
