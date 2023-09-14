@@ -197,7 +197,7 @@ describe("GenericText > Vehicle Chips", () => {
     "1FAFP45X9XF200001",
   ];
 
-  it.each(validVINs)("identifies VIN %s without errors", (text) => {
+  it.each(validVINs)("identifies VIN tag #%s without errors", (text) => {
     const { getByTestId } = render(
       <TestParent>
         <GenericText content={`text message prefix #${text} text suffix`} />
@@ -206,7 +206,15 @@ describe("GenericText > Vehicle Chips", () => {
 
     expect(getByTestId("generic-text-body")).toBeInTheDocument();
     expect(getByTestId("vehicle-chip")).toBeInTheDocument();
-    expect(getByTestId("vehicle-chip")).toHaveAttribute("href", `/vehicle/${text.replace("#", "")}`);
+    expect(getByTestId("vehicle-chip")).toHaveAttribute("href", `/vehicle/${text}`);
+  });
+
+  it("embeds Vehicles by VINwiki VIN links", () => {
+    fail("Not implemented");
+  });
+
+  it("embeds Vehicles by Better-VINwiki VIN links", () => {
+    fail("Not implemented");
   });
 });
 
@@ -225,5 +233,25 @@ describe("GenericText > OBD Codes", () => {
     expect(getByTestId("trouble-code-chip")).toBeInTheDocument();
     expect(getByTestId("trouble-code-chip")).toHaveAttribute("aria-label", description);
     expect(getByTestId("trouble-code-chip").textContent).toEqual(code);
+  });
+});
+
+describe("GenericText > Profile Chips", () => {
+  it("embeds by VINwiki Profile links", () => {
+    fail("Not implemented");
+  });
+
+  it("embeds by Better-VINwiki Profile links", () => {
+    fail("Not implemented");
+  });
+});
+
+describe("GenericText > List Chips", () => {
+  it("embeds by VINwiki Vehicle List links", () => {
+    fail("Not implemented");
+  });
+
+  it("embeds by Better-VINwiki Vehicle List links", () => {
+    fail("Not implemented");
   });
 });
