@@ -2,6 +2,7 @@ import React, { Ref, forwardRef } from "react";
 import ImagePost from "./Image";
 import VerticalImagePost from "./VerticalImage";
 import TextPost from "./Text";
+import ListAddPost from "./ListAdd";
 
 export default forwardRef((props: FeedPostProps, ref: Ref<HTMLDivElement>) => {
   switch (props.type) {
@@ -12,8 +13,9 @@ export default forwardRef((props: FeedPostProps, ref: Ref<HTMLDivElement>) => {
 
       return <ImagePost {...props} ref={ref} />;
     case "generic":
-    case "list_add":
       return <TextPost {...props} ref={ref} />;
+    case "list_add":
+      return <ListAddPost {...props} ref={ref} />;
     default:
       return null;
   }
