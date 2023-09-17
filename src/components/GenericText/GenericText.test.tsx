@@ -108,6 +108,42 @@ describe("GenericText > Mention Chips", () => {
     await waitFor(() => expect(queryByTestId("mention-chip")).not.toBeInTheDocument());
     expect(container.querySelector("span")).toHaveTextContent("@carrotman");
   });
+
+  it("embeds by VINwiki Profile links", async () => {
+    jest.spyOn(global, "fetch").mockImplementation(() => Promise.resolve({
+      json: () => Promise.resolve({ status: STATUS_OK, profile: { username: "realUUIDbutFAKEusername" } }),
+    } as Response));
+
+    const { getByTestId } = render(
+      <TestParent>
+        <GenericText content="text message prefix https://web.vinwiki.com/#/person/41e3b496-9e2f-4561-87a7-1cc38e7b4057 text suffix" />
+      </TestParent>,
+    );
+
+    expect(getByTestId("generic-text-body")).toBeInTheDocument();
+    await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(getByTestId("mention-chip")).toBeInTheDocument());
+    expect(getByTestId("mention-chip")).toHaveTextContent("realUUIDbutFAKEusername");
+    expect(getByTestId("mention-chip")).toHaveAttribute("href", `/profile/41e3b496-9e2f-4561-87a7-1cc38e7b4057`);
+  });
+
+  it("embeds by Better-VINwiki Profile links", async () => {
+    jest.spyOn(global, "fetch").mockImplementation(() => Promise.resolve({
+      json: () => Promise.resolve({ status: STATUS_OK, profile: { username: "anotherUUIDwithFAKEusername" } }),
+    } as Response));
+
+    const { getByTestId } = render(
+      <TestParent>
+        <GenericText content="text message prefix https://vinwiki.pages.dev/profile/41e3b496-9e2f-4561-87a7-1cc38e7b4057 text suffix" />
+      </TestParent>,
+    );
+
+    expect(getByTestId("generic-text-body")).toBeInTheDocument();
+    await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(getByTestId("mention-chip")).toBeInTheDocument());
+    expect(getByTestId("mention-chip")).toHaveTextContent("anotherUUIDwithFAKEusername");
+    expect(getByTestId("mention-chip")).toHaveAttribute("href", `/profile/41e3b496-9e2f-4561-87a7-1cc38e7b4057`);
+  });
 });
 
 describe("GenericText > Hyperlinks", () => {
@@ -270,16 +306,6 @@ describe("GenericText > OBD Codes", () => {
     expect(getByTestId("trouble-code-chip")).toBeInTheDocument();
     expect(getByTestId("trouble-code-chip")).toHaveAttribute("aria-label", description);
     expect(getByTestId("trouble-code-chip").textContent).toEqual(code);
-  });
-});
-
-describe("GenericText > Profile Chips", () => {
-  it("embeds by VINwiki Profile links", () => {
-    fail("Not implemented");
-  });
-
-  it("embeds by Better-VINwiki Profile links", () => {
-    fail("Not implemented");
   });
 });
 

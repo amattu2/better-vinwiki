@@ -34,15 +34,15 @@ const GenericLink = ({ href }: { href: string }) => (
 const GenericText: FC<Props> = ({ content, padding }: Props) => {
   const text = content.replace(/\s/g, " ");
 
-  // Parse List UUIDs and lookup the list's name for the @list tag
+  // Parse List UUIDs and lookup the list's name for the list tag
 
-  let parsed = reactStringReplace(text, MentionRegex, (match, i) => <MentionChip key={i} handle={match} />);
-  parsed = reactStringReplace(parsed, ProfileLinkRegex, (match, i) => <UUIDChip key={i} uuid={match} />);
-  parsed = reactStringReplace(parsed, VehicleLinkRegex, (match) => <VehicleChip vin={match} />);
-  parsed = reactStringReplace(parsed, EmailRegex, (match) => <GenericLink href={`mailto:${match}`} />);
-  parsed = reactStringReplace(parsed, HyperlinkRegex, (match) => <GenericLink href={match} />);
-  parsed = reactStringReplace(parsed, VinRegex, (match) => <VehicleChip vin={match.replace("#", "")} />);
-  parsed = reactStringReplace(parsed, OBDiiRegex, (match) => <OBDiiChip code={match} />);
+  let parsed = reactStringReplace(text, MentionRegex, (match, i) => <MentionChip key={`mention-${match}-${i}`} handle={match} />);
+  parsed = reactStringReplace(parsed, ProfileLinkRegex, (match, i) => <UUIDChip key={`profile-${match}-${i}`} uuid={match} />);
+  parsed = reactStringReplace(parsed, VehicleLinkRegex, (match, i) => <VehicleChip key={`vehicle-${match}-${i}`} vin={match} />);
+  parsed = reactStringReplace(parsed, EmailRegex, (match, i) => <GenericLink key={`email-${match}-${i}`} href={`mailto:${match}`} />);
+  parsed = reactStringReplace(parsed, HyperlinkRegex, (match, i, o) => <GenericLink key={`hyperlink-${match}-${i}-${o}`} href={match} />);
+  parsed = reactStringReplace(parsed, VinRegex, (match, i) => <VehicleChip key={`vin-${match}-${i}`} vin={match.replace("#", "")} />);
+  parsed = reactStringReplace(parsed, OBDiiRegex, (match, i) => <OBDiiChip key={`obd-${match}-${i}`} code={match} />);
 
   return (
     <Typography
