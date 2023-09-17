@@ -12,10 +12,13 @@ type Props = {
  * if the user exists. Otherwise, returns a localized
  * link to the profile.
  *
+ * Not to be confused with the `<MentionChip />` itself, which
+ * is used when `@username` is in the post body.
+ *
  * @param {Props} props
  * @returns {JSX.Element}
  */
-const UUIDChip: FC<Props> = ({ uuid }: Props) => {
+const ProfileLinkChip: FC<Props> = ({ uuid }: Props) => {
   const [status, { username }] = useUsernameLookup(uuid);
 
   if (status !== LookupStatus.Success || !username) {
@@ -29,4 +32,4 @@ const UUIDChip: FC<Props> = ({ uuid }: Props) => {
   return <MentionChip handle={username} />;
 };
 
-export default UUIDChip;
+export default ProfileLinkChip;

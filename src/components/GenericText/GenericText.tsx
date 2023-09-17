@@ -5,7 +5,7 @@ import { EmailRegex, HyperlinkRegex, MentionRegex, OBDiiRegex, ProfileLinkRegex,
 import MentionChip from "../MentionChip";
 import OBDiiChip from "../TroubleCodeChip";
 import VehicleChip from "../VehicleChip";
-import UUIDChip from "../UUIDChip";
+import ProfileLinkChip from "../ProfileLinkChip";
 
 type Props = {
   content: string;
@@ -37,7 +37,7 @@ const GenericText: FC<Props> = ({ content, padding }: Props) => {
   // Parse List UUIDs and lookup the list's name for the list tag
 
   let parsed = reactStringReplace(text, MentionRegex, (match, i) => <MentionChip key={`mention-${match}-${i}`} handle={match} />);
-  parsed = reactStringReplace(parsed, ProfileLinkRegex, (match, i) => <UUIDChip key={`profile-${match}-${i}`} uuid={match} />);
+  parsed = reactStringReplace(parsed, ProfileLinkRegex, (match, i) => <ProfileLinkChip key={`profile-${match}-${i}`} uuid={match} />);
   parsed = reactStringReplace(parsed, VehicleLinkRegex, (match, i) => <VehicleChip key={`vehicle-${match}-${i}`} vin={match} />);
   parsed = reactStringReplace(parsed, EmailRegex, (match, i) => <GenericLink key={`email-${match}-${i}`} href={`mailto:${match}`} />);
   parsed = reactStringReplace(parsed, HyperlinkRegex, (match, i, o) => <GenericLink key={`hyperlink-${match}-${i}-${o}`} href={match} />);
