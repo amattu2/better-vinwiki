@@ -3,7 +3,7 @@ import { useSessionStorage } from "usehooks-ts";
 import { useAuthProvider } from "../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
 
-type Cache = Record<Profile["username"], Profile["uuid"]>;
+type Cache = Record<List["uuid"], List["name"]>;
 
 export enum LookupStatus {
   Loading = "loading",
@@ -12,24 +12,21 @@ export enum LookupStatus {
 }
 
 /**
- * A hook to cache and lookup a username by UUID.
- * This is the inverse of `useUUIDLookup`
+ * A hook to cache and lookup List information by UUID
  *
  * @param uuid the uuid to lookup
- * @returns [status, { username }]
+ * @returns [status, { name }]
  */
-const useUsernameLookup = (uuid: Profile["uuid"]): [LookupStatus, { username: Profile["username"] | null }] => {
+const useListLookup = (uuid: List["uuid"]): [LookupStatus, { name: List["name"] | null }] => {
   const { token } = useAuthProvider();
-  const [cache, setCache] = useSessionStorage<Cache>("uuidLookupCache", {});
-
-  const cachedIndex = Object.values(cache).findIndex((v) => v === uuid);
-  const cachedValue: Profile["username"] | null = cachedIndex > -1 ? Object.keys(cache)[cachedIndex] : null;
+  const [cache, setCache] = useSessionStorage<Cache>("listLookupCache", {});
+  const cachedValue: List["name"] | null = cache[uuid] || null;
 
   // TODO: Two identical lookups will cause two network requests
   // find a way to prevent the 2nd request while the 1st is still loading
 
   const [status, setStatus] = useState<LookupStatus>(cachedValue ? LookupStatus.Success : LookupStatus.Loading);
-  const [username, setUsername] = useState<Profile["username"] | null>(cachedValue);
+  const [name, setListName] = useState<List["name"] | null>(cachedValue);
 
   useEffect(() => {
     if (cachedValue || !token || !uuid) {
@@ -40,7 +37,7 @@ const useUsernameLookup = (uuid: Profile["uuid"]): [LookupStatus, { username: Pr
     const { signal } = controller;
 
     (async () => {
-      const response = await fetch(ENDPOINTS.profile + uuid, {
+      const response = await fetch(ENDPOINTS.list + uuid, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -48,18 +45,18 @@ const useUsernameLookup = (uuid: Profile["uuid"]): [LookupStatus, { username: Pr
         signal,
       }).catch(() => setStatus(LookupStatus.Error));
 
-      const { status, profile } = await response?.json() || {};
-      if (status === STATUS_OK && !!profile?.username) {
-        setCache((prev) => ({ ...prev, [profile.username]: uuid }));
+      const { status, list } = await response?.json() || {};
+      if (status === STATUS_OK && !!list?.name) {
+        setCache((prev) => ({ ...prev, [uuid]: list.name }));
         setStatus(LookupStatus.Success);
-        setUsername(profile.username);
+        setListName(list.name);
       }
     })();
 
     return () => controller.abort();
   }, []);
 
-  return [status, { username }];
+  return [status, { name }];
 };
 
-export default useUsernameLookup;
+export default useListLookup;

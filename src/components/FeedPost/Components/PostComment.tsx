@@ -10,7 +10,7 @@ import { ENDPOINTS } from "../../../config/Endpoints";
 import { useAuthProvider } from "../../../Providers/AuthProvider";
 import { formatDateTime } from "../../../utils/date";
 import ProfileAvatar from "../../ProfileAvatar";
-import GenericText from "./GenericText";
+import GenericText from "../../GenericText/GenericText";
 
 type Props = {
   comment: PostComment;

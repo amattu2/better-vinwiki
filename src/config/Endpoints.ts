@@ -64,3 +64,4 @@ export const MEDIA_ENDPOINTS = {
 };
 
 export const STATUS_OK = "ok";
+export const STATUS_ERROR = "error";
