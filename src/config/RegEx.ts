@@ -57,3 +57,11 @@ export const ProfileLinkRegex = /(?:https?:\/\/[^\s]+\/(?:profile|person)\/)([0-
  */
 export const VehicleLinkRegex = /(?:https?:\/\/[^\s]+\/(?:vehicle|vin)\/)([A-HJ-NPR-Z0-9]{17})/g;
 
+/**
+ * List Link
+ *
+ * Matches:
+ * - Better VINwiki `/list/:uuid`
+ * - VINwiki `/#/lists/:uuid`
+ */
+export const ListLinkRegex = /(?:https?:\/\/[^\s]+\/(?:lists?)\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}))/g;

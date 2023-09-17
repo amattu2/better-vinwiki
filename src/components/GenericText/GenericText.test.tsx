@@ -310,11 +310,44 @@ describe("GenericText > OBD Codes", () => {
 });
 
 describe("GenericText > List Chips", () => {
-  it("embeds by VINwiki Vehicle List links", () => {
-    fail("Not implemented");
+  afterEach(() => {
+    jest.restoreAllMocks();
+    window.sessionStorage.clear();
   });
 
-  it("embeds by Better-VINwiki Vehicle List links", () => {
-    fail("Not implemented");
+  it("embeds by VINwiki Vehicle List links", async () => {
+    jest.spyOn(global, "fetch").mockImplementation(() => Promise.resolve({
+      json: () => Promise.resolve({ status: STATUS_OK, list: { name: "A very real list" } }),
+    } as Response));
+
+    const { getByTestId } = render(
+      <TestParent>
+        <GenericText content="text message prefix https://web.vinwiki.com/#/lists/41e3b496-9e2f-4561-87a7-1cc38e7b4057 text suffix" />
+      </TestParent>,
+    );
+
+    expect(getByTestId("generic-text-body")).toBeInTheDocument();
+    await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(getByTestId("list-chip")).toBeInTheDocument());
+    expect(getByTestId("list-chip")).toHaveTextContent("A very real list");
+    expect(getByTestId("list-chip")).toHaveAttribute("href", `/list/41e3b496-9e2f-4561-87a7-1cc38e7b4057`);
+  });
+
+  it("embeds by Better-VINwiki Vehicle List links", async () => {
+    jest.spyOn(global, "fetch").mockImplementation(() => Promise.resolve({
+      json: () => Promise.resolve({ status: STATUS_OK, list: { name: "ABC Test List" } }),
+    } as Response));
+
+    const { getByTestId } = render(
+      <TestParent>
+        <GenericText content="text message prefix https://vinwiki.pages.dev/list/41e3b496-9e2f-4561-87a7-1cc38e7b4057 text suffix" />
+      </TestParent>,
+    );
+
+    expect(getByTestId("generic-text-body")).toBeInTheDocument();
+    await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(getByTestId("list-chip")).toBeInTheDocument());
+    expect(getByTestId("list-chip")).toHaveTextContent("ABC Test List");
+    expect(getByTestId("list-chip")).toHaveAttribute("href", `/list/41e3b496-9e2f-4561-87a7-1cc38e7b4057`);
   });
 });
