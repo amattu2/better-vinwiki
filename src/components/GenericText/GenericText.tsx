@@ -1,10 +1,11 @@
 import React, { FC } from "react";
 import reactStringReplace from "react-string-replace";
 import { Typography } from "@mui/material";
-import { EmailRegex, HyperlinkRegex, MentionRegex, OBDiiRegex, VehicleLinkRegex, VinRegex } from "../../config/RegEx";
+import { EmailRegex, HyperlinkRegex, MentionRegex, OBDiiRegex, ProfileLinkRegex, VehicleLinkRegex, VinRegex } from "../../config/RegEx";
 import MentionChip from "../MentionChip";
 import OBDiiChip from "../TroubleCodeChip";
 import VehicleChip from "../VehicleChip";
+import UUIDChip from "../UUIDChip";
 
 type Props = {
   content: string;
@@ -33,9 +34,12 @@ const GenericLink = ({ href }: { href: string }) => (
 const GenericText: FC<Props> = ({ content, padding }: Props) => {
   const text = content
     .replace(/\s/g, " ")
-    .replaceAll(VehicleLinkRegex, (text, ...groups) => (groups[2] ? `#${groups[2]}` : text));
+    .replaceAll(VehicleLinkRegex, (text, ...groups) => (groups[0] ? `#${groups[0]}` : text));
+
+  // Parse List UUIDs and lookup the list's name for the @list tag
 
   let parsed = reactStringReplace(text, MentionRegex, (match, i) => <MentionChip key={i} handle={match} />);
+  parsed = reactStringReplace(parsed, ProfileLinkRegex, (match, i) => <UUIDChip key={i} uuid={match} />);
   parsed = reactStringReplace(parsed, EmailRegex, (match) => <GenericLink href={`mailto:${match}`} />);
   parsed = reactStringReplace(parsed, HyperlinkRegex, (match) => <GenericLink href={match} />);
   parsed = reactStringReplace(parsed, VinRegex, (match) => <VehicleChip vin={match.replace("#", "")} />);
