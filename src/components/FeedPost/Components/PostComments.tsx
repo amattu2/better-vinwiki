@@ -48,13 +48,14 @@ const CommentSkeleton: FC = () => (
  * @param {PostComment} comment
  * @returns {JSX.Element}
  */
-const PostComments: FC<Props> = ({ uuid, count }: Props) => {
+const PostComments: FC<Props> = ({ uuid, count: commentCount }: Props) => {
   const { token, profile } = useAuthProvider();
   const { register, watch, handleSubmit, setValue } = useForm<CommentForm>();
   const isFormValid = useMemo(() => watch("text")?.length > 0 && watch("text")?.length <= 500, [watch("text")]);
 
-  const [comments, setComments] = useState<PostComment[]>([]);
+  const [count, setCount] = useState<number>(commentCount);
   const [loading, setLoading] = useState<boolean>(count > 0);
+  const [comments, setComments] = useState<PostComment[]>([]);
   const [creating, setCreating] = useState<boolean>(false);
 
   const createComment = async ({ text }: CommentForm) => {
@@ -89,8 +90,12 @@ const PostComments: FC<Props> = ({ uuid, count }: Props) => {
     setCreating(false);
   };
 
+  const onCommentDelete = (uuid: PostComment["uuid"]) => {
+    setComments((prevComments) => prevComments.filter((comment) => comment.uuid !== uuid));
+  };
+
   useEffect(() => {
-    if (count <= 0) {
+    if (commentCount <= 0) {
       setLoading(false);
       return () => null;
     }
@@ -110,14 +115,18 @@ const PostComments: FC<Props> = ({ uuid, count }: Props) => {
       const { status, comments } = await response?.json() || {};
       if (status === STATUS_OK) {
         comments?.sort((a: PostComment, b: PostComment) => (new Date(b.created).getTime() - new Date(a.created).getTime()));
-
         setComments(comments);
-        setLoading(false);
       }
+
+      setLoading(false);
     })();
 
     return () => controller.abort();
-  }, [count]);
+  }, [commentCount]);
+
+  useEffect(() => {
+    setCount(comments.length);
+  }, [comments.length]);
 
   return (
     <StyledCommentBox>
@@ -141,10 +150,11 @@ const PostComments: FC<Props> = ({ uuid, count }: Props) => {
 
       {count > 0 && (
         <StyledCommentStack direction="column" spacing={1}>
+          {creating && <CommentSkeleton />}
           {!loading ? (
             <>
               {comments.slice(0, 4).map((comment: PostComment) => (
-                <PostComment key={comment.uuid} comment={comment} divider />
+                <PostComment key={comment.uuid} comment={comment} onDelete={onCommentDelete} divider />
               ))}
               {count > 4 && (
                 <Typography variant="body2" textAlign="center">
