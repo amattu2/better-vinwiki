@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Link } from "react-router-dom";
 import { Avatar, Chip } from "@mui/material";
-import useUsernameLookup, { LookupStatus } from "../../hooks/useUsernameLookup";
+import useUUIDLookup, { LookupStatus } from "../../hooks/useUUIDLookup";
 
 type Props = {
   handle: string;
@@ -15,7 +15,7 @@ type Props = {
  * @returns {JSX.Element}
  */
 const MentionChip: FC<Props> = ({ handle }: Props) => {
-  const [status, { uuid }] = useUsernameLookup(handle);
+  const [status, { uuid }] = useUUIDLookup(handle);
 
   if (status !== LookupStatus.Success || !uuid) {
     return <span>{`@${handle}`}</span>;

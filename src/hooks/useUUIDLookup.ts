@@ -17,9 +17,9 @@ export enum LookupStatus {
  * @param username username to lookup
  * @returns [status, { uuid }]
  */
-const useUsernameLookup = (username: Profile["username"]): [LookupStatus, { uuid: Profile["uuid"] | null }] => {
+const useUUIDLookup = (username: Profile["username"]): [LookupStatus, { uuid: Profile["uuid"] | null }] => {
   const { token } = useAuthProvider();
-  const [cache, setCache] = useSessionStorage<Cache>("usernameLookupCache", {});
+  const [cache, setCache] = useSessionStorage<Cache>("uuidLookupCache", {});
   const cachedValue: Profile["uuid"] | null = cache[username] || null;
 
   // TODO: Two identical mentions will cause two network requests
@@ -58,4 +58,4 @@ const useUsernameLookup = (username: Profile["username"]): [LookupStatus, { uuid
   return [status, { uuid }];
 };
 
-export default useUsernameLookup;
+export default useUUIDLookup;
