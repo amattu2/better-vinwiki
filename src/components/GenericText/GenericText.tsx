@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import reactStringReplace from "react-string-replace";
 import { Typography } from "@mui/material";
-import { EmailRegex, HyperlinkRegex, MentionRegex, OBDiiRegex, VinRegex } from "../../config/RegEx";
+import { EmailRegex, HyperlinkRegex, MentionRegex, OBDiiRegex, VehicleLinkRegex, VinRegex } from "../../config/RegEx";
 import MentionChip from "../MentionChip";
 import OBDiiChip from "../TroubleCodeChip";
 import VehicleChip from "../VehicleChip";
@@ -31,15 +31,15 @@ const GenericLink = ({ href }: { href: string }) => (
  * @returns {JSX.Element}
  */
 const GenericText: FC<Props> = ({ content, padding }: Props) => {
-  let parsed = reactStringReplace(content.replace(/\s/g, " "), MentionRegex, (match, i) => <MentionChip key={i} handle={match} />);
+  const text = content
+    .replace(/\s/g, " ")
+    .replaceAll(VehicleLinkRegex, (text, ...groups) => (groups[2] ? `#${groups[2]}` : text));
 
+  let parsed = reactStringReplace(text, MentionRegex, (match, i) => <MentionChip key={i} handle={match} />);
   parsed = reactStringReplace(parsed, EmailRegex, (match) => <GenericLink href={`mailto:${match}`} />);
   parsed = reactStringReplace(parsed, HyperlinkRegex, (match) => <GenericLink href={match} />);
   parsed = reactStringReplace(parsed, VinRegex, (match) => <VehicleChip vin={match.replace("#", "")} />);
   parsed = reactStringReplace(parsed, OBDiiRegex, (match) => <OBDiiChip code={match} />);
-
-  // TODO: parse vinwiki or better-vw links first
-  // if it's a list, profile, or vehicle link, then embed a chip
 
   return (
     <Typography

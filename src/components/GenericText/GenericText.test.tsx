@@ -210,11 +210,48 @@ describe("GenericText > Vehicle Chips", () => {
   });
 
   it("embeds Vehicles by VINwiki VIN links", () => {
-    fail("Not implemented");
+    const { getByTestId } = render(
+      <TestParent>
+        <GenericText content="text message prefix https://web.vinwiki.com/#/vin/3KPF24AD2PE655484 text suffix" />
+      </TestParent>,
+    );
+
+    expect(getByTestId("generic-text-body")).toBeInTheDocument();
+    expect(getByTestId("vehicle-chip")).toBeInTheDocument();
+    expect(getByTestId("vehicle-chip")).toHaveAttribute("href", `/vehicle/3KPF24AD2PE655484`);
   });
 
   it("embeds Vehicles by Better-VINwiki VIN links", () => {
-    fail("Not implemented");
+    const { getByTestId } = render(
+      <TestParent>
+        <GenericText content="text message prefix https://vinwiki.pages.dev/vehicle/3KPF24AD2PE655484 text suffix" />
+      </TestParent>,
+    );
+
+    expect(getByTestId("generic-text-body")).toBeInTheDocument();
+    expect(getByTestId("vehicle-chip")).toBeInTheDocument();
+    expect(getByTestId("vehicle-chip")).toHaveAttribute("href", `/vehicle/3KPF24AD2PE655484`);
+  });
+
+  it("embeds multiple Vehicles by Better-VINwiki VIN links", () => {
+    const links = [
+      "https://vinwiki.pages.dev/vehicle/3KPF24AD2PE655484",
+      "http://localhost:3000/vehicle/1GHDU06L7ST306552",
+      "http://vinwiki.pages.dev/vehicle/ZFF83CMB000249869",
+      "http://localhost:3000/vehicle/2B5WB35Y01K526660",
+    ];
+
+    const { getByTestId, getAllByTestId } = render(
+      <TestParent>
+        <GenericText content={links.join(" abc abc prefix suffix ")} />
+      </TestParent>,
+    );
+
+    expect(getByTestId("generic-text-body")).toBeInTheDocument();
+    expect(getAllByTestId("vehicle-chip").length).toEqual(links.length);
+    links.forEach((link, i) => {
+      expect(getAllByTestId("vehicle-chip")[i]).toHaveAttribute("href");
+    });
   });
 });
 

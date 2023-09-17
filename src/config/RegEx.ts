@@ -38,3 +38,12 @@ export const VinRegex = /(#[A-HJ-NPR-Z0-9]{17})/g;
  * - `P`, `B`, `C`, or `U` code classes
  */
 export const OBDiiRegex = /(?:^|\s)([PBCU][0-3][0-9]{3})/ig;
+
+/**
+ * Vehicle Link
+ *
+ * Matches:
+ * - Better VINwiki `/vehicle/:vin`
+ * - VINwiki `/#/vin/:vin`
+ */
+export const VehicleLinkRegex = /(https?:\/\/[^\s]+\/(vehicle|vin)\/)([A-HJ-NPR-Z0-9]{17})/g;
