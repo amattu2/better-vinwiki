@@ -103,15 +103,14 @@ const Sidebar: FC = () => {
         <StyledLogo src="https://api.placeholder.app/image/90x90/3b3b3b?text=BV" alt="logo" />
       </StyledLogoBox>
       <StyledAvatarBox>
-        <StyledLink to="/profile">
-          {profile?.avatar ? (
-            <StyledLogo src={profile.avatar} alt="user" />
-          ) : (
-            <Avatar sx={{ width: 36, height: 36 }}>
-              {profile?.username?.charAt(0).toUpperCase()}
-            </Avatar>
-          )}
-        </StyledLink>
+        <Avatar
+          component={StyledLink}
+          to="/profile"
+          sx={{ width: 36, height: 36 }}
+          src={profile.avatar ? `https://media-cdn.vinwiki.com/${profile.avatar}` : undefined}
+        >
+          {profile?.username?.charAt(0).toUpperCase()}
+        </Avatar>
       </StyledAvatarBox>
       <StyledControlGroup direction="column" gap={1}>
         <StyledIconButton disabled={pathname === "/"}>
