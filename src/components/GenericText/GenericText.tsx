@@ -1,6 +1,6 @@
-import React, { FC } from "react";
+import React, { ElementType, FC } from "react";
 import reactStringReplace from "react-string-replace";
-import { Typography } from "@mui/material";
+import { Typography, styled } from "@mui/material";
 import { EmailRegex, HyperlinkRegex, ListLinkRegex, MentionRegex, OBDiiRegex, ProfileLinkRegex, VehicleLinkRegex, VinRegex } from "../../config/RegEx";
 import MentionChip from "../MentionChip";
 import OBDiiChip from "../TroubleCodeChip";
@@ -18,6 +18,12 @@ const GenericLink = ({ href }: { href: string }) => (
     {href}
   </a>
 );
+
+const StyledTypography = styled(Typography)<{ component: ElementType }>({
+  "& .MuiChip-root": {
+    marginLeft: "2px !important",
+  },
+});
 
 /**
  * A generic text display for Feed Posts or Comments.
@@ -47,7 +53,7 @@ const GenericText: FC<Props> = ({ content, padding }: Props) => {
   parsed = reactStringReplace(parsed, OBDiiRegex, (match, i) => <OBDiiChip key={`obd-${match}-${i}`} code={match} />);
 
   return (
-    <Typography
+    <StyledTypography
       component="div"
       variant="body2"
       color="textSecondary"
@@ -55,7 +61,7 @@ const GenericText: FC<Props> = ({ content, padding }: Props) => {
       data-testid="generic-text-body"
     >
       {parsed}
-    </Typography>
+    </StyledTypography>
   );
 };
 
