@@ -21,7 +21,7 @@ import { LookupStatus, SearchResult, SearchType, useSearch } from "../../hooks/u
 import { formatVehicleName, sortVehicles } from "../../utils/vehicle";
 import ProfileAvatar from "../../components/ProfileAvatar";
 import Repeater from "../../components/Repeater";
-import GenericText from "../../components/FeedPost/Components/GenericText";
+import GenericText from "../../components/GenericText/GenericText";
 
 const StyledBox = styled(Box)({
   padding: "16px",

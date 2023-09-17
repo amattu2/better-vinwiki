@@ -12,27 +12,23 @@ export enum LookupStatus {
 }
 
 /**
- * A hook to cache and lookup a username by UUID.
- * This is the inverse of `useUUIDLookup`
+ * A hook to cache and lookup a uuid by username
  *
- * @param uuid the uuid to lookup
- * @returns [status, { username }]
+ * @param username username to lookup
+ * @returns [status, { uuid }]
  */
-const useUsernameLookup = (uuid: Profile["uuid"]): [LookupStatus, { username: Profile["username"] | null }] => {
+const useUUIDLookup = (username: Profile["username"]): [LookupStatus, { uuid: Profile["uuid"] | null }] => {
   const { token } = useAuthProvider();
   const [cache, setCache] = useSessionStorage<Cache>("uuidLookupCache", {});
+  const cachedValue: Profile["uuid"] | null = cache[username] || null;
 
-  const cachedIndex = Object.values(cache).findIndex((v) => v === uuid);
-  const cachedValue: Profile["username"] | null = cachedIndex > -1 ? Object.keys(cache)[cachedIndex] : null;
-
-  // TODO: Two identical lookups will cause two network requests
+  // TODO: Two identical mentions will cause two network requests
   // find a way to prevent the 2nd request while the 1st is still loading
-
   const [status, setStatus] = useState<LookupStatus>(cachedValue ? LookupStatus.Success : LookupStatus.Loading);
-  const [username, setUsername] = useState<Profile["username"] | null>(cachedValue);
+  const [uuid, setUUID] = useState<Profile["uuid"] | null>(cachedValue);
 
   useEffect(() => {
-    if (cachedValue || !token || !uuid) {
+    if (cachedValue || !token || !username) {
       return () => {};
     }
 
@@ -40,7 +36,7 @@ const useUsernameLookup = (uuid: Profile["uuid"]): [LookupStatus, { username: Pr
     const { signal } = controller;
 
     (async () => {
-      const response = await fetch(ENDPOINTS.profile + uuid, {
+      const response = await fetch(ENDPOINTS.profile_username_search + username, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -48,18 +44,18 @@ const useUsernameLookup = (uuid: Profile["uuid"]): [LookupStatus, { username: Pr
         signal,
       }).catch(() => setStatus(LookupStatus.Error));
 
-      const { status, profile } = await response?.json() || {};
-      if (status === STATUS_OK && !!profile?.username) {
-        setCache((prev) => ({ ...prev, [profile.username]: uuid }));
+      const { status, person } = await response?.json() || {};
+      if (status === STATUS_OK && !!person?.uuid) {
+        setCache((prev) => ({ ...prev, [username]: person.uuid }));
         setStatus(LookupStatus.Success);
-        setUsername(profile.username);
+        setUUID(person.uuid);
       }
     })();
 
     return () => controller.abort();
   }, []);
 
-  return [status, { username }];
+  return [status, { uuid }];
 };
 
-export default useUsernameLookup;
+export default useUUIDLookup;

@@ -8,7 +8,7 @@ import {
 import { LoadingButton } from '@mui/lab';
 import { useIntersectionObserver, useLocalStorage } from 'usehooks-ts';
 import { ProviderStatus, useFeedProvider } from '../../Providers/FeedProvider';
-import { PostRouter } from '../../components/FeedPost';
+import FeedPost from '../../components/FeedPost';
 import Loader from '../../components/Loader';
 import SuggestionCard from '../../components/SuggestionCards/ProfileSuggestion';
 import TransitionGroup from '../../components/TransitionGroup';
@@ -174,7 +174,7 @@ const Feed : FC = () => {
 
             <TransitionGroup
               items={slicedPosts.map((post) => ({ post, key: post.uuid }))}
-              render={({ post }, _, last) => <PostRouter {...post} ref={last ? lastElementRef : undefined} />}
+              render={({ post }, _, last) => <FeedPost {...post} ref={last ? lastElementRef : undefined} />}
             />
             {hasNext && (
               <Box sx={{ textAlign: "center", mt: 2 }}>
