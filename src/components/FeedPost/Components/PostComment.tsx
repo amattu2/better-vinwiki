@@ -14,6 +14,7 @@ import GenericText from "../../GenericText/GenericText";
 
 type Props = {
   comment: PostComment;
+  onDelete?: (uuid: PostComment["uuid"]) => void;
   divider?: boolean;
 };
 
@@ -40,7 +41,7 @@ const StyledMenuButton = styled(IconButton)({
  * @param {PostComment} comment
  * @returns {JSX.Element}
  */
-const PostComment: FC<Props> = ({ comment, divider }: Props) => {
+const PostComment: FC<Props> = ({ comment, onDelete, divider }: Props) => {
   const { token, profile } = useAuthProvider();
   const { uuid, person, text } = comment;
   const { uuid: authorUuid, username, avatar } = person;
@@ -64,6 +65,8 @@ const PostComment: FC<Props> = ({ comment, divider }: Props) => {
         Authorization: `Bearer ${token}`,
       },
     }).catch(() => null);
+
+    onDelete?.(uuid);
   };
 
   return (
