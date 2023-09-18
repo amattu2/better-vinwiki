@@ -228,7 +228,7 @@ const View : FC = () => {
                   <Stack component="form" direction="row" spacing={1} alignItems="center" onSubmit={handleSubmit(handleSearch)}>
                     <TextField {...register("query")} placeholder={`Search by ${placeholder}`} size="small" fullWidth />
                     {searchType === "Vehicle" && (
-                      <Tooltip title="Advanced Search" placement="right">
+                      <Tooltip title="Advanced Search" placement="right" arrow>
                         <IconButton onClick={() => setPlateDecoderOpen(true)}>
                           <Badge />
                         </IconButton>

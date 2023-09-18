@@ -65,7 +65,7 @@ const StyledTextField = styled(TextField)({
  */
 const CreatePost: FC = () => {
   const { profile, token } = useAuthProvider();
-  const { createPost: addFeedPost } = useFeedProvider();
+  const { addPost: addFeedPost } = useFeedProvider();
 
   const [expanded, setExpanded] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -202,7 +202,7 @@ const CreatePost: FC = () => {
             <>
               <Stack direction="row" spacing={1} alignItems="center">
                 <Typography variant="h5">Compose</Typography>
-                <Tooltip title="Cancel" placement="left">
+                <Tooltip title="Cancel" placement="left" arrow>
                   <IconButton onClick={resetPost} sx={{ ml: "auto !important" }}>
                     <Cancel fontSize="small" />
                   </IconButton>
@@ -218,7 +218,7 @@ const CreatePost: FC = () => {
                 <StyledStepContent TransitionProps={{ unmountOnExit: false }}>
                   <Stack direction="row" gap={1} sx={{ mb: 1 }}>
                     <VehicleSearch value={selectedVehicle} onChange={selectVehicle} />
-                    <Tooltip title="Advanced Search" placement="right">
+                    <Tooltip title="Advanced Search" placement="right" arrow>
                       <IconButton onClick={() => setPlateDecoderOpen(true)}>
                         <SavedSearch />
                       </IconButton>

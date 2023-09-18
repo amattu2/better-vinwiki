@@ -3,13 +3,15 @@ import { useSessionStorage } from "usehooks-ts";
 import { useAuthProvider } from "./AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
 
+type FeedType = "profile" | "feed" | "vehicle" | "filtered";
+
 export type ProviderState = {
   status: ProviderStatus;
   posts: FeedPost[];
   count: number;
   next?: (count: number) => Promise<boolean>;
-  deletePost?: (uuid: string) => Promise<boolean>;
-  createPost?: (post: FeedPost) => Promise<boolean>;
+  addPost?: (post: FeedPost) => boolean;
+  removePost?: (uuid: FeedPost["uuid"]) => boolean;
   hasNext?: boolean;
 };
 
@@ -34,69 +36,76 @@ export const useFeedProvider = (): ProviderState => {
   return contextState;
 };
 
+const getFeedUrl = (type: FeedType, identifier: string, count: number, nextPage = ""): string => {
+  let baseurl;
+  switch (type) {
+    case "feed":
+      baseurl = `${ENDPOINTS.feed}`;
+      break;
+    case "profile":
+      baseurl = `${ENDPOINTS.posts}`;
+      break;
+    case "vehicle":
+      baseurl = `${ENDPOINTS.vehicle_feed}`;
+      break;
+    case "filtered":
+      baseurl = `${ENDPOINTS.filtered_feed}`;
+      break;
+    default:
+      throw new Error("Invalid feed type received");
+  }
+
+  baseurl += `${identifier}/${count}`;
+  baseurl += nextPage ? `/${nextPage}` : "";
+
+  return baseurl;
+};
+
 type Props = {
-  filtered: boolean;
+  type: FeedType;
+  identifier: Profile["uuid"] | Vehicle["vin"];
   limit: number;
   children?: React.ReactNode;
 };
 
-export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) => {
-  const { token, profile } = useAuthProvider();
-  const [cache, setCache] = useSessionStorage<Pick<ProviderState, "posts" | "count"> | null>("FeedProvider", null);
+export const FeedProvider: FC<Props> = ({ type, identifier, limit, children }: Props) => {
+  const { token } = useAuthProvider();
+
+  const cacheKey = `${type}FeedProvider`;
+  const [cache, setCache] = useSessionStorage<Pick<ProviderState, "posts" | "count"> | null>(cacheKey, null);
   const [state, setState] = useState<ProviderState>(cache
     ? { ...defaultState, ...cache, status: ProviderStatus.RELOADING }
     : defaultState);
   const [nextPage, setNextPage] = useState<string>("");
 
-  const createPost = async (post: FeedPost): Promise<boolean> => {
+  const addPost = (post: FeedPost): boolean => {
     if (!post.uuid) {
       return false;
     }
 
-    setState((prev) => ({
-      ...prev,
-      posts: [post, ...prev.posts],
-      count: prev.count + 1,
-    }));
+    setState((prev) => ({ ...prev, posts: [post, ...prev.posts], count: prev.count + 1 }));
 
     return true;
   };
 
-  const deletePost = async (uuid: string): Promise<boolean> => {
+  const removePost = (uuid: string): boolean => {
     if (!token || !uuid) {
       return false;
     }
 
-    setState((prev) => ({
-      ...prev,
-      posts: prev.posts.filter((post) => post.uuid !== uuid),
-      count: prev.count - 1,
-    }));
+    setState((prev) => ({ ...prev, posts: prev.posts.filter((post) => post.uuid !== uuid), count: prev.count - 1 }));
 
-    const response = await fetch(ENDPOINTS.post_delete + uuid, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).catch(() => null);
-
-    const { status } = await response?.json() || {};
-    if (status === STATUS_OK) {
-      return true;
-    }
-
-    return true;
+    return false;
   };
 
   const next = async (count = limit): Promise<boolean> => {
-    if (!nextPage || !token || !profile?.uuid) {
+    if (!nextPage || !token || !identifier) {
       return false;
     }
 
     setState((prev) => ({ ...prev, status: ProviderStatus.RELOADING }));
 
-    const endpoint = `${filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed}${profile?.uuid}/${count}/${nextPage}`;
-    const response = await fetch(endpoint, {
+    const response = await fetch(getFeedUrl(type, identifier, count, nextPage), {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -120,7 +129,7 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
   };
 
   useEffect(() => {
-    if (!token || !profile?.uuid) {
+    if (!token || !identifier) {
       return () => null;
     }
 
@@ -133,8 +142,7 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
     }));
 
     (async () => {
-      const endpoint = `${filtered ? ENDPOINTS.filtered_feed : ENDPOINTS.feed}${profile.uuid}/${limit}`;
-      const response = await fetch(endpoint, {
+      const response = await fetch(getFeedUrl(type, identifier, limit), {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -142,11 +150,12 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
         signal,
       }).catch(() => null);
 
-      const { status, count, next_page_uuid, end, feed } = await response?.json() || {};
+      // NOTE: Either `feed` or `posts` will be returned, depending on the type of feed requested
+      const { status, count, next_page_uuid, end, feed, posts } = await response?.json() || {};
       if (status === STATUS_OK) {
         setState({
           status: ProviderStatus.LOADED,
-          posts: feed?.map((post: { post: FeedPost }) => post.post),
+          posts: (feed || posts)?.map((post: { post: FeedPost }) => post.post),
           count,
           hasNext: !end && next_page_uuid,
         });
@@ -155,13 +164,13 @@ export const FeedProvider: FC<Props> = ({ filtered, limit, children }: Props) =>
     })();
 
     return () => controller.abort();
-  }, [filtered, limit, token]);
+  }, [type, identifier, limit, token]);
 
   useEffect(() => {
     setCache({ posts: state?.posts, count: state?.count });
   }, [state?.posts, state?.count]);
 
-  const value = useMemo(() => ({ ...state, next, deletePost, createPost }), [state]);
+  const value = useMemo(() => ({ ...state, next, addPost, removePost }), [state]);
 
   return (
     <Context.Provider value={value}>
