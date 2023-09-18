@@ -201,6 +201,8 @@ font-style: italic;
   <ul>
   <li><a href="#/authenticate"><code><span class="http-method">post</span> /auth/authenticate</code></a></li>
   <li><a href="#/logout"><code><span class="http-method">post</span> /auth/logout</code></a></li>
+  <li><a href="#/person/delete"><code><span class="http-method">post</span> /person/delete/{uuid}</code></a></li>
+  <li><a href="#/pwreset"><code><span class="http-method">post</span> /auth/pwreset</code></a></li>
   <li><a href="#/register"><code><span class="http-method">post</span> /auth/register</code></a></li>
   </ul>
   <h4><a href="#Comments">Comments</a></h4>
@@ -220,6 +222,7 @@ font-style: italic;
   <li><a href="#/lists/id"><code><span class="http-method">get</span> /lists/id/{uuid}</code></a></li>
   <li><a href="#/lists/isFollowing"><code><span class="http-method">get</span> /lists/is_following/{uuid}</code></a></li>
   <li><a href="#/lists/search"><code><span class="http-method">post</span> /lists/search</code></a></li>
+  <li><a href="#/lists/update"><code><span class="http-method">post</span> /lists/id/{uuid}</code></a></li>
   <li><a href="#/lists/vehicles"><code><span class="http-method">get</span> /lists/vehicles/{uuid}/{count}/{last_id}</code></a></li>
   </ul>
   <h4><a href="#Media">Media</a></h4>
@@ -238,6 +241,7 @@ font-style: italic;
   </ul>
   <h4><a href="#Profiles">Profiles</a></h4>
   <ul>
+  <li><a href="#/person/delete"><code><span class="http-method">post</span> /person/delete/{uuid}</code></a></li>
   <li><a href="#/person/feed"><code><span class="http-method">get</span> /person/feed/{uuid}/{count}/{next_post_uuid}</code></a></li>
   <li><a href="#/person/filteredFeed"><code><span class="http-method">get</span> /person/filtered_feed/{uuid}/{count}/{next_post_uuid}</code></a></li>
   <li><a href="#/person/follow"><code><span class="http-method">post</span> /person/follow/{uuid}</code></a></li>
@@ -389,6 +393,105 @@ font-style: italic;
     <h4 class="field-label">200</h4>
     Successful query
         <a href="#_register_200_response">_register_200_response</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="/person/delete"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /person/delete/{uuid}</code></pre></div>
+    <div class="method-summary">Delete Profile (<span class="nickname">/person/delete</span>)</div>
+    <div class="method-notes">Delete the <code>uuid</code> profile. Cannot be undone.</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">uuid (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The <code>uuid</code> of the profile to fetch content for or against default: null </div>
+    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#_person_delete_200_response">_person_delete_200_response</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "message" : "Profile deleted successfully",
+  "status" : "ok"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful query
+        <a href="#_person_delete_200_response">_person_delete_200_response</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="/pwreset"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /auth/pwreset</code></pre></div>
+    <div class="method-summary">Reset Password (<span class="nickname">/pwreset</span>)</div>
+    <div class="method-notes">Perform a password reset trigger and receive reset the email.</div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>multipart/form-data</code></li>
+    </ul>
+
+
+
+
+    <h3 class="field-label">Form parameters</h3>
+    <div class="field-items">
+      <div class="param">email (required)</div>
+
+      <div class="param-desc"><span class="param-type">Form Parameter</span> &mdash;  default: null </div>
+    </div>  <!-- field-items -->
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#_pwreset_200_response">_pwreset_200_response</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "status" : "ok",
+  "mail_sent" : true
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful request
+        <a href="#_pwreset_200_response">_pwreset_200_response</a>
   </div> <!-- method -->
   <hr/>
   <div class="method"><a name="/register"/>
@@ -841,7 +944,7 @@ font-style: italic;
 
     <h3 class="field-label">Request body</h3>
     <div class="field-items">
-      <div class="param">_lists_add_request <a href="#_lists_add_request">_lists_add_request</a> (required)</div>
+      <div class="param">_lists_update_request <a href="#_lists_update_request">_lists_update_request</a> (required)</div>
 
       <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
 
@@ -1416,6 +1519,96 @@ font-style: italic;
     <h4 class="field-label">200</h4>
     Successful query
         <a href="#_lists_search_200_response">_lists_search_200_response</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="/lists/update"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /lists/id/{uuid}</code></pre></div>
+    <div class="method-summary">List Update (<span class="nickname">/lists/update</span>)</div>
+    <div class="method-notes">Update a list by <code>uuid</code>. You must own the list to update it.</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">uuid (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The <code>uuid</code> of the list to fetch content for or against default: null </div>
+    </div>  <!-- field-items -->
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">_lists_update_request <a href="#_lists_update_request">_lists_update_request</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#_lists_id_200_response">_lists_id_200_response</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "list" : {
+    "owner" : {
+      "bio" : "bio",
+      "last_name" : "last_name",
+      "avatar" : "avatar",
+      "display_name" : "display_name",
+      "follower_count" : 0,
+      "uuid" : "uuid",
+      "following_vehicle_count" : 1,
+      "social_instagram" : "social_instagram",
+      "social_linkedin" : "social_linkedin",
+      "full_name" : "full_name",
+      "social_twitter" : "social_twitter",
+      "website_url" : "website_url",
+      "following_count" : 6,
+      "social_facebook" : "social_facebook",
+      "profile_picture_uuid" : "profile_picture_uuid",
+      "location" : "location",
+      "id" : 5,
+      "post_count" : 5,
+      "first_name" : "first_name",
+      "email" : "email",
+      "username" : "username"
+    },
+    "created_time" : 0,
+    "name" : "name",
+    "description" : "description",
+    "created_date" : "2000-01-23T04:56:07.000+00:00",
+    "follower_count" : 6,
+    "uuid" : "uuid",
+    "vehicle_count" : 1
+  },
+  "status" : "ok"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful query
+        <a href="#_lists_id_200_response">_lists_id_200_response</a>
   </div> <!-- method -->
   <hr/>
   <div class="method"><a name="/lists/vehicles"/>
@@ -2079,6 +2272,53 @@ font-style: italic;
   </div> <!-- method -->
   <hr/>
   <h1><a name="Profiles">Profiles</a></h1>
+  <div class="method"><a name="/person/delete"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /person/delete/{uuid}</code></pre></div>
+    <div class="method-summary">Delete Profile (<span class="nickname">/person/delete</span>)</div>
+    <div class="method-notes">Delete the <code>uuid</code> profile. Cannot be undone.</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">uuid (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The <code>uuid</code> of the profile to fetch content for or against default: null </div>
+    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#_person_delete_200_response">_person_delete_200_response</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "message" : "Profile deleted successfully",
+  "status" : "ok"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successful query
+        <a href="#_person_delete_200_response">_person_delete_200_response</a>
+  </div> <!-- method -->
+  <hr/>
   <div class="method"><a name="/person/feed"/>
     <div class="method-path">
     <a class="up" href="#__Methods">Up</a>
@@ -4863,7 +5103,6 @@ font-style: italic;
     <li><a href="#_authenticate_200_response_token"><code>_authenticate_200_response_token</code> - </a></li>
     <li><a href="#_authenticate_request"><code>_authenticate_request</code> - </a></li>
     <li><a href="#_comment_report_200_response"><code>_comment_report_200_response</code> - </a></li>
-    <li><a href="#_lists_add_request"><code>_lists_add_request</code> - </a></li>
     <li><a href="#_lists_delete_200_response"><code>_lists_delete_200_response</code> - </a></li>
     <li><a href="#_lists_follow_200_response"><code>_lists_follow_200_response</code> - </a></li>
     <li><a href="#_lists_id_200_response"><code>_lists_id_200_response</code> - </a></li>
@@ -4871,7 +5110,9 @@ font-style: italic;
     <li><a href="#_lists_search_200_response"><code>_lists_search_200_response</code> - </a></li>
     <li><a href="#_lists_search_200_response_results"><code>_lists_search_200_response_results</code> - </a></li>
     <li><a href="#_lists_search_request"><code>_lists_search_request</code> - </a></li>
+    <li><a href="#_lists_update_request"><code>_lists_update_request</code> - </a></li>
     <li><a href="#_lists_vehicles_200_response"><code>_lists_vehicles_200_response</code> - </a></li>
+    <li><a href="#_person_delete_200_response"><code>_person_delete_200_response</code> - </a></li>
     <li><a href="#_person_feed_200_response"><code>_person_feed_200_response</code> - </a></li>
     <li><a href="#_person_feed_200_response_feed_inner"><code>_person_feed_200_response_feed_inner</code> - </a></li>
     <li><a href="#_person_follow_200_response"><code>_person_follow_200_response</code> - </a></li>
@@ -4898,6 +5139,7 @@ font-style: italic;
     <li><a href="#_post_comment_request"><code>_post_comment_request</code> - </a></li>
     <li><a href="#_post_comments_200_response"><code>_post_comments_200_response</code> - </a></li>
     <li><a href="#_post_delete_comment_200_response"><code>_post_delete_comment_200_response</code> - </a></li>
+    <li><a href="#_pwreset_200_response"><code>_pwreset_200_response</code> - </a></li>
     <li><a href="#_register_200_response"><code>_register_200_response</code> - </a></li>
     <li><a href="#_register_request"><code>_register_request</code> - </a></li>
     <li><a href="#_vehicle_follow_200_response"><code>_vehicle_follow_200_response</code> - </a></li>
@@ -5123,14 +5365,6 @@ font-style: italic;
     </div>  <!-- field-items -->
   </div>
   <div class="model">
-    <h3><a name="_lists_add_request"><code>_lists_add_request</code> - </a> <a class="up" href="#__Models">Up</a></h3>
-    <div class='model-description'></div>
-    <div class="field-items">
-      <div class="param">name (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
-<div class="param">description (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
-    </div>  <!-- field-items -->
-  </div>
-  <div class="model">
     <h3><a name="_lists_delete_200_response"><code>_lists_delete_200_response</code> - </a> <a class="up" href="#__Models">Up</a></h3>
     <div class='model-description'></div>
     <div class="field-items">
@@ -5187,6 +5421,14 @@ font-style: italic;
     </div>  <!-- field-items -->
   </div>
   <div class="model">
+    <h3><a name="_lists_update_request"><code>_lists_update_request</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">name (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">description (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
     <h3><a name="_lists_vehicles_200_response"><code>_lists_vehicles_200_response</code> - </a> <a class="up" href="#__Models">Up</a></h3>
     <div class='model-description'></div>
     <div class="field-items">
@@ -5196,6 +5438,14 @@ font-style: italic;
 <div class="param">total (optional)</div><div class="param-desc"><span class="param-type"><a href="#number">BigDecimal</a></span> The total number of results available </div>
 <div class="param">last_id (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The <code>id</code> of the vehicle to start the next page at </div>
 <div class="param">vehicles (optional)</div><div class="param-desc"><span class="param-type"><a href="#Vehicle">array[Vehicle]</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="_person_delete_200_response"><code>_person_delete_200_response</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">status (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">message (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
     </div>  <!-- field-items -->
   </div>
   <div class="model">
@@ -5432,6 +5682,14 @@ font-style: italic;
 <div class="param">result (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
         <div class="param-enum-header">Enum:</div>
         <div class="param-enum">deleted</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="_pwreset_200_response"><code>_pwreset_200_response</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">status (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">mail_sent (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
     </div>  <!-- field-items -->
   </div>
   <div class="model">
