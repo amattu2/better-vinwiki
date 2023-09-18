@@ -19,7 +19,6 @@ const StyledCard = styled(Card)({
   backgroundColor: "transparent",
   marginBottom: "16px",
   maxWidth: "450px",
-  cursor: "pointer",
   overflow: "visible",
 });
 
