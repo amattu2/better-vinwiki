@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSessionStorage } from "usehooks-ts";
 import { useAuthProvider } from "../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
+import { CacheKeys } from "../config/Cache";
 
 type Cache = Record<Profile["username"], Profile["uuid"]>;
 
@@ -20,7 +21,7 @@ export enum LookupStatus {
  */
 const useUsernameLookup = (uuid: Profile["uuid"]): [LookupStatus, { username: Profile["username"] | null }] => {
   const { token } = useAuthProvider();
-  const [cache, setCache] = useSessionStorage<Cache>("uuidLookupCache", {});
+  const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.UUID_LOOKUP, {});
 
   const cachedIndex = Object.values(cache).findIndex((v) => v === uuid);
   const cachedValue: Profile["username"] | null = cachedIndex > -1 ? Object.keys(cache)[cachedIndex] : null;

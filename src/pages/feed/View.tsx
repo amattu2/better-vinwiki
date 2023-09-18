@@ -16,6 +16,7 @@ import TrendingPost from '../../components/TrendingPost';
 import BlogPostCard from '../../components/BlogPost';
 import CreatePost from '../../components/CreatePost';
 import { ScrollToTop } from '../../components/ScrollToTop';
+import { CacheKeys } from '../../config/Cache';
 
 const StyledBox = styled(Box)({
   padding: "16px",
@@ -44,8 +45,8 @@ const Feed : FC = () => {
   const { status, posts, next, hasNext } = useFeedProvider();
   const lastElementRef = useRef<HTMLDivElement>(null);
 
-  const [filtered, setFiltered] = useLocalStorage<boolean>("filteredFeed", false);
-  const [postFilter, setPostFilter] = useLocalStorage<FeedPost["type"] | "">("postFilter", "");
+  const [filtered, setFiltered] = useLocalStorage<boolean>(CacheKeys.FEED_TYPE, false);
+  const [postFilter, setPostFilter] = useLocalStorage<FeedPost["type"] | "">(CacheKeys.FEED_POST_TYPE, "");
   const [limit, setLimit] = useState<number>(10);
   const entry = useIntersectionObserver(lastElementRef, {});
   const isVisible = !!entry?.isIntersecting;

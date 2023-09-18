@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSessionStorage } from "usehooks-ts";
 import { useAuthProvider } from "../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
+import { CacheKeys } from "../config/Cache";
 
 type Cache = Record<List["uuid"], List["name"]>;
 
@@ -19,7 +20,7 @@ export enum LookupStatus {
  */
 const useListLookup = (uuid: List["uuid"]): [LookupStatus, { name: List["name"] | null }] => {
   const { token } = useAuthProvider();
-  const [cache, setCache] = useSessionStorage<Cache>("listLookupCache", {});
+  const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.LIST_LOOKUP, {});
   const cachedValue: List["name"] | null = cache[uuid] || null;
 
   // TODO: Two identical lookups will cause two network requests

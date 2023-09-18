@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSessionStorage } from "usehooks-ts";
 import { useAuthProvider } from "../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
+import { CacheKeys } from "../config/Cache";
 
 type Cache = Record<Profile["username"], Profile["uuid"]>;
 
@@ -19,7 +20,7 @@ export enum LookupStatus {
  */
 const useUUIDLookup = (username: Profile["username"]): [LookupStatus, { uuid: Profile["uuid"] | null }] => {
   const { token } = useAuthProvider();
-  const [cache, setCache] = useSessionStorage<Cache>("uuidLookupCache", {});
+  const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.UUID_LOOKUP, {});
   const cachedValue: Profile["uuid"] | null = cache[username] || null;
 
   // TODO: Two identical mentions will cause two network requests

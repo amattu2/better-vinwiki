@@ -2,6 +2,7 @@ import React, { useState, FC, useEffect, useMemo } from "react";
 import { useSessionStorage } from "usehooks-ts";
 import { useAuthProvider } from "./AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
+import { CacheKeys } from "../config/Cache";
 
 type FeedType = "profile" | "feed" | "vehicle" | "filtered";
 
@@ -71,7 +72,7 @@ type Props = {
 export const FeedProvider: FC<Props> = ({ type, identifier, limit, children }: Props) => {
   const { token } = useAuthProvider();
 
-  const cacheKey = `${type}FeedProvider`;
+  const cacheKey = `${CacheKeys.FEED}_${type}_${identifier}`;
   const [cache, setCache] = useSessionStorage<Pick<ProviderState, "posts" | "count"> | null>(cacheKey, null);
   const [state, setState] = useState<ProviderState>(cache
     ? { ...defaultState, ...cache, status: ProviderStatus.RELOADING }
