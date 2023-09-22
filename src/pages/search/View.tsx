@@ -4,8 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Badge, DirectionsCar, PersonSearch, Search } from "@mui/icons-material";
 import { TabContext, TabPanel } from "@mui/lab";
 import {
-  Box,
-  Card, CardActionArea, CardContent, Chip, Container, Divider, Grid, IconButton,
+  Box, Card, Container, Divider, IconButton,
   List, ListItem, ListItemAvatar, ListItemText,
   Pagination, Skeleton, Stack, Tab,
   Table, TableBody, TableCell, TableContainer,
@@ -13,15 +12,15 @@ import {
   TextField, Tooltip, Typography, styled,
 } from "@mui/material";
 import { useAuthProvider } from "../../Providers/AuthProvider";
+import { ListSearchCard, ListSearchSkeleton } from "../../components/ListSearchCard";
 import PlateDecoder from "../../components/PlateDecoder/Dialog";
+import ProfileAvatar from "../../components/ProfileAvatar";
+import Repeater from "../../components/Repeater";
 import { ScrollToTop } from "../../components/ScrollToTop";
 import ListSuggestion from "../../components/SuggestionCards/ListSuggestion";
 import VehicleSuggestion from "../../components/SuggestionCards/VehicleSuggestion";
 import { LookupStatus, SearchResult, SearchType, useSearch } from "../../hooks/useSearch";
 import { formatVehicleName, sortVehicles } from "../../utils/vehicle";
-import ProfileAvatar from "../../components/ProfileAvatar";
-import Repeater from "../../components/Repeater";
-import GenericText from "../../components/GenericText/GenericText";
 
 const StyledBox = styled(Box)({
   padding: "16px",
@@ -67,24 +66,9 @@ const StyledVehicleImg = styled("img")({
   height: "75px",
 });
 
-const StyledListOwner = styled(Stack, { shouldForwardProp: (p) => p !== "filled" })(({ filled }: { filled: boolean }) => ({
-  borderRadius: "8px",
-  padding: "8px",
-  backgroundColor: !filled ? "transparent" : "rgb(244, 247, 250)",
-  marginLeft: "auto",
-}));
-
 const StyledLink = styled(Link)({
   textDecoration: "none",
   color: "inherit",
-});
-
-const StyledListCard = styled(StyledCard)({
-  padding: 0,
-  "& .MuiCardActionArea-root": {
-    padding: "16px",
-    paddingTop: "8px",
-  },
 });
 
 const NoSearchResults: FC = () => (
@@ -112,33 +96,6 @@ const VehicleSkeleton: FC = () => (
     </TableCell>
     <Repeater count={6} Component={TableCellSkeleton} />
   </TableRow>
-);
-
-const ListSkeleton: FC = () => (
-  <StyledListCard elevation={0}>
-    <Grid component={CardContent} container>
-      <Grid item xs={8}>
-        <Box flexGrow={1}>
-          <Skeleton variant="text" animation="wave" sx={{ fontSize: "1.5rem" }} />
-          <Skeleton variant="text" animation="wave" sx={{ fontSize: "0.8rem" }} />
-          <Skeleton variant="text" animation="wave" sx={{ fontSize: "0.8rem" }} />
-        </Box>
-        <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-          <Chip label={<Skeleton variant="text" animation="wave" width={45} />} />
-          <Chip label={<Skeleton variant="text" animation="wave" width={45} />} />
-        </Stack>
-      </Grid>
-      <Grid item xs={4}>
-        <StyledListOwner direction="row" gap={1} sx={{ height: "55px" }} filled>
-          <Skeleton variant="rounded" width={40} height={40} animation="wave" />
-          <Stack direction="column" justifyContent="center" flexGrow={1}>
-            <Skeleton variant="text" animation="wave" />
-            <Skeleton variant="text" animation="wave" />
-          </Stack>
-        </StyledListOwner>
-      </Grid>
-    </Grid>
-  </StyledListCard>
 );
 
 const ProfileSkeleton: FC = () => (
@@ -351,55 +308,12 @@ const View : FC = () => {
                 />
               </StyledPanel>
               <StyledPanel value="List">
-                {(status === LookupStatus.Loading) && (<Repeater count={5} Component={ListSkeleton} />)}
+                {(status === LookupStatus.Loading) && (<Repeater count={5} Component={ListSearchSkeleton} />)}
                 {(status === LookupStatus.Success && paginatedResults.length === 0) && (
                   <NoSearchResults />
                 )}
-                {(status === LookupStatus.Success && paginatedResults.length > 0) && (
-                  paginatedResults.map((result) => {
-                    const { uuid, name, description, owner, follower_count, vehicle_count, created_date } = result as List;
-                    const { username, avatar } = owner || {};
-
-                    if (!uuid || !owner) {
-                      return null;
-                    }
-
-                    return (
-                      <StyledListCard key={uuid} elevation={0}>
-                        <CardActionArea component={Link} to={`/list/${uuid}`}>
-                          <Grid component={CardContent} container>
-                            <Grid item xs={8}>
-                              <Box flexGrow={1}>
-                                <Typography variant="h5">{name}</Typography>
-                                <GenericText content={description} />
-                              </Box>
-                              <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                                <Chip label={`${vehicle_count} vehicles`} />
-                                <Chip label={`${follower_count} followers`} />
-                              </Stack>
-                            </Grid>
-                            <Grid item xs={4}>
-                              <StyledListOwner direction="row" gap={1} sx={{ height: "55px" }} filled>
-                                <ProfileAvatar username={username} avatar={avatar} />
-                                <Stack direction="column" justifyContent="center">
-                                  <Typography variant="body1" fontWeight={600} component="div">
-                                    <StyledLink to={`/profile/${uuid}`}>
-                                      {`@${username}`}
-                                    </StyledLink>
-                                  </Typography>
-                                  <Typography variant="body2" component="div">
-                                    Created on
-                                    {" "}
-                                    {new Date(created_date).toLocaleDateString()}
-                                  </Typography>
-                                </Stack>
-                              </StyledListOwner>
-                            </Grid>
-                          </Grid>
-                        </CardActionArea>
-                      </StyledListCard>
-                    );
-                  })
+                {(status === LookupStatus.Success && paginatedResults.length > 0 && searchType === "List") && (
+                  paginatedResults.map((result) => (<ListSearchCard key={(result as List).uuid} list={result as List} />))
                 )}
                 <StyledPagination
                   count={Math.ceil(resultCount / perPage) || 1}
