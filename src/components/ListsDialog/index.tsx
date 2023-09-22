@@ -5,6 +5,7 @@ import {
   DialogTitle,
   Tab,
   Tabs,
+  Typography,
   styled,
 } from '@mui/material';
 import { Bookmark, Source } from '@mui/icons-material';
@@ -38,7 +39,14 @@ const StyledTab = styled(Tab)({
 
 const StyledDialogContent = styled(DialogContent)({
   padding: "0 !important",
+  backgroundColor: "#f4f7fa",
 });
+
+const NoLists = () => (
+  <Typography variant="body1" color="textSecondary" sx={{ padding: "16px" }} textAlign="center" fontSize={14}>
+    Uh oh... No lists to see here
+  </Typography>
+);
 
 /**
  * A dialog that displays the Following and Owned lists of a user
@@ -60,9 +68,11 @@ const ListsDialog: FC<Props> = ({ open, lists: { owned, following }, onClose }: 
       <StyledDialogContent>
         <TabContext value={tab}>
           <TabPanel value="owned">
+            {owned?.length === 0 && (<NoLists />)}
             {owned?.map((list) => (<ListSearchCard key={list.uuid} list={list} omitOwner />))}
           </TabPanel>
           <TabPanel value="following">
+            {following?.length === 0 && (<NoLists />)}
             {following?.map((list) => (<ListSearchCard key={list.uuid} list={list} />))}
           </TabPanel>
         </TabContext>
