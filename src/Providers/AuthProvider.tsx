@@ -1,6 +1,7 @@
 import React, { useState, FC, useEffect } from "react";
 import { useLocalStorage, useReadLocalStorage } from "usehooks-ts";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
+import { CacheKeys } from "../config/Cache";
 
 type AuthenticatedState = {
   status: ProviderStatus.LOADED;
@@ -43,8 +44,8 @@ type Props = {
 };
 
 export const AuthProvider: FC<Props> = ({ children }: Props) => {
-  const [profile, setProfile] = useLocalStorage<AuthProfile | null>("profile", null);
-  const token = useReadLocalStorage<string>("token");
+  const [profile, setProfile] = useLocalStorage<AuthProfile | null>(CacheKeys.AUTH_PROFILE, null);
+  const token = useReadLocalStorage<string>(CacheKeys.AUTH_TOKEN);
   const [state, setState] = useState<ProviderState>((token && profile?.uuid) ? {
     status: ProviderStatus.LOADED,
     authenticated: true,
