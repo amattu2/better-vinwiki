@@ -7,7 +7,7 @@ import {
   Tabs,
   styled,
 } from '@mui/material';
-import { DirectionsCar, PersonSearch } from '@mui/icons-material';
+import { Bookmark, Source } from '@mui/icons-material';
 import { TabContext, TabPanel } from '@mui/lab';
 import { ListSearchCard } from '../ListSearchCard';
 
@@ -40,15 +40,21 @@ const StyledDialogContent = styled(DialogContent)({
   padding: "0 !important",
 });
 
-const ProfileListDialog: FC<Props> = ({ open, lists: { owned, following }, onClose }: Props) => {
+/**
+ * A dialog that displays the Following and Owned lists of a user
+ *
+ * @param {Props} props
+ * @returns {JSX.Element}
+ */
+const ListsDialog: FC<Props> = ({ open, lists: { owned, following }, onClose }: Props) => {
   const [tab, setTab] = React.useState<"owned" | "following">("owned");
 
   return (
     <StyledDialog maxWidth="md" open={open} onClose={onClose} fullWidth>
       <StyledDialogTitle>
         <StyledTabs value={tab} variant="fullWidth" onChange={(_, t) => setTab(t)} centered>
-          <StyledTab value="owned" label="Owned" icon={<DirectionsCar />} iconPosition="start" />
-          <StyledTab value="following" label="Following" icon={<PersonSearch />} iconPosition="start" />
+          <StyledTab value="owned" label="Owned" icon={<Source />} iconPosition="start" />
+          <StyledTab value="following" label="Following" icon={<Bookmark />} iconPosition="start" />
         </StyledTabs>
       </StyledDialogTitle>
       <StyledDialogContent>
@@ -65,4 +71,4 @@ const ProfileListDialog: FC<Props> = ({ open, lists: { owned, following }, onClo
   );
 };
 
-export default ProfileListDialog;
+export default ListsDialog;
