@@ -13,7 +13,6 @@ import { TabContext, TabPanel } from '@mui/lab';
 import { ListSearchCard } from '../ListSearchCard';
 
 type Props = {
-  open: boolean;
   lists: ProfileLists;
   onClose: () => void;
 };
@@ -54,11 +53,11 @@ const NoLists = () => (
  * @param {Props} props
  * @returns {JSX.Element}
  */
-const ListsDialog: FC<Props> = ({ open, lists: { owned, following }, onClose }: Props) => {
+const ListsDialog: FC<Props> = ({ lists: { owned, following }, onClose }: Props) => {
   const [tab, setTab] = React.useState<"owned" | "following">("owned");
 
   return (
-    <StyledDialog maxWidth="md" open={open} onClose={onClose} fullWidth>
+    <StyledDialog maxWidth="md" open onClose={onClose} fullWidth>
       <StyledDialogTitle>
         <StyledTabs value={tab} variant="fullWidth" onChange={(_, t) => setTab(t)} centered>
           <StyledTab value="owned" label="Owned" icon={<Source />} iconPosition="start" />
