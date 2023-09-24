@@ -99,7 +99,7 @@ export const ListSearchCard: FC<Props> = ({ list, omitOwner } : Props) => {
     <StyledListCard elevation={0}>
       <CardActionArea component={Link} to={`/list/${uuid}`}>
         <Grid component={CardContent} container>
-          <Grid item xs={8}>
+          <Grid item xs={!omitOwner ? 8 : 12}>
             <Box flexGrow={1}>
               <Typography variant="h5">{name}</Typography>
               <GenericText content={description} />
@@ -109,8 +109,8 @@ export const ListSearchCard: FC<Props> = ({ list, omitOwner } : Props) => {
               <Chip label={`${follower_count} followers`} />
             </Stack>
           </Grid>
-          <Grid item xs={4}>
-            {!omitOwner && (
+          {!omitOwner && (
+            <Grid item xs={4}>
               <StyledListOwner direction="row" gap={1} sx={{ height: "55px" }} filled>
                 <ProfileAvatar username={username} avatar={avatar} />
                 <Stack direction="column" justifyContent="center">
@@ -124,8 +124,8 @@ export const ListSearchCard: FC<Props> = ({ list, omitOwner } : Props) => {
                   </Typography>
                 </Stack>
               </StyledListOwner>
-            )}
-          </Grid>
+            </Grid>
+          )}
         </Grid>
       </CardActionArea>
     </StyledListCard>
