@@ -6,9 +6,7 @@ import { TabContext, TabPanel } from "@mui/lab";
 import {
   Box, Card, Container, Divider, IconButton,
   List, ListItem, ListItemAvatar, ListItemText,
-  Pagination, Skeleton, Stack, Tab,
-  Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, Tabs,
+  Pagination, Skeleton, Stack, Tab, Tabs,
   TextField, Tooltip, Typography, styled,
 } from "@mui/material";
 import { useAuthProvider } from "../../Providers/AuthProvider";
@@ -20,7 +18,8 @@ import { ScrollToTop } from "../../components/ScrollToTop";
 import ListSuggestion from "../../components/SuggestionCards/ListSuggestion";
 import VehicleSuggestion from "../../components/SuggestionCards/VehicleSuggestion";
 import { LookupStatus, SearchResult, SearchType, useSearch } from "../../hooks/useSearch";
-import { formatVehicleName, sortVehicles } from "../../utils/vehicle";
+import { sortVehicles } from "../../utils/vehicle";
+import { VehicleTable } from "../../components/VehicleTable";
 
 const StyledBox = styled(Box)({
   padding: "16px",
@@ -60,12 +59,6 @@ const StyledPagination = styled(Pagination)({
   },
 });
 
-const StyledVehicleImg = styled("img")({
-  borderRadius: "8px",
-  width: "75px",
-  height: "75px",
-});
-
 const StyledLink = styled(Link)({
   textDecoration: "none",
   color: "inherit",
@@ -81,21 +74,6 @@ const NoSearchResults: FC = () => (
   >
     No results found
   </Typography>
-);
-
-const TableCellSkeleton: FC = () => (
-  <TableCell>
-    <Skeleton variant="text" animation="wave" />
-  </TableCell>
-);
-
-const VehicleSkeleton: FC = () => (
-  <TableRow>
-    <TableCell>
-      <Skeleton variant="rectangular" width={75} height={75} animation="wave" />
-    </TableCell>
-    <Repeater count={6} Component={TableCellSkeleton} />
-  </TableRow>
 );
 
 const ProfileSkeleton: FC = () => (
@@ -210,66 +188,12 @@ const View : FC = () => {
             <TabContext value={searchType}>
               <StyledPanel value="Vehicle">
                 <StyledCard elevation={3} sx={{ padding: 0 }}>
-                  <TableContainer>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell sx={{ textAlign: "center" }}>Preview</TableCell>
-                          <TableCell>Year</TableCell>
-                          <TableCell>Make</TableCell>
-                          <TableCell>Model</TableCell>
-                          <TableCell>Trim</TableCell>
-                          <TableCell>VIN</TableCell>
-                          <TableCell>Options</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {(status === LookupStatus.Success && paginatedResults.length === 0) && (
-                          <TableRow>
-                            <TableCell colSpan={7} sx={{ textAlign: "center" }}>
-                              <NoSearchResults />
-                            </TableCell>
-                          </TableRow>
-                        )}
-                        {(status === LookupStatus.Success && paginatedResults.length > 0) && (
-                          paginatedResults.map((result) => {
-                            const { year, make, model, trim, vin, icon_photo } = result as Vehicle;
-
-                            if (!vin) {
-                              return null;
-                            }
-
-                            return (
-                              <TableRow key={vin}>
-                                <TableCell>
-                                  <StyledVehicleImg src={icon_photo} alt={formatVehicleName(result as Vehicle)} />
-                                </TableCell>
-                                <TableCell>{year}</TableCell>
-                                <TableCell>{make}</TableCell>
-                                <TableCell>{model}</TableCell>
-                                <TableCell>{trim || "-"}</TableCell>
-                                <TableCell>{vin}</TableCell>
-                                <TableCell>
-                                  <Link to={`/vehicle/${vin}`}>
-                                    View
-                                  </Link>
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })
-                        )}
-                        {(status === LookupStatus.Loading) && (<Repeater count={5} Component={VehicleSkeleton} />)}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+                  <VehicleTable
+                    status={status}
+                    vehicles={results as Vehicle[]}
+                    EmptyComponent={NoSearchResults}
+                  />
                 </StyledCard>
-                <StyledPagination
-                  count={Math.ceil(resultCount / perPage) || 1}
-                  page={page}
-                  onChange={(e, page) => handlePageChange(page)}
-                  variant="outlined"
-                  shape="rounded"
-                />
               </StyledPanel>
               <StyledPanel value="Profile">
                 <List>
