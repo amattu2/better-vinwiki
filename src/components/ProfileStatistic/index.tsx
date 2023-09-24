@@ -8,15 +8,15 @@ type Props = {
   onClick?: () => void
 };
 
-const StyledBox = styled(Box)(({ theme }) => ({
+const StyledBox = styled(Box)(({ theme, onClick }) => ({
   backgroundColor: "#3b3b3b",
   borderRadius: "16px",
-  cursor: "pointer",
+  cursor: onClick ? "pointer" : "initial",
   padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
   flex: 1,
   transition: "all 0.2s ease-in-out",
   "&:hover": {
-    boxShadow: theme.shadows[8],
+    boxShadow: onClick ? theme.shadows[8] : null,
   },
 }));
 
