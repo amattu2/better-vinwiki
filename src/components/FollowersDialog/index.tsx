@@ -116,7 +116,7 @@ const FollowersDialog: FC<Props> = ({ uuid, count, onClose }: Props) => {
       <StyledDialogContent>
         <List>
           {(status === LookupStatus.Loading) && (<Repeater count={skeletonCount} Component={ProfileSkeleton} />)}
-          {(status === LookupStatus.Success && followers?.length === 0) && (<NoFollowers />)}
+          {(status !== LookupStatus.Loading && data.length === 0) && (<NoFollowers />)}
           {data.map((result) => {
             const { uuid, username, avatar, display_name } = result;
 
