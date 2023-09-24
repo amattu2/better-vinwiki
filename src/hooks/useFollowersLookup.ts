@@ -44,13 +44,15 @@ const useFollowersLookup = (uuid: Profile["uuid"], refetch = false): [LookupStat
           Authorization: `Bearer ${token}`,
         },
         signal,
-      }).catch(() => null);
+      }).catch(() => setStatus(LookupStatus.Error));
 
       const { status, followers } = await response?.json() || {};
       if (status === STATUS_OK) {
         setCache((prev) => ({ ...prev, [uuid]: followers }));
         setStatus(LookupStatus.Success);
         setFollowers(followers);
+      } else {
+        setStatus(LookupStatus.Error);
       }
     })();
 

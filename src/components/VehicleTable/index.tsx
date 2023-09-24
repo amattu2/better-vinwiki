@@ -143,7 +143,7 @@ export const VehicleTable: FC<Props> = ({ status, vehicles, EmptyComponent }: Pr
             </TableRow>
           </TableHead>
           <TableBody>
-            {(status === "success" && vehicles.length === 0) && (
+            {(status !== "loading" && vehicles.length === 0) && (
               <TableRow>
                 <TableCell colSpan={columns.length + 2} sx={{ textAlign: "center" }}>
                   {EmptyComponent ? <EmptyComponent /> : "No results found"}

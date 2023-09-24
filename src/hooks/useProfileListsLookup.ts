@@ -57,6 +57,8 @@ const useProfileListsLookup = (uuid: Profile["uuid"], refetch = false): [LookupS
         setCache((prev) => ({ ...prev, [uuid]: result }));
         setStatus(LookupStatus.Success);
         setLists(result);
+      } else {
+        setStatus(LookupStatus.Error);
       }
     })();
 

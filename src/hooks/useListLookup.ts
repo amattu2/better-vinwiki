@@ -51,6 +51,8 @@ const useListLookup = (uuid: List["uuid"]): [LookupStatus, { name: List["name"] 
         setCache((prev) => ({ ...prev, [uuid]: list.name }));
         setStatus(LookupStatus.Success);
         setListName(list.name);
+      } else {
+        setStatus(LookupStatus.Error);
       }
     })();
 

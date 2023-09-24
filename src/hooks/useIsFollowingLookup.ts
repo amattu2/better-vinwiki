@@ -86,6 +86,8 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
         setCache((prev) => ({ ...prev, [uuid]: following }));
         setStatus(LookupStatus.Success);
         setFollowing(following);
+      } else {
+        setStatus(LookupStatus.Error);
       }
     })();
 
