@@ -77,7 +77,7 @@ const FollowersDialog: FC<Props> = ({ uuid, count, onClose }: Props) => {
 
   const skeletonCount = count > 0 && count < 10 ? count : 10;
   const data: Profile[] = useMemo(() => {
-    if (!followers) {
+    if (!followers || status !== LookupStatus.Success) {
       return [];
     }
 
