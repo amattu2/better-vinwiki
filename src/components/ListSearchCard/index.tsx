@@ -47,10 +47,10 @@ const StyledListCard = styled(StyledCard)({
  *
  * @returns {JSX.Element}
  */
-export const ListSearchSkeleton: FC = () => (
+export const ListSearchSkeleton: FC<Pick<Props, "omitOwner">> = ({ omitOwner }: Pick<Props, "omitOwner">) => (
   <StyledListCard elevation={0}>
     <Grid component={CardContent} container>
-      <Grid item xs={8}>
+      <Grid item xs={!omitOwner ? 8 : 12}>
         <Box sx={{ mr: 2 }}>
           <Skeleton variant="text" animation="wave" sx={{ fontSize: "1.5rem" }} />
           <Skeleton variant="text" animation="wave" sx={{ fontSize: "0.8rem" }} />
@@ -61,15 +61,17 @@ export const ListSearchSkeleton: FC = () => (
           <Chip label={<Skeleton variant="text" animation="wave" width={45} />} />
         </Stack>
       </Grid>
-      <Grid item xs={4}>
-        <StyledListOwner direction="row" gap={1} sx={{ height: "55px" }} filled>
-          <Skeleton variant="rounded" width={40} height={40} animation="wave" />
-          <Stack direction="column" justifyContent="center" flexGrow={1}>
-            <Skeleton variant="text" animation="wave" />
-            <Skeleton variant="text" animation="wave" />
-          </Stack>
-        </StyledListOwner>
-      </Grid>
+      {!omitOwner && (
+        <Grid item xs={4}>
+          <StyledListOwner direction="row" gap={1} sx={{ height: "55px" }} filled>
+            <Skeleton variant="rounded" width={40} height={40} animation="wave" />
+            <Stack direction="column" justifyContent="center" flexGrow={1}>
+              <Skeleton variant="text" animation="wave" />
+              <Skeleton variant="text" animation="wave" />
+            </Stack>
+          </StyledListOwner>
+        </Grid>
+      )}
     </Grid>
   </StyledListCard>
 );
