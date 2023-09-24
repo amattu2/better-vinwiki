@@ -19,7 +19,7 @@ const StyledBox = styled(Box)({
   padding: "32px 12px",
   background: "#fff",
   width: "72px",
-  borderRight: "1px solid #ebebeb",
+  borderRight: "1px solid #ddd",
   position: "fixed",
   top: "0",
   left: "0",
@@ -36,7 +36,7 @@ const StyledLogoBox = styled(Box)({
 const StyledLogo = styled('img')({
   width: "100%",
   height: "auto",
-  border: "1px solid #ebebeb",
+  border: "1px solid #ddd",
   borderRadius: "6px",
 });
 
@@ -135,15 +135,8 @@ const Sidebar: FC = () => {
       </StyledControlGroup>
       <StyledControlGroup direction="column" gap={1}>
         <Typography variant="caption" color="textSecondary" fontWeight={600}>
-          Account
+          Tools
         </Typography>
-        <StyledIconButton disabled={pathname === "/profile"}>
-          <StyledLink to="/profile">
-            <Tooltip title="Profile" placement="right">
-              <Person2Outlined />
-            </Tooltip>
-          </StyledLink>
-        </StyledIconButton>
         <IconButton onClick={openNotifications}>
           <Tooltip title="Notifications" placement="right">
             <Badge badgeContent={unseen} color="error">
