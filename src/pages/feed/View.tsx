@@ -25,6 +25,9 @@ const StyledBox = styled(Box)({
 const StyledFeedBox = styled(StyledBox)({
   backgroundColor: "#fff",
   flexGrow: 1,
+  minHeight: "100vh",
+  borderLeft: "1px solid #ddd",
+  borderRight: "1px solid #ddd",
 });
 
 const StyledSidebarBox = styled(StyledBox)({

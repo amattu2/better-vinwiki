@@ -5,9 +5,6 @@ import { useAuthProvider } from "./AuthProvider";
 export type ProviderState = {
   status: ProviderStatus;
   profile?: Profile;
-  posts?: FeedPost[];
-  lists?: ProfileLists;
-  following?: boolean;
 };
 
 export enum ProviderStatus {
@@ -46,58 +43,6 @@ const fetchProfile = async (uuid: Profile["uuid"], token: string): Promise<Profi
   throw new Error("Error fetching profile");
 };
 
-const fetchPosts = async (uuid: Profile["uuid"], token: string): Promise<{ post: FeedPost }[]> => {
-  const response = await fetch(ENDPOINTS.posts + uuid, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const { status, posts } = await response.json();
-  if (status === STATUS_OK) {
-    return posts;
-  }
-
-  throw new Error("Error fetching posts");
-};
-
-const fetchFollowing = async (uuid: Profile["uuid"], token: string): Promise<boolean> => {
-  const response = await fetch(ENDPOINTS.is_following + uuid, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const { status, following } = await response.json();
-  if (status === STATUS_OK) {
-    return following;
-  }
-
-  return false;
-};
-
-const fetchLists = async (uuid: Profile["uuid"], token: string): Promise<ProfileLists | null> => {
-  const response = await fetch(ENDPOINTS.lists + uuid, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const { status, lists_following, lists_my, lists_other } = await response.json();
-  if (status === STATUS_OK) {
-    return {
-      following: (lists_following as { list: List }[])?.map((r) => r?.list),
-      owned: (lists_my as { list: List }[])?.map((r) => r?.list),
-      other: (lists_other as { list: List }[])?.map((r) => r?.list),
-    };
-  }
-
-  return null;
-};
-
 type Props = {
   uuid: Profile["uuid"];
   withPosts?: true;
@@ -121,20 +66,14 @@ export const ProfileProvider: FC<Props> = ({
     setState(defaultState);
 
     (async () => {
-      const [profile, posts, following, lists] = (await Promise.allSettled([
+      const [profile] = (await Promise.allSettled([
         fetchProfile(uuid, token),
-        withPosts ? fetchPosts(uuid, token) : Promise.resolve([]),
-        withFollowing && uuid !== authProfile?.uuid ? fetchFollowing(uuid, token) : Promise.resolve(false),
-        withLists ? fetchLists(uuid, token) : Promise.resolve([]),
       ])).map((r) => (r.status === "fulfilled" ? r.value : null));
 
       if (profile) {
         setState({
           status: ProviderStatus.LOADED,
           profile: profile as Profile,
-          posts: (posts as { post: FeedPost }[])?.map((r) => r?.post),
-          lists: lists as ProfileLists,
-          following: following as boolean,
         });
       } else {
         setState({

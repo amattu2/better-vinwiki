@@ -72,6 +72,9 @@ type Props = {
 export const FeedProvider: FC<Props> = ({ type, identifier, limit, children }: Props) => {
   const { token } = useAuthProvider();
 
+  // TODO: identifier changing needs to reset the feed
+  // switching profiles renders the feed of the previous profile temporarily
+
   const cacheKey = `${CacheKeys.FEED}_${type}_${identifier}`;
   const [cache, setCache] = useSessionStorage<Pick<ProviderState, "posts" | "count"> | null>(cacheKey, null);
   const [state, setState] = useState<ProviderState>(cache
@@ -113,11 +116,11 @@ export const FeedProvider: FC<Props> = ({ type, identifier, limit, children }: P
       },
     }).catch(() => null);
 
-    const { status, count: postCount, next_page_uuid, end, feed } = await response?.json() || {};
+    const { status, count: postCount, next_page_uuid, end, feed, posts } = await response?.json() || {};
     if (status === STATUS_OK) {
       setState((prev) => ({
         status: ProviderStatus.LOADED,
-        posts: [...prev.posts, ...(feed?.map((post: { post: FeedPost }) => post.post) || [])],
+        posts: [...prev.posts, ...((feed || posts)?.map((post: { post: FeedPost }) => post.post) || [])],
         count: postCount + prev.count,
         hasNext: !end && next_page_uuid,
       }));
