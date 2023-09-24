@@ -1,7 +1,8 @@
 import React, { FC, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Code, DashboardOutlined, Logout, NotificationsActive,
-  PeopleOutline, Person2Outlined, SearchOutlined,
+  PeopleOutline, SearchOutlined,
 } from '@mui/icons-material';
 import {
   Avatar, Badge, IconButton, Popover,
@@ -9,7 +10,6 @@ import {
   styled, Drawer, List, ListItem,
   ListItemAvatar, ListItemText, Divider,
 } from '@mui/material';
-import { Link, useLocation } from 'react-router-dom';
 import { useAuthProvider } from '../../Providers/AuthProvider';
 import { useNotificationCountProvider } from '../../Providers/NotificationCountProvider';
 import { Notifications } from '../Notifications';
