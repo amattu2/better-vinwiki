@@ -36,6 +36,8 @@ const useFollowersLookup = (uuid: Profile["uuid"], refetch = false): [LookupStat
     const { signal } = controller;
 
     (async () => {
+      setStatus(LookupStatus.Loading);
+
       const response = await fetch(ENDPOINTS.followers + uuid, {
         method: "GET",
         headers: {
@@ -53,7 +55,7 @@ const useFollowersLookup = (uuid: Profile["uuid"], refetch = false): [LookupStat
     })();
 
     return () => controller.abort();
-  }, []);
+  }, [uuid]);
 
   return [status, { followers }];
 };

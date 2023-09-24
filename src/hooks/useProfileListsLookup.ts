@@ -36,6 +36,8 @@ const useProfileListsLookup = (uuid: Profile["uuid"], refetch = false): [LookupS
     const { signal } = controller;
 
     (async () => {
+      setStatus(LookupStatus.Loading);
+
       const response = await fetch(ENDPOINTS.lists + uuid, {
         method: "GET",
         headers: {
@@ -59,7 +61,7 @@ const useProfileListsLookup = (uuid: Profile["uuid"], refetch = false): [LookupS
     })();
 
     return () => controller.abort();
-  }, []);
+  }, [uuid]);
 
   return [status, lists];
 };

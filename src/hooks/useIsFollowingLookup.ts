@@ -71,6 +71,8 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
     const { signal } = controller;
 
     (async () => {
+      setStatus(LookupStatus.Loading);
+
       const response = await fetch(ENDPOINTS.is_following + uuid, {
         method: "GET",
         headers: {
@@ -88,7 +90,7 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
     })();
 
     return () => controller.abort();
-  }, []);
+  }, [uuid]);
 
   return [{ status, following }, toggleFollowing];
 };
