@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Box,
   Card,
@@ -33,11 +33,6 @@ const StyledListOwner = styled(Stack, { shouldForwardProp: (p) => p !== "filled"
   backgroundColor: !filled ? "transparent" : "rgb(244, 247, 250)",
   marginLeft: "auto",
 }));
-
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
-});
 
 const StyledListCard = styled(StyledCard)({
   padding: 0,
@@ -86,8 +81,15 @@ export const ListSearchSkeleton: FC = () => (
  * @returns {JSX.Element}
  */
 export const ListSearchCard: FC<Props> = ({ list, omitOwner } : Props) => {
+  const navigate = useNavigate();
   const { uuid, name, description, owner, follower_count, vehicle_count, created_date } = list;
   const { uuid: ownerUUID, username, avatar } = owner || {};
+
+  const navigateToProfile = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    navigate(`/profile/${ownerUUID}`);
+  };
 
   if (!uuid || !owner) {
     return null;
@@ -112,10 +114,8 @@ export const ListSearchCard: FC<Props> = ({ list, omitOwner } : Props) => {
               <StyledListOwner direction="row" gap={1} sx={{ height: "55px" }} filled>
                 <ProfileAvatar username={username} avatar={avatar} />
                 <Stack direction="column" justifyContent="center">
-                  <Typography variant="body1" fontWeight={600} component="div">
-                    <StyledLink to={`/profile/${ownerUUID}`}>
-                      {`@${username}`}
-                    </StyledLink>
+                  <Typography variant="body1" fontWeight={600} component="div" onClick={navigateToProfile}>
+                    {`@${username}`}
                   </Typography>
                   <Typography variant="body2" component="div">
                     Created on
