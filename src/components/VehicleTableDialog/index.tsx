@@ -6,7 +6,7 @@ import {
   Typography,
   styled,
 } from '@mui/material';
-import VehicleTable from '../VehicleTable';
+import { VehicleTable } from '../VehicleTable';
 import useFollowingVehiclesLookup from '../../hooks/useFollowingVehiclesLookup';
 
 type Props = {
