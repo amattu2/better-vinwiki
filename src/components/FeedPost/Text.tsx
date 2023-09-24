@@ -33,7 +33,7 @@ const StyledMenuButton = styled(IconButton)({
   top: "8px",
 });
 
-const TextPost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
+const TextPost: FC<FeedPostProps> = forwardRef(({ isPreview, omitComments, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
   const { token, profile } = useAuthProvider();
   const { removePost: deletePostByUUID } = useFeedProvider();
   const { uuid, comment_count, post_text, person } = post;
@@ -103,7 +103,7 @@ const TextPost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPost
             </>
           )}
         </Typography>
-        {!isPreview && <PostComments key={uuid} uuid={uuid} count={comment_count} />}
+        {(!isPreview && !omitComments) && <PostComments key={uuid} uuid={uuid} count={comment_count} />}
       </CardContent>
       {!isPreview && (
         <StyledMenuButton size="small" onClick={menuToggle}>

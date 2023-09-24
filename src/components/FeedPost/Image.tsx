@@ -91,7 +91,7 @@ const StyledExpandedImage = styled("img")({
   borderRadius: "8px",
 });
 
-const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
+const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, omitComments, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
   const { token, profile } = useAuthProvider();
   const { removePost: deletePostByUUID } = useFeedProvider();
   const { uuid, image, comment_count, post_text, person } = post;
@@ -178,7 +178,7 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPos
               </Stack>
             </Grid>
           </Grid>
-          {!isPreview && <PostComments key={uuid} uuid={uuid} count={comment_count} />}
+          {(!isPreview && !omitComments) && <PostComments key={uuid} uuid={uuid} count={comment_count} />}
         </CardContent>
         {!isPreview && (
           <StyledMenuButton size="small" onClick={menuToggle}>
