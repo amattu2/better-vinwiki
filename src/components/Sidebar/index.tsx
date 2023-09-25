@@ -14,6 +14,7 @@ import { useAuthProvider } from '../../Providers/AuthProvider';
 import { useNotificationCountProvider } from '../../Providers/NotificationCountProvider';
 import { Notifications } from '../Notifications';
 import ProfileAvatar from '../ProfileAvatar';
+import useFollowingLookup from '../../hooks/useFollowingLookup';
 
 const StyledBox = styled(Box)({
   padding: "32px 12px",
@@ -80,6 +81,8 @@ const Sidebar: FC = () => {
   const { unseen } = useNotificationCountProvider();
   const { pathname } = useLocation();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_status, { following }] = useFollowingLookup(profile!.uuid, false);
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -171,7 +174,7 @@ const Sidebar: FC = () => {
         <Typography variant="h6" fontWeight={600} padding="16px">Following &ndash; Quick Look</Typography>
         <Divider />
         <StyledList>
-          {(profile?.followingProfiles?.length === 0) && (
+          {(following?.length === 0) && (
             <ListItem>
               <ListItemText
                 primary="You are not following anyone."
@@ -179,7 +182,7 @@ const Sidebar: FC = () => {
               />
             </ListItem>
           )}
-          {profile?.followingProfiles?.map((result: ProfileFollower) => {
+          {following?.map((result: ProfileFollower) => {
             const { uuid, username, avatar, follower_count } = result;
 
             if (!uuid || !username) {

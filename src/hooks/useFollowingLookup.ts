@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSessionStorage } from "usehooks-ts";
+import { isEqual } from "lodash";
 import { useAuthProvider } from "../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
 import { CacheKeys } from "../config/Cache";
@@ -58,6 +59,15 @@ const useFollowingLookup = (uuid: Profile["uuid"], refetch = false): [LookupStat
 
     return () => controller.abort();
   }, [uuid]);
+
+  useEffect(() => {
+    // Watch for changes in the cache
+    if (isEqual(cachedValue, following)) {
+      return;
+    }
+
+    setFollowing(cachedValue);
+  }, [cachedValue]);
 
   return [status, { following }];
 };

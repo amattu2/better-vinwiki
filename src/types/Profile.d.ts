@@ -24,7 +24,6 @@ type Profile = {
 };
 
 type AuthProfile = Profile & {
-  followingProfiles?: ProfileFollower[];
   followingVehicles?: VehicleFollower[];
   recentVehicles?: Vehicle[];
   profileLists?: ProfileLists;

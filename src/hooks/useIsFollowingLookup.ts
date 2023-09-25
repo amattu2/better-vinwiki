@@ -24,6 +24,9 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
   const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.IS_FOLLOWING, {});
   const cachedValue: boolean | null = cache[uuid] || null;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_followingCache, setFollowingCache] = useSessionStorage<Cache>(CacheKeys.PROFILE_FOLLOWING, {});
+
   const [status, setStatus] = useState<LookupStatus>(cachedValue ? LookupStatus.Success : LookupStatus.Loading);
   const [following, setFollowing] = useState<boolean | null>(cachedValue);
 
@@ -54,6 +57,20 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
     }
 
     setCache((prev) => ({ ...prev, [uuid]: follow_result.state === "following" }));
+
+    const followingProfiles = await fetch(ENDPOINTS.following + profile!.uuid, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      signal,
+    }).catch(() => null);
+
+    const { status: followingLookupStatus, following } = await followingProfiles?.json() || {};
+    if (followingLookupStatus === STATUS_OK) {
+      setFollowingCache((prev) => ({ ...prev, [profile!.uuid]: following }));
+    }
+
     return true;
   };
 

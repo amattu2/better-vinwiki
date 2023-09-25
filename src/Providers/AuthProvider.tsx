@@ -99,24 +99,6 @@ export const AuthProvider: FC<Props> = ({ children }: Props) => {
     })();
 
     (async () => {
-      if (profile?.followingProfiles?.length) {
-        return;
-      }
-
-      const response = await fetch(`${ENDPOINTS.following}${profile.uuid}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).catch(() => null);
-
-      const { status, following } = await response?.json() || {};
-      if (status === STATUS_OK) {
-        setState((p) => ({ ...p, profile: { ...p.profile, followingProfiles: following || [] } } as AuthenticatedState));
-      }
-    })();
-
-    (async () => {
       if (profile?.profileLists?.following && profile?.profileLists?.owned) {
         return;
       }
