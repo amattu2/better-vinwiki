@@ -55,7 +55,7 @@ export const ProfileProvider: FC<Props> = ({
   uuid, withPosts, withFollowing, withLists,
   children,
 }: Props) => {
-  const { token, profile: authProfile } = useAuthProvider();
+  const { token } = useAuthProvider();
   const [state, setState] = useState<ProviderState>(defaultState);
 
   useEffect(() => {
