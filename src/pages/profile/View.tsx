@@ -32,6 +32,7 @@ import useIsFollowingLookup, { LookupStatus } from "../../hooks/useIsFollowingLo
 import useProfileListsLookup from "../../hooks/useProfileListsLookup";
 import { mapPostsToDate } from "../../utils/feed";
 import { StatisticItem } from "../../components/ProfileStatistic";
+import FollowingDialog from "../../components/FollowingDialog";
 
 type Props = {
   uuid: string;
@@ -129,6 +130,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
   const [listLookupStatus, lists] = useProfileListsLookup(uuid, true);
   const [listsOpen, setListsOpen] = useState<boolean>(false);
   const [followersOpen, setFollowersOpen] = useState<boolean>(false);
+  const [followingOpen, setFollowingOpen] = useState<boolean>(false);
   const [vehiclesOpen, setVehiclesOpen] = useState<boolean>(false);
   const [limit, setLimit] = useState<number>(15);
 
@@ -155,6 +157,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
 
   useEffect(() => {
     setFollowersOpen(false);
+    setFollowingOpen(false);
     setListsOpen(false);
     setVehiclesOpen(false);
   }, [location]);
@@ -239,6 +242,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
           <StatisticItem
             name="Following"
             value={profile?.following_count}
+            onClick={() => setFollowingOpen(true)}
           />
           <StatisticItem
             name="Following Vehicles"
@@ -322,6 +326,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
       <ScrollToTop />
       {(lists && listsOpen) && <ListsDialog lists={lists} onClose={() => setListsOpen(false)} />}
       {(profile.follower_count > 0 && followersOpen) && <FollowersDialog uuid={uuid} count={profile.follower_count} onClose={() => setFollowersOpen(false)} />}
+      {(profile.following_count > 0 && followingOpen) && <FollowingDialog uuid={uuid} count={profile.following_count} onClose={() => setFollowingOpen(false)} />}
       {(profile.following_vehicle_count > 0 && vehiclesOpen) && <VehicleTableDialog uuid={uuid} onClose={() => setVehiclesOpen(false)} />}
     </Box>
   );
