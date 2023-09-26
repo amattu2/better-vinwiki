@@ -38,7 +38,7 @@ const LoginView = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_profile, setProfile] = useLocalStorage<AuthProfile | null>(CacheKeys.AUTH_PROFILE, null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_token, setToken] = useLocalStorage<string>(CacheKeys.AUTH_KEY, "");
+  const [_token, setToken] = useLocalStorage<string>(CacheKeys.AUTH_TOKEN, "");
   const [loading, setLoading] = useState<boolean>(false);
 
   const { register, handleSubmit, formState } = useForm<Inputs>();

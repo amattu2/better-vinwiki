@@ -26,7 +26,6 @@ type Profile = {
 type AuthProfile = Profile & {
   followingVehicles?: VehicleFollower[];
   recentVehicles?: Vehicle[];
-  profileLists?: ProfileLists;
 };
 
 type ProfileNotification = {

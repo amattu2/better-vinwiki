@@ -97,34 +97,6 @@ export const AuthProvider: FC<Props> = ({ children }: Props) => {
         setState((p) => ({ ...p, profile: { ...p.profile, followingVehicles: vehicles_following || [] } } as AuthenticatedState));
       }
     })();
-
-    (async () => {
-      if (profile?.profileLists?.following && profile?.profileLists?.owned) {
-        return;
-      }
-
-      const response = await fetch(`${ENDPOINTS.lists}${profile.uuid}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).catch(() => null);
-
-      const { status, lists_my, lists_following, lists_other } = await response?.json() || {};
-      if (status === STATUS_OK) {
-        setState((p) => ({
-          ...p,
-          profile: {
-            ...p.profile,
-            profileLists: {
-              following: (lists_following as { list: List }[])?.map((r) => r?.list) || [],
-              owned: (lists_my as { list: List }[])?.map((r) => r?.list) || [],
-              other: (lists_other as { list: List }[])?.map((r) => r?.list) || [],
-            },
-          },
-        } as AuthenticatedState));
-      }
-    })();
   }, []);
 
   useEffect(() => {
