@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSessionStorage } from "usehooks-ts";
 import { useAuthProvider } from "../Providers/AuthProvider";
-import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
+import { ENDPOINTS, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
 import { CacheKeys } from "../config/Cache";
 
 type Cache = Record<List["uuid"], List["name"]>;
@@ -54,7 +54,7 @@ const useListLookup = (uuid: List["uuid"]): [LookupStatus, { name: List["name"] 
         setCache((prev) => ({ ...prev, [uuid]: list.name }));
         setStatus(LookupStatus.Success);
         setListName(list.name);
-      } else {
+      } else if (status === STATUS_ERROR) {
         setStatus(LookupStatus.Error);
       }
     })();

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSessionStorage } from "usehooks-ts";
 import { useAuthProvider } from "../Providers/AuthProvider";
-import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
+import { ENDPOINTS, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
 import { CacheKeys } from "../config/Cache";
 
 type Cache = Record<Profile["uuid"], Vehicle[]>;
@@ -36,8 +36,6 @@ const useFollowingVehiclesLookup = (uuid: Profile["uuid"], refetch = false): [Lo
     const { signal } = controller;
 
     (async () => {
-      setStatus(LookupStatus.Loading);
-
       const response = await fetch(ENDPOINTS.following_vehicles + uuid, {
         method: "GET",
         headers: {
@@ -54,7 +52,7 @@ const useFollowingVehiclesLookup = (uuid: Profile["uuid"], refetch = false): [Lo
         setCache((prev) => ({ ...prev, [uuid]: vehicles_following }));
         setStatus(LookupStatus.Success);
         setVehicles(vehicles_following);
-      } else {
+      } else if (status === STATUS_ERROR) {
         setStatus(LookupStatus.Error);
       }
     })();

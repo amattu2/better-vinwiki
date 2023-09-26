@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSessionStorage } from "usehooks-ts";
 import { useAuthProvider } from "../Providers/AuthProvider";
-import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
+import { ENDPOINTS, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
 import { CacheKeys } from "../config/Cache";
 
 type Cache = Record<Profile["uuid"], ProfileLists>;
@@ -36,8 +36,6 @@ const useProfileListsLookup = (uuid: Profile["uuid"], refetch = false): [LookupS
     const { signal } = controller;
 
     (async () => {
-      setStatus(LookupStatus.Loading);
-
       const response = await fetch(ENDPOINTS.lists + uuid, {
         method: "GET",
         headers: {
@@ -60,7 +58,7 @@ const useProfileListsLookup = (uuid: Profile["uuid"], refetch = false): [LookupS
         setCache((prev) => ({ ...prev, [uuid]: result }));
         setStatus(LookupStatus.Success);
         setLists(result);
-      } else {
+      } else if (status === STATUS_ERROR) {
         setStatus(LookupStatus.Error);
       }
     })();

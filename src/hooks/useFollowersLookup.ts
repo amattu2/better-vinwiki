@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSessionStorage } from "usehooks-ts";
 import { useAuthProvider } from "../Providers/AuthProvider";
-import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
+import { ENDPOINTS, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
 import { CacheKeys } from "../config/Cache";
 
 type Cache = Record<Profile["uuid"], Profile[]>;
@@ -36,8 +36,6 @@ const useFollowersLookup = (uuid: Profile["uuid"], refetch = false): [LookupStat
     const { signal } = controller;
 
     (async () => {
-      setStatus(LookupStatus.Loading);
-
       const response = await fetch(ENDPOINTS.followers + uuid, {
         method: "GET",
         headers: {
@@ -54,7 +52,7 @@ const useFollowersLookup = (uuid: Profile["uuid"], refetch = false): [LookupStat
         setCache((prev) => ({ ...prev, [uuid]: followers }));
         setStatus(LookupStatus.Success);
         setFollowers(followers);
-      } else {
+      } else if (status === STATUS_ERROR) {
         setStatus(LookupStatus.Error);
       }
     })();

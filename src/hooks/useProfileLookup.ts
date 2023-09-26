@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 import { useAuthProvider } from "../Providers/AuthProvider";
-import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
+import { ENDPOINTS, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
 import { CacheKeys } from "../config/Cache";
 
 type Cache = Record<Profile["uuid"], Profile>;
@@ -92,6 +92,8 @@ const useProfileLookup = (uuid: Profile["uuid"], refetch = false): [{ status: Lo
       if (status === STATUS_OK && !!profile?.username) {
         setStatus(LookupStatus.Success);
         setProfile(profile);
+      } else if (status === STATUS_ERROR) {
+        setStatus(LookupStatus.Error);
       }
     })();
 
