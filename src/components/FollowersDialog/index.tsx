@@ -1,5 +1,6 @@
 import React, { FC, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { FixedSizeList } from 'react-window';
 import {
   Dialog,
   DialogContent,
@@ -75,7 +76,7 @@ const FollowersDialog: FC<Props> = ({ uuid, count, onClose }: Props) => {
   const [status, { followers }] = useFollowersLookup(uuid, true);
   const [sort, setSort] = useState<"date" | "alpha">("alpha");
 
-  const skeletonCount = count > 0 && count < 10 ? count : 10;
+  const skeletonCount = count > 0 && count < 8 ? count : 8;
   const data: Profile[] = useMemo(() => {
     if (!followers || status !== LookupStatus.Success) {
       return [];
@@ -117,25 +118,29 @@ const FollowersDialog: FC<Props> = ({ uuid, count, onClose }: Props) => {
         {(status !== LookupStatus.Loading && data.length === 0) && (<NoFollowers />)}
         <List>
           {(status === LookupStatus.Loading) && (<Repeater count={skeletonCount} Component={ProfileSkeleton} />)}
-          {data.map((result) => {
-            const { uuid, username, avatar, display_name } = result;
+          <FixedSizeList
+            height={57 * skeletonCount}
+            width="100%"
+            itemSize={57}
+            itemCount={data.length}
+            style={status !== LookupStatus.Success ? { display: "none" } : undefined}
+          >
+            {({ index, style }) => {
+              const { uuid, username, avatar, display_name } = data[index];
 
-            if (!uuid || !username) {
-              return null;
-            }
-
-            return (
-              <ListItem key={uuid} component={StyledLink} to={`/profile/${uuid}`} divider>
-                <ListItemAvatar>
-                  <ProfileAvatar username={username} avatar={avatar} />
-                </ListItemAvatar>
-                <ListItemText
-                  primary={display_name && <Typography variant="body1" fontWeight={600}>{display_name}</Typography>}
-                  secondary={`@${username}`}
-                />
-              </ListItem>
-            );
-          })}
+              return (
+                <ListItem key={uuid} component={StyledLink} to={`/profile/${uuid}`} divider style={style}>
+                  <ListItemAvatar>
+                    <ProfileAvatar username={username} avatar={avatar} />
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={display_name && <Typography variant="body1" fontWeight={600}>{display_name}</Typography>}
+                    secondary={`@${username}`}
+                  />
+                </ListItem>
+              );
+            }}
+          </FixedSizeList>
         </List>
       </StyledDialogContent>
     </StyledDialog>

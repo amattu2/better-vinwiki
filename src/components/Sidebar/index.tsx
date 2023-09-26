@@ -7,14 +7,12 @@ import {
 import {
   Avatar, Badge, IconButton, Popover,
   Tooltip, Typography, Box, Stack,
-  styled, Drawer, List, ListItem,
-  ListItemAvatar, ListItemText, Divider,
+  styled,
 } from '@mui/material';
 import { useAuthProvider } from '../../Providers/AuthProvider';
 import { useNotificationCountProvider } from '../../Providers/NotificationCountProvider';
 import { Notifications } from '../Notifications';
-import ProfileAvatar from '../ProfileAvatar';
-import useFollowingLookup from '../../hooks/useFollowingLookup';
+import FollowersDrawer from '../FollowersDrawer';
 
 const StyledBox = styled(Box)({
   padding: "32px 12px",
@@ -66,23 +64,11 @@ const StyledLink = styled(Link)({
   textDecoration: "none",
 });
 
-const StyledDrawer = styled(Drawer)({
-  "& .MuiDrawer-paper": {
-    width: "350px",
-  },
-});
-
-const StyledList = styled(List)({
-  paddingTop: "0",
-});
-
 const Sidebar: FC = () => {
   const { authenticated, profile } = useAuthProvider();
   const { unseen } = useNotificationCountProvider();
   const { pathname } = useLocation();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_status, { following }] = useFollowingLookup(profile!.uuid, false);
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -170,39 +156,7 @@ const Sidebar: FC = () => {
       >
         <Notifications preload={open} />
       </Popover>
-      <StyledDrawer anchor="left" open={drawerOpen} onClose={toggleDrawer}>
-        <Typography variant="h6" fontWeight={600} padding="16px">Following &ndash; Quick Look</Typography>
-        <Divider />
-        <StyledList>
-          {(following?.length === 0) && (
-            <ListItem>
-              <ListItemText
-                primary="You are not following anyone."
-                secondary="Follow someone to see their posts."
-              />
-            </ListItem>
-          )}
-          {following?.map((result: ProfileFollower) => {
-            const { uuid, username, avatar, follower_count } = result;
-
-            if (!uuid || !username) {
-              return null;
-            }
-
-            return (
-              <ListItem key={uuid} component={StyledLink} to={`/profile/${uuid}`} onClick={toggleDrawer} divider>
-                <ListItemAvatar>
-                  <ProfileAvatar username={username} avatar={avatar} />
-                </ListItemAvatar>
-                <ListItemText
-                  primary={<Typography variant="body1" fontWeight={600}>{`@${username}`}</Typography>}
-                  secondary={`${follower_count} followers`}
-                />
-              </ListItem>
-            );
-          })}
-        </StyledList>
-      </StyledDrawer>
+      <FollowersDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </StyledBox>
   );
 };
