@@ -1,14 +1,20 @@
-import React, { FC } from "react";
+import React, { FC, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import AutoResizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList } from "react-window";
 import {
   Divider, Drawer, List, ListItem,
   ListItemAvatar, ListItemText,
+  Stack,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
   Typography, styled,
 } from "@mui/material";
+import { SortByAlpha, Event } from "@mui/icons-material";
+import { cloneDeep } from "lodash";
 import { useAuthProvider } from "../../Providers/AuthProvider";
-import useFollowingLookup from "../../hooks/useFollowingLookup";
+import useFollowingLookup, { LookupStatus } from "../../hooks/useFollowingLookup";
 import ProfileAvatar from "../ProfileAvatar";
 
 type Props = {
@@ -20,6 +26,10 @@ const StyledDrawer = styled(Drawer)({
   "& .MuiDrawer-paper": {
     width: "350px",
   },
+});
+
+const StyledStack = styled(Stack)({
+  padding: "16px",
 });
 
 const StyledList = styled(List)<{ component: React.ElementType }>({
@@ -46,14 +56,49 @@ export const FollowersDrawer: FC<Props> = ({ open, onClose }: Props) => {
   const { profile } = useAuthProvider();
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_status, { following }] = useFollowingLookup(profile!.uuid, false);
+  const [status, { following }] = useFollowingLookup(profile!.uuid, false);
+  const [sort, setSort] = useState<"alpha" | "date">("alpha");
+
+  const data: Profile[] = useMemo(() => {
+    if (!following || status !== LookupStatus.Success) {
+      return [];
+    }
+
+    const cloned: Profile[] = cloneDeep(following);
+    if (sort === "alpha") {
+      cloned?.sort((a, b) => a.username.localeCompare(b.username));
+    }
+
+    return cloned;
+  }, [following, sort]);
 
   return (
     <StyledDrawer anchor="left" open={open} onClose={onClose}>
-      <Typography variant="h6" fontWeight={600} padding="16px">Following &ndash; Quick Look</Typography>
+      <StyledStack direction="row" alignItems="center">
+        <Typography variant="h6" fontWeight={600}>Following &ndash; Quick Look</Typography>
+        <ToggleButtonGroup
+          color="primary"
+          value={sort}
+          onChange={(e, value) => setSort(value || "alpha")}
+          size="small"
+          sx={{ ml: "auto" }}
+          exclusive
+        >
+          <ToggleButton value="alpha">
+            <Tooltip title="Alphabetical">
+              <SortByAlpha />
+            </Tooltip>
+          </ToggleButton>
+          <ToggleButton value="date">
+            <Tooltip title="Follow Date">
+              <Event />
+            </Tooltip>
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </StyledStack>
       <Divider />
       <StyledList component="div">
-        {!following?.length && (
+        {!data?.length && (
           <ListItem>
             <ListItemText
               primary="You are not following anyone."
@@ -67,10 +112,10 @@ export const FollowersDrawer: FC<Props> = ({ open, onClose }: Props) => {
               height={height}
               width={width}
               itemSize={57}
-              itemCount={following?.length || 0}
+              itemCount={data.length || 0}
             >
               {({ index, style }) => {
-                const { uuid, username, avatar, follower_count } = following?.[index] || {};
+                const { uuid, username, avatar, follower_count } = data[index] || {};
 
                 if (!uuid || !username) {
                   return null;
