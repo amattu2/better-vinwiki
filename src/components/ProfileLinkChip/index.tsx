@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Link } from "react-router-dom";
+import { Avatar, Chip } from "@mui/material";
 import useProfileLookup, { LookupStatus } from "../../hooks/useProfileLookup";
-import MentionChip from "../MentionChip";
 
 type Props = {
   uuid: string;
@@ -29,7 +29,16 @@ const ProfileLinkChip: FC<Props> = ({ uuid }: Props) => {
     );
   }
 
-  return <MentionChip handle={profile.username} />;
+  return (
+    <Chip
+      component={Link}
+      avatar={<Avatar>{profile.username.charAt(0).toUpperCase()}</Avatar>}
+      label={profile.username}
+      to={`/profile/${uuid}`}
+      size="small"
+      data-testid="mention-chip"
+    />
+  );
 };
 
 export default ProfileLinkChip;

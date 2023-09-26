@@ -86,7 +86,7 @@ const useProfileLookup = (uuid: Profile["uuid"], refetch = false): [{ status: Lo
       }).catch(() => setStatus(LookupStatus.Error));
 
       const { status, profile } = await response?.json() || {};
-      if (status === STATUS_OK && !!profile?.uuid) {
+      if (status === STATUS_OK && !!profile?.username) {
         setStatus(LookupStatus.Success);
         setProfile(profile);
       }
