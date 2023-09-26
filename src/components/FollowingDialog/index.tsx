@@ -89,8 +89,6 @@ const FollowingDialog: FC<Props> = ({ uuid, count, onClose }: Props) => {
     return cloned;
   }, [following, sort]);
 
-  console.log(status, following);
-
   return (
     <StyledDialog maxWidth="sm" open onClose={onClose} fullWidth>
       <DialogTitle component={Stack} direction="row" alignItems="center">
