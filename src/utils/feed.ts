@@ -21,3 +21,21 @@ export const mapPostsToDate = (posts: FeedPost[]): { [date: string] : FeedPost[]
 
   return results;
 };
+
+/**
+ * Ingests a FeedPost from the API and remaps the properties
+ * to be more consistent with usage across the app.
+ *
+ * Note:
+ * - This is to support legacy Android clients that use the `generic` type for images
+ *
+ * @param {{ post: FeedPost }} post input from feed API
+ * @param {FeedPost} post a remapped copy of the input
+ */
+export const remapFeedPost = ({ post }: { post: FeedPost }): FeedPost => {
+  if (post.client === "android" && post.type === "generic" && post.image?.id) {
+    return { ...post, type: "photo" };
+  }
+
+  return post;
+};
