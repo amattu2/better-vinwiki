@@ -43,7 +43,10 @@ const useUUIDLookup = (username: Profile["username"]): [LookupStatus, { uuid: Pr
           Authorization: `Bearer ${token}`,
         },
         signal,
-      }).catch(() => setStatus(LookupStatus.Error));
+      }).catch(({ name }) => {
+        if (name !== "AbortError") setStatus(LookupStatus.Error);
+        return null;
+      });
 
       const { status, person } = await response?.json() || {};
       if (status === STATUS_OK && !!person?.uuid) {

@@ -96,7 +96,10 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
           Authorization: `Bearer ${token}`,
         },
         signal,
-      }).catch(() => setStatus(LookupStatus.Error));
+      }).catch(({ name }) => {
+        if (name !== "AbortError") setStatus(LookupStatus.Error);
+        return null;
+      });
 
       const { status, following } = await response?.json() || {};
       if (status === STATUS_OK) {

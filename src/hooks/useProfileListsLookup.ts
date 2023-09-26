@@ -44,7 +44,10 @@ const useProfileListsLookup = (uuid: Profile["uuid"], refetch = false): [LookupS
           Authorization: `Bearer ${token}`,
         },
         signal,
-      }).catch(() => setStatus(LookupStatus.Error));
+      }).catch(({ name }) => {
+        if (name !== "AbortError") setStatus(LookupStatus.Error);
+        return null;
+      });
 
       const { status, lists_my, lists_following, lists_other } = await response?.json() || {};
       if (status === STATUS_OK) {

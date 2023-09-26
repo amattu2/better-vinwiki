@@ -44,7 +44,10 @@ const useFollowingVehiclesLookup = (uuid: Profile["uuid"], refetch = false): [Lo
           Authorization: `Bearer ${token}`,
         },
         signal,
-      }).catch(() => setStatus(LookupStatus.Error));
+      }).catch(({ name }) => {
+        if (name !== "AbortError") setStatus(LookupStatus.Error);
+        return null;
+      });
 
       const { status, vehicles_following } = await response?.json() || {};
       if (status === STATUS_OK) {

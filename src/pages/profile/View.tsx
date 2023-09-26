@@ -158,7 +158,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
     return <Loader />;
   }
 
-  if (!profile) {
+  if (profileStatus === ProfileProviderStatus.Error || !profile) {
     return <span>Something went wrong!</span>;
   }
 

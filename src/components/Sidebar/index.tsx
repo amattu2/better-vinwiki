@@ -108,7 +108,7 @@ const Sidebar: FC = () => {
       <StyledAvatarBox>
         <Avatar
           component={StyledLink}
-          to="/profile"
+          to={`/profile/${profile.uuid}`}
           sx={{ width: 36, height: 36 }}
           src={profile.avatar ? `https://media-cdn.vinwiki.com/${profile.avatar}` : undefined}
         >

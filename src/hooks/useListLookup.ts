@@ -44,7 +44,10 @@ const useListLookup = (uuid: List["uuid"]): [LookupStatus, { name: List["name"] 
           Authorization: `Bearer ${token}`,
         },
         signal,
-      }).catch(() => setStatus(LookupStatus.Error));
+      }).catch(({ name }) => {
+        if (name !== "AbortError") setStatus(LookupStatus.Error);
+        return null;
+      });
 
       const { status, list } = await response?.json() || {};
       if (status === STATUS_OK && !!list?.name) {
