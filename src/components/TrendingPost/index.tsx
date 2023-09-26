@@ -9,6 +9,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { formatDateTime } from '../../utils/date';
 import { prettySubstring } from '../../utils/text';
 import ProfileAvatar from '../ProfileAvatar';
+import { randomGradient } from '../../utils/gradient';
 
 type Props = {
   reason: string;
@@ -36,7 +37,7 @@ const StyledPostBox = styled(Stack)({
 });
 
 const StyledBackground = styled("div", { shouldForwardProp: (p) => p !== "bg" })(({ bg }: { bg?: string }) => ({
-  backgroundImage: bg ? `url(${bg})` : "linear-gradient(to bottom left, #a18cd1 0%, #fbc2eb 100%)",
+  backgroundImage: bg ? `url(${bg})` : randomGradient(),
   filter: bg ? "blur(6px) brightness(0.8)" : "none",
   backgroundSize: "cover",
   backgroundPosition: "center",

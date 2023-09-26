@@ -1,25 +1,24 @@
 import React, { FC, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Code, DashboardOutlined, Logout, NotificationsActive,
-  PeopleOutline, Person2Outlined, SearchOutlined,
+  PeopleOutline, SearchOutlined,
 } from '@mui/icons-material';
 import {
   Avatar, Badge, IconButton, Popover,
   Tooltip, Typography, Box, Stack,
-  styled, Drawer, List, ListItem,
-  ListItemAvatar, ListItemText, Divider,
+  styled,
 } from '@mui/material';
-import { Link, useLocation } from 'react-router-dom';
 import { useAuthProvider } from '../../Providers/AuthProvider';
 import { useNotificationCountProvider } from '../../Providers/NotificationCountProvider';
 import { Notifications } from '../Notifications';
-import ProfileAvatar from '../ProfileAvatar';
+import { FollowersDrawer } from '../FollowersDrawer';
 
 const StyledBox = styled(Box)({
   padding: "32px 12px",
   background: "#fff",
   width: "72px",
-  borderRight: "1px solid #ebebeb",
+  borderRight: "1px solid #ddd",
   position: "fixed",
   top: "0",
   left: "0",
@@ -36,7 +35,7 @@ const StyledLogoBox = styled(Box)({
 const StyledLogo = styled('img')({
   width: "100%",
   height: "auto",
-  border: "1px solid #ebebeb",
+  border: "1px solid #ddd",
   borderRadius: "6px",
 });
 
@@ -63,16 +62,6 @@ const StyledIconButton = styled(IconButton)({
 const StyledLink = styled(Link)({
   color: "inherit",
   textDecoration: "none",
-});
-
-const StyledDrawer = styled(Drawer)({
-  "& .MuiDrawer-paper": {
-    width: "350px",
-  },
-});
-
-const StyledList = styled(List)({
-  paddingTop: "0",
 });
 
 const Sidebar: FC = () => {
@@ -103,15 +92,14 @@ const Sidebar: FC = () => {
         <StyledLogo src="https://api.placeholder.app/image/90x90/3b3b3b?text=BV" alt="logo" />
       </StyledLogoBox>
       <StyledAvatarBox>
-        <StyledLink to="/profile">
-          {profile?.avatar ? (
-            <StyledLogo src={profile.avatar} alt="user" />
-          ) : (
-            <Avatar sx={{ width: 36, height: 36 }}>
-              {profile?.username?.charAt(0).toUpperCase()}
-            </Avatar>
-          )}
-        </StyledLink>
+        <Avatar
+          component={StyledLink}
+          to={`/profile/${profile.uuid}`}
+          sx={{ width: 36, height: 36 }}
+          src={profile.avatar ? `https://media-cdn.vinwiki.com/${profile.avatar}` : undefined}
+        >
+          {profile?.username?.charAt(0).toUpperCase()}
+        </Avatar>
       </StyledAvatarBox>
       <StyledControlGroup direction="column" gap={1}>
         <StyledIconButton disabled={pathname === "/"}>
@@ -136,15 +124,8 @@ const Sidebar: FC = () => {
       </StyledControlGroup>
       <StyledControlGroup direction="column" gap={1}>
         <Typography variant="caption" color="textSecondary" fontWeight={600}>
-          Account
+          Tools
         </Typography>
-        <StyledIconButton disabled={pathname === "/profile"}>
-          <StyledLink to="/profile">
-            <Tooltip title="Profile" placement="right">
-              <Person2Outlined />
-            </Tooltip>
-          </StyledLink>
-        </StyledIconButton>
         <IconButton onClick={openNotifications}>
           <Tooltip title="Notifications" placement="right">
             <Badge badgeContent={unseen} color="error">
@@ -175,39 +156,7 @@ const Sidebar: FC = () => {
       >
         <Notifications preload={open} />
       </Popover>
-      <StyledDrawer anchor="left" open={drawerOpen} onClose={toggleDrawer}>
-        <Typography variant="h6" fontWeight={600} padding="16px">Following &ndash; Quick Look</Typography>
-        <Divider />
-        <StyledList>
-          {(profile?.followingProfiles?.length === 0) && (
-            <ListItem>
-              <ListItemText
-                primary="You are not following anyone."
-                secondary="Follow someone to see their posts."
-              />
-            </ListItem>
-          )}
-          {profile?.followingProfiles?.map((result: ProfileFollower) => {
-            const { uuid, username, avatar, follower_count } = result;
-
-            if (!uuid || !username) {
-              return null;
-            }
-
-            return (
-              <ListItem key={uuid} component={StyledLink} to={`/profile/${uuid}`} onClick={toggleDrawer} divider>
-                <ListItemAvatar>
-                  <ProfileAvatar username={username} avatar={avatar} />
-                </ListItemAvatar>
-                <ListItemText
-                  primary={<Typography variant="body1" fontWeight={600}>{`@${username}`}</Typography>}
-                  secondary={`${follower_count} followers`}
-                />
-              </ListItem>
-            );
-          })}
-        </StyledList>
-      </StyledDrawer>
+      <FollowersDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </StyledBox>
   );
 };

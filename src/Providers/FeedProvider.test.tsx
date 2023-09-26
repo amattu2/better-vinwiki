@@ -7,7 +7,7 @@ describe("FeedProvider General Tests", () => {
   test("should render without crashing", () => {
     render(
       <AuthProvider>
-        <FeedProvider filtered limit={25} />
+        <FeedProvider type="feed" identifier="FAKE-UUID" limit={25} />
       </AuthProvider>,
     );
   });
@@ -15,7 +15,7 @@ describe("FeedProvider General Tests", () => {
   test("should render children", () => {
     render(
       <AuthProvider>
-        <FeedProvider filtered limit={25}>
+        <FeedProvider type="feed" identifier="FAKE-UUID" limit={25}>
           <div>Test</div>
         </FeedProvider>
       </AuthProvider>,

@@ -6,11 +6,12 @@ import {
   MenuItem, Typography, styled,
 } from "@mui/material";
 import { useAuthProvider } from "../../Providers/AuthProvider";
+import { useFeedProvider } from "../../Providers/FeedProvider";
+import { ENDPOINTS } from "../../config/Endpoints";
 import { formatDateTime } from "../../utils/date";
 import GenericText from "../GenericText/GenericText";
-import ProfileBit from "./Components/PostProfile";
 import DeletePostDialog from "./Components/DeletePostDialog";
-import { useFeedProvider } from "../../Providers/FeedProvider";
+import ProfileBit from "./Components/PostProfile";
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",
@@ -26,8 +27,8 @@ const StyledMenuButton = styled(IconButton)({
 });
 
 const ListAddPost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
-  const { profile } = useAuthProvider();
-  const { deletePost: deletePostByUUID } = useFeedProvider();
+  const { token, profile } = useAuthProvider();
+  const { removePost: deletePostByUUID } = useFeedProvider();
   const { uuid, subject_uuid, person } = post;
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -47,7 +48,14 @@ const ListAddPost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedP
 
   const deletePost = async () => {
     setDeleteDialogOpen(false);
-    await deletePostByUUID?.(uuid);
+    deletePostByUUID?.(uuid);
+
+    await fetch(ENDPOINTS.post_delete + uuid, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).catch(() => null);
   };
 
   return (

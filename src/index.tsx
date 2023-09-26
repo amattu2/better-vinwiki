@@ -16,6 +16,7 @@ import Profile from './pages/profile/Controller';
 import Search from './pages/search/Controller';
 import Vehicle from './pages/vehicle/Controller';
 import reportWebVitals from './reportWebVitals';
+import { CacheKeys } from './config/Cache';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -23,7 +24,7 @@ const root = ReactDOM.createRoot(
 
 const ProtectedRoutes = () => {
   const token = useReadLocalStorage<string>("token");
-  const profile = useReadLocalStorage<AuthProfile | null>("profile");
+  const profile = useReadLocalStorage<AuthProfile | null>(CacheKeys.AUTH_PROFILE);
   if (!token || !profile?.uuid) {
     return <Navigate to="/login" />;
   }

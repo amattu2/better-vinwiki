@@ -4,24 +4,23 @@ import { Link, useNavigate } from "react-router-dom";
 import { Badge, DirectionsCar, PersonSearch, Search } from "@mui/icons-material";
 import { TabContext, TabPanel } from "@mui/lab";
 import {
-  Box,
-  Card, CardActionArea, CardContent, Chip, Container, Divider, Grid, IconButton,
+  Box, Card, Container, Divider, IconButton,
   List, ListItem, ListItemAvatar, ListItemText,
-  Pagination, Skeleton, Stack, Tab,
-  Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, Tabs,
+  Pagination, Skeleton, Stack, Tab, Tabs,
   TextField, Tooltip, Typography, styled,
 } from "@mui/material";
 import { useAuthProvider } from "../../Providers/AuthProvider";
+import { ListSearchCard, ListSearchSkeleton } from "../../components/ListSearchCard";
 import PlateDecoder from "../../components/PlateDecoder/Dialog";
+import ProfileAvatar from "../../components/ProfileAvatar";
+import Repeater from "../../components/Repeater";
 import { ScrollToTop } from "../../components/ScrollToTop";
 import ListSuggestion from "../../components/SuggestionCards/ListSuggestion";
 import VehicleSuggestion from "../../components/SuggestionCards/VehicleSuggestion";
 import { LookupStatus, SearchResult, SearchType, useSearch } from "../../hooks/useSearch";
-import { formatVehicleName, sortVehicles } from "../../utils/vehicle";
-import ProfileAvatar from "../../components/ProfileAvatar";
-import Repeater from "../../components/Repeater";
-import GenericText from "../../components/GenericText/GenericText";
+import useProfileListsLookup from "../../hooks/useProfileListsLookup";
+import { sortVehicles } from "../../utils/vehicle";
+import { VehicleTable } from "../../components/VehicleTable";
 
 const StyledBox = styled(Box)({
   padding: "16px",
@@ -30,6 +29,9 @@ const StyledBox = styled(Box)({
 const StyledSearchBox = styled(StyledBox)({
   backgroundColor: "#fff",
   flexGrow: 1,
+  minHeight: "100vh",
+  borderLeft: "1px solid #ddd",
+  borderRight: "1px solid #ddd",
 });
 
 const StyledSidebarBox = styled(StyledBox)({
@@ -61,30 +63,9 @@ const StyledPagination = styled(Pagination)({
   },
 });
 
-const StyledVehicleImg = styled("img")({
-  borderRadius: "8px",
-  width: "75px",
-  height: "75px",
-});
-
-const StyledListOwner = styled(Stack, { shouldForwardProp: (p) => p !== "filled" })(({ filled }: { filled: boolean }) => ({
-  borderRadius: "8px",
-  padding: "8px",
-  backgroundColor: !filled ? "transparent" : "rgb(244, 247, 250)",
-  marginLeft: "auto",
-}));
-
 const StyledLink = styled(Link)({
   textDecoration: "none",
   color: "inherit",
-});
-
-const StyledListCard = styled(StyledCard)({
-  padding: 0,
-  "& .MuiCardActionArea-root": {
-    padding: "16px",
-    paddingTop: "8px",
-  },
 });
 
 const NoSearchResults: FC = () => (
@@ -97,48 +78,6 @@ const NoSearchResults: FC = () => (
   >
     No results found
   </Typography>
-);
-
-const TableCellSkeleton: FC = () => (
-  <TableCell>
-    <Skeleton variant="text" animation="wave" />
-  </TableCell>
-);
-
-const VehicleSkeleton: FC = () => (
-  <TableRow>
-    <TableCell>
-      <Skeleton variant="rectangular" width={75} height={75} animation="wave" />
-    </TableCell>
-    <Repeater count={6} Component={TableCellSkeleton} />
-  </TableRow>
-);
-
-const ListSkeleton: FC = () => (
-  <StyledListCard elevation={0}>
-    <Grid component={CardContent} container>
-      <Grid item xs={8}>
-        <Box flexGrow={1}>
-          <Skeleton variant="text" animation="wave" sx={{ fontSize: "1.5rem" }} />
-          <Skeleton variant="text" animation="wave" sx={{ fontSize: "0.8rem" }} />
-          <Skeleton variant="text" animation="wave" sx={{ fontSize: "0.8rem" }} />
-        </Box>
-        <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-          <Chip label={<Skeleton variant="text" animation="wave" width={45} />} />
-          <Chip label={<Skeleton variant="text" animation="wave" width={45} />} />
-        </Stack>
-      </Grid>
-      <Grid item xs={4}>
-        <StyledListOwner direction="row" gap={1} sx={{ height: "55px" }} filled>
-          <Skeleton variant="rounded" width={40} height={40} animation="wave" />
-          <Stack direction="column" justifyContent="center" flexGrow={1}>
-            <Skeleton variant="text" animation="wave" />
-            <Skeleton variant="text" animation="wave" />
-          </Stack>
-        </StyledListOwner>
-      </Grid>
-    </Grid>
-  </StyledListCard>
 );
 
 const ProfileSkeleton: FC = () => (
@@ -156,8 +95,11 @@ const ProfileSkeleton: FC = () => (
 const View : FC = () => {
   const navigate = useNavigate();
   const { profile } = useAuthProvider();
-  const { followingVehicles: vehicles, profileLists: lists } = profile || {};
+  const { followingVehicles: vehicles } = profile || {};
   const { register, handleSubmit } = useForm<{ query: string }>();
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_status, lists] = useProfileListsLookup(profile?.uuid || "");
 
   const [searchType, setSearchType] = useState<SearchType>("Vehicle");
   const [plateDecoderOpen, setPlateDecoderOpen] = useState<boolean>(false);
@@ -228,7 +170,7 @@ const View : FC = () => {
                   <Stack component="form" direction="row" spacing={1} alignItems="center" onSubmit={handleSubmit(handleSearch)}>
                     <TextField {...register("query")} placeholder={`Search by ${placeholder}`} size="small" fullWidth />
                     {searchType === "Vehicle" && (
-                      <Tooltip title="Advanced Search" placement="right">
+                      <Tooltip title="Advanced Search" placement="right" arrow>
                         <IconButton onClick={() => setPlateDecoderOpen(true)}>
                           <Badge />
                         </IconButton>
@@ -253,66 +195,12 @@ const View : FC = () => {
             <TabContext value={searchType}>
               <StyledPanel value="Vehicle">
                 <StyledCard elevation={3} sx={{ padding: 0 }}>
-                  <TableContainer>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell sx={{ textAlign: "center" }}>Preview</TableCell>
-                          <TableCell>Year</TableCell>
-                          <TableCell>Make</TableCell>
-                          <TableCell>Model</TableCell>
-                          <TableCell>Trim</TableCell>
-                          <TableCell>VIN</TableCell>
-                          <TableCell>Options</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {(status === LookupStatus.Success && paginatedResults.length === 0) && (
-                          <TableRow>
-                            <TableCell colSpan={7} sx={{ textAlign: "center" }}>
-                              <NoSearchResults />
-                            </TableCell>
-                          </TableRow>
-                        )}
-                        {(status === LookupStatus.Success && paginatedResults.length > 0) && (
-                          paginatedResults.map((result) => {
-                            const { year, make, model, trim, vin, icon_photo } = result as Vehicle;
-
-                            if (!vin) {
-                              return null;
-                            }
-
-                            return (
-                              <TableRow key={vin}>
-                                <TableCell>
-                                  <StyledVehicleImg src={icon_photo} alt={formatVehicleName(result as Vehicle)} />
-                                </TableCell>
-                                <TableCell>{year}</TableCell>
-                                <TableCell>{make}</TableCell>
-                                <TableCell>{model}</TableCell>
-                                <TableCell>{trim || "-"}</TableCell>
-                                <TableCell>{vin}</TableCell>
-                                <TableCell>
-                                  <Link to={`/vehicle/${vin}`}>
-                                    View
-                                  </Link>
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })
-                        )}
-                        {(status === LookupStatus.Loading) && (<Repeater count={5} Component={VehicleSkeleton} />)}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+                  <VehicleTable
+                    status={status}
+                    vehicles={results as Vehicle[]}
+                    EmptyComponent={NoSearchResults}
+                  />
                 </StyledCard>
-                <StyledPagination
-                  count={Math.ceil(resultCount / perPage) || 1}
-                  page={page}
-                  onChange={(e, page) => handlePageChange(page)}
-                  variant="outlined"
-                  shape="rounded"
-                />
               </StyledPanel>
               <StyledPanel value="Profile">
                 <List>
@@ -351,55 +239,12 @@ const View : FC = () => {
                 />
               </StyledPanel>
               <StyledPanel value="List">
-                {(status === LookupStatus.Loading) && (<Repeater count={5} Component={ListSkeleton} />)}
+                {(status === LookupStatus.Loading) && (<Repeater count={5} Component={ListSearchSkeleton} />)}
                 {(status === LookupStatus.Success && paginatedResults.length === 0) && (
                   <NoSearchResults />
                 )}
-                {(status === LookupStatus.Success && paginatedResults.length > 0) && (
-                  paginatedResults.map((result) => {
-                    const { uuid, name, description, owner, follower_count, vehicle_count, created_date } = result as List;
-                    const { username, avatar } = owner || {};
-
-                    if (!uuid || !owner) {
-                      return null;
-                    }
-
-                    return (
-                      <StyledListCard key={uuid} elevation={0}>
-                        <CardActionArea component={Link} to={`/list/${uuid}`}>
-                          <Grid component={CardContent} container>
-                            <Grid item xs={8}>
-                              <Box flexGrow={1}>
-                                <Typography variant="h5">{name}</Typography>
-                                <GenericText content={description} />
-                              </Box>
-                              <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                                <Chip label={`${vehicle_count} vehicles`} />
-                                <Chip label={`${follower_count} followers`} />
-                              </Stack>
-                            </Grid>
-                            <Grid item xs={4}>
-                              <StyledListOwner direction="row" gap={1} sx={{ height: "55px" }} filled>
-                                <ProfileAvatar username={username} avatar={avatar} />
-                                <Stack direction="column" justifyContent="center">
-                                  <Typography variant="body1" fontWeight={600} component="div">
-                                    <StyledLink to={`/profile/${uuid}`}>
-                                      {`@${username}`}
-                                    </StyledLink>
-                                  </Typography>
-                                  <Typography variant="body2" component="div">
-                                    Created on
-                                    {" "}
-                                    {new Date(created_date).toLocaleDateString()}
-                                  </Typography>
-                                </Stack>
-                              </StyledListOwner>
-                            </Grid>
-                          </Grid>
-                        </CardActionArea>
-                      </StyledListCard>
-                    );
-                  })
+                {(status === LookupStatus.Success && paginatedResults.length > 0 && searchType === "List") && (
+                  paginatedResults.map((result) => (<ListSearchCard key={(result as List).uuid} list={result as List} />))
                 )}
                 <StyledPagination
                   count={Math.ceil(resultCount / perPage) || 1}

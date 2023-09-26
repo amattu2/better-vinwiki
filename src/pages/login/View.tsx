@@ -5,6 +5,7 @@ import { useLocalStorage } from "usehooks-ts";
 import { Box, Button, Container, TextField, Typography, styled } from "@mui/material";
 import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
 import Loader from "../../components/Loader";
+import { CacheKeys } from "../../config/Cache";
 
 const StyledContainer = styled(Container)({
   height: "100%",
@@ -35,9 +36,9 @@ type Inputs = {
 const LoginView = () => {
   const navigate = useNavigate();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_profile, setProfile] = useLocalStorage<AuthProfile | null>("profile", null);
+  const [_profile, setProfile] = useLocalStorage<AuthProfile | null>(CacheKeys.AUTH_PROFILE, null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_token, setToken] = useLocalStorage<string>("token", "");
+  const [_token, setToken] = useLocalStorage<string>(CacheKeys.AUTH_TOKEN, "");
   const [loading, setLoading] = useState<boolean>(false);
 
   const { register, handleSubmit, formState } = useForm<Inputs>();

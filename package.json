@@ -18,6 +18,8 @@
     "@types/react-dom": "^18.2.7",
     "@types/react-transition-group": "^4.4.6",
     "dayjs": "^1.11.9",
+    "lodash": "^4.17.21",
+    "numeral": "^2.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.45.4",
@@ -25,6 +27,8 @@
     "react-scripts": "^5.0.1",
     "react-string-replace": "^1.1.1",
     "react-transition-group": "^4.4.5",
+    "react-virtualized-auto-sizer": "^1.0.20",
+    "react-window": "^1.8.9",
     "usehooks-ts": "^2.9.1",
     "web-vitals": "^2.1.4"
   },
@@ -59,6 +63,10 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@openapitools/openapi-generator-cli": "^2.7.0",
+    "@types/lodash": "^4.14.199",
+    "@types/numeral": "^2.0.2",
+    "@types/react-virtualized-auto-sizer": "^1.0.1",
+    "@types/react-window": "^1.8.5",
     "@typescript-eslint/eslint-plugin": "^6.6.0",
     "@typescript-eslint/parser": "^6.6.0",
     "eslint": "^8.48.0",

@@ -1,8 +1,8 @@
 import React from "react";
 import { Navigate, useParams } from "react-router-dom";
-import ProfileView from "./View";
-import { ProfileProvider } from "../../Providers/ProfileProvider";
 import { useAuthProvider } from "../../Providers/AuthProvider";
+import { FeedProvider } from "../../Providers/FeedProvider";
+import ProfileView from "./View";
 
 const Controller = () => {
   const { uuid } = useParams();
@@ -13,9 +13,9 @@ const Controller = () => {
   }
 
   return (
-    <ProfileProvider uuid={uuid} withPosts withFollowing withLists>
-      <ProfileView />
-    </ProfileProvider>
+    <FeedProvider key={uuid} type="profile" identifier={uuid} limit={30}>
+      <ProfileView uuid={uuid} />
+    </FeedProvider>
   );
 };
 

@@ -7,14 +7,15 @@ import {
   Typography, styled,
 } from "@mui/material";
 import { useCopyToClipboard } from "usehooks-ts";
-import useProgressiveQuality from "../../hooks/useProgressiveQuality";
-import PostComments from "./Components/PostComments";
-import ProfileBit from "./Components/PostProfile";
-import GenericText from "../GenericText/GenericText";
-import { formatDateTime } from "../../utils/date";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { useFeedProvider } from "../../Providers/FeedProvider";
+import { ENDPOINTS } from "../../config/Endpoints";
+import useProgressiveQuality from "../../hooks/useProgressiveQuality";
+import { formatDateTime } from "../../utils/date";
+import GenericText from "../GenericText/GenericText";
 import DeletePostDialog from "./Components/DeletePostDialog";
+import PostComments from "./Components/PostComments";
+import ProfileBit from "./Components/PostProfile";
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",
@@ -90,9 +91,9 @@ const StyledExpandedImage = styled("img")({
   borderRadius: "8px",
 });
 
-const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
-  const { profile } = useAuthProvider();
-  const { deletePost: deletePostByUUID } = useFeedProvider();
+const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, omitComments, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
+  const { token, profile } = useAuthProvider();
+  const { removePost: deletePostByUUID } = useFeedProvider();
   const { uuid, image, comment_count, post_text, person } = post;
   const [src, { blur }] = useProgressiveQuality(image?.thumb, image?.large);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -116,7 +117,14 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPos
 
   const deletePost = async () => {
     setDeleteDialogOpen(false);
-    await deletePostByUUID?.(uuid);
+    deletePostByUUID?.(uuid);
+
+    await fetch(ENDPOINTS.post_delete + uuid, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).catch(() => null);
   };
 
   const openPost = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -170,7 +178,7 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPos
               </Stack>
             </Grid>
           </Grid>
-          {!isPreview && <PostComments key={uuid} uuid={uuid} count={comment_count} />}
+          {(!isPreview && !omitComments) && <PostComments key={uuid} uuid={uuid} count={comment_count} />}
         </CardContent>
         {!isPreview && (
           <StyledMenuButton size="small" onClick={menuToggle}>

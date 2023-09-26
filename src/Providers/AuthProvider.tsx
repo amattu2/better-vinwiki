@@ -1,6 +1,7 @@
 import React, { useState, FC, useEffect } from "react";
 import { useLocalStorage, useReadLocalStorage } from "usehooks-ts";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
+import { CacheKeys } from "../config/Cache";
 
 type AuthenticatedState = {
   status: ProviderStatus.LOADED;
@@ -43,8 +44,8 @@ type Props = {
 };
 
 export const AuthProvider: FC<Props> = ({ children }: Props) => {
-  const [profile, setProfile] = useLocalStorage<AuthProfile | null>("profile", null);
-  const token = useReadLocalStorage<string>("token");
+  const [profile, setProfile] = useLocalStorage<AuthProfile | null>(CacheKeys.AUTH_PROFILE, null);
+  const token = useReadLocalStorage<string>(CacheKeys.AUTH_TOKEN);
   const [state, setState] = useState<ProviderState>((token && profile?.uuid) ? {
     status: ProviderStatus.LOADED,
     authenticated: true,
@@ -94,52 +95,6 @@ export const AuthProvider: FC<Props> = ({ children }: Props) => {
       const { status, vehicles_following } = await response?.json() || {};
       if (status === STATUS_OK) {
         setState((p) => ({ ...p, profile: { ...p.profile, followingVehicles: vehicles_following || [] } } as AuthenticatedState));
-      }
-    })();
-
-    (async () => {
-      if (profile?.followingProfiles?.length) {
-        return;
-      }
-
-      const response = await fetch(`${ENDPOINTS.following}${profile.uuid}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).catch(() => null);
-
-      const { status, following } = await response?.json() || {};
-      if (status === STATUS_OK) {
-        setState((p) => ({ ...p, profile: { ...p.profile, followingProfiles: following || [] } } as AuthenticatedState));
-      }
-    })();
-
-    (async () => {
-      if (profile?.profileLists?.following && profile?.profileLists?.owned) {
-        return;
-      }
-
-      const response = await fetch(`${ENDPOINTS.lists}${profile.uuid}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).catch(() => null);
-
-      const { status, lists_my, lists_following, lists_other } = await response?.json() || {};
-      if (status === STATUS_OK) {
-        setState((p) => ({
-          ...p,
-          profile: {
-            ...p.profile,
-            profileLists: {
-              following: (lists_following as { list: List }[])?.map((r) => r?.list) || [],
-              owned: (lists_my as { list: List }[])?.map((r) => r?.list) || [],
-              other: (lists_other as { list: List }[])?.map((r) => r?.list) || [],
-            },
-          },
-        } as AuthenticatedState));
       }
     })();
   }, []);

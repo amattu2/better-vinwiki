@@ -4,7 +4,7 @@ import { useAuthProvider } from "../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
 import { CacheKeys } from "../config/Cache";
 
-type Cache = Record<List["uuid"], List["name"]>;
+type Cache = Record<Profile["uuid"], Vehicle[]>;
 
 export enum LookupStatus {
   Loading = "loading",
@@ -13,24 +13,22 @@ export enum LookupStatus {
 }
 
 /**
- * A hook to cache and lookup List information by UUID
+ * A hook to cache and lookup vehicles a profile is following by uuid
  *
- * @param uuid the uuid to lookup
- * @returns [status, { name }]
+ * @param uuid the uuid to verify against
+ * @param refetch if true, will refetch the status
+ * @returns [status, { vehicles }]
  */
-const useListLookup = (uuid: List["uuid"]): [LookupStatus, { name: List["name"] | null }] => {
+const useFollowingVehiclesLookup = (uuid: Profile["uuid"], refetch = false): [LookupStatus, { vehicles: Vehicle[] | null }] => {
   const { token } = useAuthProvider();
-  const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.LIST_LOOKUP, {});
-  const cachedValue: List["name"] | null = cache[uuid] || null;
-
-  // TODO: Two identical lookups will cause two network requests
-  // find a way to prevent the 2nd request while the 1st is still loading
+  const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.PROFILE_VEHICLES, {});
+  const cachedValue: Vehicle[] | null = cache[uuid] || null;
 
   const [status, setStatus] = useState<LookupStatus>(cachedValue ? LookupStatus.Success : LookupStatus.Loading);
-  const [name, setListName] = useState<List["name"] | null>(cachedValue);
+  const [vehicles, setVehicles] = useState<Vehicle[] | null>(cachedValue);
 
   useEffect(() => {
-    if (cachedValue || !token || !uuid) {
+    if ((cachedValue && !refetch) || !token || !uuid) {
       return () => {};
     }
 
@@ -38,7 +36,7 @@ const useListLookup = (uuid: List["uuid"]): [LookupStatus, { name: List["name"] 
     const { signal } = controller;
 
     (async () => {
-      const response = await fetch(ENDPOINTS.list + uuid, {
+      const response = await fetch(ENDPOINTS.following_vehicles + uuid, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -49,20 +47,20 @@ const useListLookup = (uuid: List["uuid"]): [LookupStatus, { name: List["name"] 
         return null;
       });
 
-      const { status, list } = await response?.json() || {};
-      if (status === STATUS_OK && !!list?.name) {
-        setCache((prev) => ({ ...prev, [uuid]: list.name }));
+      const { status, vehicles_following } = await response?.json() || {};
+      if (status === STATUS_OK) {
+        setCache((prev) => ({ ...prev, [uuid]: vehicles_following }));
         setStatus(LookupStatus.Success);
-        setListName(list.name);
+        setVehicles(vehicles_following);
       } else if (status === STATUS_ERROR) {
         setStatus(LookupStatus.Error);
       }
     })();
 
     return () => controller.abort();
-  }, []);
+  }, [uuid]);
 
-  return [status, { name }];
+  return [status, { vehicles }];
 };
 
-export default useListLookup;
+export default useFollowingVehiclesLookup;
