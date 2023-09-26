@@ -7,6 +7,7 @@ export const CacheKeys: { [name: string]: Readonly<string> } = {
   IS_FOLLOWING: "isFollowingCache",
   UUID_LOOKUP: "uuidLookupCache",
   LIST_LOOKUP: "listLookupCache",
+  PROFILE: "profileCache",
   PROFILE_LISTS: "profileListsCache",
   PROFILE_FOLLOWERS: "profileFollowersCache",
   PROFILE_FOLLOWING: "profileFollowingCache",

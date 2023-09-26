@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { Link } from "react-router-dom";
-import useUsernameLookup, { LookupStatus } from "../../hooks/useUsernameLookup";
+import useProfileLookup, { LookupStatus } from "../../hooks/useProfileLookup";
 import MentionChip from "../MentionChip";
 
 type Props = {
@@ -19,9 +19,9 @@ type Props = {
  * @returns {JSX.Element}
  */
 const ProfileLinkChip: FC<Props> = ({ uuid }: Props) => {
-  const [status, { username }] = useUsernameLookup(uuid);
+  const [{ status, profile }] = useProfileLookup(uuid);
 
-  if (status !== LookupStatus.Success || !username) {
+  if (status !== LookupStatus.Success || !profile?.username) {
     return (
       <Link to={`/profile/${uuid}`}>
         {`${window.origin}/profile/${uuid}`}
@@ -29,7 +29,7 @@ const ProfileLinkChip: FC<Props> = ({ uuid }: Props) => {
     );
   }
 
-  return <MentionChip handle={username} />;
+  return <MentionChip handle={profile.username} />;
 };
 
 export default ProfileLinkChip;

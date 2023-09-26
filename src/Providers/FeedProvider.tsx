@@ -69,11 +69,22 @@ type Props = {
   children?: React.ReactNode;
 };
 
+/**
+ * A general purpose feed provider.
+ *
+ * Supports:
+ * - Profile Feeds
+ * - Vehicle Feeds
+ * - Home Feed
+ *
+ * Note: You must provide a `key` prop with the `identifier` as the value to ensure
+ * the component is re-rendered when the identifier changes.
+ *
+ * @param {Props} props
+ * @returns {JSX.Element}
+ */
 export const FeedProvider: FC<Props> = ({ type, identifier, limit, children }: Props) => {
   const { token } = useAuthProvider();
-
-  // TODO: identifier changing needs to reset the feed
-  // switching profiles renders the feed of the previous profile temporarily
 
   const cacheKey = `${CacheKeys.FEED}_${type}_${identifier}`;
   const [cache, setCache] = useSessionStorage<Pick<ProviderState, "posts" | "count"> | null>(cacheKey, null);

@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { FC, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Edit, Facebook, Instagram, LinkOutlined,
   MyLocationOutlined, NavigateNext, Twitter,
@@ -17,22 +17,23 @@ import {
 } from "@mui/material";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { ProviderStatus as FeedProviderStatus, useFeedProvider } from "../../Providers/FeedProvider";
-import { ProviderStatus as ProfileProviderStatus, useProfileProvider } from "../../Providers/ProfileProvider";
+import EditProfileDialog from "../../components/EditProfileDialog";
 import FeedPost from "../../components/FeedPost";
 import FollowersDialog from "../../components/FollowersDialog";
+import FollowingDialog from "../../components/FollowingDialog";
 import GenericText from "../../components/GenericText/GenericText";
 import { ListSearchCard, ListSearchSkeleton } from "../../components/ListSearchCard";
 import ListsDialog from "../../components/ListsDialog";
 import Loader from "../../components/Loader";
 import ProfileAvatar from "../../components/ProfileAvatar";
+import { StatisticItem } from "../../components/ProfileStatistic";
 import Repeater from "../../components/Repeater";
 import { ScrollToTop } from "../../components/ScrollToTop";
 import VehicleTableDialog from "../../components/VehicleTableDialog";
 import useIsFollowingLookup, { LookupStatus } from "../../hooks/useIsFollowingLookup";
 import useProfileListsLookup from "../../hooks/useProfileListsLookup";
+import useProfileLookup, { LookupStatus as ProfileProviderStatus } from "../../hooks/useProfileLookup";
 import { mapPostsToDate } from "../../utils/feed";
-import { StatisticItem } from "../../components/ProfileStatistic";
-import FollowingDialog from "../../components/FollowingDialog";
 
 type Props = {
   uuid: string;
@@ -58,8 +59,6 @@ const StyledProfileDetails = styled(Stack)(({ theme }) => ({
   paddingTop: theme.spacing(4),
   paddingBottom: theme.spacing(4),
   background: "#fff",
-  overflow: "unset",
-  position: "relative",
   paddingLeft: "24px !important",
 }));
 
@@ -120,8 +119,7 @@ const TopListSkeleton: FC = () => (
 );
 
 const View: FC<Props> = ({ uuid }: Props) => {
-  const location = useLocation();
-  const { status: profileStatus, profile } = useProfileProvider();
+  const [{ status: profileStatus, profile }, editProfile] = useProfileLookup(uuid, true);
   const { profile: authProfile } = useAuthProvider();
   const { status: feedStatus, posts, hasNext, next } = useFeedProvider();
   const postPanelRef = useRef<HTMLDivElement>(null);
@@ -132,6 +130,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
   const [followersOpen, setFollowersOpen] = useState<boolean>(false);
   const [followingOpen, setFollowingOpen] = useState<boolean>(false);
   const [vehiclesOpen, setVehiclesOpen] = useState<boolean>(false);
+  const [editOpen, setEditOpen] = useState<boolean>(false);
   const [limit, setLimit] = useState<number>(15);
 
   const listCount: number = useMemo(() => (lists?.owned?.length || 0) + (lists?.following?.length || 0), [lists]);
@@ -155,18 +154,11 @@ const View: FC<Props> = ({ uuid }: Props) => {
     postPanelRef?.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  useEffect(() => {
-    setFollowersOpen(false);
-    setFollowingOpen(false);
-    setListsOpen(false);
-    setVehiclesOpen(false);
-  }, [location]);
-
-  if (profileStatus === ProfileProviderStatus.LOADING) {
+  if (profileStatus === ProfileProviderStatus.Loading) {
     return <Loader />;
   }
 
-  if (profileStatus === ProfileProviderStatus.ERROR || !profile) {
+  if (!profile) {
     return <span>Something went wrong!</span>;
   }
 
@@ -178,9 +170,8 @@ const View: FC<Props> = ({ uuid }: Props) => {
           <Typography>{`@${profile.username}`}</Typography>
         </Breadcrumbs>
         {profile.uuid === authProfile?.uuid && (
-          <Tooltip title="Update Profile" arrow>
-            {/* TODO: edit prompt */}
-            <IconButton>
+          <Tooltip title="Edit Profile" arrow>
+            <IconButton onClick={() => setEditOpen(true)}>
               <Edit />
             </IconButton>
           </Tooltip>
@@ -328,6 +319,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
       {(profile.follower_count > 0 && followersOpen) && <FollowersDialog uuid={uuid} count={profile.follower_count} onClose={() => setFollowersOpen(false)} />}
       {(profile.following_count > 0 && followingOpen) && <FollowingDialog uuid={uuid} count={profile.following_count} onClose={() => setFollowingOpen(false)} />}
       {(profile.following_vehicle_count > 0 && vehiclesOpen) && <VehicleTableDialog uuid={uuid} onClose={() => setVehiclesOpen(false)} />}
+      {(authProfile?.uuid === uuid && editOpen) && <EditProfileDialog profile={profile} onClose={() => setEditOpen(false)} onConfirm={editProfile} />}
     </Box>
   );
 };
