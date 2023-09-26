@@ -12,7 +12,7 @@ import {
 import { useAuthProvider } from '../../Providers/AuthProvider';
 import { useNotificationCountProvider } from '../../Providers/NotificationCountProvider';
 import { Notifications } from '../Notifications';
-import FollowersDrawer from '../FollowersDrawer';
+import { FollowersDrawer } from '../FollowersDrawer';
 
 const StyledBox = styled(Box)({
   padding: "32px 12px",
