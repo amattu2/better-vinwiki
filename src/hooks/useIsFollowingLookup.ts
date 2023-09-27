@@ -24,10 +24,9 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
   const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.IS_FOLLOWING, {});
   const cachedValue: boolean | null = cache[uuid] || null;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_followingCache, setFollowingCache] = useSessionStorage<Record<Profile["uuid"], Profile[]>>(CacheKeys.PROFILE_FOLLOWING, {});
+  const [, setFollowingCache] = useSessionStorage<Record<Profile["uuid"], Profile[]>>(CacheKeys.PROFILE_FOLLOWING, {});
 
-  const [status, setStatus] = useState<LookupStatus>(cachedValue ? LookupStatus.Success : LookupStatus.Loading);
+  const [status, setStatus] = useState<LookupStatus>(cachedValue !== null ? LookupStatus.Success : LookupStatus.Loading);
   const [following, setFollowing] = useState<boolean | null>(cachedValue);
 
   const followController = useRef<AbortController | null>(new AbortController());
@@ -75,7 +74,7 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
   };
 
   useEffect(() => {
-    if ((cachedValue && !refetch) || !token || !uuid) {
+    if ((cachedValue !== null && !refetch) || !token || !uuid) {
       return () => {};
     }
     if (profile?.uuid === uuid) {
