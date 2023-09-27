@@ -128,7 +128,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
   const { status: feedStatus, posts, hasNext, next } = useFeedProvider();
   const postPanelRef = useRef<HTMLDivElement>(null);
 
-  const [{ status: isFollowingStatus, following }, toggleFollow] = useIsFollowingLookup(uuid, true);
+  const [{ status: isFollowingStatus, following }, toggleFollow] = useIsFollowingLookup(uuid);
   const [listLookupStatus, lists] = useProfileListsLookup(uuid, true);
   const [listsOpen, setListsOpen] = useState<boolean>(false);
   const [followersOpen, setFollowersOpen] = useState<boolean>(false);

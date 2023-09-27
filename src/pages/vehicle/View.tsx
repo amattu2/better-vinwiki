@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Edit, NavigateNext } from "@mui/icons-material";
 import {
   Box, Breadcrumbs, Button,
-  IconButton, Stack,
+  IconButton, Skeleton, Stack,
   Tooltip, Typography, styled,
 } from "@mui/material";
 import { useFeedProvider } from "../../Providers/FeedProvider";
@@ -11,6 +11,7 @@ import FeedPost from "../../components/FeedPost";
 import { ProviderStatus, useVehicleProvider } from "../../Providers/VehicleProvider";
 import Loader from "../../components/Loader";
 import CreatePost from "../../components/CreatePost";
+import useIsFollowingVehicleLookup, { LookupStatus } from "../../hooks/useIsFollowingVehicleLookup";
 
 type Props = {
   vin: Vehicle["vin"];
@@ -32,8 +33,9 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
 }));
 
 const View: FC<Props> = ({ vin }: Props) => {
-  const { status, vehicle, following } = useVehicleProvider();
+  const { status, vehicle } = useVehicleProvider();
   const { posts, hasNext, next } = useFeedProvider();
+  const [{ status: isFollowingStatus, following }, toggleFollow] = useIsFollowingVehicleLookup(vin);
   const [limit, setLimit] = useState<number>(15);
 
   const filteredPosts: FeedPost[] = useMemo(() => posts
@@ -85,7 +87,11 @@ const View: FC<Props> = ({ vin }: Props) => {
         <br />
         <strong>You are following:</strong>
         {' '}
-        {following ? "Yes" : "No"}
+        {isFollowingStatus === LookupStatus.Loading ? (
+          <Skeleton variant="rectangular" width={100} height={32} sx={{ borderRadius: "8px" }} />
+        ) : (
+          <Button variant="outlined" color="primary" onClick={toggleFollow} sx={{ mr: "auto", textTransform: "none" }}>{following ? "Unfollow" : "Follow"}</Button>
+        )}
       </Box>
       <Box sx={{ px: 2 }}>
         <h3>Posts</h3>

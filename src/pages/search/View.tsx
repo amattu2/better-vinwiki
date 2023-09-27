@@ -18,6 +18,7 @@ import { ScrollToTop } from "../../components/ScrollToTop";
 import ListSuggestion from "../../components/SuggestionCards/ListSuggestion";
 import VehicleSuggestion from "../../components/SuggestionCards/VehicleSuggestion";
 import { LookupStatus, SearchResult, SearchType, useSearch } from "../../hooks/useSearch";
+import useFollowingVehiclesLookup from "../../hooks/useFollowingVehiclesLookup";
 import useProfileListsLookup from "../../hooks/useProfileListsLookup";
 import { sortVehicles } from "../../utils/vehicle";
 import { VehicleTable } from "../../components/VehicleTable";
@@ -95,11 +96,9 @@ const ProfileSkeleton: FC = () => (
 const View : FC = () => {
   const navigate = useNavigate();
   const { profile } = useAuthProvider();
-  const { followingVehicles: vehicles } = profile || {};
+  const [, { vehicles }] = useFollowingVehiclesLookup(profile?.uuid || "");
+  const [, lists] = useProfileListsLookup(profile?.uuid || "");
   const { register, handleSubmit } = useForm<{ query: string }>();
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_status, lists] = useProfileListsLookup(profile?.uuid || "");
 
   const [searchType, setSearchType] = useState<SearchType>("Vehicle");
   const [plateDecoderOpen, setPlateDecoderOpen] = useState<boolean>(false);

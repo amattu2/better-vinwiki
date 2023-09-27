@@ -27,6 +27,7 @@ module.exports = {
     "no-empty-function": "warn",
     "import/extensions": "off",
     "import/prefer-default-export": "off",
+    "import/no-named-as-default": ["warn"],
     "no-console": "warn",
     "no-return-assign": "off",
     "object-curly-newline": "off",

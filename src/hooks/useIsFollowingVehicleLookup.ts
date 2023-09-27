@@ -4,7 +4,7 @@ import { useAuthProvider } from "../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
 import { CacheKeys } from "../config/Cache";
 
-type Cache = Record<Profile["uuid"], boolean>;
+type Cache = Record<Vehicle["vin"], boolean>;
 
 export enum LookupStatus {
   Loading = "loading",
@@ -13,21 +13,20 @@ export enum LookupStatus {
 }
 
 /**
- * A hook to cache and lookup following status by uuid
+ * A hook to cache and lookup vehicle following status by VIN
  *
- * @param uuid the uuid to verify against
+ * @param vin the uuid to verify against
  * @param refetch if true, will refetch the status
  * @returns [{ status, following }, toggleFollowing]
  */
-const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status: LookupStatus, following: boolean | null }, () => Promise<boolean>] => {
+const useIsFollowingVehicleLookup = (vin: Vehicle["vin"], refetch = false): [{ status: LookupStatus, following: boolean | null }, () => Promise<boolean>] => {
   const { token, profile } = useAuthProvider();
-  const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.IS_FOLLOWING, {});
-  const cachedValue: boolean | null = cache[uuid] || null;
+  const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.IS_FOLLOWING_VEHICLE, {});
+  const cachedValue: boolean | null = cache[vin] || null;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_followingCache, setFollowingCache] = useSessionStorage<Record<Profile["uuid"], Profile[]>>(CacheKeys.PROFILE_FOLLOWING, {});
+  const [, setFollowingCache] = useSessionStorage<Record<Vehicle["vin"], Vehicle[]>>(CacheKeys.PROFILE_VEHICLES, {});
 
-  const [status, setStatus] = useState<LookupStatus>(cachedValue ? LookupStatus.Success : LookupStatus.Loading);
+  const [status, setStatus] = useState<LookupStatus>(cachedValue !== null ? LookupStatus.Success : LookupStatus.Loading);
   const [following, setFollowing] = useState<boolean | null>(cachedValue);
 
   const followController = useRef<AbortController | null>(new AbortController());
@@ -42,7 +41,7 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
     followController.current = new AbortController();
     const { signal } = followController.current;
 
-    const response = await fetch(ENDPOINTS.follow + uuid, {
+    const response = await fetch(ENDPOINTS.vehicle_follow + vin, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -56,9 +55,9 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
       return false;
     }
 
-    setCache((prev) => ({ ...prev, [uuid]: follow_result.state === "following" }));
+    setCache((prev) => ({ ...prev, [vin]: follow_result.state === "following" }));
 
-    const followingProfiles = await fetch(ENDPOINTS.following + profile!.uuid, {
+    const followingVehicles = await fetch(ENDPOINTS.following_vehicles + profile!.uuid, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -66,21 +65,16 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
       signal,
     }).catch(() => null);
 
-    const { status: followingLookupStatus, following } = await followingProfiles?.json() || {};
+    const { status: followingLookupStatus, vehicles_following } = await followingVehicles?.json() || {};
     if (followingLookupStatus === STATUS_OK) {
-      setFollowingCache((prev) => ({ ...prev, [profile!.uuid]: following }));
+      setFollowingCache((prev) => ({ ...prev, [profile!.uuid]: vehicles_following }));
     }
 
     return true;
   };
 
   useEffect(() => {
-    if ((cachedValue && !refetch) || !token || !uuid) {
-      return () => {};
-    }
-    if (profile?.uuid === uuid) {
-      setFollowing(true);
-      setStatus(LookupStatus.Success);
+    if ((cachedValue !== null && !refetch) || !token || !vin) {
       return () => {};
     }
 
@@ -88,7 +82,7 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
     const { signal } = controller;
 
     (async () => {
-      const response = await fetch(ENDPOINTS.is_following + uuid, {
+      const response = await fetch(ENDPOINTS.vehicle_is_following + vin, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -101,7 +95,7 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
 
       const { status, following } = await response?.json() || {};
       if (status === STATUS_OK) {
-        setCache((prev) => ({ ...prev, [uuid]: following }));
+        setCache((prev) => ({ ...prev, [vin]: following }));
         setStatus(LookupStatus.Success);
         setFollowing(following);
       } else if (status === STATUS_ERROR) {
@@ -110,9 +104,9 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
     })();
 
     return () => controller.abort();
-  }, [uuid]);
+  }, [vin]);
 
   return [{ status, following }, toggleFollowing];
 };
 
-export default useIsFollowingLookup;
+export default useIsFollowingVehicleLookup;

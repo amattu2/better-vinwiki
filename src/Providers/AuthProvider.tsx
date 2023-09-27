@@ -1,6 +1,5 @@
 import React, { useState, FC, useEffect } from "react";
 import { useLocalStorage, useReadLocalStorage } from "usehooks-ts";
-import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
 import { CacheKeys } from "../config/Cache";
 
 type AuthenticatedState = {
@@ -46,61 +45,15 @@ type Props = {
 export const AuthProvider: FC<Props> = ({ children }: Props) => {
   const [profile, setProfile] = useLocalStorage<AuthProfile | null>(CacheKeys.AUTH_PROFILE, null);
   const token = useReadLocalStorage<string>(CacheKeys.AUTH_TOKEN);
-  const [state, setState] = useState<ProviderState>((token && profile?.uuid) ? {
+  const [state] = useState<ProviderState>((token && profile?.uuid) ? {
     status: ProviderStatus.LOADED,
     authenticated: true,
     profile,
     token,
   } : defaultState);
 
-  // TODO: Refactor each of these fetches into their own custom hooks
-  // This will allow us to use the data in other components without having to
-  // copy-paste the fetch logic and we can also abort the fetches when the
-  // component unmounts.
   useEffect(() => {
-    if (!token || !profile?.uuid) {
-      return;
-    }
-
-    (async () => {
-      if (profile?.recentVehicles?.length) {
-        return;
-      }
-
-      const response = await fetch(`${ENDPOINTS.recent_vins}${profile.uuid}/25`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).catch(() => null);
-
-      const { status, recent_vins } = await response?.json() || {};
-      if (status === STATUS_OK) {
-        setState((p) => ({ ...p, profile: { ...p.profile, recentVehicles: recent_vins || [] } } as AuthenticatedState));
-      }
-    })();
-
-    (async () => {
-      if (profile?.followingVehicles?.length) {
-        return;
-      }
-
-      const response = await fetch(`${ENDPOINTS.following_vehicles}${profile.uuid}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).catch(() => null);
-
-      const { status, vehicles_following } = await response?.json() || {};
-      if (status === STATUS_OK) {
-        setState((p) => ({ ...p, profile: { ...p.profile, followingVehicles: vehicles_following || [] } } as AuthenticatedState));
-      }
-    })();
-  }, []);
-
-  useEffect(() => {
-    if (!state.profile) {
+    if (!state?.profile) {
       return;
     }
 
