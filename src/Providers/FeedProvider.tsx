@@ -3,6 +3,7 @@ import { useSessionStorage } from "usehooks-ts";
 import { useAuthProvider } from "./AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
 import { CacheKeys } from "../config/Cache";
+import { remapFeedPost } from "../utils/feed";
 
 type FeedType = "profile" | "feed" | "vehicle" | "filtered";
 
@@ -131,7 +132,7 @@ export const FeedProvider: FC<Props> = ({ type, identifier, limit, children }: P
     if (status === STATUS_OK) {
       setState((prev) => ({
         status: ProviderStatus.LOADED,
-        posts: [...prev.posts, ...((feed || posts)?.map((post: { post: FeedPost }) => post.post) || [])],
+        posts: [...prev.posts, ...((feed || posts)?.map(remapFeedPost) || [])],
         count: postCount + prev.count,
         hasNext: !end && next_page_uuid,
       }));
@@ -170,7 +171,7 @@ export const FeedProvider: FC<Props> = ({ type, identifier, limit, children }: P
       if (status === STATUS_OK) {
         setState({
           status: ProviderStatus.LOADED,
-          posts: (feed || posts)?.map((post: { post: FeedPost }) => post.post),
+          posts: (feed || posts)?.map(remapFeedPost),
           count,
           hasNext: !end && next_page_uuid,
         });
