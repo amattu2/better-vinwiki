@@ -62,6 +62,7 @@ export const ENDPOINTS = {
 export const MEDIA_ENDPOINTS = {
   /* Vehicle Endpoints */
   vehicle_image_add: `${MEDIA_URL}add/photo/vehicle/`,
+  vehicle_image: `${MEDIA_URL}photo/vehicle/`,
   person_image_add: `${MEDIA_URL}photo/person/`,
 };
 

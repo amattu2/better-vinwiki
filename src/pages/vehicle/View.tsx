@@ -11,6 +11,7 @@ import FeedPost from "../../components/FeedPost";
 import { ProviderStatus, useVehicleProvider } from "../../Providers/VehicleProvider";
 import Loader from "../../components/Loader";
 import CreatePost from "../../components/CreatePost";
+import EditVehicleDialog from "../../components/EditVehicleDialog";
 import useIsFollowingVehicleLookup, { LookupStatus } from "../../hooks/useIsFollowingVehicleLookup";
 
 type Props = {
@@ -33,10 +34,11 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
 }));
 
 const View: FC<Props> = ({ vin }: Props) => {
-  const { status, vehicle } = useVehicleProvider();
+  const { status, vehicle, editVehicle } = useVehicleProvider();
   const { posts, hasNext, next } = useFeedProvider();
   const [{ status: isFollowingStatus, following }, toggleFollow] = useIsFollowingVehicleLookup(vin);
   const [limit, setLimit] = useState<number>(15);
+  const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
 
   const filteredPosts: FeedPost[] = useMemo(() => posts
     .filter((p) => !(p.client === "vinbot" && p.person.username !== "vinbot" && !p.post_text))
@@ -55,7 +57,7 @@ const View: FC<Props> = ({ vin }: Props) => {
     return <Loader />;
   }
 
-  if (status === ProviderStatus.ERROR || !vehicle) {
+  if (status === ProviderStatus.ERROR || !vehicle || !editVehicle) {
     return <span>Something went wrong!</span>;
   }
 
@@ -67,12 +69,15 @@ const View: FC<Props> = ({ vin }: Props) => {
           <Typography>{`#${vin}`}</Typography>
         </Breadcrumbs>
         <Tooltip title="Edit Vehicle" arrow>
-          <StyledIconButton>
+          <StyledIconButton onClick={() => setEditDialogOpen(true)}>
             <Edit />
           </StyledIconButton>
         </Tooltip>
       </StyledHeaderSection>
       <Box sx={{ px: 2, pt: 2 }}>
+        <Box sx={{ display: vehicle.poster_photo ? "block" : "none" }}>
+          <img src={vehicle.poster_photo} alt="vehicle pic" style={{ maxWidth: "250px", maxHeight: "250px" }} />
+        </Box>
         <strong>VIN:</strong>
         {' '}
         {vehicle.vin}
@@ -84,6 +89,10 @@ const View: FC<Props> = ({ vin }: Props) => {
         <strong>Model:</strong>
         {' '}
         {vehicle.model}
+        <br />
+        <strong>Trim:</strong>
+        {' '}
+        {vehicle.trim}
         <br />
         <strong>You are following:</strong>
         {' '}
@@ -99,6 +108,7 @@ const View: FC<Props> = ({ vin }: Props) => {
         {slicedPosts?.map((post) => (<FeedPost key={post.uuid} {...post} />))}
         {hasNext && <Button onClick={loadMore}>Load More</Button>}
       </Box>
+      {editDialogOpen && (<EditVehicleDialog vehicle={vehicle} onClose={() => setEditDialogOpen(false)} onConfirm={editVehicle} />)}
     </Box>
   );
 };

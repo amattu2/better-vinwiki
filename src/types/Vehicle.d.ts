@@ -32,3 +32,12 @@ type PlateDecodeResponse = Pick<Vehicle, "make" | "model" | "trim" | "year" | "v
 };
 
 type VehicleFollower = VehicleResponse;
+
+type EditVehicleInput = {
+  year: Vehicle["year"];
+  make: Vehicle["make"];
+  model: Vehicle["model"];
+  trim: Vehicle["trim"];
+  image_uuid?: string;
+  image: FileList;
+};

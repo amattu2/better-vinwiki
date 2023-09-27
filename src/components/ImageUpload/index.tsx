@@ -3,11 +3,11 @@ import { Box, Paper, Stack, styled } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 
 type Props = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  InputProps: any;
   preview?: string;
   onPreviewClick?: () => void;
   onDrop?: (e: React.DragEvent<HTMLDivElement>) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  InputProps: any;
 };
 
 const StyledDropzone = styled(Box)({
@@ -60,7 +60,7 @@ const StyledBackground = styled("div", { shouldForwardProp: (p) => p !== "bg" &&
   filter: blur ? "blur(6px)" : "none",
   backgroundPosition: "center",
   backgroundRepeat: "no-repeat",
-  backgroundAttachment: "contain",
+  backgroundSize: "contain",
   position: "absolute",
   top: 0,
   left: 0,
@@ -81,12 +81,12 @@ const StyledDeleteIcon = styled(Delete)({
 });
 
 /**
- * A Post Image Upload Component
+ * Image upload component with drag and drop support.
  *
  * @param {Props} props
  * @returns {JSX.Element}
  */
-export const ImageUpload: FC<Props> = ({ InputProps, onDrop, preview, onPreviewClick }: Props) => {
+export const ImageUpload: FC<Props> = ({ InputProps, preview, onDrop, onPreviewClick }: Props) => {
   const inputRef = useRef<HTMLInputElement>();
 
   const handleClick = () => {
@@ -129,7 +129,7 @@ export const ImageUpload: FC<Props> = ({ InputProps, onDrop, preview, onPreviewC
           if (!node) { return; }
 
           inputRef.current = node;
-          InputProps?.ref(node);
+          InputProps?.ref?.(node);
         }}
       />
     </Stack>

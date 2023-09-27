@@ -63,6 +63,7 @@ const useProfileLookup = (uuid: Profile["uuid"], refetch = false): [{ status: Lo
     const { status } = await response?.json() || {};
     if (status === STATUS_OK) {
       setProfile((prev) => ({ ...prev!, ...editedProfile }));
+      return true;
     }
 
     return false;

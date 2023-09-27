@@ -12,7 +12,7 @@ const Controller = () => {
   }
 
   return (
-    <VehicleProvider key={vin} vin={vin}>
+    <VehicleProvider vin={vin}>
       <FeedProvider type="vehicle" identifier={vin} limit={30}>
         <VehicleView vin={vin} />
       </FeedProvider>

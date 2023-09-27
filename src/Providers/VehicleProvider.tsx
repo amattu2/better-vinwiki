@@ -1,10 +1,11 @@
-import React, { useState, FC, useEffect } from "react";
+import React, { useState, FC, useEffect, useMemo } from "react";
 import { useAuthProvider } from "./AuthProvider";
-import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
+import { ENDPOINTS, MEDIA_ENDPOINTS, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
 
 export type ProviderState = {
   status: ProviderStatus;
   vehicle?: VehicleResponse;
+  editVehicle?: (vehicle: EditVehicleInput) => Promise<boolean>;
 };
 
 export enum ProviderStatus {
@@ -27,22 +28,6 @@ export const useVehicleProvider = (): ProviderState => {
   return contextState;
 };
 
-const fetchVehicle = async (vin: Vehicle["vin"], token: string): Promise<VehicleResponse> => {
-  const response = await fetch(ENDPOINTS.vehicle + vin, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const { status, vehicle } = await response.json();
-  if (status === STATUS_OK) {
-    return vehicle;
-  }
-
-  throw new Error("Error fetching vehicle");
-};
-
 type Props = {
   vin: Vehicle["vin"];
   children?: React.ReactNode;
@@ -52,33 +37,94 @@ export const VehicleProvider: FC<Props> = ({ vin, children }: Props) => {
   const { token } = useAuthProvider();
   const [state, setState] = useState<ProviderState>(defaultState);
 
+  const editVehicle = async ({ image, ...vehicle }: EditVehicleInput): Promise<boolean> => {
+    if (!token || !vin || !vehicle) {
+      return false;
+    }
+
+    if (image?.[0]) {
+      const formData = new FormData();
+      formData.append("media", image?.[0]);
+
+      const response = await fetch(MEDIA_ENDPOINTS.vehicle_image + vin, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }).catch(() => null);
+
+      const { status, image: result } = await response?.json() || {};
+      if (status === STATUS_OK && result?.uuid) {
+        vehicle.image_uuid = result.uuid;
+      }
+    }
+
+    const response = await fetch(`${ENDPOINTS.vehicle_update}${vin}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(vehicle),
+    }).catch(() => null);
+
+    const { status } = await response?.json() || {};
+    if (status === STATUS_OK) {
+      setState((prev) => ({
+        ...prev,
+        vehicle: {
+          ...prev.vehicle!,
+          ...vehicle,
+          // NOTE: Rendering the new image takes a few minutes. Hide the old one until then.
+          poster_photo: (vehicle.image_uuid ? null : prev.vehicle?.poster_photo) || "",
+        },
+      }));
+      return true;
+    }
+
+    return false;
+  };
+
   useEffect(() => {
     if (!token || !vin) {
-      return;
+      return () => {};
     }
 
     setState(defaultState);
 
-    (async () => {
-      const [vehicle] = (await Promise.allSettled([
-        fetchVehicle(vin, token),
-      ])).map((r) => (r.status === "fulfilled" ? r.value : null));
+    const controller = new AbortController();
+    const { signal } = controller;
 
-      if (vehicle) {
+    (async () => {
+      const response = await fetch(ENDPOINTS.vehicle + vin, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        signal,
+      }).catch(({ name }) => {
+        if (name !== "AbortError") setState({ status: ProviderStatus.ERROR });
+        return null;
+      });
+
+      const { status, vehicle } = await response?.json() || {};
+      if (status === STATUS_OK) {
         setState({
           status: ProviderStatus.LOADED,
           vehicle: vehicle as VehicleResponse,
         });
-      } else {
-        setState({
-          status: ProviderStatus.ERROR,
-        });
+      } else if (status === STATUS_ERROR) {
+        setState({ status: ProviderStatus.ERROR });
       }
     })();
+
+    return () => controller.abort();
   }, [token, vin]);
 
+  const value = useMemo(() => ({ ...state, editVehicle }), [state]);
+
   return (
-    <Context.Provider value={state}>
+    <Context.Provider value={value}>
       {children}
     </Context.Provider>
   );
