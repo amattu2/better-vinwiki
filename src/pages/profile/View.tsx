@@ -50,11 +50,11 @@ const StyledTab = styled(Tab)({
 
 const StyledHeaderSection = styled(Stack)(({ theme }) => ({
   padding: `${theme.spacing(2)} ${theme.spacing(3)}`,
+  borderBottom: "1px solid #ddd",
   background: "#fff",
 }));
 
 const StyledProfileDetails = styled(Stack)(({ theme }) => ({
-  borderTop: "1px solid #ddd",
   borderBottom: "1px solid #ddd",
   paddingTop: theme.spacing(4),
   paddingBottom: theme.spacing(4),
@@ -99,6 +99,10 @@ const StyledTabBox = styled(Box)(({ theme }) => ({
   marginRight: "-20px",
   paddingLeft: theme.spacing(2),
   paddingRight: theme.spacing(2),
+}));
+
+const StyledIconButton = styled(IconButton)(({ theme }) => ({
+  margin: theme.spacing(-1),
 }));
 
 const StyledTimelineContent = styled(TimelineContent)({
@@ -171,9 +175,9 @@ const View: FC<Props> = ({ uuid }: Props) => {
         </Breadcrumbs>
         {profile.uuid === authProfile?.uuid && (
           <Tooltip title="Edit Profile" arrow>
-            <IconButton onClick={() => setEditOpen(true)}>
+            <StyledIconButton onClick={() => setEditOpen(true)}>
               <Edit />
-            </IconButton>
+            </StyledIconButton>
           </Tooltip>
         )}
       </StyledHeaderSection>

@@ -30,7 +30,7 @@ export const ENDPOINTS = {
   vehicle: `${API_URL}vehicle/vin/`,
   vehicle_update: `${API_URL}vehicle/vin/`,
   vehicle_search: `${API_URL}vehicle/search/`,
-  vehicle_feed: `${API_URL}/vehicle/feed/`,
+  vehicle_feed: `${API_URL}vehicle/feed/`,
   vehicle_is_following: `${API_URL}vehicle/is_following/`,
   vehicle_follow: `${API_URL}vehicle/follow/`,
   vehicle_followers: `${API_URL}vehicle/followers/`,

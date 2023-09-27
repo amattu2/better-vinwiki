@@ -45,22 +45,6 @@ const fetchVehicle = async (vin: Vehicle["vin"], token: string): Promise<Vehicle
   throw new Error("Error fetching vehicle");
 };
 
-const fetchPosts = async (vin: Vehicle["vin"], token: string): Promise<{ post: FeedPost }[]> => {
-  const response = await fetch(ENDPOINTS.vehicle_feed + vin, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const { status, feed } = await response.json();
-  if (status === STATUS_OK) {
-    return feed;
-  }
-
-  throw new Error("Error fetching posts");
-};
-
 const fetchFollowing = async (vin: Vehicle["vin"], token: string): Promise<boolean> => {
   const response = await fetch(ENDPOINTS.vehicle_is_following + vin, {
     method: "GET",
@@ -79,12 +63,11 @@ const fetchFollowing = async (vin: Vehicle["vin"], token: string): Promise<boole
 
 type Props = {
   vin: Vehicle["vin"];
-  withPosts?: true;
   withFollowing?: true;
   children?: React.ReactNode;
 };
 
-export const VehicleProvider: FC<Props> = ({ vin, withPosts, withFollowing, children }: Props) => {
+export const VehicleProvider: FC<Props> = ({ vin, withFollowing, children }: Props) => {
   const { token } = useAuthProvider();
   const [state, setState] = useState<ProviderState>(defaultState);
 
@@ -96,9 +79,8 @@ export const VehicleProvider: FC<Props> = ({ vin, withPosts, withFollowing, chil
     setState(defaultState);
 
     (async () => {
-      const [vehicle, posts, following] = (await Promise.allSettled([
+      const [vehicle, following] = (await Promise.allSettled([
         fetchVehicle(vin, token),
-        withPosts ? fetchPosts(vin, token) : Promise.resolve([]),
         withFollowing ? fetchFollowing(vin, token) : Promise.resolve(false),
       ])).map((r) => (r.status === "fulfilled" ? r.value : null));
 
@@ -106,7 +88,6 @@ export const VehicleProvider: FC<Props> = ({ vin, withPosts, withFollowing, chil
         setState({
           status: ProviderStatus.LOADED,
           vehicle: vehicle as VehicleResponse,
-          posts: (posts as { post: FeedPost }[])?.map((r) => r?.post),
           following: following as boolean,
         });
       } else {
@@ -115,7 +96,7 @@ export const VehicleProvider: FC<Props> = ({ vin, withPosts, withFollowing, chil
         });
       }
     })();
-  }, [token, vin, withPosts, withFollowing]);
+  }, [token, vin, withFollowing]);
 
   return (
     <Context.Provider value={state}>
