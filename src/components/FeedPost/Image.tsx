@@ -157,9 +157,11 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, omitComments, ...p
               </StyledImageBox>
             </Grid>
             <Grid item xs={4}>
-              <Stack gap={1}>
+              <Stack gap={1} direction="column" height="100%">
                 <ProfileBit post={post} />
-                <GenericText content={post_text} />
+                <Box flexGrow={1}>
+                  <GenericText content={post_text} />
+                </Box>
                 <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600}>
                   {formatDateTime(new Date(post.post_date))}
                   {post.locale && (
