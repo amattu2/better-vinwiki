@@ -43,6 +43,9 @@ const StyledLink = styled(Link)({
 const StyledDialogContent = styled(DialogContent)({
   padding: "0 !important",
   backgroundColor: "#f4f7fa",
+  "& .MuiList-root": {
+    padding: "0 !important",
+  },
   "& .MuiListItem-root:last-child": {
     borderBottom: "unset",
   },
@@ -114,7 +117,7 @@ const FollowingDialog: FC<Props> = ({ uuid, count, onClose }: Props) => {
           </ToggleButton>
         </ToggleButtonGroup>
       </DialogTitle>
-      <StyledDialogContent>
+      <StyledDialogContent dividers>
         {(status !== LookupStatus.Loading && data.length === 0) && (<NoContent />)}
         <List>
           {(status === LookupStatus.Loading) && (<Repeater count={skeletonCount} Component={ProfileSkeleton} />)}

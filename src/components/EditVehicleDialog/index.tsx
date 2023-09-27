@@ -67,7 +67,7 @@ const EditVehicleDialog: FC<Props> = ({ vehicle, onConfirm, onClose }: Props) =>
       <DialogTitle component={Stack} direction="row" alignItems="center">
         Edit Vehicle
       </DialogTitle>
-      <StyledDialogContent>
+      <StyledDialogContent dividers>
         <form onSubmit={handleSubmit(saveVehicle)} id={id}>
           <StyledTextField
             fullWidth

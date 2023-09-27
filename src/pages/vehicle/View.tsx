@@ -1,6 +1,6 @@
 import React, { FC, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Edit, NavigateNext } from "@mui/icons-material";
+import { Edit, NavigateNext, PlaylistAdd } from "@mui/icons-material";
 import {
   Box, Breadcrumbs, Button,
   IconButton, Skeleton, Stack,
@@ -12,6 +12,7 @@ import { ProviderStatus, useVehicleProvider } from "../../Providers/VehicleProvi
 import Loader from "../../components/Loader";
 import CreatePost from "../../components/CreatePost";
 import EditVehicleDialog from "../../components/EditVehicleDialog";
+import ListAssignmentDialog from "../../components/ListAssignmentDialog";
 import useIsFollowingVehicleLookup, { LookupStatus } from "../../hooks/useIsFollowingVehicleLookup";
 
 type Props = {
@@ -39,6 +40,7 @@ const View: FC<Props> = ({ vin }: Props) => {
   const [{ status: isFollowingStatus, following }, toggleFollow] = useIsFollowingVehicleLookup(vin);
   const [limit, setLimit] = useState<number>(15);
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
+  const [listDialogOpen, setListDialogOpen] = useState<boolean>(false);
 
   const filteredPosts: FeedPost[] = useMemo(() => posts
     .filter((p) => !(p.client === "vinbot" && p.person.username !== "vinbot" && !p.post_text))
@@ -68,6 +70,11 @@ const View: FC<Props> = ({ vin }: Props) => {
           <StyledLink to="/">Home</StyledLink>
           <Typography>{`#${vin}`}</Typography>
         </Breadcrumbs>
+        <Tooltip title="Add to List" arrow>
+          <StyledIconButton onClick={() => setListDialogOpen(true)}>
+            <PlaylistAdd />
+          </StyledIconButton>
+        </Tooltip>
         <Tooltip title="Edit Vehicle" arrow>
           <StyledIconButton onClick={() => setEditDialogOpen(true)}>
             <Edit />
@@ -109,6 +116,7 @@ const View: FC<Props> = ({ vin }: Props) => {
         {hasNext && <Button onClick={loadMore}>Load More</Button>}
       </Box>
       {editDialogOpen && (<EditVehicleDialog vehicle={vehicle} onClose={() => setEditDialogOpen(false)} onConfirm={editVehicle} />)}
+      {listDialogOpen && (<ListAssignmentDialog vehicle={vehicle} onClose={() => setListDialogOpen(false)} />)}
     </Box>
   );
 };

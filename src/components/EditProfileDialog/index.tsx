@@ -59,7 +59,7 @@ const EditProfileDialog: FC<Props> = ({ profile, onConfirm, onClose }: Props) =>
       <DialogTitle component={Stack} direction="row" alignItems="center">
         Edit Profile
       </DialogTitle>
-      <StyledDialogContent>
+      <StyledDialogContent dividers>
         <form onSubmit={handleSubmit(saveProfile)} id={id}>
           <StyledTextField
             fullWidth

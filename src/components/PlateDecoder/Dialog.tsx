@@ -115,7 +115,7 @@ const DecoderDialog: FC<Props> = ({ open, onConfirm, onCancel }: Props) => {
       <DialogTitle>
         License Plate Lookup
       </DialogTitle>
-      <DialogContent>
+      <DialogContent dividers>
         <Form control={control}>
           <StyledTextField
             {...register("plate")}
