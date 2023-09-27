@@ -1,6 +1,6 @@
-import React, { FC, useMemo, useState } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Badge, DirectionsCar, PersonSearch, Search } from "@mui/icons-material";
 import { TabContext, TabPanel } from "@mui/lab";
 import {
@@ -95,12 +95,16 @@ const ProfileSkeleton: FC = () => (
 
 const View : FC = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams({ query: "", type: "Vehicle" });
+
   const { profile } = useAuthProvider();
   const [, { vehicles }] = useFollowingVehiclesLookup(profile?.uuid || "");
   const [, lists] = useProfileListsLookup(profile?.uuid || "");
-  const { register, handleSubmit } = useForm<{ query: string }>();
+  const { register, handleSubmit, watch } = useForm<{ query: string }>({ defaultValues: { query: searchParams.get("query") || "" } });
 
-  const [searchType, setSearchType] = useState<SearchType>("Vehicle");
+  const [searchType, setSearchType] = useState<SearchType>(["Vehicle", "List", "Profile"].includes(searchParams.get("type") || "")
+    ? (searchParams.get("type") as SearchType)
+    : "Vehicle");
   const [plateDecoderOpen, setPlateDecoderOpen] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
   const [perPage, setPerPage] = useState<number>(15);
@@ -151,6 +155,10 @@ const View : FC = () => {
     setPlateDecoderOpen(false);
     navigate(`/vehicle/${vehicle.vin}`);
   };
+
+  useEffect(() => {
+    setSearchParams({ query: watch("query"), type: searchType });
+  }, [searchType, watch("query")]);
 
   return (
     <Stack direction="row">
