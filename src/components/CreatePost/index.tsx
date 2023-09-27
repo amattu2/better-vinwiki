@@ -24,6 +24,10 @@ import ProfileAvatar from "../ProfileAvatar";
 import { VehicleSearch } from "../Typeahead/VehicleSearch";
 import { useFeedProvider } from "../../Providers/FeedProvider";
 
+type Props = {
+  vehicle?: Vehicle;
+};
+
 type PostForm = {
   type: FeedPost["type"];
   post_text: string;
@@ -63,13 +67,13 @@ const StyledTextField = styled(TextField)({
  *
  * @returns {JSX.Element}
  */
-const CreatePost: FC = () => {
+const CreatePost: FC<Props> = ({ vehicle }: Props) => {
   const { profile, token } = useAuthProvider();
   const { addPost: addFeedPost } = useFeedProvider();
 
   const [expanded, setExpanded] = useState<boolean>(false);
-  const [activeStep, setActiveStep] = useState<number>(0);
-  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(vehicle || null);
+  const [activeStep, setActiveStep] = useState<number>(selectedVehicle ? 1 : 0);
   const [postType, setPostType] = useState<FeedPost["type"]>("generic");
   const [plateDecoderOpen, setPlateDecoderOpen] = useState<boolean>(false);
   const [posting, setPosting] = useState<boolean>(false);
@@ -213,7 +217,7 @@ const CreatePost: FC = () => {
           )}
           {expanded && (
             <Stepper activeStep={activeStep} orientation="vertical">
-              <Step completed={stepStatuses[0]}>
+              <Step disabled={!!vehicle} completed={stepStatuses[0]}>
                 <StepButton onClick={() => setActiveStep(0)}>Select a Vehicle</StepButton>
                 <StyledStepContent TransitionProps={{ unmountOnExit: false }}>
                   <Stack direction="row" gap={1} sx={{ mb: 1 }}>

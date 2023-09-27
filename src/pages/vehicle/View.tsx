@@ -10,6 +10,7 @@ import { useFeedProvider } from "../../Providers/FeedProvider";
 import FeedPost from "../../components/FeedPost";
 import { ProviderStatus, useVehicleProvider } from "../../Providers/VehicleProvider";
 import Loader from "../../components/Loader";
+import CreatePost from "../../components/CreatePost";
 
 type Props = {
   vin: Vehicle["vin"];
@@ -88,6 +89,7 @@ const View: FC<Props> = ({ vin }: Props) => {
       </Box>
       <Box sx={{ px: 2 }}>
         <h3>Posts</h3>
+        <CreatePost vehicle={vehicle} />
         {slicedPosts?.map((post) => (<FeedPost key={post.uuid} {...post} />))}
         {hasNext && <Button onClick={loadMore}>Load More</Button>}
       </Box>
