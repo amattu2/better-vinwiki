@@ -13,6 +13,7 @@ export const CacheKeys: { [name: string]: Readonly<string> } = {
   PROFILE_FOLLOWERS: "profileFollowersCache",
   PROFILE_FOLLOWING: "profileFollowingCache",
   PROFILE_VEHICLES: "profileVehiclesCache",
+  VEHICLE_FOLLOWERS: "vehicleFollowersCache",
   FEED: "feedCache",
   FEED_TYPE: "feedTypeCache",
   FEED_POST_TYPE: "feedPostTypeCache",

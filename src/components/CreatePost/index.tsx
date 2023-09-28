@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from "react";
+import React, { FC, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   AddPhotoAlternate, AddPhotoAlternateOutlined,
@@ -44,7 +44,7 @@ const StyledCard = styled(Card, { shouldForwardProp: (p) => p !== "expanded" })(
   borderRadius: "8px",
   margin: "8px 0",
   border: "1px solid #e5e5e5",
-  zIndex: 10,
+  zIndex: expanded ? 10 : "unset",
 }));
 
 const StyledTab = styled(Tab)({
@@ -77,6 +77,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
   const [postType, setPostType] = useState<FeedPost["type"]>("generic");
   const [plateDecoderOpen, setPlateDecoderOpen] = useState<boolean>(false);
   const [posting, setPosting] = useState<boolean>(false);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const { register, watch, setValue, reset, resetField, control } = useForm<PostForm>();
   const postText = watch("post_text");
@@ -104,7 +105,14 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
     reset();
   };
 
-  const setExpand = (expanded: boolean) => setExpanded(expanded);
+  const setExpand = (expanded: boolean) => {
+    setExpanded(expanded);
+    if (expanded) {
+      setTimeout(() => {
+        cardRef?.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+  };
 
   const selectVehicle = (e: React.SyntheticEvent, vehicle: Vehicle | null) => {
     setSelectedVehicle(vehicle);
@@ -198,7 +206,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
     <>
       <Backdrop open={expanded} sx={{ zIndex: 9 }} />
       <ClickAwayListener onClickAway={() => setExpand(false)}>
-        <StyledCard expanded={expanded} elevation={expanded ? 12 : 0}>
+        <StyledCard expanded={expanded} elevation={expanded ? 12 : 0} ref={cardRef}>
           {(expanded && posting) && (
             <Loader fullscreen={false} />
           )}

@@ -52,6 +52,9 @@ const StyledHeaderSection = styled(Stack)(({ theme }) => ({
   padding: `${theme.spacing(2)} ${theme.spacing(3)}`,
   borderBottom: "1px solid #ddd",
   background: "#fff",
+  position: "sticky",
+  top: 0,
+  zIndex: 8,
 }));
 
 const StyledProfileDetails = styled(Stack)(({ theme }) => ({
@@ -320,7 +323,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
 
       <ScrollToTop />
       {(lists && listsOpen) && <ListsDialog lists={lists} onClose={() => setListsOpen(false)} />}
-      {(profile.follower_count > 0 && followersOpen) && <FollowersDialog uuid={uuid} count={profile.follower_count} onClose={() => setFollowersOpen(false)} />}
+      {(profile.follower_count > 0 && followersOpen) && <FollowersDialog identifier={uuid} type="Profile" count={profile.follower_count} onClose={() => setFollowersOpen(false)} />}
       {(profile.following_count > 0 && followingOpen) && <FollowingDialog uuid={uuid} count={profile.following_count} onClose={() => setFollowingOpen(false)} />}
       {(profile.following_vehicle_count > 0 && vehiclesOpen) && <VehicleTableDialog uuid={uuid} onClose={() => setVehiclesOpen(false)} />}
       {(authProfile?.uuid === uuid && editOpen) && <EditProfileDialog profile={profile} onClose={() => setEditOpen(false)} onConfirm={editProfile} />}

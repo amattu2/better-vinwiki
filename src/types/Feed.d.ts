@@ -1,7 +1,6 @@
 type FeedPost = {
   client: string;
   comment_count: number;
-  data: never; // TODO: Figure out what this is
   dest_url: string;
   event_date: string; // ISO 8601 incl. offset
   event_time: string; // Unix timestamp

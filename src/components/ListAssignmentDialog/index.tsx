@@ -84,9 +84,8 @@ const ListAssignmentDialog: FC<Props> = ({ vehicle, onClose }: Props) => {
         <form onSubmit={handleSubmit(submitForm)} id={id}>
           <RadioGroup {...register("uuid")}>
             {ownedLists.map(({ uuid, name, vehicle_count, follower_count, created_date }: List) => (
-              <>
+              <React.Fragment key={uuid}>
                 <FormControlLabel
-                  key={uuid}
                   value={uuid}
                   control={<Radio />}
                   label={(
@@ -108,7 +107,7 @@ const ListAssignmentDialog: FC<Props> = ({ vehicle, onClose }: Props) => {
                   )}
                 />
                 <Divider sx={{ my: 1 }} />
-              </>
+              </React.Fragment>
             ))}
           </RadioGroup>
         </form>

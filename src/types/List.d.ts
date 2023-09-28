@@ -21,5 +21,5 @@ type ListResponse = List & {
 type ProfileLists = {
   following: List[];
   owned: List[];
-  other: List[];
+  // other: List[];
 };
