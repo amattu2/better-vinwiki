@@ -8,8 +8,9 @@ Top Features:
 - Modernized post feed with Trending Posts
 - Individual post page with comments (Similar to Reddit)
 - Profile pages with comprehensive information on Activity, Vehicles, Lists, etc
-- Integrated Vehicle, List, & Person search functionality
-- Enhanced post parsing w/ support for OBD-ii Codes, `@mentions`, `#VIN`, and more
+- Vehicle diagnostic scan histories, VIN decoding, recall information, and more
+- Enhanced bio and post content w/support for OBD-ii Codes, `@mentions`, `#VIN`,
+and more
 
 > **Note**: This application uses the native vinwiki.com API,
 > but is not affiliated with VINwiki.com in any way.

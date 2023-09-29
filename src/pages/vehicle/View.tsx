@@ -2,13 +2,10 @@ import React, { FC, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Edit, NavigateNext, PlaylistAdd } from "@mui/icons-material";
 import {
-  Alert, Avatar,
-  Box, Breadcrumbs, Button, Card,
-  CardContent, CardHeader, Grid,
-  IconButton, List, ListItem, ListItemText,
-  Skeleton, Stack, Tooltip, Typography, styled,
+  Alert, Avatar, Box, Breadcrumbs, Button,
+  Grid, IconButton, Skeleton, Stack,
+  Tooltip, Typography, styled,
 } from "@mui/material";
-import { DecodeVinValuesResults } from "@shaggytools/nhtsa-api-wrapper";
 import { ProviderStatus as FeedProviderStatus, useFeedProvider } from "../../Providers/FeedProvider";
 import { ProviderStatus as VehicleProviderStatus, useVehicleProvider } from "../../Providers/VehicleProvider";
 import CreatePost from "../../components/CreatePost";
@@ -21,10 +18,10 @@ import Loader from "../../components/Loader";
 import { StatisticItem } from "../../components/ProfileStatistic";
 import { ScrollToTop } from "../../components/ScrollToTop";
 import useIsFollowingVehicleLookup, { LookupStatus as IsFollowingStatus } from "../../hooks/useIsFollowingVehicleLookup";
-import useVinDecoder, { LookupStatus as VinDecoderStatus } from "../../hooks/useVinDecoder";
 import { formatDateMMYY } from "../../utils/date";
 import { formatVehicleName } from "../../utils/vehicle";
-import Repeater from "../../components/Repeater";
+import ActionableCard from "../../components/ActionableCard";
+import VinDecodeDialog from "../../components/VinDecodeDialog";
 
 type Props = {
   vin: Vehicle["vin"];
@@ -70,31 +67,15 @@ const StyledContainerTitle = styled(Typography)(({ theme }) => ({
   marginLeft: 0,
 }));
 
-const StyledCard = styled(Card)({
-  padding: "16px 24px",
-  borderRadius: "8px",
-  margin: "8px 0",
-  border: "1px solid #e5e5e5",
-});
-
-const DecoderItemSkeleton: FC = () => (
-  <ListItem dense divider>
-    <ListItemText
-      primary={(<Skeleton variant="text" width={100} height={24} animation="wave" />)}
-      secondary={(<Skeleton variant="text" width={200} height={24} animation="wave" />)}
-    />
-  </ListItem>
-);
-
 const View: FC<Props> = ({ vin }: Props) => {
   const { status, vehicle, editVehicle } = useVehicleProvider();
   const { status: postStatus, posts, hasNext, next } = useFeedProvider();
   const [{ status: isFollowingStatus, following }, toggleFollow] = useIsFollowingVehicleLookup(vin);
-  const [vinDecoderStatus, decoderData] = useVinDecoder(vin);
   const [limit, setLimit] = useState<number>(15);
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
   const [listDialogOpen, setListDialogOpen] = useState<boolean>(false);
   const [followersOpen, setFollowersOpen] = useState<boolean>(false);
+  const [decodeOpen, setDecodeOpen] = useState<boolean>(false);
   const postsContainer = useRef<HTMLDivElement>(null);
 
   const filteredPosts: FeedPost[] = useMemo(() => posts
@@ -213,8 +194,8 @@ const View: FC<Props> = ({ vin }: Props) => {
         </Grid>
       </Grid>
       <Box>
-        <Grid container columnSpacing={2}>
-          <Grid item xs={12} md={8} ref={postsContainer}>
+        <Grid container columnSpacing={2} alignItems="flex-start">
+          <Grid item md={12} lg={8} ref={postsContainer}>
             <Box sx={{ p: 2, pt: 0 }}>
               <StyledContainerTitle variant="h5">Posts</StyledContainerTitle>
               <CreatePost vehicle={vehicle} />
@@ -226,35 +207,30 @@ const View: FC<Props> = ({ vin }: Props) => {
               {hasNext && <Button onClick={loadMore}>Load More</Button>}
             </Box>
           </Grid>
-          <Grid item xs={0} md={4} sx={{ pl: "0 !important" }}>
-            <StyledCard elevation={0} sx={{ m: 0, borderRadius: 0, borderColor: "#ddd", borderTop: "unset" }}>
-              sidebar
-              {/* TODO: Carfax service history records */}
-            </StyledCard>
-            <StyledCard elevation={0} sx={{ m: 0, borderRadius: 0, borderColor: "#ddd", borderTop: "unset" }}>
-              sidebar
-              {/* TODO: Golo365 Scan Histories */}
-            </StyledCard>
-            <StyledCard elevation={0} sx={{ m: 0, borderRadius: 0, borderColor: "#ddd", borderTop: "unset" }}>
-              sidebar
-              {/* TODO: NHTSA Recalls */}
-            </StyledCard>
-            <StyledCard elevation={0} sx={{ p: 0, m: 0, borderRadius: 0, borderColor: "#ddd", borderTop: "unset" }} hidden={!decoderData && vinDecoderStatus !== VinDecoderStatus.Loading}>
-              <CardHeader title="VIN Decode Result" titleTypographyProps={{ fontSize: 16 }} />
-              <CardContent component={List} dense sx={{ pt: 0, "& .MuiListItem-root:last-child": { borderBottom: "unset" } }}>
-                {vinDecoderStatus === VinDecoderStatus.Loading && (
-                <Repeater count={5} Component={DecoderItemSkeleton} />
-                )}
-                {decoderData && ((Object.keys(decoderData) as (keyof DecodeVinValuesResults)[]).map((key) => (
-                  <ListItem key={key} dense divider>
-                    <ListItemText
-                      primary={key}
-                      secondary={decoderData[key]}
-                    />
-                  </ListItem>
-                )))}
-              </CardContent>
-            </StyledCard>
+          <Grid item md={12} lg={4} sx={{ pl: "0 !important", position: "sticky", top: "57px" }}>
+            <ActionableCard
+              title="CARFAX Service History"
+              subtitle="Derived from CARFAX-integrated service centers"
+              disabled
+            />
+            <ActionableCard
+              title="Diagnostic Scan History"
+              subtitle="OBD-ii diagnostic scan history reported by compatible MATCO tools"
+              onClick={() => {}}
+              // TODO: Golo365 scans
+            />
+            <ActionableCard
+              title="Recalls"
+              subtitle="Search for manufacturer recalls by year, make, and model"
+              onClick={() => {}}
+              // TODO: open recalls dialog
+            />
+            <ActionableCard
+              title="VIN Decode"
+              subtitle="Perform full VIN decode of manufacturer options and features"
+              onClick={() => setDecodeOpen(true)}
+              // TODO: open decoder dialog
+            />
           </Grid>
         </Grid>
       </Box>
@@ -262,6 +238,7 @@ const View: FC<Props> = ({ vin }: Props) => {
       <ScrollToTop topGap={false} />
       {editDialogOpen && (<EditVehicleDialog vehicle={vehicle} onClose={() => setEditDialogOpen(false)} onConfirm={editVehicle} />)}
       {listDialogOpen && (<ListAssignmentDialog vehicle={vehicle} onClose={() => setListDialogOpen(false)} />)}
+      {decodeOpen && (<VinDecodeDialog vin={vin} onClose={() => setDecodeOpen(false)} />)}
       {(vehicle.follower_count > 0 && followersOpen) && <FollowersDialog identifier={vin} type="Vehicle" count={vehicle.follower_count} onClose={() => setFollowersOpen(false)} />}
     </Box>
   );
