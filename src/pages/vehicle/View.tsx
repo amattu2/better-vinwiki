@@ -229,7 +229,6 @@ const View: FC<Props> = ({ vin }: Props) => {
               title="VIN Decode"
               subtitle="Perform full VIN decode of manufacturer options and features"
               onClick={() => setDecodeOpen(true)}
-              // TODO: open decoder dialog
             />
           </Grid>
         </Grid>

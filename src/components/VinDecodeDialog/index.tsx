@@ -37,6 +37,12 @@ const StyledDialogContent = styled(DialogContent)({
   },
 });
 
+const StyledListItemText = styled(ListItemText)({
+  whiteSpace: "nowrap",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+});
+
 const NoContent = () => (
   <Typography variant="body1" color="textSecondary" sx={{ padding: "16px" }} textAlign="center" fontSize={14}>
     Uh oh... Nothing to see here
@@ -81,7 +87,7 @@ const VinDecodeDialog: FC<Props> = ({ vin, onClose }: Props) => {
           >
             {({ index, style }) => (
               <ListItem key={optionKeys[index]} style={style} dense divider>
-                <ListItemText
+                <StyledListItemText
                   primary={optionKeys[index]}
                   secondary={options?.[optionKeys[index]]}
                 />
