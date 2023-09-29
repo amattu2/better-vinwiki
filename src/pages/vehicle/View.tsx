@@ -2,12 +2,13 @@ import React, { FC, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Edit, NavigateNext, PlaylistAdd } from "@mui/icons-material";
 import {
-  Alert,
-  Avatar,
-  Box, Breadcrumbs, Button, Card, Grid,
-  IconButton, Skeleton, Stack,
-  Tooltip, Typography, styled,
+  Alert, Avatar,
+  Box, Breadcrumbs, Button, Card,
+  CardContent, CardHeader, Grid,
+  IconButton, List, ListItem, ListItemText,
+  Skeleton, Stack, Tooltip, Typography, styled,
 } from "@mui/material";
+import { DecodeVinValuesResults } from "@shaggytools/nhtsa-api-wrapper";
 import { ProviderStatus as FeedProviderStatus, useFeedProvider } from "../../Providers/FeedProvider";
 import { ProviderStatus as VehicleProviderStatus, useVehicleProvider } from "../../Providers/VehicleProvider";
 import CreatePost from "../../components/CreatePost";
@@ -19,9 +20,11 @@ import ListAssignmentDialog from "../../components/ListAssignmentDialog";
 import Loader from "../../components/Loader";
 import { StatisticItem } from "../../components/ProfileStatistic";
 import { ScrollToTop } from "../../components/ScrollToTop";
-import useIsFollowingVehicleLookup, { LookupStatus } from "../../hooks/useIsFollowingVehicleLookup";
-import { formatVehicleName } from "../../utils/vehicle";
+import useIsFollowingVehicleLookup, { LookupStatus as IsFollowingStatus } from "../../hooks/useIsFollowingVehicleLookup";
+import useVinDecoder, { LookupStatus as VinDecoderStatus } from "../../hooks/useVinDecoder";
 import { formatDateMMYY } from "../../utils/date";
+import { formatVehicleName } from "../../utils/vehicle";
+import Repeater from "../../components/Repeater";
 
 type Props = {
   vin: Vehicle["vin"];
@@ -74,10 +77,20 @@ const StyledCard = styled(Card)({
   border: "1px solid #e5e5e5",
 });
 
+const DecoderItemSkeleton: FC = () => (
+  <ListItem dense divider>
+    <ListItemText
+      primary={(<Skeleton variant="text" width={100} height={24} animation="wave" />)}
+      secondary={(<Skeleton variant="text" width={200} height={24} animation="wave" />)}
+    />
+  </ListItem>
+);
+
 const View: FC<Props> = ({ vin }: Props) => {
   const { status, vehicle, editVehicle } = useVehicleProvider();
   const { status: postStatus, posts, hasNext, next } = useFeedProvider();
   const [{ status: isFollowingStatus, following }, toggleFollow] = useIsFollowingVehicleLookup(vin);
+  const [vinDecoderStatus, decoderData] = useVinDecoder(vin);
   const [limit, setLimit] = useState<number>(15);
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
   const [listDialogOpen, setListDialogOpen] = useState<boolean>(false);
@@ -159,7 +172,7 @@ const View: FC<Props> = ({ vin }: Props) => {
                 {vehicle.trim || "N/A"}
               </Typography>
 
-              {isFollowingStatus === LookupStatus.Loading ? (
+              {isFollowingStatus === IsFollowingStatus.Loading ? (
                 <Skeleton variant="rectangular" width={100} height={32} sx={{ borderRadius: "8px" }} />
               ) : (
                 <Button variant="outlined" color="primary" onClick={toggleFollow} sx={{ mt: 1, mr: "auto", textTransform: "none" }}>{following ? "Unfollow" : "Follow"}</Button>
@@ -226,9 +239,21 @@ const View: FC<Props> = ({ vin }: Props) => {
               sidebar
               {/* TODO: NHTSA Recalls */}
             </StyledCard>
-            <StyledCard elevation={0} sx={{ m: 0, borderRadius: 0, borderColor: "#ddd", borderTop: "unset" }}>
-              sidebar
-              {/* TODO: NHTSA top decoded info (Trans/Drivetrain/etc) */}
+            <StyledCard elevation={0} sx={{ p: 0, m: 0, borderRadius: 0, borderColor: "#ddd", borderTop: "unset" }} hidden={!decoderData && vinDecoderStatus !== VinDecoderStatus.Loading}>
+              <CardHeader title="VIN Decode Result" titleTypographyProps={{ fontSize: 16 }} />
+              <CardContent component={List} dense sx={{ pt: 0, "& .MuiListItem-root:last-child": { borderBottom: "unset" } }}>
+                {vinDecoderStatus === VinDecoderStatus.Loading && (
+                <Repeater count={5} Component={DecoderItemSkeleton} />
+                )}
+                {decoderData && ((Object.keys(decoderData) as (keyof DecodeVinValuesResults)[]).map((key) => (
+                  <ListItem key={key} dense divider>
+                    <ListItemText
+                      primary={key}
+                      secondary={decoderData[key]}
+                    />
+                  </ListItem>
+                )))}
+              </CardContent>
             </StyledCard>
           </Grid>
         </Grid>
