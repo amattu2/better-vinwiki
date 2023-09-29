@@ -4,7 +4,7 @@ import numeral from "numeral";
 
 type Props = {
   name: string,
-  value: number,
+  value: number | string,
   onClick?: () => void
 };
 
@@ -42,7 +42,7 @@ const StyledName = styled(Typography)(({ theme }) => ({
  */
 export const StatisticItem: FC<Props> = ({ name, value, onClick }: Props) => (
   <StyledBox onClick={onClick}>
-    <StyledValue variant="h3">{numeral(value).format("0a")}</StyledValue>
+    <StyledValue variant="h3">{typeof value === "number" ? numeral(value).format("0a") : value}</StyledValue>
     <StyledName>{name}</StyledName>
   </StyledBox>
 );

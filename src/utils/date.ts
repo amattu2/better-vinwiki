@@ -26,3 +26,14 @@ export const formatDateTime = (date: Date, includePrefix = false) => {
 
   return `${formatDate(date)} at ${formatTime(date)}`;
 };
+
+/**
+ * Parse a Date object into a MM/YY formatted string
+ *
+ * @param date JavaScript Date object
+ * @returns formatted MM/YY string
+ */
+export const formatDateMMYY = (date: Date) => date.toLocaleDateString('en-US', {
+  month: '2-digit',
+  year: '2-digit',
+});

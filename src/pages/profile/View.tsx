@@ -321,7 +321,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
         </TabContext>
       </StyledProfileBox>
 
-      <ScrollToTop />
+      <ScrollToTop topGap={false} />
       {(lists && listsOpen) && <ListsDialog lists={lists} onClose={() => setListsOpen(false)} />}
       {(profile.follower_count > 0 && followersOpen) && <FollowersDialog identifier={uuid} type="Profile" count={profile.follower_count} onClose={() => setFollowersOpen(false)} />}
       {(profile.following_count > 0 && followingOpen) && <FollowingDialog uuid={uuid} count={profile.following_count} onClose={() => setFollowingOpen(false)} />}
