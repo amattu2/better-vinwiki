@@ -79,7 +79,8 @@ const FollowingDialog: FC<Props> = ({ uuid, count, onClose }: Props) => {
   const [status, { following }] = useFollowingLookup(uuid, true);
   const [sort, setSort] = useState<"date" | "alpha">("alpha");
 
-  const skeletonCount = count > 0 && count < 8 ? count : 8;
+  const countToUse = status === LookupStatus.Success ? following?.length || count : count;
+  const skeletonCount = countToUse > 0 && countToUse < 8 ? countToUse : 8;
   const data: Profile[] = useMemo(() => {
     if (!following || status !== LookupStatus.Success) {
       return [];

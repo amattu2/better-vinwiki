@@ -80,7 +80,8 @@ const FollowersDialog: FC<Props> = ({ identifier, type, count, onClose }: Props)
   const [status, { followers }] = useFollowersLookup(identifier, type, true);
   const [sort, setSort] = useState<"date" | "alpha">("alpha");
 
-  const skeletonCount = count > 0 && count < 8 ? count : 8;
+  const countToUse = status === LookupStatus.Success ? followers?.length || count : count;
+  const skeletonCount = countToUse > 0 && countToUse < 8 ? countToUse : 8;
   const data: Profile[] = useMemo(() => {
     if (!followers || status !== LookupStatus.Success) {
       return [];
