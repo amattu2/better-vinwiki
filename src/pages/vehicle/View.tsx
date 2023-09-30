@@ -71,7 +71,7 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
 
 const StyledContainerTitle = styled(Typography)(({ theme }) => ({
   marginTop: theme.spacing(3),
-  marginBottom: theme.spacing(3),
+  marginBottom: theme.spacing(2),
   marginLeft: 0,
 }));
 
