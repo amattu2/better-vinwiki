@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { Delete, MoreVert } from "@mui/icons-material";
 import {
   Collapse, Divider, IconButton, ListItemIcon,
-  ListItemText, Menu, MenuItem, Stack,
-  Typography, styled,
+  ListItemText, Menu, MenuItem, Skeleton, Stack,
+  Typography, styled, Box, Chip,
 } from "@mui/material";
 import { ENDPOINTS } from "../../../config/Endpoints";
 import { useAuthProvider } from "../../../Providers/AuthProvider";
@@ -14,6 +14,7 @@ import GenericText from "../../GenericText/GenericText";
 
 type Props = {
   comment: PostComment;
+  isAuthor?: boolean;
   onDelete?: (uuid: PostComment["uuid"]) => void;
   divider?: boolean;
 };
@@ -35,13 +36,24 @@ const StyledMenuButton = styled(IconButton)({
   top: "8px",
 });
 
+export const CommentSkeleton: FC = () => (
+  <Stack direction="row" spacing={1} alignItems="center">
+    <Skeleton variant="circular" width={45} height={45} />
+    <Box sx={{ flexGrow: 1 }}>
+      <Skeleton />
+      <Skeleton width="60%" />
+      <Skeleton width="20%" />
+    </Box>
+  </Stack>
+);
+
 /**
  * A representation of a Feed Post Comment
  *
  * @param {PostComment} comment
  * @returns {JSX.Element}
  */
-const PostComment: FC<Props> = ({ comment, onDelete, divider }: Props) => {
+const PostComment: FC<Props> = ({ comment, isAuthor, divider, onDelete }: Props) => {
   const { token, profile } = useAuthProvider();
   const { uuid, person, text } = comment;
   const { uuid: authorUuid, username, avatar } = person;
@@ -77,6 +89,7 @@ const PostComment: FC<Props> = ({ comment, onDelete, divider }: Props) => {
           <Stack direction="column" gap={1}>
             <Typography component={StyledLink} variant="body1" fontWeight={600} to={`/profile/${authorUuid}`}>
               {`@${username}`}
+              {isAuthor && (<Chip label="Author" size="small" color="primary" variant="outlined" sx={{ marginLeft: "8px" }} />)}
             </Typography>
             <GenericText content={text} />
             <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600}>

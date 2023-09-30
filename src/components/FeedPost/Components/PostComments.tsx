@@ -2,15 +2,16 @@ import React, { FC, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { Send } from "@mui/icons-material";
-import { Box, Button, Skeleton, Stack, TextField, Typography, styled } from "@mui/material";
+import { Box, Button, Stack, TextField, Typography, styled } from "@mui/material";
 import { useAuthProvider } from "../../../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../../../config/Endpoints";
 import Repeater from "../../Repeater";
-import PostComment from "./PostComment";
+import PostComment, { CommentSkeleton } from "./PostComment";
 
 type Props = {
   uuid: FeedPost["uuid"];
   count: number;
+  limit?: number;
 };
 
 type CommentForm = {
@@ -20,6 +21,8 @@ type CommentForm = {
 const StyledCommentBox = styled(Box)({
   marginTop: "0px",
   padding: "8px",
+  position: "sticky",
+  top: "57px",
   "& .MuiDivider-root:last-child": {
     display: "none",
   },
@@ -29,30 +32,20 @@ const StyledCommentStack = styled(Stack)({
   marginTop: "8px",
 });
 
-const CommentSkeleton: FC = () => (
-  <Stack direction="row" spacing={1} alignItems="center">
-    <Skeleton variant="circular" width={45} height={45} />
-    <Box sx={{ flexGrow: 1 }}>
-      <Skeleton />
-      <Skeleton width="60%" />
-      <Skeleton width="20%" />
-    </Box>
-  </Stack>
-);
-
 /**
- * A representation of a post's comments.
+ * A representation of a post's comments. Handles fetching, creating, and displaying comments.
  *
- * Handles fetching, creating, and displaying comments.
+ * Pass `Infinity` to `limit` to display all comments.
  *
  * @param {PostComment} comment
  * @returns {JSX.Element}
  */
-const PostComments: FC<Props> = ({ uuid, count: commentCount }: Props) => {
+const PostComments: FC<Props> = ({ uuid, limit = 4, count: commentCount }: Props) => {
   const { token, profile } = useAuthProvider();
   const { register, watch, handleSubmit, setValue } = useForm<CommentForm>();
   const isFormValid = useMemo(() => watch("text")?.length > 0 && watch("text")?.length <= 500, [watch("text")]);
 
+  const [postAuthor, setPostAuthor] = useState<Profile["uuid"]>("");
   const [count, setCount] = useState<number>(commentCount);
   const [loading, setLoading] = useState<boolean>(count > 0);
   const [comments, setComments] = useState<PostComment[]>([]);
@@ -112,10 +105,11 @@ const PostComments: FC<Props> = ({ uuid, count: commentCount }: Props) => {
         signal,
       }).catch(() => null);
 
-      const { status, comments } = await response?.json() || {};
+      const { status, post, comments } = await response?.json() || {};
       if (status === STATUS_OK) {
         comments?.sort((a: PostComment, b: PostComment) => (new Date(b.created).getTime() - new Date(a.created).getTime()));
         setComments(comments);
+        setPostAuthor(post?.person?.uuid || "");
       }
 
       setLoading(false);
@@ -153,10 +147,16 @@ const PostComments: FC<Props> = ({ uuid, count: commentCount }: Props) => {
           {creating && <CommentSkeleton />}
           {!loading ? (
             <>
-              {comments.slice(0, 4).map((comment: PostComment) => (
-                <PostComment key={comment.uuid} comment={comment} onDelete={onCommentDelete} divider />
+              {comments.slice(0, limit).map((comment: PostComment) => (
+                <PostComment
+                  key={comment.uuid}
+                  isAuthor={comment?.person?.uuid === postAuthor}
+                  comment={comment}
+                  onDelete={onCommentDelete}
+                  divider
+                />
               ))}
-              {count > 4 && (
+              {count > limit && (
                 <Typography variant="body2" textAlign="center">
                   <Link to={`/post/${uuid}`} target="_blank">
                     View remaining comments in thread

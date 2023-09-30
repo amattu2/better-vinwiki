@@ -10,9 +10,13 @@ type FeedPostProps = FeedPost & {
   isPreview?: true;
 
   /**
-   * Hides the comments section.
+   * Post is on the individual post page
+   *
+   * Disables:
+   * - Comments
+   * - Click to Open
    */
-  omitComments?: true;
+  isIndividual?: true;
 
   /**
    * Adds a ref to the post container.

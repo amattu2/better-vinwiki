@@ -17,6 +17,7 @@ type ProfileSuggestion = {
 };
 
 type Props = {
+  cardTitle?: string;
   suggestions: ProfileSuggestion[];
   limit: number;
 };
@@ -71,10 +72,10 @@ const SuggestionItem: FC<ProfileSuggestion> = ({ profile, postCount }: ProfileSu
   </ListItem>
 );
 
-const SuggestionCard: FC<Props> = ({ suggestions, limit }: Props) => (
+const SuggestionCard: FC<Props> = ({ cardTitle = "In this feed", suggestions, limit }: Props) => (
   <StyledCard raised>
     <StyledCardHeader
-      title="In this feed"
+      title={cardTitle}
       titleTypographyProps={{ variant: 'h6' }}
     />
     <StyledCardContent>

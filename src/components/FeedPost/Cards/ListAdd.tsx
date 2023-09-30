@@ -6,7 +6,7 @@ import {
   MenuItem, Skeleton, Typography, styled,
 } from "@mui/material";
 import { useAuthProvider } from "../../../Providers/AuthProvider";
-import { useFeedProvider } from "../../../Providers/FeedProvider";
+import usePostDeleteWrapper from "../../../hooks/usePostDeleteWrapper";
 import { ENDPOINTS } from "../../../config/Endpoints";
 import { formatDateTime } from "../../../utils/date";
 import GenericText from "../../GenericText/GenericText";
@@ -49,7 +49,7 @@ export const ListAddPostSkeleton: FC = () => (
  */
 const ListAddPost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
   const { token, profile } = useAuthProvider();
-  const { removePost: deletePostByUUID } = useFeedProvider();
+  const { removePost: deletePostByUUID } = usePostDeleteWrapper();
   const { uuid, subject_uuid, person } = post;
   const rootRef = useRef<HTMLDivElement>(null);
 

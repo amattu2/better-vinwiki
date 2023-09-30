@@ -8,9 +8,9 @@ import {
 } from "@mui/material";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useAuthProvider } from "../../../Providers/AuthProvider";
-import { useFeedProvider } from "../../../Providers/FeedProvider";
 import { ENDPOINTS } from "../../../config/Endpoints";
 import { formatDateTime } from "../../../utils/date";
+import usePostDeleteWrapper from "../../../hooks/usePostDeleteWrapper";
 import { ExpandableImage } from "../../ExpandableImage";
 import GenericText from "../../GenericText/GenericText";
 import DeletePostDialog from "../Components/DeletePostDialog";
@@ -18,25 +18,25 @@ import PostComments from "../Components/PostComments";
 import ProfileBit, { PostProfileSkeleton } from "../Components/PostProfile";
 import Repeater from "../../Repeater";
 
-const StyledCard = styled(Card)({
+const StyledCard = styled(Card, { shouldForwardProp: (p) => p !== "hoverAction" })(({ hoverAction } : { hoverAction?: boolean }) => ({
   borderRadius: "8px",
   marginBottom: "8px",
   border: "1px solid #e5e5e5",
   position: "relative",
   transition: "border-color 0.2s ease-out",
-  "&:hover": {
+  [hoverAction ? "&:hover" : ""]: {
     borderColor: "#bdbdbd",
     cursor: "pointer",
   },
-});
+}));
 
-const StyledImageBox = styled(Box)({
-  height: "250px",
+const StyledImageBox = styled(Box, { shouldForwardProp: (p) => p !== "isIndividual" })(({ isIndividual } : Pick<FeedPostProps, "isIndividual">) => ({
+  height: isIndividual ? "450px" : "250px",
   maxWidth: "95%",
   overflow: "hidden",
   borderRadius: "8px",
   marginLeft: "8px",
-});
+}));
 
 const StyledMenuButton = styled(IconButton)({
   position: "absolute",
@@ -87,9 +87,9 @@ export const ImagePostSkeleton: FC = () => (
  * @param {FeedPostProps} post
  * @returns {JSX.Element}
  */
-const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, omitComments, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
+const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, isIndividual, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
   const { token, profile } = useAuthProvider();
-  const { removePost: deletePostByUUID } = useFeedProvider();
+  const { removePost: deletePostByUUID } = usePostDeleteWrapper();
   const { uuid, image, comment_count, post_text, person } = post;
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -124,7 +124,7 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, omitComments, ...p
     if (event.target !== rootRef.current) {
       return;
     }
-    if (isPreview) {
+    if (isPreview || isIndividual) {
       return;
     }
 
@@ -137,11 +137,11 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, omitComments, ...p
   };
 
   return (
-    <StyledCard elevation={0} onClick={openPost} ref={ref}>
+    <StyledCard elevation={0} onClick={openPost} ref={ref} hoverAction={!isPreview && !isIndividual}>
       <CardContent ref={rootRef}>
         <Grid container>
           <Grid item xs={8}>
-            <StyledImageBox>
+            <StyledImageBox isIndividual={isIndividual}>
               <ExpandableImage lowRes={image.thumb} highRes={image.large} alt={post_text} />
             </StyledImageBox>
           </Grid>
@@ -169,7 +169,7 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, omitComments, ...p
             </Stack>
           </Grid>
         </Grid>
-        {(!isPreview && !omitComments) && <PostComments key={uuid} uuid={uuid} count={comment_count} />}
+        {(!isPreview && !isIndividual) && <PostComments key={uuid} uuid={uuid} count={comment_count} />}
       </CardContent>
       {!isPreview && (
         <StyledMenuButton size="small" onClick={menuToggle}>
