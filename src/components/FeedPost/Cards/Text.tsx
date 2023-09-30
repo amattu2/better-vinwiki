@@ -3,7 +3,7 @@ import { Delete, MoreVert, Share } from "@mui/icons-material";
 import {
   Card, CardContent, IconButton,
   ListItemIcon, ListItemText, Menu,
-  MenuItem, Typography, styled,
+  MenuItem, Skeleton, Typography, styled,
 } from "@mui/material";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useAuthProvider } from "../../../Providers/AuthProvider";
@@ -13,7 +13,7 @@ import { formatDateTime } from "../../../utils/date";
 import GenericText from "../../GenericText/GenericText";
 import DeletePostDialog from "../Components/DeletePostDialog";
 import PostComments from "../Components/PostComments";
-import ProfileBit from "../Components/PostProfile";
+import ProfileBit, { PostProfileSkeleton } from "../Components/PostProfile";
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",
@@ -33,6 +33,28 @@ const StyledMenuButton = styled(IconButton)({
   top: "8px",
 });
 
+/**
+ * A skeleton representation of TextPost
+ *
+ * @returns {JSX.Element}
+ */
+export const TextPostSkeleton: FC = () => (
+  <StyledCard elevation={0} sx={{ "&:hover": { cursor: "initial", borderColor: "#e5e5e5" } }}>
+    <CardContent>
+      <PostProfileSkeleton filled={false} />
+      <Skeleton variant="text" width={375} sx={{ fontSize: "0.875rem", ml: "8px" }} animation="wave" />
+      <Skeleton variant="text" width={350} sx={{ fontSize: "0.875rem", mb: 1, ml: "8px" }} animation="wave" />
+      <Skeleton variant="text" width={150} sx={{ fontSize: "12px", ml: "8px" }} animation="wave" />
+    </CardContent>
+  </StyledCard>
+);
+
+/**
+ * A post with only text content
+ *
+ * @param {FeedPostProps} post
+ * @returns {JSX.Element}
+ */
 const TextPost: FC<FeedPostProps> = forwardRef(({ isPreview, omitComments, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
   const { token, profile } = useAuthProvider();
   const { removePost: deletePostByUUID } = useFeedProvider();

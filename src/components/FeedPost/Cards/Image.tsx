@@ -3,7 +3,7 @@ import { Delete, MoreVert, Share } from "@mui/icons-material";
 import {
   Box, Card, CardContent, Grid,
   IconButton, ListItemIcon, ListItemText,
-  Menu, MenuItem, Stack,
+  Menu, MenuItem, Skeleton, Stack,
   Typography, styled,
 } from "@mui/material";
 import { useCopyToClipboard } from "usehooks-ts";
@@ -15,7 +15,8 @@ import { ExpandableImage } from "../../ExpandableImage";
 import GenericText from "../../GenericText/GenericText";
 import DeletePostDialog from "../Components/DeletePostDialog";
 import PostComments from "../Components/PostComments";
-import ProfileBit from "../Components/PostProfile";
+import ProfileBit, { PostProfileSkeleton } from "../Components/PostProfile";
+import Repeater from "../../Repeater";
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",
@@ -42,6 +43,43 @@ const StyledMenuButton = styled(IconButton)({
   right: "8px",
   top: "8px",
 });
+
+const PostTextSkeleton: FC = () => (
+  <Skeleton
+    variant="text"
+    width="85%"
+    sx={{ fontSize: "0.875rem", ml: "8px" }}
+    animation="wave"
+  />
+);
+
+/**
+ * A skeleton representation of ImagePost
+ *
+ * @returns {JSX.Element}
+ */
+export const ImagePostSkeleton: FC = () => (
+  <StyledCard elevation={0} sx={{ "&:hover": { cursor: "initial", borderColor: "#e5e5e5" } }}>
+    <CardContent>
+      <Grid container>
+        <Grid item xs={8}>
+          <StyledImageBox>
+            <Skeleton variant="rectangular" width="100%" height="100%" animation="wave" />
+          </StyledImageBox>
+        </Grid>
+        <Grid item xs={4}>
+          <Stack gap={1} direction="column" height="100%">
+            <PostProfileSkeleton filled />
+            <Box flexGrow={1}>
+              <Repeater count={4} Component={PostTextSkeleton} />
+            </Box>
+            <Skeleton variant="text" width={150} sx={{ fontSize: "12px", ml: "8px" }} animation="wave" />
+          </Stack>
+        </Grid>
+      </Grid>
+    </CardContent>
+  </StyledCard>
+);
 
 /**
  * A post with an image attached

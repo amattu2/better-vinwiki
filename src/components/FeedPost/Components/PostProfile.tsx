@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { Link } from "react-router-dom";
-import { Stack, Typography, styled } from "@mui/material";
+import { Skeleton, Stack, Typography, styled } from "@mui/material";
 import ProfileAvatar from "../../ProfileAvatar";
 import { formatVehicleName, formatOdometer } from "../../../utils/vehicle";
 
@@ -19,6 +19,19 @@ const StyledLink = styled(Link)({
   textDecoration: "none",
   color: "inherit",
 });
+
+export const PostProfileSkeleton: FC<{ filled?: boolean }> = ({ filled = true }) => (
+  <StyledStack direction="row" gap={1} filled={filled}>
+    <Skeleton variant="rectangular" width={40} height={40} sx={{ borderRadius: "8px" }} />
+    <Stack direction="column" justifyContent="center">
+      <Skeleton variant="text" width={100} sx={{ fontSize: "1rem" }} animation="wave" />
+      <Stack direction="row" justifyContent="center" gap={1}>
+        <Skeleton variant="text" width={120} sx={{ fontSize: "0.875rem" }} animation="wave" />
+        <Skeleton variant="text" width={40} sx={{ fontSize: "0.875rem" }} animation="wave" />
+      </Stack>
+    </Stack>
+  </StyledStack>
+);
 
 /**
  * A general component for displaying a Profile of a Feed Post

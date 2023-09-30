@@ -3,7 +3,7 @@ import { Delete, MoreVert, Share } from "@mui/icons-material";
 import {
   Box, Card, CardContent, IconButton,
   ListItemIcon, ListItemText, Menu,
-  MenuItem, Stack, Typography,
+  MenuItem, Skeleton, Stack, Typography,
   styled,
 } from "@mui/material";
 import { useCopyToClipboard } from "usehooks-ts";
@@ -15,7 +15,7 @@ import { ExpandableImage } from "../../ExpandableImage";
 import GenericText from "../../GenericText/GenericText";
 import DeletePostDialog from "../Components/DeletePostDialog";
 import PostComments from "../Components/PostComments";
-import ProfileBit from "../Components/PostProfile";
+import ProfileBit, { PostProfileSkeleton } from "../Components/PostProfile";
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",
@@ -43,13 +43,38 @@ const StyledMenuButton = styled(IconButton)({
 });
 
 /**
+ * A skeleton representation of VerticalImagePost
+ *
+ * @returns {JSX.Element}
+ */
+export const VerticalImagePostSkeleton: FC = () => (
+  <StyledCard elevation={0} sx={{ "&:hover": { cursor: "initial", borderColor: "#e5e5e5" } }}>
+    <CardContent>
+      <Stack direction="column" gap={1}>
+        <Box>
+          <Stack gap={1}>
+            <PostProfileSkeleton filled />
+            <Skeleton variant="text" width="90%" sx={{ fontSize: "0.875rem" }} animation="wave" />
+            <Skeleton variant="text" width="85%" sx={{ fontSize: "0.875rem", mb: 1 }} animation="wave" />
+          </Stack>
+        </Box>
+        <StyledImageBox>
+          <Skeleton variant="rectangular" width="100%" height="100%" animation="wave" />
+        </StyledImageBox>
+        <Skeleton variant="text" width={150} sx={{ fontSize: "12px" }} animation="wave" />
+      </Stack>
+    </CardContent>
+  </StyledCard>
+);
+
+/**
  * A extension to the Image card but oriented vertically,
  * designed for images with lots of text
  *
  * @param {FeedPostProps} post
  * @returns {JSX.Element}
  */
-const VerticalImage: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
+const VerticalImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
   const { token, profile } = useAuthProvider();
   const { removePost: deletePostByUUID } = useFeedProvider();
   const { uuid, image, comment_count, post_text, person } = post;
@@ -160,4 +185,4 @@ const VerticalImage: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: Fee
   );
 });
 
-export default VerticalImage;
+export default VerticalImagePost;
