@@ -17,6 +17,7 @@ import useVinDecoder, { LookupStatus } from '../../hooks/useVinDecoder';
 
 type Props = {
   vin: Vehicle["vin"];
+  year: Vehicle["year"];
   onClose: () => void;
 };
 
@@ -28,7 +29,6 @@ const StyledDialog = styled(Dialog)({
 
 const StyledDialogContent = styled(DialogContent)({
   padding: "0 !important",
-  backgroundColor: "#f4f7fa",
   "& .MuiList-root": {
     padding: "0 !important",
   },
@@ -64,8 +64,8 @@ const DecoderItemSkeleton: FC = () => (
  * @param {Props} props
  * @returns {JSX.Element}
  */
-const VinDecodeDialog: FC<Props> = ({ vin, onClose }: Props) => {
-  const [status, options] = useVinDecoder(vin);
+const VinDecodeDialog: FC<Props> = ({ vin, year, onClose }: Props) => {
+  const [status, options] = useVinDecoder(vin, year);
 
   const optionKeys = options ? Object.keys(options) as (keyof DecodeVinValuesResults)[] : [];
 
@@ -89,6 +89,7 @@ const VinDecodeDialog: FC<Props> = ({ vin, onClose }: Props) => {
               <ListItem key={optionKeys[index]} style={style} dense divider>
                 <StyledListItemText
                   primary={optionKeys[index]}
+                  primaryTypographyProps={{ fontWeight: 500, textTransform: "uppercase", fontSize: 12 }}
                   secondary={options?.[optionKeys[index]]}
                 />
               </ListItem>

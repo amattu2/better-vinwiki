@@ -1,3 +1,8 @@
+import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+
+dayjs.extend(advancedFormat);
+
 export const formatDate = (date: Date) => date.toLocaleDateString('en-US', {
   day: 'numeric',
   month: 'long',
@@ -37,3 +42,27 @@ export const formatDateMMYY = (date: Date) => date.toLocaleDateString('en-US', {
   month: '2-digit',
   year: '2-digit',
 });
+
+/**
+ * Parse a NHTSA recall date DD/MM/YYYY into MMMM Do, YYYY
+ *
+ * @param date NHTSA recall date
+ * @returns formatted date
+ */
+export const formatNHTSADate = (date: string) => {
+  const parsedDate = dayjs(date, "DD/MM/YYYY", true);
+
+  if (!parsedDate.isValid()) {
+    return date;
+  }
+
+  return parsedDate.format("MMMM Do, YYYY");
+};
+
+/**
+ * Parse a NHTSA recall date DD/MM/YYYY into a Date object
+ *
+ * @param date NHTSA recall date
+ * @returns Date object
+ */
+export const parseNHTSADate = (date: string) => dayjs(date, "DD/MM/YYYY", true).toDate();

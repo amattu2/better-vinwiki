@@ -22,6 +22,7 @@ import { formatDateMMYY } from "../../utils/date";
 import { formatVehicleName } from "../../utils/vehicle";
 import ActionableCard from "../../components/ActionableCard";
 import VinDecodeDialog from "../../components/VinDecodeDialog";
+import RecallLookupDialog from "../../components/RecallLookupDialog";
 
 type Props = {
   vin: Vehicle["vin"];
@@ -76,6 +77,7 @@ const View: FC<Props> = ({ vin }: Props) => {
   const [listDialogOpen, setListDialogOpen] = useState<boolean>(false);
   const [followersOpen, setFollowersOpen] = useState<boolean>(false);
   const [decodeOpen, setDecodeOpen] = useState<boolean>(false);
+  const [recallsOpen, setRecallsOpen] = useState<boolean>(false);
   const postsContainer = useRef<HTMLDivElement>(null);
 
   const filteredPosts: FeedPost[] = useMemo(() => posts
@@ -210,20 +212,20 @@ const View: FC<Props> = ({ vin }: Props) => {
           <Grid item md={12} lg={4} sx={{ pl: "0 !important", position: "sticky", top: "57px" }}>
             <ActionableCard
               title="CARFAX Service History"
-              subtitle="Derived from CARFAX-integrated service centers"
+              subtitle="Derived from CARFAX partner automotive service centers"
               disabled
+              // TODO: CARFAX integration
             />
             <ActionableCard
               title="Diagnostic Scan History"
-              subtitle="OBD-ii diagnostic scan history reported by compatible MATCO tools"
+              subtitle="View OBD-ii diagnostic scan events reported by compatible MATCO tools"
               onClick={() => {}}
               // TODO: Golo365 scans
             />
             <ActionableCard
               title="Recalls"
               subtitle="Search for manufacturer recalls by year, make, and model"
-              onClick={() => {}}
-              // TODO: open recalls dialog
+              onClick={() => setRecallsOpen(true)}
             />
             <ActionableCard
               title="VIN Decode"
@@ -237,7 +239,8 @@ const View: FC<Props> = ({ vin }: Props) => {
       <ScrollToTop topGap={false} />
       {editDialogOpen && (<EditVehicleDialog vehicle={vehicle} onClose={() => setEditDialogOpen(false)} onConfirm={editVehicle} />)}
       {listDialogOpen && (<ListAssignmentDialog vehicle={vehicle} onClose={() => setListDialogOpen(false)} />)}
-      {decodeOpen && (<VinDecodeDialog vin={vin} onClose={() => setDecodeOpen(false)} />)}
+      {decodeOpen && (<VinDecodeDialog vin={vin} year={vehicle.year} onClose={() => setDecodeOpen(false)} />)}
+      {recallsOpen && (<RecallLookupDialog year={vehicle.year} make={vehicle.make} model={vehicle.model} onClose={() => setRecallsOpen(false)} />)}
       {(vehicle.follower_count > 0 && followersOpen) && <FollowersDialog identifier={vin} type="Vehicle" count={vehicle.follower_count} onClose={() => setFollowersOpen(false)} />}
     </Box>
   );
