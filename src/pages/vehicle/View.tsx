@@ -25,6 +25,7 @@ import ActionableCard from "../../components/ActionableCard";
 import VinDecodeDialog from "../../components/VinDecodeDialog";
 import RecallLookupDialog from "../../components/RecallLookupDialog";
 import Repeater from "../../components/Repeater";
+import { DEFAULT_DATE } from "../../config/Endpoints";
 
 type Props = {
   vin: Vehicle["vin"];
@@ -214,7 +215,7 @@ const View: FC<Props> = ({ vin }: Props) => {
           <StyledPill
             component={StatisticItem}
             name="Updated"
-            value={formatDateMMYY(new Date(vehicle.updated))}
+            value={vehicle.updated !== DEFAULT_DATE ? formatDateMMYY(new Date(vehicle.updated)) : "N/A"}
             xs={6}
             md={3}
             item
