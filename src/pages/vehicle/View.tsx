@@ -6,6 +6,7 @@ import {
   Grid, IconButton, Skeleton, Stack,
   Tooltip, Typography, styled,
 } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 import { ProviderStatus as FeedProviderStatus, useFeedProvider } from "../../Providers/FeedProvider";
 import { ProviderStatus as VehicleProviderStatus, useVehicleProvider } from "../../Providers/VehicleProvider";
 import CreatePost from "../../components/CreatePost";
@@ -202,12 +203,22 @@ const View: FC<Props> = ({ vin }: Props) => {
             <Box sx={{ p: 2, pt: 0 }}>
               <StyledContainerTitle variant="h5">Posts</StyledContainerTitle>
               <CreatePost vehicle={vehicle} />
-              {feedStatus === FeedProviderStatus.LOADING && (<Repeater count={3} Component={PostSkeleton} />)}
-              {feedStatus === FeedProviderStatus.LOADED && slicedPosts?.map((post) => (<FeedPost key={post.uuid} {...post} />))}
               {(feedStatus === FeedProviderStatus.LOADED && slicedPosts.length === 0) && (
                 <Alert severity="info" sx={{ mb: 1 }}>Uh oh. We have no posts to show.</Alert>
               )}
-              {hasNext && <Button onClick={loadMore}>Load More</Button>}
+              {feedStatus === FeedProviderStatus.LOADING && (<Repeater count={3} Component={PostSkeleton} />)}
+              {slicedPosts?.map((post) => (<FeedPost key={post.uuid} {...post} />))}
+              {hasNext && (
+                <Box sx={{ textAlign: "center", mt: 2 }}>
+                  <LoadingButton
+                    variant="outlined"
+                    onClick={loadMore}
+                    loading={feedStatus === FeedProviderStatus.RELOADING}
+                  >
+                    Show More
+                  </LoadingButton>
+                </Box>
+              )}
             </Box>
           </Grid>
           <Grid item md={12} lg={4} sx={{ pl: "0 !important", position: "sticky", top: "57px" }}>
@@ -221,6 +232,7 @@ const View: FC<Props> = ({ vin }: Props) => {
               title="Diagnostic Scan History"
               subtitle="View OBD-ii diagnostic scan events reported by compatible MATCO tools"
               onClick={() => {}}
+              disabled
               // TODO: Golo365 scans
             />
             <ActionableCard
