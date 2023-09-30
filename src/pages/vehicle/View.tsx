@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useRef, useState } from "react";
+import React, { ElementType, FC, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Edit, NavigateNext, PlaylistAdd } from "@mui/icons-material";
 import {
@@ -16,7 +16,7 @@ import FeedPost, { PostSkeleton } from "../../components/FeedPost";
 import FollowersDialog from "../../components/FollowersDialog";
 import ListAssignmentDialog from "../../components/ListAssignmentDialog";
 import Loader from "../../components/Loader";
-import { StatisticItem } from "../../components/ProfileStatistic";
+import { StatisticItem, StatisticItemProps } from "../../components/ProfileStatistic";
 import { ScrollToTop } from "../../components/ScrollToTop";
 import useIsFollowingVehicleLookup, { LookupStatus as IsFollowingStatus } from "../../hooks/useIsFollowingVehicleLookup";
 import { formatDateMMYY } from "../../utils/date";
@@ -48,11 +48,16 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
   margin: theme.spacing(-1),
 }));
 
+const StyledDetailsGrid = styled(Grid)({
+  borderBottom: "1px solid #ddd",
+});
+
 const StyledVehicleDetails = styled(Stack)(({ theme }) => ({
   borderRight: "1px solid #ddd",
-  paddingTop: theme.spacing(4),
   paddingBottom: theme.spacing(4),
   background: "#fff",
+  padding: theme.spacing(2),
+  paddingTop: theme.spacing(4),
   paddingLeft: "24px !important",
 }));
 
@@ -69,6 +74,28 @@ const StyledContainerTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(3),
   marginLeft: 0,
 }));
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  marginTop: theme.spacing(1),
+  marginRight: "auto",
+  textTransform: "none",
+}));
+
+const StyledPillGrid = styled(Grid)(({ theme }) => ({
+  padding: theme.spacing(2),
+  background: "#fff",
+  alignItems: "center",
+}));
+
+const StyledPill = styled(Grid)<{ component: ElementType } & StatisticItemProps>({
+  flex: "calc(1/2)",
+});
+
+const StyledActionsGrid = styled(Grid)({
+  paddingLeft: "0 !important",
+  position: "sticky",
+  top: "57px",
+});
 
 const View: FC<Props> = ({ vin }: Props) => {
   const { status, vehicle, editVehicle } = useVehicleProvider();
@@ -125,9 +152,9 @@ const View: FC<Props> = ({ vin }: Props) => {
           </StyledIconButton>
         </Tooltip>
       </StyledHeaderSection>
-      <Grid container columnSpacing={2} sx={{ borderBottom: "1px solid #ddd" }}>
+      <StyledDetailsGrid container columnSpacing={2}>
         <Grid item xs={12} md={8}>
-          <StyledVehicleDetails direction="row" alignItems="center" justifyContent="flex-start" gap={2} sx={{ p: 2 }}>
+          <StyledVehicleDetails direction="row" alignItems="center" justifyContent="flex-start" gap={2}>
             <Box>
               <StyledAvatar>
                 <ExpandableImage lowRes={vehicle.icon_photo} highRes={vehicle.poster_photo} alt={vehicle.vin} />
@@ -160,13 +187,13 @@ const View: FC<Props> = ({ vin }: Props) => {
               {isFollowingStatus === IsFollowingStatus.Loading ? (
                 <Skeleton variant="rectangular" width={100} height={32} sx={{ borderRadius: "8px" }} />
               ) : (
-                <Button variant="outlined" color="primary" onClick={toggleFollow} sx={{ mt: 1, mr: "auto", textTransform: "none" }}>{following ? "Unfollow" : "Follow"}</Button>
+                <StyledButton variant="outlined" color="primary" onClick={toggleFollow}>{following ? "Unfollow" : "Follow"}</StyledButton>
               )}
             </Stack>
           </StyledVehicleDetails>
         </Grid>
-        <Grid container item xs={0} md={4} gap={2} sx={{ p: 2, background: "#fff", alignItems: "center" }}>
-          <Grid
+        <StyledPillGrid container item xs={0} md={4} gap={2}>
+          <StyledPill
             component={StatisticItem}
             name="Followers"
             value={vehicle.follower_count}
@@ -174,9 +201,8 @@ const View: FC<Props> = ({ vin }: Props) => {
             xs={6}
             md={3}
             item
-            sx={{ flex: "calc(1/2)" }}
           />
-          <Grid
+          <StyledPill
             component={StatisticItem}
             name="Posts"
             value={vehicle.post_count}
@@ -184,19 +210,17 @@ const View: FC<Props> = ({ vin }: Props) => {
             xs={6}
             md={3}
             item
-            sx={{ flex: "calc(1/2)" }}
           />
-          <Grid
+          <StyledPill
             component={StatisticItem}
             name="Updated"
             value={formatDateMMYY(new Date(vehicle.updated))}
             xs={6}
             md={3}
             item
-            sx={{ flex: "calc(1/2)" }}
           />
-        </Grid>
-      </Grid>
+        </StyledPillGrid>
+      </StyledDetailsGrid>
       <Box>
         <Grid container columnSpacing={2} alignItems="flex-start">
           <Grid item md={12} lg={8} ref={postsContainer}>
@@ -221,19 +245,19 @@ const View: FC<Props> = ({ vin }: Props) => {
               )}
             </Box>
           </Grid>
-          <Grid item md={12} lg={4} sx={{ pl: "0 !important", position: "sticky", top: "57px" }}>
+          <StyledActionsGrid item md={12} lg={4}>
             <ActionableCard
+              // TODO: CARFAX integration
               title="CARFAX Service History"
               subtitle="Derived from CARFAX partner automotive service centers"
               disabled
-              // TODO: CARFAX integration
             />
             <ActionableCard
+              // TODO: Golo365 scans
               title="Diagnostic Scan History"
               subtitle="View OBD-ii diagnostic scan events reported by compatible MATCO tools"
               onClick={() => {}}
               disabled
-              // TODO: Golo365 scans
             />
             <ActionableCard
               title="Recalls"
@@ -245,7 +269,7 @@ const View: FC<Props> = ({ vin }: Props) => {
               subtitle="Perform full VIN decode of manufacturer options and features"
               onClick={() => setDecodeOpen(true)}
             />
-          </Grid>
+          </StyledActionsGrid>
         </Grid>
       </Box>
 
