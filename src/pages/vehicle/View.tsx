@@ -247,19 +247,6 @@ const View: FC<Props> = ({ vin }: Props) => {
           </Grid>
           <StyledActionsGrid item md={12} lg={4}>
             <ActionableCard
-              // TODO: CARFAX integration
-              title="CARFAX Service History"
-              subtitle="Derived from CARFAX partner automotive service centers"
-              disabled
-            />
-            <ActionableCard
-              // TODO: Golo365 scans
-              title="Diagnostic Scan History"
-              subtitle="View OBD-ii diagnostic scan events reported by compatible MATCO tools"
-              onClick={() => {}}
-              disabled
-            />
-            <ActionableCard
               title="Recalls"
               subtitle="Search for manufacturer recalls by year, make, and model"
               onClick={() => setRecallsOpen(true)}
@@ -268,6 +255,18 @@ const View: FC<Props> = ({ vin }: Props) => {
               title="VIN Decode"
               subtitle="Perform full VIN decode of manufacturer options and features"
               onClick={() => setDecodeOpen(true)}
+            />
+            <ActionableCard
+              // TODO: CARFAX integration - disabled due to API key
+              title="CARFAX Service History"
+              subtitle="Derived from CARFAX partner automotive service centers"
+              disabled
+            />
+            <ActionableCard
+              // TODO: Golo365 scans - Disabled due to CORS
+              title="Diagnostic Scan History"
+              subtitle="View OBD-ii diagnostic scan events reported by compatible MATCO tools"
+              disabled
             />
           </StyledActionsGrid>
         </Grid>
