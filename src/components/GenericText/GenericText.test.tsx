@@ -317,7 +317,7 @@ describe("GenericText > List Chips", () => {
 
   it("embeds by VINwiki Vehicle List links", async () => {
     jest.spyOn(global, "fetch").mockImplementation(() => Promise.resolve({
-      json: () => Promise.resolve({ status: STATUS_OK, list: { name: "A very real list" } }),
+      json: () => Promise.resolve({ status: STATUS_OK, list: { uuid: "abc", name: "A very real list" } }),
     } as Response));
 
     const { getByTestId } = render(
@@ -335,7 +335,7 @@ describe("GenericText > List Chips", () => {
 
   it("embeds by Better-VINwiki Vehicle List links", async () => {
     jest.spyOn(global, "fetch").mockImplementation(() => Promise.resolve({
-      json: () => Promise.resolve({ status: STATUS_OK, list: { name: "ABC Test List" } }),
+      json: () => Promise.resolve({ status: STATUS_OK, list: { uuid: "abc", name: "ABC Test List" } }),
     } as Response));
 
     const { getByTestId } = render(

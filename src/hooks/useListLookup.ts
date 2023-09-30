@@ -4,7 +4,7 @@ import { useAuthProvider } from "../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
 import { CacheKeys } from "../config/Cache";
 
-type Cache = Record<List["uuid"], List["name"]>;
+type Cache = Record<List["uuid"], List>;
 
 export enum LookupStatus {
   Loading = "loading",
@@ -16,21 +16,22 @@ export enum LookupStatus {
  * A hook to cache and lookup List information by UUID
  *
  * @param uuid the uuid to lookup
- * @returns [status, { name }]
+ * @param refetch if true, will refetch the list
+ * @returns [status, List | null]
  */
-const useListLookup = (uuid: List["uuid"]): [LookupStatus, { name: List["name"] | null }] => {
+const useListLookup = (uuid: List["uuid"], refetch = false): [LookupStatus, List | null] => {
   const { token } = useAuthProvider();
   const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.LIST_LOOKUP, {});
-  const cachedValue: List["name"] | null = cache[uuid] || null;
+  const cachedValue: List | null = cache[uuid] || null;
 
   // TODO: Two identical lookups will cause two network requests
   // find a way to prevent the 2nd request while the 1st is still loading
 
   const [status, setStatus] = useState<LookupStatus>(cachedValue ? LookupStatus.Success : LookupStatus.Loading);
-  const [name, setListName] = useState<List["name"] | null>(cachedValue);
+  const [list, setList] = useState<List | null>(cachedValue);
 
   useEffect(() => {
-    if (cachedValue || !token || !uuid) {
+    if ((cachedValue !== null && !refetch) || !token || !uuid) {
       return () => {};
     }
 
@@ -50,10 +51,11 @@ const useListLookup = (uuid: List["uuid"]): [LookupStatus, { name: List["name"] 
       });
 
       const { status, list } = await response?.json() || {};
-      if (status === STATUS_OK && !!list?.name) {
-        setCache((prev) => ({ ...prev, [uuid]: list.name }));
+      if (status === STATUS_OK && !!list?.uuid) {
+        delete list.vehicles;
+        setCache((prev) => ({ ...prev, [uuid]: list }));
         setStatus(LookupStatus.Success);
-        setListName(list.name);
+        setList(list);
       } else if (status === STATUS_ERROR) {
         setStatus(LookupStatus.Error);
       }
@@ -62,7 +64,7 @@ const useListLookup = (uuid: List["uuid"]): [LookupStatus, { name: List["name"] 
     return () => controller.abort();
   }, []);
 
-  return [status, { name }];
+  return [status, list];
 };
 
 export default useListLookup;

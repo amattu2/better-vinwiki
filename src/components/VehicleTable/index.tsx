@@ -1,16 +1,36 @@
-import React, { FC, useMemo, useState } from "react";
+import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
+  Box,
   Paper, Skeleton, Table, TableBody,
   TableCell, TableContainer, TableHead,
   TablePagination, TableRow, TableSortLabel,
   styled,
 } from "@mui/material";
 import Repeater from "../Repeater";
+import { ExpandableImage } from "../ExpandableImage";
 
 type Props = {
   status: "loading" | "success" | "error";
   vehicles: Vehicle[];
+  /**
+   * The total number of vehicles in the list
+   * Required for server pagination.
+   *
+   * @default vehicles.length
+   */
+  totalCount?: number;
+  /**
+   * A callback to be called when the page changes
+   *
+   * @param {number} page The new page number
+   * @param {number} remainingCount The number of vehicles remaining based on `vehicles.length`
+   * @returns {void}
+   */
+  onPageChange?: (page: number, remainingCount: number) => void;
+  /**
+   * A component to render when there are no vehicles in the list
+   */
   EmptyComponent?: React.FC;
 };
 
@@ -23,10 +43,11 @@ type Column = {
   comparator?: (a: T, b: T) => number;
 };
 
-const StyledVehicleImg = styled("img")({
+const StyledImageBox = styled(Box)({
   borderRadius: "8px",
   width: "75px",
   height: "75px",
+  overflow: "hidden",
 });
 
 const TableCellSkeleton: FC = () => (
@@ -48,7 +69,9 @@ const columns: Column[] = [
   {
     label: "Preview",
     value: ({ icon_photo, long_name }) => (
-      <StyledVehicleImg src={icon_photo} alt={`${long_name} preview`} />
+      <StyledImageBox>
+        <ExpandableImage lowRes={icon_photo} alt={long_name} />
+      </StyledImageBox>
     ),
   },
   {
@@ -84,12 +107,12 @@ const columns: Column[] = [
  * @param {Props} props
  * @returns {JSX.Element}
  */
-export const VehicleTable: FC<Props> = ({ status, vehicles, EmptyComponent }: Props) => {
+export const VehicleTable: FC<Props> = ({ status, vehicles, totalCount, onPageChange, EmptyComponent }: Props) => {
   const [order, setOrder] = useState<"asc" | "desc">("desc");
   const [orderBy, setOrderBy] = useState<Column>(columns[1]);
   const [page, setPage] = useState<number>(0);
   const [perPage, setPerPage] = useState<number>(20);
-  const [count, setCount] = useState<number>(0);
+  const lastPageRef = useRef<number>(0);
 
   const handleRequestSort = (column: Column) => {
     setOrder(orderBy === column && order === "asc" ? "desc" : "asc");
@@ -104,7 +127,6 @@ export const VehicleTable: FC<Props> = ({ status, vehicles, EmptyComponent }: Pr
 
   const dataset: T[] = useMemo(() => {
     if (!vehicles?.length || status !== "success") {
-      setCount(0);
       return [];
     }
 
@@ -114,9 +136,23 @@ export const VehicleTable: FC<Props> = ({ status, vehicles, EmptyComponent }: Pr
       sorted.reverse();
     }
 
-    setCount(sorted.length);
     return sorted.slice(page * perPage, (page * perPage) + perPage);
   }, [vehicles, perPage, page, orderBy, order]);
+
+  const count: number = useMemo(() => {
+    if (totalCount) {
+      return totalCount;
+    }
+
+    return vehicles?.length;
+  }, [vehicles, totalCount]);
+
+  useEffect(() => {
+    if (lastPageRef.current !== page) {
+      onPageChange?.(page, vehicles.length - ((page + 1) * perPage));
+      lastPageRef.current = page;
+    }
+  }, [page]);
 
   return (
     <Paper>
@@ -182,7 +218,7 @@ export const VehicleTable: FC<Props> = ({ status, vehicles, EmptyComponent }: Pr
             perPage === -1
             || !dataset
             || dataset.length === 0
-            || count <= (page + 1) * perPage
+            || vehicles.length <= (page + 1) * perPage
             || status === "loading",
         }}
         backIconButtonProps={{ disabled: page === 0 || status === "loading" }}

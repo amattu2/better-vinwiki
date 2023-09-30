@@ -16,9 +16,9 @@ type Props = {
  * @returns {JSX.Element}
  */
 const ListLinkChip: FC<Props> = ({ uuid }: Props) => {
-  const [status, { name }] = useListLookup(uuid);
+  const [status, list] = useListLookup(uuid);
 
-  if (status !== LookupStatus.Success || !name) {
+  if (status !== LookupStatus.Success || !list?.name) {
     return (
       <Link to={`/list/${uuid}`}>
         {`${window.origin}/list/${uuid}`}
@@ -30,7 +30,7 @@ const ListLinkChip: FC<Props> = ({ uuid }: Props) => {
     <Chip
       component={Link}
       icon={<ListAlt />}
-      label={name}
+      label={list.name}
       to={`/list/${uuid}`}
       size="small"
       data-testid="list-chip"

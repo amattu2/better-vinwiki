@@ -1,13 +1,11 @@
 import React, { useState, FC, useEffect, useMemo } from "react";
 import { useAuthProvider } from "./AuthProvider";
-import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
+import { ENDPOINTS, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
 
 export type ProviderState = {
   status: ProviderStatus;
-  list?: List;
   vehicles?: Vehicle[];
-  following?: boolean;
-  hasMore?: boolean;
+  hasNext?: boolean;
   next?: (count: number) => Promise<boolean>;
 };
 
@@ -22,7 +20,7 @@ const defaultState: ProviderState = { status: ProviderStatus.LOADING };
 
 const Context = React.createContext<ProviderState | null>(null);
 
-export const useListProvider = (): ProviderState => {
+export const useListVehiclesProvider = (): ProviderState => {
   const contextState = React.useContext(Context);
 
   if (contextState === null) {
@@ -32,51 +30,19 @@ export const useListProvider = (): ProviderState => {
   return contextState;
 };
 
-const fetchList = async (uuid: string, token: string): Promise<ListResponse | null> => {
-  const response = await fetch(ENDPOINTS.list + uuid, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const { status, list } = await response.json();
-  if (status === STATUS_OK) {
-    return list as ListResponse;
-  }
-
-  return null;
-};
-
-const fetchFollowing = async (uuid: string, token: string): Promise<boolean> => {
-  const response = await fetch(ENDPOINTS.list_is_following + uuid, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const { status, following } = await response.json();
-  if (status === STATUS_OK) {
-    return !!following;
-  }
-
-  return false;
-};
-
 type Props = {
   uuid: string;
   children?: React.ReactNode;
 };
 
-export const ListProvider: FC<Props> = ({ uuid, children }: Props) => {
+export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
   const { token } = useAuthProvider();
   const [state, setState] = useState<ProviderState>(defaultState);
   const [lastID, setLastID] = useState<string>("");
-  const [hasMore, setHasMore] = useState<boolean>(false);
+  const [hasNext, setHasNext] = useState<boolean>(false);
 
   const next = async (count = 1000) : Promise<boolean> => {
-    if (!token || !hasMore || !lastID) {
+    if (!token || !hasNext || !lastID) {
       return false;
     }
 
@@ -96,7 +62,7 @@ export const ListProvider: FC<Props> = ({ uuid, children }: Props) => {
         status: ProviderStatus.LOADED,
         vehicles: [...(prev.vehicles || []), ...(vehicles || [])],
       }));
-      setHasMore(!end);
+      setHasNext(!end);
       setLastID(last_id || "");
       return true;
     }
@@ -106,35 +72,44 @@ export const ListProvider: FC<Props> = ({ uuid, children }: Props) => {
 
   useEffect(() => {
     if (!token || !uuid) {
-      return;
+      return () => {};
     }
 
     setState(defaultState);
 
+    const controller = new AbortController();
+    const { signal } = controller;
+
     (async () => {
-      const [list, following] = (await Promise.allSettled([
-        fetchList(uuid, token),
-        fetchFollowing(uuid, token),
-      ])).map((r) => (r.status === "fulfilled" ? r.value : null));
+      const response = await fetch(`${ENDPOINTS.list_vehicles}${uuid}/${200}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        signal,
+      }).catch(({ name }) => {
+        if (name !== "AbortError") setState((prev) => ({ ...prev, status: ProviderStatus.ERROR }));
+        return null;
+      });
 
-      if (list) {
-        const { vehicles } = list as ListResponse;
-
-        setState({
+      const { status, vehicles, last_id, end } = await response?.json() || {};
+      if (status === STATUS_OK && vehicles) {
+        setState((prev) => ({
+          ...prev,
           status: ProviderStatus.LOADED,
-          list: list as List,
-          vehicles: vehicles?.vehicles,
-          following: following as boolean,
-        });
-        setHasMore(!vehicles?.end);
-        setLastID(vehicles?.last_id || "");
-      } else {
-        setState({ status: ProviderStatus.ERROR });
+          vehicles,
+        }));
+        setHasNext(!end);
+        setLastID(last_id || "");
+      } else if (status === STATUS_ERROR) {
+        setState((prev) => ({ ...prev, status: ProviderStatus.ERROR }));
       }
     })();
+
+    return () => controller.abort();
   }, [token, uuid]);
 
-  const value = useMemo(() => ({ ...state, next, hasMore }), [state, hasMore]);
+  const value = useMemo(() => ({ ...state, next, hasNext }), [state, hasNext]);
 
   return (
     <Context.Provider value={value}>
