@@ -39,7 +39,8 @@ const ProtectedRoutes = () => {
             <Routes>
               <Route path="/profile/:uuid?" element={<Profile />} />
               <Route path="/vehicle/:vin" element={<Vehicle />} />
-              <Route path="/list/:uuid" element={<List />} />
+              <Route path="/list/:uuid?" element={<List />} />
+              <Route path="/lists" element={<span>TODO</span>} />
               <Route path="/post/:uuid" element={<Post />} />
               <Route path="/search" element={<Search />} />
               <Route path="*" element={<Home />} />

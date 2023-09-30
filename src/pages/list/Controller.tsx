@@ -7,7 +7,7 @@ const Controller = () => {
   const { uuid } = useParams();
 
   if (!uuid) {
-    return <Navigate to="/" />;
+    return <Navigate to="/lists" />;
   }
 
   return (

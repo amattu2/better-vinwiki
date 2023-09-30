@@ -102,6 +102,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
       <StyledHeaderSection direction="row" alignItems="center" justifyContent="flex-start" gap={2}>
         <Breadcrumbs separator={<NavigateNext fontSize="small" />} sx={{ mr: "auto" }}>
           <StyledLink to="/">Home</StyledLink>
+          <StyledLink to="/lists">Lists</StyledLink>
           <Typography>{list.name}</Typography>
         </Breadcrumbs>
         {list.owner.uuid === profile?.uuid && (

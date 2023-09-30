@@ -1,13 +1,12 @@
-import React, { FC, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { ElementType, FC, useState } from 'react';
+import { Link, NavigateProps, useLocation } from 'react-router-dom';
 import {
   Code, DashboardOutlined, Logout, NotificationsActive,
-  PeopleOutline, SearchOutlined,
+  PeopleOutline, SearchOutlined, ListOutlined,
 } from '@mui/icons-material';
 import {
   Avatar, Badge, IconButton, Popover,
-  Tooltip, Typography, Box, Stack,
-  styled,
+  Tooltip, Typography, Box, Stack, styled,
 } from '@mui/material';
 import { useAuthProvider } from '../../Providers/AuthProvider';
 import { useNotificationCountProvider } from '../../Providers/NotificationCountProvider';
@@ -55,8 +54,9 @@ const StyledControlGroup = styled(Stack)({
   },
 });
 
-const StyledIconButton = styled(IconButton)({
+const StyledIconButton = styled(IconButton)<{ component?: ElementType, to?: NavigateProps["to"] }>({
   color: "rgba(0, 0, 0, 0.54)",
+  height: "47px",
 });
 
 const StyledLink = styled(Link)({
@@ -102,24 +102,25 @@ const Sidebar: FC = () => {
         </Avatar>
       </StyledAvatarBox>
       <StyledControlGroup direction="column" gap={1}>
-        <StyledIconButton disabled={pathname === "/"}>
-          <StyledLink to="/">
-            <Tooltip title="Feed" placement="right">
-              <DashboardOutlined />
-            </Tooltip>
-          </StyledLink>
+        <StyledIconButton component={StyledLink} to="/search" disabled={pathname === "/search"}>
+          <Tooltip title="Search" placement="right">
+            <SearchOutlined />
+          </Tooltip>
+        </StyledIconButton>
+        <StyledIconButton component={StyledLink} to="/" disabled={pathname === "/"}>
+          <Tooltip title="Feed" placement="right">
+            <DashboardOutlined />
+          </Tooltip>
+        </StyledIconButton>
+        <StyledIconButton component={StyledLink} to="/lists" disabled={pathname === "/lists"}>
+          <Tooltip title="Lists" placement="right">
+            <ListOutlined />
+          </Tooltip>
         </StyledIconButton>
         <StyledIconButton onClick={toggleDrawer}>
           <Tooltip title="Following" placement="right">
             <PeopleOutline />
           </Tooltip>
-        </StyledIconButton>
-        <StyledIconButton disabled={pathname === "/search"}>
-          <StyledLink to="/search">
-            <Tooltip title="Search" placement="right">
-              <SearchOutlined />
-            </Tooltip>
-          </StyledLink>
         </StyledIconButton>
       </StyledControlGroup>
       <StyledControlGroup direction="column" gap={1}>
