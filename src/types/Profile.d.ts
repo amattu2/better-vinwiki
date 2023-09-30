@@ -23,10 +23,7 @@ type Profile = {
   website_url: string;
 };
 
-type AuthProfile = Profile & {
-  followingVehicles?: VehicleFollower[];
-  recentVehicles?: Vehicle[];
-};
+type AuthProfile = Profile;
 
 type ProfileNotification = {
   created: string; // Unix timestamp

@@ -2,9 +2,9 @@ import React, { FC } from "react";
 import { Box, Typography, styled } from "@mui/material";
 import numeral from "numeral";
 
-type Props = {
+export type StatisticItemProps = {
   name: string,
-  value: number,
+  value: number | string,
   onClick?: () => void
 };
 
@@ -37,12 +37,12 @@ const StyledName = styled(Typography)(({ theme }) => ({
 /**
  * A statistic item for the profile page
  *
- * @param {Props} props
+ * @param {StatisticItemProps} props
  * @returns {JSX.Element}
  */
-export const StatisticItem: FC<Props> = ({ name, value, onClick }: Props) => (
+export const StatisticItem: FC<StatisticItemProps> = ({ name, value, onClick }: StatisticItemProps) => (
   <StyledBox onClick={onClick}>
-    <StyledValue variant="h3">{numeral(value).format("0a")}</StyledValue>
+    <StyledValue variant="h3">{typeof value === "number" ? numeral(value).format("0a") : value}</StyledValue>
     <StyledName>{name}</StyledName>
   </StyledBox>
 );

@@ -3,6 +3,7 @@ import { Autocomplete, Stack, TextField, Typography, debounce } from "@mui/mater
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
 import { formatVehicleName } from "../../utils/vehicle";
+import useFollowingVehiclesLookup from "../../hooks/useFollowingVehiclesLookup";
 
 type Props = {
   value?: Vehicle | null;
@@ -42,7 +43,7 @@ const fetchVehicles = async (searchValue: string, token: string, controller: Rea
  */
 export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
   const { token, profile } = useAuthProvider();
-  const { followingVehicles: recentVehicles } = profile || {};
+  const [, { vehicles: recentVehicles }] = useFollowingVehiclesLookup(profile!.uuid);
 
   const [searchValue, setSearchValue] = useState<string>("");
   const [options, setOptions] = useState<Vehicle[]>([]);

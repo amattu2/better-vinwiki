@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from "react";
+import React, { FC, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   AddPhotoAlternate, AddPhotoAlternateOutlined,
@@ -24,6 +24,10 @@ import ProfileAvatar from "../ProfileAvatar";
 import { VehicleSearch } from "../Typeahead/VehicleSearch";
 import { useFeedProvider } from "../../Providers/FeedProvider";
 
+type Props = {
+  vehicle?: Vehicle;
+};
+
 type PostForm = {
   type: FeedPost["type"];
   post_text: string;
@@ -40,7 +44,7 @@ const StyledCard = styled(Card, { shouldForwardProp: (p) => p !== "expanded" })(
   borderRadius: "8px",
   margin: "8px 0",
   border: "1px solid #e5e5e5",
-  zIndex: 10,
+  zIndex: expanded ? 10 : "unset",
 }));
 
 const StyledTab = styled(Tab)({
@@ -63,16 +67,17 @@ const StyledTextField = styled(TextField)({
  *
  * @returns {JSX.Element}
  */
-const CreatePost: FC = () => {
+const CreatePost: FC<Props> = ({ vehicle }: Props) => {
   const { profile, token } = useAuthProvider();
   const { addPost: addFeedPost } = useFeedProvider();
 
   const [expanded, setExpanded] = useState<boolean>(false);
-  const [activeStep, setActiveStep] = useState<number>(0);
-  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(vehicle || null);
+  const [activeStep, setActiveStep] = useState<number>(selectedVehicle ? 1 : 0);
   const [postType, setPostType] = useState<FeedPost["type"]>("generic");
   const [plateDecoderOpen, setPlateDecoderOpen] = useState<boolean>(false);
   const [posting, setPosting] = useState<boolean>(false);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const { register, watch, setValue, reset, resetField, control } = useForm<PostForm>();
   const postText = watch("post_text");
@@ -100,7 +105,14 @@ const CreatePost: FC = () => {
     reset();
   };
 
-  const setExpand = (expanded: boolean) => setExpanded(expanded);
+  const setExpand = (expanded: boolean) => {
+    setExpanded(expanded);
+    if (expanded) {
+      setTimeout(() => {
+        cardRef?.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+  };
 
   const selectVehicle = (e: React.SyntheticEvent, vehicle: Vehicle | null) => {
     setSelectedVehicle(vehicle);
@@ -194,7 +206,7 @@ const CreatePost: FC = () => {
     <>
       <Backdrop open={expanded} sx={{ zIndex: 9 }} />
       <ClickAwayListener onClickAway={() => setExpand(false)}>
-        <StyledCard expanded={expanded} elevation={expanded ? 12 : 0}>
+        <StyledCard expanded={expanded} elevation={expanded ? 12 : 0} ref={cardRef}>
           {(expanded && posting) && (
             <Loader fullscreen={false} />
           )}
@@ -213,7 +225,7 @@ const CreatePost: FC = () => {
           )}
           {expanded && (
             <Stepper activeStep={activeStep} orientation="vertical">
-              <Step completed={stepStatuses[0]}>
+              <Step disabled={!!vehicle} completed={stepStatuses[0]}>
                 <StepButton onClick={() => setActiveStep(0)}>Select a Vehicle</StepButton>
                 <StyledStepContent TransitionProps={{ unmountOnExit: false }}>
                   <Stack direction="row" gap={1} sx={{ mb: 1 }}>

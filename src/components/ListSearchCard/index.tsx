@@ -107,8 +107,8 @@ export const ListSearchCard: FC<Props> = ({ list, omitOwner } : Props) => {
               <GenericText content={description} />
             </Box>
             <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-              <Chip label={`${vehicle_count} vehicles`} />
-              <Chip label={`${follower_count} followers`} />
+              <Chip label={`${vehicle_count} vehicle${vehicle_count !== 1 ? "s" : ""}`} />
+              <Chip label={`${follower_count} follower${follower_count !== 1 ? "s" : ""}`} />
             </Stack>
           </Grid>
           {!omitOwner && (

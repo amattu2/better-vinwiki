@@ -4,7 +4,14 @@ import { useAuthProvider } from "../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
 import { CacheKeys } from "../config/Cache";
 
-type Cache = Record<Profile["uuid"], Profile[]>;
+export type LookupType = "Profile" | "Vehicle";
+
+type KeyType<T> =
+  T extends "Profile" ? Profile["uuid"] :
+    T extends "Vehicle" ? Vehicle["vin"] :
+      never;
+
+type Cache<T extends LookupType> = Record<KeyType<T>, Profile[]>;
 
 export enum LookupStatus {
   Loading = "loading",
@@ -13,22 +20,27 @@ export enum LookupStatus {
 }
 
 /**
- * A hook to cache and lookup profile followers by uuid
+ * A hook to cache and lookup followers for a model (Profile or Vehicle)
  *
- * @param uuid the uuid to verify against
- * @param refetch if true, will refetch the status
+ * @param {string} identifier the uuid or vin to verify against
+ * @param {LookupType} type the type of lookup to perform
+ * @param {boolean} [refetch] if true, will refetch the status
  * @returns [status, { followers }]
  */
-const useFollowersLookup = (uuid: Profile["uuid"], refetch = false): [LookupStatus, { followers: Profile[] | null }] => {
+const useFollowersLookup = <T extends LookupType>(identifier: KeyType<T>, type: T, refetch: boolean = false): [LookupStatus, { followers: Profile[] | null }] => {
   const { token } = useAuthProvider();
-  const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.PROFILE_FOLLOWERS, {});
-  const cachedValue: Profile[] | null = cache[uuid] || null;
+
+  const cacheKey = type === "Profile" ? CacheKeys.PROFILE_FOLLOWERS : CacheKeys.VEHICLE_FOLLOWERS;
+  const [cache, setCache] = useSessionStorage<Cache<T>>(cacheKey, {} as Cache<T>);
+  const cachedValue: Profile[] | null = cache[identifier] || null;
 
   const [status, setStatus] = useState<LookupStatus>(cachedValue ? LookupStatus.Success : LookupStatus.Loading);
   const [followers, setFollowers] = useState<Profile[] | null>(cachedValue);
 
+  const endpoint = type === "Profile" ? ENDPOINTS.followers : ENDPOINTS.vehicle_followers;
+
   useEffect(() => {
-    if ((cachedValue && !refetch) || !token || !uuid) {
+    if ((cachedValue && !refetch) || !token || !identifier) {
       return () => {};
     }
 
@@ -36,7 +48,7 @@ const useFollowersLookup = (uuid: Profile["uuid"], refetch = false): [LookupStat
     const { signal } = controller;
 
     (async () => {
-      const response = await fetch(ENDPOINTS.followers + uuid, {
+      const response = await fetch(endpoint + identifier, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -49,7 +61,7 @@ const useFollowersLookup = (uuid: Profile["uuid"], refetch = false): [LookupStat
 
       const { status, followers } = await response?.json() || {};
       if (status === STATUS_OK) {
-        setCache((prev) => ({ ...prev, [uuid]: followers }));
+        setCache((prev) => ({ ...prev, [identifier]: followers }));
         setStatus(LookupStatus.Success);
         setFollowers(followers);
       } else if (status === STATUS_ERROR) {
@@ -58,7 +70,7 @@ const useFollowersLookup = (uuid: Profile["uuid"], refetch = false): [LookupStat
     })();
 
     return () => controller.abort();
-  }, [uuid]);
+  }, [identifier, type]);
 
   return [status, { followers }];
 };

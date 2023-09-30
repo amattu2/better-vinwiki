@@ -128,7 +128,7 @@ export const FollowersDrawer: FC<Props> = ({ open, onClose }: Props) => {
                     </ListItemAvatar>
                     <ListItemText
                       primary={<Typography variant="body1" fontWeight={600}>{`@${username}`}</Typography>}
-                      secondary={`${follower_count} followers`}
+                      secondary={`${follower_count} follower${(parseInt(follower_count.toString(), 10)) !== 1 ? "s" : ""}`}
                     />
                   </ListItem>
                 );

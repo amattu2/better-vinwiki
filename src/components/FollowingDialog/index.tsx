@@ -43,6 +43,9 @@ const StyledLink = styled(Link)({
 const StyledDialogContent = styled(DialogContent)({
   padding: "0 !important",
   backgroundColor: "#f4f7fa",
+  "& .MuiList-root": {
+    padding: "0 !important",
+  },
   "& .MuiListItem-root:last-child": {
     borderBottom: "unset",
   },
@@ -76,7 +79,8 @@ const FollowingDialog: FC<Props> = ({ uuid, count, onClose }: Props) => {
   const [status, { following }] = useFollowingLookup(uuid, true);
   const [sort, setSort] = useState<"date" | "alpha">("alpha");
 
-  const skeletonCount = count > 0 && count < 8 ? count : 8;
+  const countToUse = status === LookupStatus.Success ? following?.length || count : count;
+  const skeletonCount = countToUse > 0 && countToUse < 8 ? countToUse : 8;
   const data: Profile[] = useMemo(() => {
     if (!following || status !== LookupStatus.Success) {
       return [];
@@ -114,7 +118,7 @@ const FollowingDialog: FC<Props> = ({ uuid, count, onClose }: Props) => {
           </ToggleButton>
         </ToggleButtonGroup>
       </DialogTitle>
-      <StyledDialogContent>
+      <StyledDialogContent dividers>
         {(status !== LookupStatus.Loading && data.length === 0) && (<NoContent />)}
         <List>
           {(status === LookupStatus.Loading) && (<Repeater count={skeletonCount} Component={ProfileSkeleton} />)}

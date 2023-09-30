@@ -45,7 +45,7 @@ const VehicleTableDialog: FC<Props> = ({ uuid, onClose }: Props) => {
       <DialogTitle>
         Following Vehicles
       </DialogTitle>
-      <StyledDialogContent>
+      <StyledDialogContent dividers>
         <VehicleTable
           status={lookupStatus}
           vehicles={vehicles || []}

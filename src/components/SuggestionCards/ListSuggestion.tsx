@@ -62,8 +62,8 @@ const SuggestionItem: FC<List> = (list: List) => {
               <StyledLink to={`/profile/${ownerUuid}`}>{username}</StyledLink>
             </Typography>
             <Stack direction="row" spacing={0.5} sx={{ mt: 0.5 }}>
-              <Chip label={`${vehicle_count} vehicles`} />
-              <Chip label={`${follower_count} followers`} />
+              <Chip label={`${vehicle_count} vehicle${vehicle_count !== 1 ? "s" : ""}`} />
+              <Chip label={`${follower_count} follower${follower_count !== 1 ? "s" : ""}`} />
             </Stack>
           </>
         )}

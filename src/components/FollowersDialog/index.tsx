@@ -21,10 +21,11 @@ import { Event, SortByAlpha } from '@mui/icons-material';
 import { cloneDeep } from 'lodash';
 import ProfileAvatar from '../ProfileAvatar';
 import Repeater from '../Repeater';
-import useFollowersLookup, { LookupStatus } from '../../hooks/useFollowersLookup';
+import useFollowersLookup, { LookupStatus, LookupType } from '../../hooks/useFollowersLookup';
 
 type Props = {
-  uuid: Profile["uuid"];
+  identifier: Profile["uuid"] | Vehicle["vin"];
+  type: LookupType;
   count: number;
   onClose: () => void;
 };
@@ -43,6 +44,9 @@ const StyledLink = styled(Link)({
 const StyledDialogContent = styled(DialogContent)({
   padding: "0 !important",
   backgroundColor: "#f4f7fa",
+  "& .MuiList-root": {
+    padding: "0 !important",
+  },
   "& .MuiListItem-root:last-child": {
     borderBottom: "unset",
   },
@@ -67,16 +71,17 @@ const ProfileSkeleton: FC = () => (
 );
 
 /**
- * A dialog that displays the Followers of a user
+ * A dialog that displays the Followers of a model (Profile, vehicle, etc)
  *
  * @param {Props} props
  * @returns {JSX.Element}
  */
-const FollowersDialog: FC<Props> = ({ uuid, count, onClose }: Props) => {
-  const [status, { followers }] = useFollowersLookup(uuid, true);
+const FollowersDialog: FC<Props> = ({ identifier, type, count, onClose }: Props) => {
+  const [status, { followers }] = useFollowersLookup(identifier, type, true);
   const [sort, setSort] = useState<"date" | "alpha">("alpha");
 
-  const skeletonCount = count > 0 && count < 8 ? count : 8;
+  const countToUse = status === LookupStatus.Success ? followers?.length || count : count;
+  const skeletonCount = countToUse > 0 && countToUse < 8 ? countToUse : 8;
   const data: Profile[] = useMemo(() => {
     if (!followers || status !== LookupStatus.Success) {
       return [];
@@ -114,7 +119,7 @@ const FollowersDialog: FC<Props> = ({ uuid, count, onClose }: Props) => {
           </ToggleButton>
         </ToggleButtonGroup>
       </DialogTitle>
-      <StyledDialogContent>
+      <StyledDialogContent dividers>
         {(status !== LookupStatus.Loading && data.length === 0) && (<NoFollowers />)}
         <List>
           {(status === LookupStatus.Loading) && (<Repeater count={skeletonCount} Component={ProfileSkeleton} />)}

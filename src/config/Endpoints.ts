@@ -1,6 +1,8 @@
 export const API_URL: string = 'https://rest.vinwiki.com/';
 export const MEDIA_URL: string = "https://media.vinwiki.com/media/";
 
+export const DEFAULT_DATE = "1970-01-01T00:00:00+00:00";
+
 export const ENDPOINTS = {
   /* Auth Endpoints */
   authenticate: `${API_URL}auth/authenticate`,
@@ -30,7 +32,7 @@ export const ENDPOINTS = {
   vehicle: `${API_URL}vehicle/vin/`,
   vehicle_update: `${API_URL}vehicle/vin/`,
   vehicle_search: `${API_URL}vehicle/search/`,
-  vehicle_feed: `${API_URL}/vehicle/feed/`,
+  vehicle_feed: `${API_URL}vehicle/feed/`,
   vehicle_is_following: `${API_URL}vehicle/is_following/`,
   vehicle_follow: `${API_URL}vehicle/follow/`,
   vehicle_followers: `${API_URL}vehicle/followers/`,
@@ -62,6 +64,7 @@ export const ENDPOINTS = {
 export const MEDIA_ENDPOINTS = {
   /* Vehicle Endpoints */
   vehicle_image_add: `${MEDIA_URL}add/photo/vehicle/`,
+  vehicle_image: `${MEDIA_URL}photo/vehicle/`,
   person_image_add: `${MEDIA_URL}photo/person/`,
 };
 

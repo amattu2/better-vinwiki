@@ -3,15 +3,15 @@ import { Delete, MoreVert } from "@mui/icons-material";
 import {
   Card, CardContent, IconButton,
   ListItemIcon, ListItemText, Menu,
-  MenuItem, Typography, styled,
+  MenuItem, Skeleton, Typography, styled,
 } from "@mui/material";
-import { useAuthProvider } from "../../Providers/AuthProvider";
-import { useFeedProvider } from "../../Providers/FeedProvider";
-import { ENDPOINTS } from "../../config/Endpoints";
-import { formatDateTime } from "../../utils/date";
-import GenericText from "../GenericText/GenericText";
-import DeletePostDialog from "./Components/DeletePostDialog";
-import ProfileBit from "./Components/PostProfile";
+import { useAuthProvider } from "../../../Providers/AuthProvider";
+import { useFeedProvider } from "../../../Providers/FeedProvider";
+import { ENDPOINTS } from "../../../config/Endpoints";
+import { formatDateTime } from "../../../utils/date";
+import GenericText from "../../GenericText/GenericText";
+import DeletePostDialog from "../Components/DeletePostDialog";
+import ProfileBit, { PostProfileSkeleton } from "../Components/PostProfile";
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",
@@ -26,6 +26,27 @@ const StyledMenuButton = styled(IconButton)({
   top: "8px",
 });
 
+/**
+ * A skeleton representation of ListAddPost
+ *
+ * @returns {JSX.Element}
+ */
+export const ListAddPostSkeleton: FC = () => (
+  <StyledCard elevation={0} sx={{ "&:hover": { cursor: "initial", borderColor: "#e5e5e5" } }}>
+    <CardContent>
+      <PostProfileSkeleton filled={false} />
+      <Skeleton variant="text" width={375} sx={{ fontSize: "0.875rem", mb: 1, ml: "8px" }} animation="wave" />
+      <Skeleton variant="text" width={150} sx={{ fontSize: "12px", ml: "8px" }} animation="wave" />
+    </CardContent>
+  </StyledCard>
+);
+
+/**
+ * A post for the `list_add` type
+ *
+ * @param {FeedPostProps} post
+ * @returns {JSX.Element}
+ */
 const ListAddPost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
   const { token, profile } = useAuthProvider();
   const { removePost: deletePostByUUID } = useFeedProvider();

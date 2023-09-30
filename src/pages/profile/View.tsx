@@ -50,11 +50,14 @@ const StyledTab = styled(Tab)({
 
 const StyledHeaderSection = styled(Stack)(({ theme }) => ({
   padding: `${theme.spacing(2)} ${theme.spacing(3)}`,
+  borderBottom: "1px solid #ddd",
   background: "#fff",
+  position: "sticky",
+  top: 0,
+  zIndex: 8,
 }));
 
 const StyledProfileDetails = styled(Stack)(({ theme }) => ({
-  borderTop: "1px solid #ddd",
   borderBottom: "1px solid #ddd",
   paddingTop: theme.spacing(4),
   paddingBottom: theme.spacing(4),
@@ -101,6 +104,10 @@ const StyledTabBox = styled(Box)(({ theme }) => ({
   paddingRight: theme.spacing(2),
 }));
 
+const StyledIconButton = styled(IconButton)(({ theme }) => ({
+  margin: theme.spacing(-1),
+}));
+
 const StyledTimelineContent = styled(TimelineContent)({
   "&.MuiTimelineContent-root": {
     textAlign: "unset !important",
@@ -124,7 +131,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
   const { status: feedStatus, posts, hasNext, next } = useFeedProvider();
   const postPanelRef = useRef<HTMLDivElement>(null);
 
-  const [{ status: isFollowingStatus, following }, toggleFollow] = useIsFollowingLookup(uuid, true);
+  const [{ status: isFollowingStatus, following }, toggleFollow] = useIsFollowingLookup(uuid);
   const [listLookupStatus, lists] = useProfileListsLookup(uuid, true);
   const [listsOpen, setListsOpen] = useState<boolean>(false);
   const [followersOpen, setFollowersOpen] = useState<boolean>(false);
@@ -171,9 +178,9 @@ const View: FC<Props> = ({ uuid }: Props) => {
         </Breadcrumbs>
         {profile.uuid === authProfile?.uuid && (
           <Tooltip title="Edit Profile" arrow>
-            <IconButton onClick={() => setEditOpen(true)}>
+            <StyledIconButton onClick={() => setEditOpen(true)}>
               <Edit />
-            </IconButton>
+            </StyledIconButton>
           </Tooltip>
         )}
       </StyledHeaderSection>
@@ -314,9 +321,9 @@ const View: FC<Props> = ({ uuid }: Props) => {
         </TabContext>
       </StyledProfileBox>
 
-      <ScrollToTop />
+      <ScrollToTop topGap={false} />
       {(lists && listsOpen) && <ListsDialog lists={lists} onClose={() => setListsOpen(false)} />}
-      {(profile.follower_count > 0 && followersOpen) && <FollowersDialog uuid={uuid} count={profile.follower_count} onClose={() => setFollowersOpen(false)} />}
+      {(profile.follower_count > 0 && followersOpen) && <FollowersDialog identifier={uuid} type="Profile" count={profile.follower_count} onClose={() => setFollowersOpen(false)} />}
       {(profile.following_count > 0 && followingOpen) && <FollowingDialog uuid={uuid} count={profile.following_count} onClose={() => setFollowingOpen(false)} />}
       {(profile.following_vehicle_count > 0 && vehiclesOpen) && <VehicleTableDialog uuid={uuid} onClose={() => setVehiclesOpen(false)} />}
       {(authProfile?.uuid === uuid && editOpen) && <EditProfileDialog profile={profile} onClose={() => setEditOpen(false)} onConfirm={editProfile} />}
