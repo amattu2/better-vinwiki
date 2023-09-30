@@ -4,12 +4,13 @@ import { useAuthProvider } from "../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
 import { CacheKeys } from "../config/Cache";
 
-export type LookupType = "Profile" | "Vehicle";
+export type LookupType = "Profile" | "Vehicle" | "List";
 
 type KeyType<T> =
   T extends "Profile" ? Profile["uuid"] :
     T extends "Vehicle" ? Vehicle["vin"] :
-      never;
+      T extends "List" ? List["uuid"] :
+        never;
 
 type Cache<T extends LookupType> = Record<KeyType<T>, Profile[]>;
 
@@ -19,8 +20,34 @@ export enum LookupStatus {
   Error = "error",
 }
 
+const getCacheKey = <T extends LookupType>(type: T): string => {
+  switch (type) {
+    case "Profile":
+      return CacheKeys.PROFILE_FOLLOWERS;
+    case "Vehicle":
+      return CacheKeys.VEHICLE_FOLLOWERS;
+    case "List":
+      return CacheKeys.LIST_FOLLOWERS;
+    default:
+      throw new Error("Invalid LookupType");
+  }
+};
+
+const getEndpoint = <T extends LookupType>(type: T): string => {
+  switch (type) {
+    case "Profile":
+      return ENDPOINTS.followers;
+    case "Vehicle":
+      return ENDPOINTS.vehicle_followers;
+    case "List":
+      return ENDPOINTS.list_followers;
+    default:
+      throw new Error("Invalid LookupType");
+  }
+};
+
 /**
- * A hook to cache and lookup followers for a model (Profile or Vehicle)
+ * A hook to cache and lookup followers for a model (Profile, Vehicle, List)
  *
  * @param {string} identifier the uuid or vin to verify against
  * @param {LookupType} type the type of lookup to perform
@@ -30,14 +57,11 @@ export enum LookupStatus {
 const useFollowersLookup = <T extends LookupType>(identifier: KeyType<T>, type: T, refetch: boolean = false): [LookupStatus, { followers: Profile[] | null }] => {
   const { token } = useAuthProvider();
 
-  const cacheKey = type === "Profile" ? CacheKeys.PROFILE_FOLLOWERS : CacheKeys.VEHICLE_FOLLOWERS;
-  const [cache, setCache] = useSessionStorage<Cache<T>>(cacheKey, {} as Cache<T>);
+  const [cache, setCache] = useSessionStorage<Cache<T>>(getCacheKey(type), {} as Cache<T>);
   const cachedValue: Profile[] | null = cache[identifier] || null;
 
   const [status, setStatus] = useState<LookupStatus>(cachedValue ? LookupStatus.Success : LookupStatus.Loading);
   const [followers, setFollowers] = useState<Profile[] | null>(cachedValue);
-
-  const endpoint = type === "Profile" ? ENDPOINTS.followers : ENDPOINTS.vehicle_followers;
 
   useEffect(() => {
     if ((cachedValue && !refetch) || !token || !identifier) {
@@ -48,7 +72,7 @@ const useFollowersLookup = <T extends LookupType>(identifier: KeyType<T>, type: 
     const { signal } = controller;
 
     (async () => {
-      const response = await fetch(endpoint + identifier, {
+      const response = await fetch(getEndpoint(type) + identifier, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
