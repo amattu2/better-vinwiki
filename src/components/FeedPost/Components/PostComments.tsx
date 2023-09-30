@@ -33,9 +33,7 @@ const StyledCommentStack = styled(Stack)({
 });
 
 /**
- * A representation of a post's comments.
- *
- * Handles fetching, creating, and displaying comments.
+ * A representation of a post's comments. Handles fetching, creating, and displaying comments.
  *
  * Pass `Infinity` to `limit` to display all comments.
  *
@@ -47,6 +45,7 @@ const PostComments: FC<Props> = ({ uuid, limit = 4, count: commentCount }: Props
   const { register, watch, handleSubmit, setValue } = useForm<CommentForm>();
   const isFormValid = useMemo(() => watch("text")?.length > 0 && watch("text")?.length <= 500, [watch("text")]);
 
+  const [postAuthor, setPostAuthor] = useState<Profile["uuid"]>("");
   const [count, setCount] = useState<number>(commentCount);
   const [loading, setLoading] = useState<boolean>(count > 0);
   const [comments, setComments] = useState<PostComment[]>([]);
@@ -106,10 +105,11 @@ const PostComments: FC<Props> = ({ uuid, limit = 4, count: commentCount }: Props
         signal,
       }).catch(() => null);
 
-      const { status, comments } = await response?.json() || {};
+      const { status, post, comments } = await response?.json() || {};
       if (status === STATUS_OK) {
         comments?.sort((a: PostComment, b: PostComment) => (new Date(b.created).getTime() - new Date(a.created).getTime()));
         setComments(comments);
+        setPostAuthor(post?.person?.uuid || "");
       }
 
       setLoading(false);
@@ -148,7 +148,13 @@ const PostComments: FC<Props> = ({ uuid, limit = 4, count: commentCount }: Props
           {!loading ? (
             <>
               {comments.slice(0, limit).map((comment: PostComment) => (
-                <PostComment key={comment.uuid} comment={comment} onDelete={onCommentDelete} divider />
+                <PostComment
+                  key={comment.uuid}
+                  isAuthor={comment?.person?.uuid === postAuthor}
+                  comment={comment}
+                  onDelete={onCommentDelete}
+                  divider
+                />
               ))}
               {count > limit && (
                 <Typography variant="body2" textAlign="center">
