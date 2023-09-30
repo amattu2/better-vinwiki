@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useAuthProvider } from "../../../Providers/AuthProvider";
-import { useFeedProvider } from "../../../Providers/FeedProvider";
+import usePostDeleteWrapper from "../../../hooks/usePostDeleteWrapper";
 import { ENDPOINTS } from "../../../config/Endpoints";
 import { formatDateTime } from "../../../utils/date";
 import { ExpandableImage } from "../../ExpandableImage";
@@ -17,24 +17,24 @@ import DeletePostDialog from "../Components/DeletePostDialog";
 import PostComments from "../Components/PostComments";
 import ProfileBit, { PostProfileSkeleton } from "../Components/PostProfile";
 
-const StyledCard = styled(Card)({
+const StyledCard = styled(Card, { shouldForwardProp: (p) => p !== "hoverAction" })(({ hoverAction } : { hoverAction?: boolean }) => ({
   borderRadius: "8px",
   marginBottom: "8px",
   border: "1px solid #e5e5e5",
   position: "relative",
   transition: "border-color 0.2s ease-out",
-  "&:hover": {
+  [hoverAction ? "&:hover" : ""]: {
     borderColor: "#bdbdbd",
     cursor: "pointer",
   },
-});
+}));
 
-const StyledImageBox = styled(Box)({
-  height: "300px",
+const StyledImageBox = styled(Box, { shouldForwardProp: (p) => p !== "isIndividual" })(({ isIndividual } : Pick<FeedPostProps, "isIndividual">) => ({
+  height: isIndividual ? "450px" : "300px",
   maxWidth: "100%",
   overflow: "hidden",
   borderRadius: "8px",
-});
+}));
 
 const StyledMenuButton = styled(IconButton)({
   position: "absolute",
@@ -74,9 +74,9 @@ export const VerticalImagePostSkeleton: FC = () => (
  * @param {FeedPostProps} post
  * @returns {JSX.Element}
  */
-const VerticalImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
+const VerticalImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, isIndividual, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
   const { token, profile } = useAuthProvider();
-  const { removePost: deletePostByUUID } = useFeedProvider();
+  const { removePost: deletePostByUUID } = usePostDeleteWrapper();
   const { uuid, image, comment_count, post_text, person } = post;
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -111,7 +111,7 @@ const VerticalImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }:
     if (event.target !== rootRef.current) {
       return;
     }
-    if (isPreview) {
+    if (isPreview || isIndividual) {
       return;
     }
 
@@ -124,7 +124,7 @@ const VerticalImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }:
   };
 
   return (
-    <StyledCard elevation={0} onClick={openPost} ref={ref}>
+    <StyledCard elevation={0} onClick={openPost} ref={ref} hoverAction={!isPreview && !isIndividual}>
       <CardContent ref={rootRef}>
         <Stack direction="column" gap={1}>
           <Box>
@@ -133,7 +133,7 @@ const VerticalImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }:
               <GenericText content={post_text} />
             </Stack>
           </Box>
-          <StyledImageBox>
+          <StyledImageBox isIndividual={isIndividual}>
             <ExpandableImage lowRes={image.thumb} highRes={image.large} alt={post_text} />
           </StyledImageBox>
           <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600} textAlign="right">
@@ -152,7 +152,7 @@ const VerticalImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }:
             )}
           </Typography>
         </Stack>
-        {!isPreview && <PostComments key={uuid} uuid={uuid} count={comment_count} />}
+        {(!isPreview && !isIndividual) && <PostComments key={uuid} uuid={uuid} count={comment_count} />}
       </CardContent>
       {!isPreview && (
         <StyledMenuButton size="small" onClick={menuToggle}>

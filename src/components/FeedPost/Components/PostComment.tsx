@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { Delete, MoreVert } from "@mui/icons-material";
 import {
   Collapse, Divider, IconButton, ListItemIcon,
-  ListItemText, Menu, MenuItem, Stack,
-  Typography, styled,
+  ListItemText, Menu, MenuItem, Skeleton, Stack,
+  Typography, styled, Box,
 } from "@mui/material";
 import { ENDPOINTS } from "../../../config/Endpoints";
 import { useAuthProvider } from "../../../Providers/AuthProvider";
@@ -34,6 +34,17 @@ const StyledMenuButton = styled(IconButton)({
   right: "8px",
   top: "8px",
 });
+
+export const CommentSkeleton: FC = () => (
+  <Stack direction="row" spacing={1} alignItems="center">
+    <Skeleton variant="circular" width={45} height={45} />
+    <Box sx={{ flexGrow: 1 }}>
+      <Skeleton />
+      <Skeleton width="60%" />
+      <Skeleton width="20%" />
+    </Box>
+  </Stack>
+);
 
 /**
  * A representation of a Feed Post Comment

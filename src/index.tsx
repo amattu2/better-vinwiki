@@ -15,6 +15,7 @@ import Logout from './pages/logout/Controller';
 import Profile from './pages/profile/Controller';
 import Search from './pages/search/Controller';
 import Vehicle from './pages/vehicle/Controller';
+import Post from './pages/post/Controller';
 import reportWebVitals from './reportWebVitals';
 import { CacheKeys } from './config/Cache';
 
@@ -39,7 +40,7 @@ const ProtectedRoutes = () => {
               <Route path="/profile/:uuid?" element={<Profile />} />
               <Route path="/vehicle/:vin" element={<Vehicle />} />
               <Route path="/list/:uuid" element={<List />} />
-              <Route path="/post/:uuid" element={<p>Todo</p>} />
+              <Route path="/post/:uuid" element={<Post />} />
               <Route path="/search" element={<Search />} />
               <Route path="*" element={<Home />} />
             </Routes>
