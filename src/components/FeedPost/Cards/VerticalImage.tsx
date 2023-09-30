@@ -1,21 +1,21 @@
 import React, { FC, Ref, forwardRef, useRef, useState } from "react";
 import { Delete, MoreVert, Share } from "@mui/icons-material";
 import {
-  Box, Card, CardContent, Grid,
-  IconButton, ListItemIcon, ListItemText,
-  Menu, MenuItem, Stack,
-  Typography, styled,
+  Box, Card, CardContent, IconButton,
+  ListItemIcon, ListItemText, Menu,
+  MenuItem, Stack, Typography,
+  styled,
 } from "@mui/material";
 import { useCopyToClipboard } from "usehooks-ts";
-import { useAuthProvider } from "../../Providers/AuthProvider";
-import { useFeedProvider } from "../../Providers/FeedProvider";
-import { ENDPOINTS } from "../../config/Endpoints";
-import { formatDateTime } from "../../utils/date";
-import { ExpandableImage } from "../ExpandableImage";
-import GenericText from "../GenericText/GenericText";
-import DeletePostDialog from "./Components/DeletePostDialog";
-import PostComments from "./Components/PostComments";
-import ProfileBit from "./Components/PostProfile";
+import { useAuthProvider } from "../../../Providers/AuthProvider";
+import { useFeedProvider } from "../../../Providers/FeedProvider";
+import { ENDPOINTS } from "../../../config/Endpoints";
+import { formatDateTime } from "../../../utils/date";
+import { ExpandableImage } from "../../ExpandableImage";
+import GenericText from "../../GenericText/GenericText";
+import DeletePostDialog from "../Components/DeletePostDialog";
+import PostComments from "../Components/PostComments";
+import ProfileBit from "../Components/PostProfile";
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",
@@ -30,11 +30,10 @@ const StyledCard = styled(Card)({
 });
 
 const StyledImageBox = styled(Box)({
-  height: "250px",
-  maxWidth: "95%",
+  height: "300px",
+  maxWidth: "100%",
   overflow: "hidden",
   borderRadius: "8px",
-  marginLeft: "8px",
 });
 
 const StyledMenuButton = styled(IconButton)({
@@ -44,12 +43,13 @@ const StyledMenuButton = styled(IconButton)({
 });
 
 /**
- * A post with an image attached
+ * A extension to the Image card but oriented vertically,
+ * designed for images with lots of text
  *
  * @param {FeedPostProps} post
  * @returns {JSX.Element}
  */
-const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, omitComments, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
+const VerticalImage: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
   const { token, profile } = useAuthProvider();
   const { removePost: deletePostByUUID } = useFeedProvider();
   const { uuid, image, comment_count, post_text, person } = post;
@@ -101,37 +101,33 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, omitComments, ...p
   return (
     <StyledCard elevation={0} onClick={openPost} ref={ref}>
       <CardContent ref={rootRef}>
-        <Grid container>
-          <Grid item xs={8}>
-            <StyledImageBox>
-              <ExpandableImage lowRes={image.thumb} highRes={image.large} alt={post_text} />
-            </StyledImageBox>
-          </Grid>
-          <Grid item xs={4}>
-            <Stack gap={1} direction="column" height="100%">
+        <Stack direction="column" gap={1}>
+          <Box>
+            <Stack gap={1}>
               <ProfileBit post={post} />
-              <Box flexGrow={1}>
-                <GenericText content={post_text} />
-              </Box>
-              <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600}>
-                {formatDateTime(new Date(post.post_date))}
-                {post.locale && (
-                  <>
-                    {" • "}
-                    {post.locale}
-                  </>
-                )}
-                {(post.client && !["web", "vinbot"].includes(post.client)) && (
-                  <>
-                    {" • "}
-                    {post.client}
-                  </>
-                )}
-              </Typography>
+              <GenericText content={post_text} />
             </Stack>
-          </Grid>
-        </Grid>
-        {(!isPreview && !omitComments) && <PostComments key={uuid} uuid={uuid} count={comment_count} />}
+          </Box>
+          <StyledImageBox>
+            <ExpandableImage lowRes={image.thumb} highRes={image.large} alt={post_text} />
+          </StyledImageBox>
+          <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600} textAlign="right">
+            {formatDateTime(new Date(post.post_date))}
+            {post.locale && (
+              <>
+                {" • "}
+                {post.locale}
+              </>
+            )}
+            {(post.client && !["web", "vinbot"].includes(post.client)) && (
+              <>
+                {" • "}
+                {post.client}
+              </>
+            )}
+          </Typography>
+        </Stack>
+        {!isPreview && <PostComments key={uuid} uuid={uuid} count={comment_count} />}
       </CardContent>
       {!isPreview && (
         <StyledMenuButton size="small" onClick={menuToggle}>
@@ -164,4 +160,4 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, omitComments, ...p
   );
 });
 
-export default ImagePost;
+export default VerticalImage;

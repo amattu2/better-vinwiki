@@ -5,13 +5,13 @@ import {
   ListItemIcon, ListItemText, Menu,
   MenuItem, Typography, styled,
 } from "@mui/material";
-import { useAuthProvider } from "../../Providers/AuthProvider";
-import { useFeedProvider } from "../../Providers/FeedProvider";
-import { ENDPOINTS } from "../../config/Endpoints";
-import { formatDateTime } from "../../utils/date";
-import GenericText from "../GenericText/GenericText";
-import DeletePostDialog from "./Components/DeletePostDialog";
-import ProfileBit from "./Components/PostProfile";
+import { useAuthProvider } from "../../../Providers/AuthProvider";
+import { useFeedProvider } from "../../../Providers/FeedProvider";
+import { ENDPOINTS } from "../../../config/Endpoints";
+import { formatDateTime } from "../../../utils/date";
+import GenericText from "../../GenericText/GenericText";
+import DeletePostDialog from "../Components/DeletePostDialog";
+import ProfileBit from "../Components/PostProfile";
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",

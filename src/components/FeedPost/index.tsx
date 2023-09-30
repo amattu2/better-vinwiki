@@ -1,8 +1,8 @@
 import React, { Ref, forwardRef } from "react";
-import ImagePost from "./Image";
-import VerticalImagePost from "./VerticalImage";
-import TextPost from "./Text";
-import ListAddPost from "./ListAdd";
+import ImagePost from "./Cards/Image";
+import VerticalImagePost from "./Cards/VerticalImage";
+import TextPost from "./Cards/Text";
+import ListAddPost from "./Cards/ListAdd";
 
 export default forwardRef((props: FeedPostProps, ref: Ref<HTMLDivElement>) => {
   switch (props.type) {

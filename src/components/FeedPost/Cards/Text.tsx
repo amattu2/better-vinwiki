@@ -6,14 +6,14 @@ import {
   MenuItem, Typography, styled,
 } from "@mui/material";
 import { useCopyToClipboard } from "usehooks-ts";
-import { useAuthProvider } from "../../Providers/AuthProvider";
-import { useFeedProvider } from "../../Providers/FeedProvider";
-import { ENDPOINTS } from "../../config/Endpoints";
-import { formatDateTime } from "../../utils/date";
-import GenericText from "../GenericText/GenericText";
-import DeletePostDialog from "./Components/DeletePostDialog";
-import PostComments from "./Components/PostComments";
-import ProfileBit from "./Components/PostProfile";
+import { useAuthProvider } from "../../../Providers/AuthProvider";
+import { useFeedProvider } from "../../../Providers/FeedProvider";
+import { ENDPOINTS } from "../../../config/Endpoints";
+import { formatDateTime } from "../../../utils/date";
+import GenericText from "../../GenericText/GenericText";
+import DeletePostDialog from "../Components/DeletePostDialog";
+import PostComments from "../Components/PostComments";
+import ProfileBit from "../Components/PostProfile";
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",
