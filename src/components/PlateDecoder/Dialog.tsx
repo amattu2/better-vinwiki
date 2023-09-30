@@ -60,7 +60,7 @@ const ResultItem : FC<{ vehicle: PlateDecodeResponse, onCancel: () => void }> = 
           )}
           secondary={vin}
         />
-        <Button onClick={onCancel}>
+        <Button onClick={onCancel} color="error">
           Not It
         </Button>
       </ListItem>
