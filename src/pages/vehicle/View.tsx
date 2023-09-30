@@ -11,7 +11,7 @@ import { ProviderStatus as VehicleProviderStatus, useVehicleProvider } from "../
 import CreatePost from "../../components/CreatePost";
 import EditVehicleDialog from "../../components/EditVehicleDialog";
 import { ExpandableImage } from "../../components/ExpandableImage";
-import FeedPost from "../../components/FeedPost";
+import FeedPost, { PostSkeleton } from "../../components/FeedPost";
 import FollowersDialog from "../../components/FollowersDialog";
 import ListAssignmentDialog from "../../components/ListAssignmentDialog";
 import Loader from "../../components/Loader";
@@ -23,6 +23,7 @@ import { formatVehicleName } from "../../utils/vehicle";
 import ActionableCard from "../../components/ActionableCard";
 import VinDecodeDialog from "../../components/VinDecodeDialog";
 import RecallLookupDialog from "../../components/RecallLookupDialog";
+import Repeater from "../../components/Repeater";
 
 type Props = {
   vin: Vehicle["vin"];
@@ -70,7 +71,7 @@ const StyledContainerTitle = styled(Typography)(({ theme }) => ({
 
 const View: FC<Props> = ({ vin }: Props) => {
   const { status, vehicle, editVehicle } = useVehicleProvider();
-  const { status: postStatus, posts, hasNext, next } = useFeedProvider();
+  const { status: feedStatus, posts, hasNext, next } = useFeedProvider();
   const [{ status: isFollowingStatus, following }, toggleFollow] = useIsFollowingVehicleLookup(vin);
   const [limit, setLimit] = useState<number>(15);
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
@@ -201,9 +202,9 @@ const View: FC<Props> = ({ vin }: Props) => {
             <Box sx={{ p: 2, pt: 0 }}>
               <StyledContainerTitle variant="h5">Posts</StyledContainerTitle>
               <CreatePost vehicle={vehicle} />
-              {/* TODO: loading skeleton using alternating post types automatically */}
-              {slicedPosts?.map((post) => (<FeedPost key={post.uuid} {...post} />))}
-              {(postStatus === FeedProviderStatus.LOADED && slicedPosts.length === 0) && (
+              {feedStatus === FeedProviderStatus.LOADING && (<Repeater count={3} Component={PostSkeleton} />)}
+              {feedStatus === FeedProviderStatus.LOADED && slicedPosts?.map((post) => (<FeedPost key={post.uuid} {...post} />))}
+              {(feedStatus === FeedProviderStatus.LOADED && slicedPosts.length === 0) && (
                 <Alert severity="info" sx={{ mb: 1 }}>Uh oh. We have no posts to show.</Alert>
               )}
               {hasNext && <Button onClick={loadMore}>Load More</Button>}
