@@ -1,12 +1,17 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  Box,
   Paper, Skeleton, Table, TableBody,
   TableCell, TableContainer, TableHead,
   TablePagination, TableRow, TableSortLabel,
-  styled,
+  Box, Toolbar, styled, alpha, Typography, Checkbox,
+  Theme,
+  Tooltip,
+  IconButton,
+  Stack,
 } from "@mui/material";
+import { Delete, SaveOutlined } from "@mui/icons-material";
+import numeral from "numeral";
 import Repeater from "../Repeater";
 import { ExpandableImage } from "../ExpandableImage";
 
@@ -32,6 +37,22 @@ type Props = {
    * A component to render when there are no vehicles in the list
    */
   EmptyComponent?: React.FC;
+  /**
+   * Callback function to be called when the delete button is clicked
+   * If not provided, the delete button will not be shown
+   *
+   * @description This will enable the checkbox column
+   * @param {Vehicle[]} vehicles The vehicles selected
+   */
+  onDelete?: (vehicles: Vehicle[]) => void;
+  /**
+   * Callback function to be called when the export button is clicked
+   * If not provided, the export button will not be shown
+   *
+   * @description This will enable the checkbox column
+   * @param {Vehicle[]} vehicles The vehicles selected
+   */
+  onExport?: (vehicles: Vehicle[]) => void;
 };
 
 type T = Vehicle;
@@ -50,18 +71,41 @@ const StyledImageBox = styled(Box)({
   overflow: "hidden",
 });
 
+const StyledToolbar = styled(Toolbar, { shouldForwardProp: (p) => p !== "showCheckboxes" && p !== "hasSelected" })(({ theme, showCheckboxes, hasSelected }: { theme?: Theme, showCheckboxes: boolean, hasSelected: boolean }) => ({
+  display: !showCheckboxes ? "none" : "flex",
+  paddingRight: 1,
+  backgroundColor: hasSelected && theme ? alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity) : "",
+}));
+
+const ToolbarTitle: FC<{ numSelected: number }> = ({ numSelected }) => (
+  numSelected > 0 ? (
+    <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
+      {`${numeral(numSelected).format("0,0")} selected`}
+    </Typography>
+  ) : (
+    <Typography sx={{ flex: '1 1 100%' }} variant="h6" component="div">
+      Vehicles
+    </Typography>
+  )
+);
+
 const TableCellSkeleton: FC = () => (
   <TableCell>
     <Skeleton variant="text" animation="wave" />
   </TableCell>
 );
 
-const ResultSkeleton: FC<{ colCount?: number }> = ({ colCount = 6 }: { colCount?: number }) => (
+const ResultSkeleton: FC<{ hasCheckbox?: boolean }> = ({ hasCheckbox }: { hasCheckbox?: boolean }) => (
   <TableRow>
+    {hasCheckbox && (
+      <TableCell padding="checkbox">
+        <Skeleton variant="rectangular" width={18} height={18} animation="wave" sx={{ borderRadius: "2px", margin: "0 auto" }} />
+      </TableCell>
+    )}
     <TableCell>
-      <Skeleton variant="rectangular" width={75} height={75} animation="wave" />
+      <Skeleton variant="rectangular" width={75} height={75} animation="wave" sx={{ borderRadius: "8px" }} />
     </TableCell>
-    <Repeater count={colCount} Component={TableCellSkeleton} />
+    <Repeater count={6} Component={TableCellSkeleton} />
   </TableRow>
 );
 
@@ -107,23 +151,18 @@ const columns: Column[] = [
  * @param {Props} props
  * @returns {JSX.Element}
  */
-export const VehicleTable: FC<Props> = ({ status, vehicles, totalCount, onPageChange, EmptyComponent }: Props) => {
+export const VehicleTable: FC<Props> = ({
+  status, vehicles, totalCount, EmptyComponent,
+  onPageChange, onDelete, onExport,
+}: Props) => {
   const [order, setOrder] = useState<"asc" | "desc">("desc");
   const [orderBy, setOrderBy] = useState<Column>(columns[1]);
   const [page, setPage] = useState<number>(0);
   const [perPage, setPerPage] = useState<number>(20);
+  const [selected, setSelected] = useState<readonly T["vin"][]>([]);
   const lastPageRef = useRef<number>(0);
 
-  const handleRequestSort = (column: Column) => {
-    setOrder(orderBy === column && order === "asc" ? "desc" : "asc");
-    setOrderBy(column);
-    setPage(0);
-  };
-
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  const showCheckboxes = !!onDelete || !!onExport;
 
   const dataset: T[] = useMemo(() => {
     if (!vehicles?.length || status !== "success") {
@@ -147,8 +186,50 @@ export const VehicleTable: FC<Props> = ({ status, vehicles, totalCount, onPageCh
     return vehicles?.length;
   }, [vehicles, totalCount]);
 
+  const handleRequestSort = (column: Column) => {
+    setOrder(orderBy === column && order === "asc" ? "desc" : "asc");
+    setOrderBy(column);
+    setPage(0);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleSelectClick = (vin: T["vin"]) => {
+    if (selected.includes(vin)) {
+      setSelected(selected.filter((v) => v !== vin));
+    } else {
+      setSelected([...selected, vin]);
+    }
+  };
+
+  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      const newSelecteds = dataset.map((n) => n.vin);
+      setSelected(newSelecteds);
+      return;
+    }
+
+    setSelected([]);
+  };
+
+  const onDeleteWrapper = () => {
+    setSelected([]);
+    const selectedVehicles: T[] = dataset.filter((v: T) => selected.includes(v.vin));
+    onDelete?.(selectedVehicles);
+  };
+
+  const onExportWrapper = () => {
+    setSelected([]);
+    const selectedVehicles: T[] = dataset.filter((v: T) => selected.includes(v.vin));
+    onExport?.(selectedVehicles);
+  };
+
   useEffect(() => {
     if (lastPageRef.current !== page) {
+      setSelected([]);
       onPageChange?.(page, vehicles.length - ((page + 1) * perPage));
       lastPageRef.current = page;
     }
@@ -156,10 +237,35 @@ export const VehicleTable: FC<Props> = ({ status, vehicles, totalCount, onPageCh
 
   return (
     <Paper>
+      <StyledToolbar hasSelected={selected.length > 0} showCheckboxes={showCheckboxes}>
+        <ToolbarTitle numSelected={selected.length} />
+        <Stack direction="row" alignItems="center" sx={{ visibility: selected.length <= 0 ? "hidden" : "visible" }}>
+          <Tooltip title="Export to CSV" sx={{ display: !onExport ? "none" : "initial" }} arrow>
+            <IconButton onClick={onExportWrapper}>
+              <SaveOutlined />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Remove from list" sx={{ display: !onDelete ? "none" : "initial" }} arrow>
+            <IconButton onClick={onDeleteWrapper}>
+              <Delete />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+      </StyledToolbar>
       <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
+              {showCheckboxes && (
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    color="primary"
+                    indeterminate={selected.length > 0 && selected.length < dataset.length}
+                    checked={dataset.length > 0 && selected.length === dataset.length}
+                    onChange={handleSelectAll}
+                  />
+                </TableCell>
+              )}
               {columns.map((col: Column) => (
                 <TableCell key={col.label}>
                   {col.comparator ? (
@@ -181,13 +287,18 @@ export const VehicleTable: FC<Props> = ({ status, vehicles, totalCount, onPageCh
           <TableBody>
             {(status !== "loading" && vehicles.length === 0) && (
               <TableRow>
-                <TableCell colSpan={columns.length + 2} sx={{ textAlign: "center" }}>
+                <TableCell colSpan={columns.length + 2 + (showCheckboxes ? 1 : 0)} sx={{ textAlign: "center" }}>
                   {EmptyComponent ? <EmptyComponent /> : "No results found"}
                 </TableCell>
               </TableRow>
             )}
             {dataset.map((d: T) => (
-              <TableRow tabIndex={-1} hover key={`${d["vin"]}`}>
+              <TableRow key={`${d["vin"]}`} selected={selected.includes(d.vin)} tabIndex={-1} hover>
+                {showCheckboxes && (
+                  <TableCell padding="checkbox">
+                    <Checkbox color="primary" checked={selected.includes(d.vin)} onClick={() => handleSelectClick(d.vin)} />
+                  </TableCell>
+                )}
                 {columns.map((col: Column) => (
                   <TableCell key={`${d["vin"]}_${col.label}`}>
                     {col.value(d)}
@@ -200,13 +311,15 @@ export const VehicleTable: FC<Props> = ({ status, vehicles, totalCount, onPageCh
                 </TableCell>
               </TableRow>
             ))}
-            {/* TODO: Use dynamic colCount */}
-            {(status === "loading") && (<Repeater count={5} Component={ResultSkeleton} />)}
+            {(status === "loading") && (
+              // eslint-disable-next-line react/no-unstable-nested-components
+              <Repeater count={5} Component={() => <ResultSkeleton hasCheckbox={showCheckboxes} />} />
+            )}
           </TableBody>
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 20, 50]}
+        rowsPerPageOptions={[5, 10, 20, 50, 100]}
         component="div"
         count={count}
         rowsPerPage={perPage}

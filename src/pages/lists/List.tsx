@@ -20,6 +20,7 @@ import { formatDate, formatDateMMYY } from "../../utils/date";
 import ProfileAvatar from "../../components/ProfileAvatar";
 import EditListDialog from "../../components/EditListDialog";
 import useIsFollowingListLookup, { LookupStatus as IsFollowingLookupStatus } from "../../hooks/useIsFollowingListLookup";
+import { objectToCSV } from "../../utils/objectToCSV";
 
 type Props = {
   uuid: string;
@@ -93,6 +94,13 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
     }
 
     next?.(250);
+  };
+
+  // TODO: Implement deleting from a list - Need API support
+  // const deleteSelection = async (vehicles: Vehicle[]) => false;
+
+  const exportSelection = (vehicles: Vehicle[]) => {
+    objectToCSV(vehicles);
   };
 
   const onDeleteWrapper = async () => {
@@ -182,12 +190,13 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
       </StyledStatisticStack>
 
       <Card sx={{ mx: 2, mb: 2 }} elevation={2} ref={tableCardRef}>
-        {/* TODO: Checkboxes for mass export or removal */}
         <VehicleTable
           status={list.vehicle_count === 0 || listVehiclesStatus !== ListProviderStatus.LOADING ? "success" : "loading"}
           vehicles={vehicles || []}
           totalCount={list.vehicle_count}
           onPageChange={tablePageChange}
+          onExport={exportSelection}
+          // onDelete={deleteSelection}
         />
       </Card>
 
