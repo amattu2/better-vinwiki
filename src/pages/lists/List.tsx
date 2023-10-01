@@ -2,9 +2,9 @@ import React, { FC, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Add, Edit, NavigateNext } from "@mui/icons-material";
 import {
-  Box, Breadcrumbs, Button,
-  Card,
-  IconButton, Stack, Tooltip, Typography, styled,
+  Box, Breadcrumbs, Button, Card,
+  IconButton, Skeleton, Stack, Tooltip,
+  Typography, styled,
 } from "@mui/material";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import FollowersDialog from "../../components/FollowersDialog";
@@ -19,6 +19,7 @@ import { DEFAULT_DATE } from "../../config/Endpoints";
 import { formatDate, formatDateMMYY } from "../../utils/date";
 import ProfileAvatar from "../../components/ProfileAvatar";
 import EditListDialog from "../../components/EditListDialog";
+import useIsFollowingListLookup, { LookupStatus as IsFollowingLookupStatus } from "../../hooks/useIsFollowingListLookup";
 
 type Props = {
   uuid: string;
@@ -77,6 +78,7 @@ const StyledListOwner = styled(Stack, { shouldForwardProp: (p) => p !== "filled"
 const ListView: FC<Props> = ({ uuid }: Props) => {
   const navigate = useNavigate();
   const [{ status, list }, editList, deleteList] = useListLookup(uuid, true);
+  const [{ status: isFollowingStatus, following }, toggleFollow] = useIsFollowingListLookup(uuid);
   const { profile } = useAuthProvider();
   const { status: listVehiclesStatus, vehicles, hasNext, next } = useListVehiclesProvider();
   const tableCardRef = useRef<HTMLDivElement>(null);
@@ -126,8 +128,6 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
                 <Add />
               </StyledIconButton>
             </Tooltip>
-
-            {/* TODO: Add edit list dialog with DELETE list button */}
             <Tooltip title="Edit List" arrow>
               <StyledIconButton onClick={() => setEditOpen(true)}>
                 <Edit />
@@ -157,9 +157,13 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
                 </Typography>
               </Stack>
             </StyledListOwner>
-
-            {/* TODO: follow/unfollow and loading skeleton */}
-            <Button variant="outlined" color="primary" sx={{ mr: "auto", textTransform: "none" }}>{false ? "Unfollow" : "Follow"}</Button>
+            {profile?.uuid !== list?.owner?.uuid && (
+              isFollowingStatus === IsFollowingLookupStatus.Loading ? (
+                <Skeleton variant="rectangular" width={100} height={32} sx={{ borderRadius: "8px" }} />
+              ) : (
+                <Button variant="outlined" color="primary" onClick={toggleFollow} sx={{ mr: "auto", textTransform: "none" }}>{following ? "Unfollow" : "Follow"}</Button>
+              )
+            )}
           </Stack>
         </Stack>
       </StyledProfileDetails>
