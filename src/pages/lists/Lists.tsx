@@ -13,6 +13,7 @@ import Repeater from "../../components/Repeater";
 import useProfileListsLookup, { LookupStatus } from "../../hooks/useProfileListsLookup";
 import { sortLists } from "../../utils/lists";
 import CreateListDialog from "../../components/CreateListDialog";
+import { ScrollToTop } from "../../components/ScrollToTop";
 
 const StyledLink = styled(Link)({
   textDecoration: "none",
@@ -179,6 +180,7 @@ const ListsView: FC = () => {
           ))}
         </Grid>
       </StyledStack>
+      <ScrollToTop />
       {createOpen && (<CreateListDialog onClose={() => setCreateOpen(false)} onCreate={listCreated} />)}
     </Box>
   );
