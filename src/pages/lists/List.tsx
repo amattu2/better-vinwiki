@@ -67,7 +67,13 @@ const StyledListOwner = styled(Stack, { shouldForwardProp: (p) => p !== "filled"
   marginRight: "auto",
 }));
 
-const View: FC<Props> = ({ uuid }: Props) => {
+/**
+ * A page for viewing a single Vehicle List.
+ *
+ * @param {Props} props
+ * @returns {JSX.Element}
+ */
+const ListView: FC<Props> = ({ uuid }: Props) => {
   const [status, list] = useListLookup(uuid);
   const { profile } = useAuthProvider();
   const { status: listVehiclesStatus, vehicles, hasNext, next } = useListVehiclesProvider();
@@ -173,7 +179,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
       <Card sx={{ mx: 2, mb: 2 }} elevation={2} ref={tableCardRef}>
         {/* TODO: Checkboxes for mass export or removal */}
         <VehicleTable
-          status={listVehiclesStatus !== ListProviderStatus.LOADING ? "success" : "loading"}
+          status={list.vehicle_count === 0 || listVehiclesStatus !== ListProviderStatus.LOADING ? "success" : "loading"}
           vehicles={vehicles || []}
           totalCount={list.vehicle_count}
           onPageChange={tablePageChange}
@@ -186,4 +192,4 @@ const View: FC<Props> = ({ uuid }: Props) => {
   );
 };
 
-export default View;
+export default ListView;
