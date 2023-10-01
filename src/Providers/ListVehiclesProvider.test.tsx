@@ -1,13 +1,13 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { ListProvider, useListProvider } from "./ListProvider";
+import { ListVehiclesProvider, useListVehiclesProvider } from "./ListVehiclesProvider";
 import { AuthProvider } from "./AuthProvider";
 
 describe("ListProvider General Tests", () => {
   test("should render without crashing", () => {
     render(
       <AuthProvider>
-        <ListProvider uuid="AABB-FAKE-LIST-Id" />
+        <ListVehiclesProvider uuid="AABB-FAKE-LIST-Id" />
       </AuthProvider>,
     );
   });
@@ -15,9 +15,9 @@ describe("ListProvider General Tests", () => {
   test("should render children", () => {
     render(
       <AuthProvider>
-        <ListProvider uuid="">
+        <ListVehiclesProvider uuid="">
           <div>Test</div>
-        </ListProvider>
+        </ListVehiclesProvider>
       </AuthProvider>,
     );
 
@@ -29,7 +29,7 @@ describe("ListProvider General Tests", () => {
     const spy = jest.spyOn(console, "error").mockImplementation(() => {});
 
     expect(() => {
-      render(<div>{JSON.stringify(useListProvider())}</div>);
+      render(<div>{JSON.stringify(useListVehiclesProvider())}</div>);
     }).toThrowError();
 
     spy.mockRestore();

@@ -4,7 +4,7 @@ import { useAuthProvider } from "../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
 import { CacheKeys } from "../config/Cache";
 
-type Cache = Record<Profile["uuid"], boolean>;
+type Cache = Record<List["uuid"], boolean>;
 
 export enum LookupStatus {
   Loading = "loading",
@@ -13,18 +13,21 @@ export enum LookupStatus {
 }
 
 /**
- * A hook to cache and lookup following status by uuid
+ * A hook to cache and lookup Vehicle List following status by UUID
  *
- * @param uuid the uuid to verify against
+ * NOTE:
+ * - Unlike `isFollowingVehicleLookup` or `isFollowingLookup`,
+ *   the `toggleFollowing` function will NOT update
+ *   the cached `usePRofileListsLookup` value
+ *
+ * @param uuid the list uuid to verify against
  * @param refetch if true, will refetch the status
  * @returns [{ status, following }, toggleFollowing]
  */
-const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status: LookupStatus, following: boolean | null }, () => Promise<boolean>] => {
-  const { token, profile } = useAuthProvider();
-  const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.IS_FOLLOWING_PROFILE, {});
+const useIsFollowingListLookup = (uuid: List["uuid"], refetch = false): [{ status: LookupStatus, following: boolean | null }, () => Promise<boolean>] => {
+  const { token } = useAuthProvider();
+  const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.IS_FOLLOWING_LIST, {});
   const cachedValue: boolean | null = cache[uuid] || null;
-
-  const [, setFollowingCache] = useSessionStorage<Record<Profile["uuid"], Profile[]>>(CacheKeys.PROFILE_FOLLOWING, {});
 
   const [status, setStatus] = useState<LookupStatus>(cachedValue !== null ? LookupStatus.Success : LookupStatus.Loading);
   const [following, setFollowing] = useState<boolean | null>(cachedValue);
@@ -41,7 +44,7 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
     followController.current = new AbortController();
     const { signal } = followController.current;
 
-    const response = await fetch(ENDPOINTS.follow + uuid, {
+    const response = await fetch(ENDPOINTS.list_follow + uuid, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -49,37 +52,18 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
       signal,
     }).catch(() => null);
 
-    const { status, follow_result } = await response?.json() || {};
-    if (status !== STATUS_OK) {
-      setFollowing((prev) => !prev);
-      return false;
+    const { status, following_status } = await response?.json() || {};
+    if (status === STATUS_OK) {
+      setCache((prev) => ({ ...prev, [uuid]: !!following_status }));
+      return true;
     }
 
-    setCache((prev) => ({ ...prev, [uuid]: follow_result.state === "following" }));
-
-    const followingProfiles = await fetch(ENDPOINTS.following + profile!.uuid, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      signal,
-    }).catch(() => null);
-
-    const { status: followingLookupStatus, following } = await followingProfiles?.json() || {};
-    if (followingLookupStatus === STATUS_OK) {
-      setFollowingCache((prev) => ({ ...prev, [profile!.uuid]: following }));
-    }
-
-    return true;
+    setFollowing((prev) => !prev);
+    return false;
   };
 
   useEffect(() => {
     if ((cachedValue !== null && !refetch) || !token || !uuid) {
-      return () => {};
-    }
-    if (profile?.uuid === uuid) {
-      setFollowing(true);
-      setStatus(LookupStatus.Success);
       return () => {};
     }
 
@@ -87,7 +71,7 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
     const { signal } = controller;
 
     (async () => {
-      const response = await fetch(ENDPOINTS.is_following + uuid, {
+      const response = await fetch(ENDPOINTS.list_is_following + uuid, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -98,11 +82,11 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
         return null;
       });
 
-      const { status, following } = await response?.json() || {};
-      if (status === STATUS_OK) {
-        setCache((prev) => ({ ...prev, [uuid]: following }));
+      const { status, is_following } = await response?.json() || {};
+      if (status === STATUS_OK && typeof is_following === "boolean") {
+        setCache((prev) => ({ ...prev, [uuid]: is_following }));
         setStatus(LookupStatus.Success);
-        setFollowing(following);
+        setFollowing(is_following);
       } else if (status === STATUS_ERROR) {
         setStatus(LookupStatus.Error);
       }
@@ -114,4 +98,4 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
   return [{ status, following }, toggleFollowing];
 };
 
-export default useIsFollowingLookup;
+export default useIsFollowingListLookup;

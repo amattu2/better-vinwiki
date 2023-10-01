@@ -4,7 +4,7 @@ import { useAuthProvider } from "../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
 import { CacheKeys } from "../config/Cache";
 
-type Cache = Record<Profile["uuid"], ProfileLists>;
+export type Cache = Record<Profile["uuid"], ProfileLists>;
 
 export enum LookupStatus {
   Loading = "loading",
@@ -50,8 +50,10 @@ const useProfileListsLookup = (uuid: Profile["uuid"], refetch = false): [LookupS
       const { status, lists_my, lists_following } = await response?.json() || {};
       if (status === STATUS_OK) {
         const result: ProfileLists = {
-          following: (lists_following as { list: List }[])?.map((r) => r?.list),
           owned: (lists_my as { list: List }[])?.map((r) => r?.list),
+          // NOTE: We're filtering out lists owned by the `uuid` user because they're already in the `owned` array
+          // NOTE: If this gets removed, the `useListLookup` edit/delete functions will need to be updated
+          following: (lists_following as { list: List }[])?.map((r) => r?.list)?.filter((l) => l?.owner?.uuid !== uuid),
         };
 
         setCache((prev) => ({ ...prev, [uuid]: result }));

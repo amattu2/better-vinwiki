@@ -10,7 +10,7 @@ import usePostDeleteWrapper from "../../../hooks/usePostDeleteWrapper";
 import { ENDPOINTS } from "../../../config/Endpoints";
 import { formatDateTime } from "../../../utils/date";
 import GenericText from "../../GenericText/GenericText";
-import DeletePostDialog from "../Components/DeletePostDialog";
+import DeleteContentDialog from "../../DeleteContentConfirm";
 import ProfileBit, { PostProfileSkeleton } from "../Components/PostProfile";
 
 const StyledCard = styled(Card)({
@@ -103,7 +103,7 @@ const ListAddPost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedP
           </Menu>
         </>
       )}
-      <DeletePostDialog
+      <DeleteContentDialog
         type="post"
         open={deleteDialogOpen}
         onConfirm={deletePost}

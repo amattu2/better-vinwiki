@@ -24,7 +24,7 @@ import Repeater from '../Repeater';
 import useFollowersLookup, { LookupStatus, LookupType } from '../../hooks/useFollowersLookup';
 
 type Props = {
-  identifier: Profile["uuid"] | Vehicle["vin"];
+  identifier: Profile["uuid"] | Vehicle["vin"] | List["uuid"];
   type: LookupType;
   count: number;
   onClose: () => void;

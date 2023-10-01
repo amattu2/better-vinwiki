@@ -9,7 +9,7 @@ import {
 import { Form, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useAuthProvider } from "../../Providers/AuthProvider";
-import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
+import { DEFAULT_VEHICLE_SRC, ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
 import { Countries, Territories } from "../../config/Locations";
 import { formatVehicleName } from "../../utils/vehicle";
 import ProfileAvatar from "../ProfileAvatar";
@@ -48,7 +48,7 @@ const ResultItem : FC<{ vehicle: PlateDecodeResponse, onCancel: () => void }> = 
     <List>
       <ListItem>
         <ListItemAvatar>
-          <ProfileAvatar username={description} />
+          <ProfileAvatar username={description} avatar={DEFAULT_VEHICLE_SRC} />
         </ListItemAvatar>
         <ListItemText
           primary={(
@@ -60,7 +60,7 @@ const ResultItem : FC<{ vehicle: PlateDecodeResponse, onCancel: () => void }> = 
           )}
           secondary={vin}
         />
-        <Button onClick={onCancel}>
+        <Button onClick={onCancel} color="error">
           Not It
         </Button>
       </ListItem>

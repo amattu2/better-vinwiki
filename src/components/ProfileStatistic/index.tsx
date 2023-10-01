@@ -5,6 +5,7 @@ import numeral from "numeral";
 export type StatisticItemProps = {
   name: string,
   value: number | string,
+  precise?: boolean,
   onClick?: () => void
 };
 
@@ -34,15 +35,23 @@ const StyledName = styled(Typography)(({ theme }) => ({
   fontSize: 14,
 }));
 
+const getFormattedValue = (value: number | string, precise?: boolean): string => {
+  if (typeof value === "number") {
+    return numeral(value).format(precise ? "0,0" : "0a");
+  }
+
+  return value;
+};
+
 /**
  * A statistic item for the profile page
  *
  * @param {StatisticItemProps} props
  * @returns {JSX.Element}
  */
-export const StatisticItem: FC<StatisticItemProps> = ({ name, value, onClick }: StatisticItemProps) => (
+export const StatisticItem: FC<StatisticItemProps> = ({ name, value, precise, onClick }: StatisticItemProps) => (
   <StyledBox onClick={onClick}>
-    <StyledValue variant="h3">{typeof value === "number" ? numeral(value).format("0a") : value}</StyledValue>
+    <StyledValue variant="h3">{getFormattedValue(value, precise)}</StyledValue>
     <StyledName>{name}</StyledName>
   </StyledBox>
 );

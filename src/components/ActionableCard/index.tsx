@@ -20,7 +20,7 @@ const StyledCard = styled(Card)({
 });
 
 const StyledCardHeader = styled(CardHeader)<{ component: ElementType, disabled?: boolean }>(({ disabled }) => ({
-  [disabled ? "& .MuiCardHeader-content .MuiTypography-root" : ""]: {
+  [disabled ? "& .MuiCardHeader-content .MuiTypography-root, & .MuiCardHeader-action" : ""]: {
     color: "#ddd !important",
   },
   "& .MuiCardHeader-action": {

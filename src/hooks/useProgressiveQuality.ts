@@ -10,6 +10,10 @@ const useProgressiveQuality = (initial: string, highRes: string): [string, { blu
   const [src, setSrc] = useState(initial);
 
   useEffect(() => {
+    if (initial === highRes) {
+      return;
+    }
+
     setSrc(initial);
 
     const img = new Image();
@@ -17,7 +21,7 @@ const useProgressiveQuality = (initial: string, highRes: string): [string, { blu
     img.onload = () => setSrc(highRes);
   }, [initial, highRes]);
 
-  return [src, { blur: src === initial }];
+  return [src, { blur: src === initial && highRes !== initial }];
 };
 
 export default useProgressiveQuality;

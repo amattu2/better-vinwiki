@@ -9,7 +9,7 @@ import { AuthProvider } from './Providers/AuthProvider';
 import { NotificationCountProvider } from './Providers/NotificationCountProvider';
 import Sidebar from './components/Sidebar';
 import Home from './pages';
-import List from './pages/list/Controller';
+import Lists from './pages/lists/Controller';
 import Login from './pages/login/Controller';
 import Logout from './pages/logout/Controller';
 import Profile from './pages/profile/Controller';
@@ -39,7 +39,8 @@ const ProtectedRoutes = () => {
             <Routes>
               <Route path="/profile/:uuid?" element={<Profile />} />
               <Route path="/vehicle/:vin" element={<Vehicle />} />
-              <Route path="/list/:uuid" element={<List />} />
+              <Route path="/list/:uuid?" element={<Lists />} />
+              <Route path="/lists" element={<Lists />} />
               <Route path="/post/:uuid" element={<Post />} />
               <Route path="/search" element={<Search />} />
               <Route path="*" element={<Home />} />

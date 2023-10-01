@@ -11,7 +11,7 @@ import usePostDeleteWrapper from "../../../hooks/usePostDeleteWrapper";
 import { ENDPOINTS } from "../../../config/Endpoints";
 import { formatDateTime } from "../../../utils/date";
 import GenericText from "../../GenericText/GenericText";
-import DeletePostDialog from "../Components/DeletePostDialog";
+import DeleteContentDialog from "../../DeleteContentConfirm";
 import PostComments from "../Components/PostComments";
 import ProfileBit, { PostProfileSkeleton } from "../Components/PostProfile";
 
@@ -148,7 +148,7 @@ const TextPost: FC<FeedPostProps> = forwardRef(({ isPreview, isIndividual, ...po
           </MenuItem>
         )}
       </Menu>
-      <DeletePostDialog
+      <DeleteContentDialog
         type="post"
         open={deleteDialogOpen}
         onConfirm={deletePost}
