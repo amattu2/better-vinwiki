@@ -21,6 +21,7 @@ import ProfileAvatar from "../../components/ProfileAvatar";
 import EditListDialog from "../../components/EditListDialog";
 import useIsFollowingListLookup, { LookupStatus as IsFollowingLookupStatus } from "../../hooks/useIsFollowingListLookup";
 import { objectToCSV } from "../../utils/objectToCSV";
+import VehicleSelectionDialog from "../../components/VehicleSelectionDialog";
 
 type Props = {
   uuid: string;
@@ -77,11 +78,12 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
   const [{ status, list }, editList, deleteList] = useListLookup(uuid, true);
   const [{ status: isFollowingStatus, following }, toggleFollow] = useIsFollowingListLookup(uuid);
   const { profile } = useAuthProvider();
-  const { status: listVehiclesStatus, vehicles, hasNext, next } = useListVehiclesProvider();
+  const { status: listVehiclesStatus, count, vehicles, hasNext, next, addVehicle } = useListVehiclesProvider();
   const tableCardRef = useRef<HTMLDivElement>(null);
 
   const [followersOpen, setFollowersOpen] = useState<boolean>(false);
   const [editOpen, setEditOpen] = useState<boolean>(false);
+  const [addVehiclesOpen, setAddVehiclesOpen] = useState<boolean>(false);
 
   const tablePageChange = (page: number, remaining: number) => {
     tableCardRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -98,6 +100,12 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
 
   // TODO: Implement deleting from a list - Need API support
   // const deleteSelection = async (vehicles: Vehicle[]) => false;
+
+  const addVehiclesWrapper = async (vehicles: Vehicle[]) => {
+    await Promise.all(vehicles.map(async (vehicle) => {
+      await addVehicle?.(vehicle);
+    }));
+  };
 
   const exportSelection = (vehicles: Vehicle[]) => {
     objectToCSV(vehicles);
@@ -126,9 +134,8 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
         </Breadcrumbs>
         {list.owner.uuid === profile?.uuid && (
           <>
-            {/* TODO: Mass import dialog w/ CSV support? */}
             <Tooltip title="Add Vehicles" arrow>
-              <StyledIconButton>
+              <StyledIconButton onClick={() => setAddVehiclesOpen(true)}>
                 <Add />
               </StyledIconButton>
             </Tooltip>
@@ -180,7 +187,7 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
         />
         <StatisticItem
           name="Vehicles"
-          value={list.vehicle_count}
+          value={count || list.vehicle_count}
           precise
         />
         <StatisticItem
@@ -193,7 +200,7 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
         <VehicleTable
           status={list.vehicle_count === 0 || listVehiclesStatus !== ListProviderStatus.LOADING ? "success" : "loading"}
           vehicles={vehicles || []}
-          totalCount={list.vehicle_count}
+          totalCount={count || list.vehicle_count}
           onPageChange={tablePageChange}
           onExport={exportSelection}
           // onDelete={deleteSelection}
@@ -203,6 +210,7 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
       <ScrollToTop topGap={false} />
       {(list.follower_count > 0 && followersOpen) && <FollowersDialog identifier={uuid} type="List" count={list.follower_count} onClose={() => setFollowersOpen(false)} />}
       {editOpen && <EditListDialog list={list} onClose={() => setEditOpen(false)} onDelete={onDeleteWrapper} onConfirm={editList} />}
+      {addVehiclesOpen && <VehicleSelectionDialog onSelect={addVehiclesWrapper} onClose={() => setAddVehiclesOpen(false)} />}
     </Box>
   );
 };

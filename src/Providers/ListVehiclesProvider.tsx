@@ -4,7 +4,10 @@ import { ENDPOINTS, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
 
 export type ProviderState = {
   status: ProviderStatus;
+  count: number;
   vehicles?: Vehicle[];
+  addVehicle?: (vehicle: Vehicle) => Promise<boolean>;
+  removeVehicle?: (vin: Vehicle["vin"]) => Promise<boolean>;
   hasNext?: boolean;
   next?: (count: number) => Promise<boolean>;
 };
@@ -16,7 +19,7 @@ export enum ProviderStatus {
   ERROR = "ERROR",
 }
 
-const defaultState: ProviderState = { status: ProviderStatus.LOADING };
+const defaultState: ProviderState = { status: ProviderStatus.LOADING, count: 0 };
 
 const Context = React.createContext<ProviderState | null>(null);
 
@@ -41,6 +44,36 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
   const [lastID, setLastID] = useState<string>("");
   const [hasNext, setHasNext] = useState<boolean>(false);
 
+  const addVehicle = async (vehicle: Vehicle) : Promise<boolean> => {
+    if (!token || !uuid || !vehicle?.vin) {
+      return false;
+    }
+
+    const response = await fetch(`${ENDPOINTS.list_add_vehicle}${uuid}/${vehicle.vin}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).catch(() => null);
+
+    const { status, list } = await response?.json().catch(() => null) || {};
+    if (status !== STATUS_OK || !list?.uuid) {
+      return false;
+    }
+
+    let result = true;
+    setState((prev) => {
+      if (prev.count === list?.count || prev.vehicles?.find((v) => v.vin === vehicle.vin)) {
+        result = false;
+        return prev;
+      }
+
+      return { ...prev, count: prev.count + 1, vehicles: [...(prev.vehicles || []), vehicle] };
+    });
+
+    return result;
+  };
+
   const next = async (count = 1000) : Promise<boolean> => {
     if (!token || !hasNext || !lastID) {
       return false;
@@ -55,11 +88,12 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
       },
     });
 
-    const { status, vehicles, last_id, end } = await response.json();
+    const { status, total, vehicles, last_id, end } = await response.json();
     if (status === STATUS_OK) {
       setState((prev) => ({
         ...prev,
         status: ProviderStatus.LOADED,
+        count: parseInt(total, 10),
         vehicles: [...(prev.vehicles || []), ...(vehicles || [])],
       }));
       setHasNext(!end);
@@ -92,11 +126,12 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
         return null;
       });
 
-      const { status, vehicles, last_id, end } = await response?.json().catch(() => null) || {};
+      const { status, total, vehicles, last_id, end } = await response?.json().catch(() => null) || {};
       if (status === STATUS_OK && vehicles) {
         setState((prev) => ({
           ...prev,
           status: ProviderStatus.LOADED,
+          count: parseInt(total, 10),
           vehicles,
         }));
         setHasNext(!end);
@@ -109,7 +144,7 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
     return () => controller.abort();
   }, [token, uuid]);
 
-  const value = useMemo(() => ({ ...state, next, hasNext }), [state, hasNext]);
+  const value = useMemo(() => ({ ...state, addVehicle, next, hasNext }), [state, hasNext]);
 
   return (
     <Context.Provider value={value}>
