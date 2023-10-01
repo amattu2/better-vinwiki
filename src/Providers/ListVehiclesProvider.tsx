@@ -63,12 +63,14 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
 
     let result = true;
     setState((prev) => {
-      if (prev.count === list?.count || prev.vehicles?.find((v) => v.vin === vehicle.vin)) {
+      if (prev.count === list?.vehicles?.count || prev.vehicles?.find((v) => v.vin === vehicle.vin)) {
         result = false;
         return prev;
       }
 
-      return { ...prev, count: prev.count + 1, vehicles: [...(prev.vehicles || []), vehicle] };
+      const newCount = list?.vehicles?.count || prev.count + 1;
+
+      return { ...prev, count: newCount, vehicles: [...(prev.vehicles || []), vehicle] };
     });
 
     return result;
