@@ -47,13 +47,9 @@ const StyledProfileDetails = styled(Stack)(({ theme }) => ({
   paddingLeft: "24px !important",
 }));
 
-const StyledProfileBox = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(2.5),
-}));
-
 const StyledStatisticStack = styled(Stack)(({ theme }) => ({
   position: "relative",
-  padding: theme.spacing(1),
+  padding: theme.spacing(2),
   alignItems: "center",
 }));
 
@@ -168,24 +164,22 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
         </Stack>
       </StyledProfileDetails>
 
-      <StyledProfileBox>
-        <StyledStatisticStack direction="row" spacing={3}>
-          <StatisticItem
-            name="Followers"
-            value={list.follower_count}
-            onClick={() => setFollowersOpen(true)}
-          />
-          <StatisticItem
-            name="Vehicles"
-            value={list.vehicle_count}
-            precise
-          />
-          <StatisticItem
-            name="Created"
-            value={list.created_date !== DEFAULT_DATE ? formatDateMMYY(new Date(list.created_date)) : "N/A"}
-          />
-        </StyledStatisticStack>
-      </StyledProfileBox>
+      <StyledStatisticStack direction="row" spacing={3}>
+        <StatisticItem
+          name="Followers"
+          value={list.follower_count}
+          onClick={() => setFollowersOpen(true)}
+        />
+        <StatisticItem
+          name="Vehicles"
+          value={list.vehicle_count}
+          precise
+        />
+        <StatisticItem
+          name="Created"
+          value={list.created_date !== DEFAULT_DATE ? formatDateMMYY(new Date(list.created_date)) : "N/A"}
+        />
+      </StyledStatisticStack>
 
       <Card sx={{ mx: 2, mb: 2 }} elevation={2} ref={tableCardRef}>
         {/* TODO: Checkboxes for mass export or removal */}
