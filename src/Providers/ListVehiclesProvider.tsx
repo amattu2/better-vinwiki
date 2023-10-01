@@ -92,7 +92,7 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
         return null;
       });
 
-      const { status, vehicles, last_id, end } = await response?.json() || {};
+      const { status, vehicles, last_id, end } = await response?.json().catch(() => null) || {};
       if (status === STATUS_OK && vehicles) {
         setState((prev) => ({
           ...prev,

@@ -21,7 +21,7 @@ export enum LookupStatus {
  */
 const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status: LookupStatus, following: boolean | null }, () => Promise<boolean>] => {
   const { token, profile } = useAuthProvider();
-  const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.IS_FOLLOWING, {});
+  const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.IS_FOLLOWING_PROFILE, {});
   const cachedValue: boolean | null = cache[uuid] || null;
 
   const [, setFollowingCache] = useSessionStorage<Record<Profile["uuid"], Profile[]>>(CacheKeys.PROFILE_FOLLOWING, {});

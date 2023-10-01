@@ -13,7 +13,7 @@ import { formatDateTime } from "../../../utils/date";
 import usePostDeleteWrapper from "../../../hooks/usePostDeleteWrapper";
 import { ExpandableImage } from "../../ExpandableImage";
 import GenericText from "../../GenericText/GenericText";
-import DeletePostDialog from "../Components/DeletePostDialog";
+import DeleteContentDialog from "../../DeleteContentConfirm";
 import PostComments from "../Components/PostComments";
 import ProfileBit, { PostProfileSkeleton } from "../Components/PostProfile";
 import Repeater from "../../Repeater";
@@ -192,7 +192,7 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, isIndividual, ...p
           </MenuItem>
         )}
       </Menu>
-      <DeletePostDialog
+      <DeleteContentDialog
         type="post"
         open={deleteDialogOpen}
         onConfirm={deletePost}

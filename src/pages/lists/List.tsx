@@ -1,5 +1,5 @@
 import React, { FC, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Add, Edit, NavigateNext } from "@mui/icons-material";
 import {
   Box, Breadcrumbs, Button,
@@ -18,6 +18,7 @@ import { VehicleTable } from "../../components/VehicleTable";
 import { DEFAULT_DATE } from "../../config/Endpoints";
 import { formatDate, formatDateMMYY } from "../../utils/date";
 import ProfileAvatar from "../../components/ProfileAvatar";
+import EditListDialog from "../../components/EditListDialog";
 
 type Props = {
   uuid: string;
@@ -74,7 +75,8 @@ const StyledListOwner = styled(Stack, { shouldForwardProp: (p) => p !== "filled"
  * @returns {JSX.Element}
  */
 const ListView: FC<Props> = ({ uuid }: Props) => {
-  const [status, list] = useListLookup(uuid);
+  const navigate = useNavigate();
+  const [{ status, list }, editList, deleteList] = useListLookup(uuid, true);
   const { profile } = useAuthProvider();
   const { status: listVehiclesStatus, vehicles, hasNext, next } = useListVehiclesProvider();
   const tableCardRef = useRef<HTMLDivElement>(null);
@@ -93,6 +95,11 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
     }
 
     next?.(250);
+  };
+
+  const onDeleteWrapper = async () => {
+    await deleteList();
+    navigate("/lists");
   };
 
   if (status === ListLookupStatus.Loading) {
@@ -188,6 +195,7 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
 
       <ScrollToTop topGap={false} />
       {(list.follower_count > 0 && followersOpen) && <FollowersDialog identifier={uuid} type="List" count={list.follower_count} onClose={() => setFollowersOpen(false)} />}
+      {editOpen && <EditListDialog list={list} onClose={() => setEditOpen(false)} onDelete={onDeleteWrapper} onConfirm={editList} />}
     </Box>
   );
 };

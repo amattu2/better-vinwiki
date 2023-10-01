@@ -6,28 +6,25 @@ import {
 
 type Props = {
   open: boolean;
-  type: "post" | "comment";
+  type: "post" | "comment" | "list";
   onConfirm?: () => void;
   onCancel?: () => void;
 };
 
 /**
- * A generic dialog for deleting posts and comments
+ * A generic dialog for deleting a List, Post, or Comment
  *
  * @param {uuid}
  * @returns {JSX.Element}
  */
-const DeletePostDialog: FC<Props> = ({ type, open, onConfirm, onCancel }: Props) => (
+const DeleteContentDialog: FC<Props> = ({ type, open, onConfirm, onCancel }: Props) => (
   <Dialog open={open} onClose={onCancel}>
     <DialogTitle>
-      {type === "post" ? "Delete Post" : "Delete Comment"}
+      {`Delete ${type.charAt(0).toUpperCase() + type.slice(1)}`}
     </DialogTitle>
     <DialogContent>
       <DialogContentText>
-        Are you sure you want to delete this
-        {type === "post" ? " post" : " comment"}
-        ?
-        This action cannot be undone.
+        {`Are you sure you want to delete this ${type}? This action cannot be undone.`}
       </DialogContentText>
     </DialogContent>
     <DialogActions>
@@ -37,4 +34,4 @@ const DeletePostDialog: FC<Props> = ({ type, open, onConfirm, onCancel }: Props)
   </Dialog>
 );
 
-export default DeletePostDialog;
+export default DeleteContentDialog;
