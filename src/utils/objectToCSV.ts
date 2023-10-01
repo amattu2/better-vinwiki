@@ -13,9 +13,9 @@ export const objectToCSV = <T extends Record<string, unknown>>(data: T[]): void 
     return;
   }
 
-  const headers = Object.keys(data[0]).map(encodeForCSV).join(',');
-  const rows = data.map((row) => Object.values(row).map(encodeForCSV).join(',')).join('\r\n');
-  const csv = `${headers}\r\n${rows}`;
+  const headers = Object.keys(data[0]);
+  const rows = data.map((row) => headers.map((h) => encodeForCSV(row?.[h] || "")).join(',')).join('\r\n');
+  const csv = `${headers.map(encodeForCSV).join(',')}\r\n${rows}`;
 
   downloadBlob(csv, 'export.csv', 'text/csv');
 };
