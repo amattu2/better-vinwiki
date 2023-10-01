@@ -139,7 +139,7 @@ const RecallLookupDialog: FC<Props> = ({ year, make, model, onClose }: Props) =>
                 </Typography>
                 <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
                   {recall.Component.split(":").map((component) => (
-                    <Typography fontSize={14} textTransform="capitalize">{component}</Typography>
+                    <Typography key={component} fontSize={14} textTransform="capitalize">{component}</Typography>
                   ))}
                 </Breadcrumbs>
               </Box>
