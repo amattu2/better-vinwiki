@@ -2,8 +2,7 @@ import React, { FC, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Add, Event, NavigateNext, Numbers, SortByAlpha } from "@mui/icons-material";
 import {
-  Box, Breadcrumbs, Grid,
-  IconButton,
+  Box, Breadcrumbs, Button, Grid,
   Stack, ToggleButton, ToggleButtonGroup,
   Tooltip, Typography, styled,
 } from "@mui/material";
@@ -33,10 +32,6 @@ const StyledStack = styled(Stack)(({ theme }) => ({
   padding: theme.spacing(2),
   background: "#fff",
   minHeight: "calc(100vh - 57px)",
-}));
-
-const StyledIconButton = styled(IconButton)(({ theme }) => ({
-  margin: theme.spacing(-1),
 }));
 
 const OwnedListSkeleton: FC = () => (
@@ -97,9 +92,9 @@ const ListsView: FC = () => {
           <Typography>Lists</Typography>
         </Breadcrumbs>
         <Tooltip title="Create List" arrow>
-          <StyledIconButton onClick={() => setCreateOpen(true)}>
-            <Add />
-          </StyledIconButton>
+          <Button onClick={() => setCreateOpen(true)} startIcon={<Add />}>
+            Create List
+          </Button>
         </Tooltip>
       </StyledHeaderSection>
       <StyledStack gap={2}>
