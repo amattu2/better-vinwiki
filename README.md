@@ -43,14 +43,8 @@ The OpenAPI Documentation for the VINwiki REST API can be found [here](./openapi
 This documentation was derived from unofficial means and is not affiliated with
 or approved by VINwiki.com in any way.
 
-To generate the documentation, run the following command:
-
-```bash
-npm run docs:make
-```
-
-Due to compatibility issues with the OpenAPI Generator, the generated
-documentation uses the old `html` template.
+The documentation is imported at build time using the Swagger React UI and can
+be viewed by navigating to the `/documentation` route.
 
 > **Note**: The Schema definitions for API types were translated from TypeScript
 > to OpenAPI spec and may not be 100% accurate, please refer to the [src/types](./src/types)

@@ -4,6 +4,9 @@ info:
   description: An unofficial source of VINwiki Rest API documentation.
     This document is a work-in-progress and may not contain every endpoint available.
   version: "1.0.0"
+  license:
+    name: AGPL-3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
 servers:
   - url: https://rest.vinwiki.com
     description: Production REST API
