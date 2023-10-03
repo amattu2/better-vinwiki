@@ -7,6 +7,7 @@ import {
   Tooltip, Typography, styled,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
+import { isValidVin } from "@shaggytools/nhtsa-api-wrapper";
 import { ProviderStatus as FeedProviderStatus, useFeedProvider } from "../../Providers/FeedProvider";
 import { ProviderStatus as VehicleProviderStatus, useVehicleProvider } from "../../Providers/VehicleProvider";
 import CreatePost from "../../components/CreatePost";
@@ -256,6 +257,7 @@ const View: FC<Props> = ({ vin }: Props) => {
               title="VIN Decode"
               subtitle="Perform full VIN decode of manufacturer options and features"
               onClick={() => setDecodeOpen(true)}
+              disabled={!isValidVin(vin)}
             />
             <ActionableCard
               // TODO: CARFAX integration - disabled due to API key

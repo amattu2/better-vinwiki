@@ -29,7 +29,12 @@ const StyledCardHeader = styled(CardHeader)<{ component: ElementType, disabled?:
 }));
 
 const ActionableCard: FC<Props> = forwardRef(({ title, subtitle, disabled, ...cardProps }: Props, ref: Ref<HTMLDivElement>) => (
-  <StyledCard elevation={0} ref={ref} {...cardProps}>
+  <StyledCard
+    elevation={0}
+    ref={ref}
+    {...cardProps}
+    onClick={cardProps?.onClick && !disabled ? cardProps.onClick : undefined}
+  >
     <StyledCardHeader
       component={CardActionArea}
       title={title}
