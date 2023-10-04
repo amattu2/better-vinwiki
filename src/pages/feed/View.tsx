@@ -8,7 +8,7 @@ import {
 import { LoadingButton } from '@mui/lab';
 import { useIntersectionObserver, useLocalStorage } from 'usehooks-ts';
 import { ProviderStatus, useFeedProvider } from '../../Providers/FeedProvider';
-import FeedPost from '../../components/FeedPost';
+import FeedPost, { PostSkeleton } from '../../components/FeedPost';
 import Loader from '../../components/Loader';
 import SuggestionCard from '../../components/SuggestionCards/ProfileSuggestion';
 import TransitionGroup from '../../components/TransitionGroup';
@@ -17,6 +17,7 @@ import BlogPostCard from '../../components/BlogPost';
 import CreatePost from '../../components/CreatePost';
 import { ScrollToTop } from '../../components/ScrollToTop';
 import { CacheKeys } from '../../config/Cache';
+import Repeater from '../../components/Repeater';
 
 const StyledBox = styled(Box)({
   padding: "16px",
@@ -113,10 +114,6 @@ const Feed : FC = () => {
     }
   }, [isVisible]);
 
-  if (status === ProviderStatus.LOADING) {
-    return <Loader />;
-  }
-
   return (
     <Stack direction="row">
       <Container maxWidth="xl">
@@ -167,14 +164,17 @@ const Feed : FC = () => {
 
             <Divider sx={{ my: 2 }} />
 
+            <CreatePost />
+
+            {status === ProviderStatus.LOADING && (
+              <Repeater count={5} Component={PostSkeleton} />
+            )}
             {status === ProviderStatus.RELOADING && (
               <Alert severity="info" sx={{ mb: 1 }}>Hang tight. We're fetching your latest feed...</Alert>
             )}
             {(status === ProviderStatus.LOADED && slicedPosts.length === 0) && (
               <Alert severity="info" sx={{ mb: 1 }}>Uh oh. We have no posts to show.</Alert>
             )}
-
-            <CreatePost />
 
             <TransitionGroup
               items={slicedPosts.map((post) => ({ post, key: post.uuid }))}
