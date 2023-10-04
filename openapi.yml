@@ -4,6 +4,9 @@ info:
   description: An unofficial source of VINwiki Rest API documentation.
     This document is a work-in-progress and may not contain every endpoint available.
   version: "1.0.0"
+  license:
+    name: AGPL-3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
 servers:
   - url: https://rest.vinwiki.com
     description: Production REST API
@@ -197,6 +200,42 @@ paths:
                     example: ok
                   profile:
                     $ref: "#/components/schemas/Profile"
+
+  /person/change_password/{uuid}:
+    post:
+      operationId: /person/change_password
+      tags:
+        - authentication
+        - profiles
+      summary: Change Account Password
+      description: Change the account password for the authenticated user
+      parameters:
+        - $ref: "#/components/parameters/profile_uuid"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password1:
+                  type: string
+                  example: 123password321
+                password2:
+                  description: Must match `password1`
+                  type: string
+                  example: 123password321
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
 
   /person/search/{unknown}/{count}:
     post:
@@ -1359,6 +1398,31 @@ paths:
       summary: List Add Vehicle
       description: Add a vehicle to a list.
         Does not need to be owned by the authenticated user.
+      parameters:
+        - $ref: "#/components/parameters/list_uuid"
+        - $ref: "#/components/parameters/vehicle_vin"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  list:
+                    $ref: "#/components/schemas/List"
+
+  /lists/rmvin/{uuid}/{vin}:
+    post:
+      operationId: /lists/rmvin
+      tags:
+        - lists
+      summary: List Remove Vehicle
+      description: Remove a vehicle from a list.
+        Does not need to be owned by the authenticated user?
       parameters:
         - $ref: "#/components/parameters/list_uuid"
         - $ref: "#/components/parameters/vehicle_vin"

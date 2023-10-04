@@ -16,6 +16,7 @@ import Profile from './pages/profile/Controller';
 import Search from './pages/search/Controller';
 import Vehicle from './pages/vehicle/Controller';
 import Post from './pages/post/Controller';
+import Documentation from './pages/documentation';
 import reportWebVitals from './reportWebVitals';
 import { CacheKeys } from './config/Cache';
 
@@ -60,6 +61,7 @@ root.render(
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Logout />} />
+          <Route path="/documentation" element={<Documentation />} />
           <Route path="*" element={<ProtectedRoutes />} />
         </Routes>
       </Router>
