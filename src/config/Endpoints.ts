@@ -61,7 +61,7 @@ export const ENDPOINTS = {
   list_create: `${API_URL}lists/add`,
   list_delete: `${API_URL}lists/delete/`,
   list_add_vehicle: `${API_URL}lists/addvin/`,
-  // TODO: List Vehicle Removal...
+  list_remove_vehicle: `${API_URL}lists/rmvin/`,
 };
 
 export const MEDIA_ENDPOINTS = {

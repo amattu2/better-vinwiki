@@ -44,6 +44,32 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
   const [lastID, setLastID] = useState<string>("");
   const [hasNext, setHasNext] = useState<boolean>(false);
 
+  const removeVehicle = async (vin: Vehicle["vin"]) : Promise<boolean> => {
+    if (!token || !uuid || !vin || !state.vehicles?.find((v) => v.vin === vin)) {
+      return false;
+    }
+
+    const response = await fetch(`${ENDPOINTS.list_remove_vehicle}${uuid}/${vin}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).catch(() => null);
+
+    const { status, list } = await response?.json().catch(() => null) || {};
+    if (status !== STATUS_OK || !list?.uuid) {
+      return false;
+    }
+
+    setState((prev) => ({
+      ...prev,
+      count: list?.vehicles?.count || prev.count - 1,
+      vehicles: prev.vehicles?.filter((v) => v.vin !== vin),
+    }));
+
+    return true;
+  };
+
   const addVehicle = async (vehicle: Vehicle) : Promise<boolean> => {
     if (!token || !uuid || !vehicle?.vin) {
       return false;
@@ -63,7 +89,7 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
 
     let result = true;
     setState((prev) => {
-      if (prev.count === list?.vehicles?.count || prev.vehicles?.find((v) => v.vin === vehicle.vin)) {
+      if (prev.vehicles?.find((v) => v.vin === vehicle.vin)) {
         result = false;
         return prev;
       }
@@ -146,7 +172,7 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
     return () => controller.abort();
   }, [token, uuid]);
 
-  const value = useMemo(() => ({ ...state, addVehicle, next, hasNext }), [state, hasNext]);
+  const value = useMemo(() => ({ ...state, addVehicle, removeVehicle, next, hasNext }), [state, hasNext]);
 
   return (
     <Context.Provider value={value}>

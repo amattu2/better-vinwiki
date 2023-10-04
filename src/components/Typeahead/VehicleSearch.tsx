@@ -49,6 +49,7 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
   const [options, setOptions] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
+  const inputRef = useRef<HTMLInputElement>(null);
   const controllerRef = useRef<AbortController>(new AbortController());
   const mergedOptions = useMemo(() => {
     const cloned = [...options, value].filter((v: Vehicle | null | undefined) => v) as Vehicle[];
@@ -77,6 +78,7 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
   };
 
   const onChangeWrapper = (e: React.SyntheticEvent, value: Vehicle | null, reason: string) => {
+    inputRef.current?.blur();
     setSearchValue("");
     onChange(e, value, reason);
   };
@@ -107,7 +109,7 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
       groupBy={(option: Vehicle) => (
         recentVehicles?.find((v) => v.vin === option.vin) ? "Recents & Following" : option.make.toUpperCase()
       )}
-      renderInput={(params) => <TextField {...params} label="Search by VIN or Description" />}
+      renderInput={(params) => <TextField {...params} inputRef={inputRef} label="Search by VIN or Description" />}
       getOptionLabel={(option: Vehicle) => formatVehicleName(option)}
       onInputChange={debouncedSearch}
       renderOption={(props, option: Vehicle) => (

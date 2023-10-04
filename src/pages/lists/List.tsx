@@ -22,6 +22,7 @@ import EditListDialog from "../../components/EditListDialog";
 import useIsFollowingListLookup, { LookupStatus as IsFollowingLookupStatus } from "../../hooks/useIsFollowingListLookup";
 import { objectToCSV } from "../../utils/objectToCSV";
 import VehicleSelectionDialog from "../../components/VehicleSelectionDialog";
+import DeleteContentDialog from "../../components/DeleteContentConfirm";
 
 type Props = {
   uuid: string;
@@ -78,12 +79,14 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
   const [{ status, list }, editList, deleteList] = useListLookup(uuid, true);
   const [{ status: isFollowingStatus, following }, toggleFollow] = useIsFollowingListLookup(uuid);
   const { profile } = useAuthProvider();
-  const { status: listVehiclesStatus, count, vehicles, hasNext, next, addVehicle } = useListVehiclesProvider();
+  const { status: listVehiclesStatus, count, vehicles, hasNext, next, addVehicle, removeVehicle } = useListVehiclesProvider();
   const tableCardRef = useRef<HTMLDivElement>(null);
+  const deleteVehiclesRef = useRef<Vehicle[]>([]);
 
   const [followersOpen, setFollowersOpen] = useState<boolean>(false);
   const [editOpen, setEditOpen] = useState<boolean>(false);
   const [addVehiclesOpen, setAddVehiclesOpen] = useState<boolean>(false);
+  const [deleteVehiclesOpen, setDeleteVehiclesOpen] = useState<boolean>(false);
 
   const tablePageChange = (page: number, remaining: number) => {
     tableCardRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -98,8 +101,24 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
     next?.(250);
   };
 
-  // TODO: Implement deleting from a list - Need API support
-  // const deleteSelection = async (vehicles: Vehicle[]) => false;
+  const onConfirmDelete = async () => {
+    await Promise.all(deleteVehiclesRef.current.map(async (vehicle) => {
+      await removeVehicle?.(vehicle.vin);
+    }));
+
+    deleteVehiclesRef.current = [];
+    setDeleteVehiclesOpen(false);
+  };
+
+  const deleteSelectionPrompt = async (vehicles: Vehicle[]) => {
+    deleteVehiclesRef.current = vehicles;
+    setDeleteVehiclesOpen(true);
+  };
+
+  const cancelDeleteVehicles = () => {
+    setDeleteVehiclesOpen(false);
+    deleteVehiclesRef.current = [];
+  };
 
   const addVehiclesWrapper = async (vehicles: Vehicle[]) => {
     await Promise.all(vehicles.map(async (vehicle) => {
@@ -187,7 +206,7 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
         />
         <StatisticItem
           name="Vehicles"
-          value={count || list.vehicle_count}
+          value={listVehiclesStatus !== ListProviderStatus.LOADING ? count : list.vehicle_count}
           precise
         />
         <StatisticItem
@@ -200,14 +219,20 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
         <VehicleTable
           status={list.vehicle_count === 0 || listVehiclesStatus !== ListProviderStatus.LOADING ? "success" : "loading"}
           vehicles={vehicles || []}
-          totalCount={count || list.vehicle_count}
+          totalCount={listVehiclesStatus !== ListProviderStatus.LOADING ? count : list.vehicle_count}
           onPageChange={tablePageChange}
           onExport={exportSelection}
-          // onDelete={deleteSelection}
+          onDelete={deleteSelectionPrompt}
         />
       </Card>
 
       <ScrollToTop topGap={false} />
+      <DeleteContentDialog
+        open={deleteVehiclesOpen}
+        type="list_vehicles"
+        onConfirm={onConfirmDelete}
+        onCancel={cancelDeleteVehicles}
+      />
       {(list.follower_count > 0 && followersOpen) && <FollowersDialog identifier={uuid} type="List" count={list.follower_count} onClose={() => setFollowersOpen(false)} />}
       {editOpen && <EditListDialog list={list} onClose={() => setEditOpen(false)} onDelete={onDeleteWrapper} onConfirm={editList} />}
       {addVehiclesOpen && <VehicleSelectionDialog onSelect={addVehiclesWrapper} onClose={() => setAddVehiclesOpen(false)} />}
