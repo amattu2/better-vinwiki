@@ -21,6 +21,7 @@ export const EmailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/g;
  * - Only links prefixed with `https://`
  */
 export const HyperlinkRegex = /(https:\/\/[^\s]+)/g;
+export const HyperlinkRegexNG = /(https:\/\/[^\s]+)/;
 
 /**
  * Vehicle Identification Number

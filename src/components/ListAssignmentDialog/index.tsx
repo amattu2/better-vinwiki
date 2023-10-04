@@ -1,4 +1,4 @@
-import React, { FC, useId, useMemo, useState } from 'react';
+import React, { FC, useId, useMemo, useRef, useState } from 'react';
 import {
   Button, Chip, Dialog, DialogActions, DialogContent,
   DialogTitle, Divider, FormControlLabel, ListItemText,
@@ -33,6 +33,7 @@ const StyledDialog = styled(Dialog)({
  */
 const ListAssignmentDialog: FC<Props> = ({ vehicle, onClose }: Props) => {
   const id = useId();
+  const controllerRef = useRef<AbortController>(new AbortController());
   const { token, profile } = useAuthProvider();
   const { register, handleSubmit } = useForm<{ uuid: List["uuid"] }>();
   const [, lists] = useProfileListsLookup(profile?.uuid || "");
@@ -55,11 +56,13 @@ const ListAssignmentDialog: FC<Props> = ({ vehicle, onClose }: Props) => {
 
     setSaving(true);
 
+    const { signal } = controllerRef.current;
     const response = await fetch(`${ENDPOINTS.list_add_vehicle}${data.uuid}/${vehicle.vin}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      signal,
     }).catch(() => null);
 
     const { status } = await response?.json() || {};
@@ -70,8 +73,15 @@ const ListAssignmentDialog: FC<Props> = ({ vehicle, onClose }: Props) => {
     setSaving(false);
   };
 
+  const onCloseWrapper = () => {
+    if (saving) {
+      controllerRef?.current?.abort();
+    }
+    onClose();
+  };
+
   return (
-    <StyledDialog maxWidth="sm" open onClose={onClose} fullWidth>
+    <StyledDialog maxWidth="sm" open onClose={onCloseWrapper} fullWidth>
       <DialogTitle component={Stack} direction="row" alignItems="center">
         Add to List
       </DialogTitle>
@@ -113,7 +123,7 @@ const ListAssignmentDialog: FC<Props> = ({ vehicle, onClose }: Props) => {
         </form>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="error">Cancel</Button>
+        <Button onClick={onCloseWrapper} color="error">Cancel</Button>
         <LoadingButton type="submit" form={id} loading={saving}>Add</LoadingButton>
       </DialogActions>
     </StyledDialog>

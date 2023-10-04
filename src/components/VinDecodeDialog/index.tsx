@@ -68,6 +68,7 @@ const VinDecodeDialog: FC<Props> = ({ vin, year, onClose }: Props) => {
   const [status, options] = useVinDecoder(vin, year);
 
   const optionKeys = options ? Object.keys(options) as (keyof DecodeVinValuesResults)[] : [];
+  const hasNoOptions = optionKeys.length === 0 && status !== LookupStatus.Loading;
 
   return (
     <StyledDialog maxWidth="sm" open onClose={onClose} fullWidth>
@@ -75,8 +76,8 @@ const VinDecodeDialog: FC<Props> = ({ vin, year, onClose }: Props) => {
         VIN Decode
       </DialogTitle>
       <StyledDialogContent dividers>
-        {(status !== LookupStatus.Loading && optionKeys.length === 0) && (<NoContent />)}
-        <List>
+        {hasNoOptions && (<NoContent />)}
+        <List sx={{ display: hasNoOptions ? "none" : "block" }}>
           {(status === LookupStatus.Loading) && (<Repeater count={6} Component={DecoderItemSkeleton} />)}
           <FixedSizeList
             height={57 * 6}

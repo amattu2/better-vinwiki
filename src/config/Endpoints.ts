@@ -1,8 +1,10 @@
 export const API_URL: string = 'https://rest.vinwiki.com/';
 export const MEDIA_URL: string = "https://media.vinwiki.com/media/";
+export const MEDIA_CDN: string = "https://media-cdn.vinwiki.com/";
 
 export const DEFAULT_DATE = "1970-01-01T00:00:00+00:00";
 export const DEFAULT_VEHICLE_SRC = "https://media.vinwiki.com/static/img/placeholders/car_100_sq.jpg";
+export const POST_TYPES: FeedPost["type"][] = ["photo", "generic", "list_add"];
 
 export const ENDPOINTS = {
   /* Auth Endpoints */
@@ -59,7 +61,7 @@ export const ENDPOINTS = {
   list_create: `${API_URL}lists/add`,
   list_delete: `${API_URL}lists/delete/`,
   list_add_vehicle: `${API_URL}lists/addvin/`,
-  // TODO: List Vehicle Removal...
+  list_remove_vehicle: `${API_URL}lists/rmvin/`,
 };
 
 export const MEDIA_ENDPOINTS = {

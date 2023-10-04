@@ -1,17 +1,18 @@
 import React, { FC, Ref, forwardRef, useRef, useState } from "react";
-import { Delete, MoreVert } from "@mui/icons-material";
+import { Delete, MoreVert, PlaylistAdd } from "@mui/icons-material";
 import {
   Card, CardContent, IconButton,
   ListItemIcon, ListItemText, Menu,
-  MenuItem, Skeleton, Typography, styled,
+  MenuItem, Skeleton, styled,
 } from "@mui/material";
 import { useAuthProvider } from "../../../Providers/AuthProvider";
 import usePostDeleteWrapper from "../../../hooks/usePostDeleteWrapper";
 import { ENDPOINTS } from "../../../config/Endpoints";
-import { formatDateTime } from "../../../utils/date";
 import GenericText from "../../GenericText/GenericText";
 import DeleteContentDialog from "../../DeleteContentConfirm";
 import ProfileBit, { PostProfileSkeleton } from "../Components/PostProfile";
+import PostMeta from "../Components/PostMeta";
+import ListAssignmentDialog from "../../ListAssignmentDialog";
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",
@@ -47,15 +48,16 @@ export const ListAddPostSkeleton: FC = () => (
  * @param {FeedPostProps} post
  * @returns {JSX.Element}
  */
-const ListAddPost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
+const ListAddPost: FC<FeedPostProps> = forwardRef(({ isPreview, isVehiclePage, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
   const { token, profile } = useAuthProvider();
   const { removePost: deletePostByUUID } = usePostDeleteWrapper();
-  const { uuid, subject_uuid, person } = post;
+  const { uuid, subject_uuid, person, vehicle } = post;
   const rootRef = useRef<HTMLDivElement>(null);
 
   const [open, setOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+  const [listDialogOpen, setListDialogOpen] = useState<boolean>(false);
 
   const menuToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -64,6 +66,11 @@ const ListAddPost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedP
 
   const confirmDelete = () => {
     setDeleteDialogOpen(true);
+    setOpen(false);
+  };
+
+  const addToList = () => {
+    setListDialogOpen(true);
     setOpen(false);
   };
 
@@ -84,22 +91,30 @@ const ListAddPost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedP
       <CardContent ref={rootRef}>
         <ProfileBit post={post} filled={false} />
         <GenericText content={`Added to List ${window.origin}/lists/${subject_uuid}`} padding="8px" />
-        <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600} paddingLeft="8px">
-          {formatDateTime(new Date(post.post_date))}
-        </Typography>
+        <PostMeta post={post} paddingLeft="8px" />
       </CardContent>
-      {(profile?.uuid === person.uuid && !isPreview) && (
+      {(!isPreview && (profile?.uuid === person.uuid || !isVehiclePage)) && (
         <>
           <StyledMenuButton size="small" onClick={menuToggle}>
             <MoreVert fontSize="small" />
           </StyledMenuButton>
           <Menu open={open} anchorEl={anchorEl} onClose={() => setOpen(false)}>
-            <MenuItem onClick={confirmDelete}>
-              <ListItemIcon>
-                <Delete fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>Delete</ListItemText>
-            </MenuItem>
+            {profile?.uuid === person.uuid && (
+              <MenuItem onClick={confirmDelete}>
+                <ListItemIcon>
+                  <Delete fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Delete</ListItemText>
+              </MenuItem>
+            )}
+            {(profile?.uuid !== person.uuid && !isVehiclePage) && (
+              <MenuItem onClick={addToList}>
+                <ListItemIcon>
+                  <PlaylistAdd fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Add to List</ListItemText>
+              </MenuItem>
+            )}
           </Menu>
         </>
       )}
@@ -109,6 +124,7 @@ const ListAddPost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedP
         onConfirm={deletePost}
         onCancel={() => setDeleteDialogOpen(false)}
       />
+      {listDialogOpen && (<ListAssignmentDialog vehicle={vehicle} onClose={() => setListDialogOpen(false)} />)}
     </StyledCard>
   );
 });
