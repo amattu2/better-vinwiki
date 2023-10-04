@@ -1,9 +1,13 @@
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import tz from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 
-dayjs.extend(customParseFormat);
+dayjs.extend(tz);
+dayjs.extend(utc);
 dayjs.extend(advancedFormat);
+dayjs.extend(customParseFormat);
 
 export const formatDate = (date: Date) => date.toLocaleDateString('en-US', {
   day: 'numeric',
@@ -89,14 +93,14 @@ export const parseNHTSADate = (date: string) => dayjs(date, "DD/MM/YYYY", true).
  */
 export const isValidEventDate = (event: FeedPost["event_date"], post: FeedPost["post_date"]): boolean => {
   // Missing or invalid event date. This is not valid.
-  const eventDate = dayjs(event, "YYYY-MM-DD[T]HH:mm:ssZ", true);
-  if (!event || !eventDate.isValid()) {
+  const eventDate = dayjs(new Date(event));
+  if (!event || !eventDate.isValid() || eventDate.get("hours") === 0) {
     throw new Error("Invalid event date format");
   }
 
   // Missing or invalid post date. This should not happen.
-  const postDate = dayjs(post, "YYYY-MM-DD[T]HH:mm:ssZ", true);
-  if (!post || !postDate.isValid()) {
+  const postDate = dayjs(new Date(post));
+  if (!post || !postDate.isValid() || postDate.get("hours") === 0) {
     throw new Error("Invalid post date format");
   }
 

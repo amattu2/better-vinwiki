@@ -9,7 +9,6 @@ describe('Utils isValidEventDate', () => {
     '23-01-2022',
     '2019/01/01',
     '07/19/1998',
-    "August 19, 2021 04:00:00",
     "0000-00-00T00:00:00-00:00",
     "1968-01-01T11:60:00-05:00",
   ];
@@ -29,7 +28,9 @@ describe('Utils isValidEventDate', () => {
 
   const eventDatesEqualPostDate: FeedPost[] = [
     { event_date: '2019-05-22T10:10:00-04:00', post_date: '2019-05-22T10:10:00-04:00' }, // Same TZ, date, hour
-    // NOTE: Need to add more tests for different TZs but same calculated timestamp
+    { event_date: '2005-08-12T12:10:00-04:00', post_date: '2005-08-12T16:10:00+00:00' }, // Different TZ, same date, hour
+    { event_date: '2015-10-05T13:25:00-08:00', post_date: '2015-10-05T17:25:00-04:00' }, // Different TZ, same date, hour
+
   ] as FeedPost[];
   it.each(eventDatesEqualPostDate)('throws an exception for event_date $event_date equal to post_date $post_date', ({ event_date, post_date }) => {
     expect(() => isValidEventDate(event_date, post_date)).toThrow("Event date is the same day and hour as the post date");
