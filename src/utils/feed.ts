@@ -1,3 +1,4 @@
+import { POST_TYPES } from "../config/Endpoints";
 import { isValidEventDate } from "./date";
 
 /**
@@ -29,13 +30,20 @@ export const mapPostsToDate = (posts: FeedPost[]): { [date: string] : FeedPost[]
  * to be more consistent with usage across the app.
  *
  * Note:
- * - This is to support legacy Android clients that use the `generic` type for images
+ * - This will force the `generic` type to `photo` if the `image` property is present
+ * - This will override unknown types to `generic` if the `image` property is not present
  *
  * @param {{ post: FeedPost }} post input from feed API
  * @param {FeedPost} post a remapped copy of the input
  */
 export const remapFeedPost = ({ post }: { post: FeedPost }): FeedPost => {
   if (post.client === "android" && post.type === "generic" && post.image?.id) {
+    return { ...post, type: "photo" };
+  }
+  if (!POST_TYPES.includes(post.type) && !post.image?.id && !!post.post_text) {
+    return { ...post, type: "generic" };
+  }
+  if (!POST_TYPES.includes(post.type) && !!post.image?.id) {
     return { ...post, type: "photo" };
   }
 

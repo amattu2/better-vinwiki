@@ -3,6 +3,7 @@ export const MEDIA_URL: string = "https://media.vinwiki.com/media/";
 
 export const DEFAULT_DATE = "1970-01-01T00:00:00+00:00";
 export const DEFAULT_VEHICLE_SRC = "https://media.vinwiki.com/static/img/placeholders/car_100_sq.jpg";
+export const POST_TYPES: FeedPost["type"][] = ["photo", "generic", "list_add"];
 
 export const ENDPOINTS = {
   /* Auth Endpoints */
