@@ -222,7 +222,7 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
           totalCount={listVehiclesStatus !== ListProviderStatus.LOADING ? count : list.vehicle_count}
           onPageChange={tablePageChange}
           onExport={exportSelection}
-          onDelete={deleteSelectionPrompt}
+          onDelete={list.owner.uuid === profile?.uuid ? deleteSelectionPrompt : undefined}
         />
       </Card>
 
