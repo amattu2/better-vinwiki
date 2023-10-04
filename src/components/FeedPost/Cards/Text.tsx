@@ -1,19 +1,20 @@
 import React, { FC, Ref, forwardRef, useRef, useState } from "react";
-import { Delete, MoreVert, Share } from "@mui/icons-material";
+import { Delete, MoreVert, PlaylistAdd, Share } from "@mui/icons-material";
 import {
   Card, CardContent, IconButton,
   ListItemIcon, ListItemText, Menu,
-  MenuItem, Skeleton, Typography, styled,
+  MenuItem, Skeleton, styled,
 } from "@mui/material";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useAuthProvider } from "../../../Providers/AuthProvider";
 import usePostDeleteWrapper from "../../../hooks/usePostDeleteWrapper";
 import { ENDPOINTS } from "../../../config/Endpoints";
-import { formatDateTime } from "../../../utils/date";
 import GenericText from "../../GenericText/GenericText";
 import DeleteContentDialog from "../../DeleteContentConfirm";
 import PostComments from "../Components/PostComments";
 import ProfileBit, { PostProfileSkeleton } from "../Components/PostProfile";
+import PostMeta from "../Components/PostMeta";
+import ListAssignmentDialog from "../../ListAssignmentDialog";
 
 const StyledCard = styled(Card, { shouldForwardProp: (p) => p !== "hoverAction" })(({ hoverAction } : { hoverAction?: boolean }) => ({
   borderRadius: "8px",
@@ -55,17 +56,17 @@ export const TextPostSkeleton: FC = () => (
  * @param {FeedPostProps} post
  * @returns {JSX.Element}
  */
-const TextPost: FC<FeedPostProps> = forwardRef(({ isPreview, isIndividual, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
+const TextPost: FC<FeedPostProps> = forwardRef(({ isPreview, isIndividual, isVehiclePage, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
   const { token, profile } = useAuthProvider();
   const { removePost: deletePostByUUID } = usePostDeleteWrapper();
-  const { uuid, comment_count, post_text, person } = post;
+  const { uuid, comment_count, post_text, person, vehicle } = post;
   const rootRef = useRef<HTMLDivElement>(null);
 
   const [open, setOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, copyValue] = useCopyToClipboard();
+  const [, copyValue] = useCopyToClipboard();
+  const [listDialogOpen, setListDialogOpen] = useState<boolean>(false);
 
   const menuToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -74,6 +75,11 @@ const TextPost: FC<FeedPostProps> = forwardRef(({ isPreview, isIndividual, ...po
 
   const confirmDelete = () => {
     setDeleteDialogOpen(true);
+    setOpen(false);
+  };
+
+  const addToList = () => {
+    setListDialogOpen(true);
     setOpen(false);
   };
 
@@ -110,50 +116,47 @@ const TextPost: FC<FeedPostProps> = forwardRef(({ isPreview, isIndividual, ...po
       <CardContent ref={rootRef}>
         <ProfileBit post={post} filled={false} />
         <GenericText content={post_text} padding="8px" />
-        <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600} paddingLeft="8px">
-          {formatDateTime(new Date(post.post_date))}
-          {post.locale && (
-            <>
-              {" • "}
-              {post.locale}
-            </>
-          )}
-          {(post.client && !["web", "vinbot"].includes(post.client)) && (
-            <>
-              {" • "}
-              {post.client}
-            </>
-          )}
-        </Typography>
+        <PostMeta post={post} paddingLeft="8px" />
         {(!isPreview && !isIndividual) && <PostComments key={uuid} uuid={uuid} count={comment_count} />}
       </CardContent>
       {!isPreview && (
-        <StyledMenuButton size="small" onClick={menuToggle}>
-          <MoreVert fontSize="small" />
-        </StyledMenuButton>
+        <>
+          <StyledMenuButton size="small" onClick={menuToggle}>
+            <MoreVert fontSize="small" />
+          </StyledMenuButton>
+          <Menu open={open} anchorEl={anchorEl} onClose={() => setOpen(false)}>
+            <MenuItem onClick={copyPostURL}>
+              <ListItemIcon>
+                <Share fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Copy Link</ListItemText>
+            </MenuItem>
+            {!isVehiclePage && (
+              <MenuItem onClick={addToList}>
+                <ListItemIcon>
+                  <PlaylistAdd fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Add to List</ListItemText>
+              </MenuItem>
+            )}
+            {profile?.uuid === person.uuid && (
+              <MenuItem onClick={confirmDelete}>
+                <ListItemIcon>
+                  <Delete fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Delete</ListItemText>
+              </MenuItem>
+            )}
+          </Menu>
+        </>
       )}
-      <Menu open={open} anchorEl={anchorEl} onClose={() => setOpen(false)}>
-        <MenuItem onClick={copyPostURL}>
-          <ListItemIcon>
-            <Share fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Copy Link</ListItemText>
-        </MenuItem>
-        {profile?.uuid === person.uuid && (
-          <MenuItem onClick={confirmDelete}>
-            <ListItemIcon>
-              <Delete fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Delete</ListItemText>
-          </MenuItem>
-        )}
-      </Menu>
       <DeleteContentDialog
         type="post"
         open={deleteDialogOpen}
         onConfirm={deletePost}
         onCancel={() => setDeleteDialogOpen(false)}
       />
+      {listDialogOpen && (<ListAssignmentDialog vehicle={vehicle} onClose={() => setListDialogOpen(false)} />)}
     </StyledCard>
   );
 });

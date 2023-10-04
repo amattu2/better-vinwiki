@@ -34,6 +34,8 @@ import useIsFollowingLookup, { LookupStatus } from "../../hooks/useIsFollowingLo
 import useProfileListsLookup from "../../hooks/useProfileListsLookup";
 import useProfileLookup, { LookupStatus as ProfileProviderStatus } from "../../hooks/useProfileLookup";
 import { mapPostsToDate } from "../../utils/feed";
+import { HyperlinkRegexNG } from "../../config/RegEx";
+import { MEDIA_CDN } from "../../config/Endpoints";
 
 type Props = {
   uuid: string;
@@ -187,7 +189,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
 
       <StyledProfileDetails direction="column" gap={2}>
         <Stack direction="row" alignItems="center" justifyContent="flex-start" gap={2}>
-          <StyledProfileAvatar username={profile.username} avatar={profile.avatar} rounded />
+          <StyledProfileAvatar username={profile.username} avatar={`${MEDIA_CDN}${profile.avatar}`} rounded />
           <Stack direction="column" alignItems="flex-start" justifyContent="center" gap={1}>
             <Typography variant="h3" fontSize={18} fontWeight="bold">{`@${profile.username}`}</Typography>
             {profile.bio ? <GenericText content={profile.bio} /> : null}
@@ -199,7 +201,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
               <StyledChip icon={<MyLocationOutlined />} label={profile.location} variant="filled" size="small" />
             </Tooltip>
           )}
-          {profile?.website_url && (
+          {HyperlinkRegexNG.test(profile?.website_url || "") && (
             <Link to={profile.website_url} target="_blank" rel="noopener noreferrer">
               <StyledChip icon={<LinkOutlined />} label={profile.website_url} variant="filled" size="small" />
             </Link>
