@@ -1,3 +1,5 @@
+import { isValidEventDate } from "./date";
+
 /**
  * Builds out a map of Posts by Date and sorts them by within the date
  *
@@ -38,4 +40,19 @@ export const remapFeedPost = ({ post }: { post: FeedPost }): FeedPost => {
   }
 
   return post;
+};
+
+/**
+ * Determines if a `event_date` should be displayed to the user
+ * Wrapper for `isValidEventDate` to catch any exceptions
+ *
+ * @param {FeedPost} post
+ * @returns boolean true if the event date should be displayed
+ */
+export const showEventDate = ({ event_date, post_date }: FeedPost): boolean => {
+  try {
+    return isValidEventDate(event_date, post_date);
+  } catch (e) {
+    return false;
+  }
 };

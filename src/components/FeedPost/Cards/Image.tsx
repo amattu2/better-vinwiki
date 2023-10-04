@@ -3,13 +3,11 @@ import { Delete, MoreVert, Share } from "@mui/icons-material";
 import {
   Box, Card, CardContent, Grid,
   IconButton, ListItemIcon, ListItemText,
-  Menu, MenuItem, Skeleton, Stack,
-  Typography, styled,
+  Menu, MenuItem, Skeleton, Stack, styled,
 } from "@mui/material";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useAuthProvider } from "../../../Providers/AuthProvider";
 import { ENDPOINTS } from "../../../config/Endpoints";
-import { formatDateTime } from "../../../utils/date";
 import usePostDeleteWrapper from "../../../hooks/usePostDeleteWrapper";
 import { ExpandableImage } from "../../ExpandableImage";
 import GenericText from "../../GenericText/GenericText";
@@ -17,6 +15,7 @@ import DeleteContentDialog from "../../DeleteContentConfirm";
 import PostComments from "../Components/PostComments";
 import ProfileBit, { PostProfileSkeleton } from "../Components/PostProfile";
 import Repeater from "../../Repeater";
+import PostMeta from "../Components/PostMeta";
 
 const StyledCard = styled(Card, { shouldForwardProp: (p) => p !== "hoverAction" })(({ hoverAction } : { hoverAction?: boolean }) => ({
   borderRadius: "8px",
@@ -151,21 +150,7 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, isIndividual, ...p
               <Box flexGrow={1}>
                 <GenericText content={post_text} />
               </Box>
-              <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600}>
-                {formatDateTime(new Date(post.post_date))}
-                {post.locale && (
-                  <>
-                    {" • "}
-                    {post.locale}
-                  </>
-                )}
-                {(post.client && !["web", "vinbot"].includes(post.client)) && (
-                  <>
-                    {" • "}
-                    {post.client}
-                  </>
-                )}
-              </Typography>
+              <PostMeta post={post} />
             </Stack>
           </Grid>
         </Grid>

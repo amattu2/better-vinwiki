@@ -3,19 +3,18 @@ import { Delete, MoreVert, Share } from "@mui/icons-material";
 import {
   Box, Card, CardContent, IconButton,
   ListItemIcon, ListItemText, Menu,
-  MenuItem, Skeleton, Stack, Typography,
-  styled,
+  MenuItem, Skeleton, Stack, styled,
 } from "@mui/material";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useAuthProvider } from "../../../Providers/AuthProvider";
 import usePostDeleteWrapper from "../../../hooks/usePostDeleteWrapper";
 import { ENDPOINTS } from "../../../config/Endpoints";
-import { formatDateTime } from "../../../utils/date";
 import { ExpandableImage } from "../../ExpandableImage";
 import GenericText from "../../GenericText/GenericText";
 import DeleteContentDialog from "../../DeleteContentConfirm";
 import PostComments from "../Components/PostComments";
 import ProfileBit, { PostProfileSkeleton } from "../Components/PostProfile";
+import PostMeta from "../Components/PostMeta";
 
 const StyledCard = styled(Card, { shouldForwardProp: (p) => p !== "hoverAction" })(({ hoverAction } : { hoverAction?: boolean }) => ({
   borderRadius: "8px",
@@ -136,21 +135,7 @@ const VerticalImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, isIndividu
           <StyledImageBox isIndividual={isIndividual}>
             <ExpandableImage lowRes={image.thumb} highRes={image.large} alt={post_text} />
           </StyledImageBox>
-          <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600} textAlign="right">
-            {formatDateTime(new Date(post.post_date))}
-            {post.locale && (
-              <>
-                {" • "}
-                {post.locale}
-              </>
-            )}
-            {(post.client && !["web", "vinbot"].includes(post.client)) && (
-              <>
-                {" • "}
-                {post.client}
-              </>
-            )}
-          </Typography>
+          <PostMeta post={post} textAlign="right" />
         </Stack>
         {(!isPreview && !isIndividual) && <PostComments key={uuid} uuid={uuid} count={comment_count} />}
       </CardContent>

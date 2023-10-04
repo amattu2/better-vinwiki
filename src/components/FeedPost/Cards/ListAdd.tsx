@@ -3,15 +3,15 @@ import { Delete, MoreVert } from "@mui/icons-material";
 import {
   Card, CardContent, IconButton,
   ListItemIcon, ListItemText, Menu,
-  MenuItem, Skeleton, Typography, styled,
+  MenuItem, Skeleton, styled,
 } from "@mui/material";
 import { useAuthProvider } from "../../../Providers/AuthProvider";
 import usePostDeleteWrapper from "../../../hooks/usePostDeleteWrapper";
 import { ENDPOINTS } from "../../../config/Endpoints";
-import { formatDateTime } from "../../../utils/date";
 import GenericText from "../../GenericText/GenericText";
 import DeleteContentDialog from "../../DeleteContentConfirm";
 import ProfileBit, { PostProfileSkeleton } from "../Components/PostProfile";
+import PostMeta from "../Components/PostMeta";
 
 const StyledCard = styled(Card)({
   borderRadius: "8px",
@@ -84,9 +84,7 @@ const ListAddPost: FC<FeedPostProps> = forwardRef(({ isPreview, ...post }: FeedP
       <CardContent ref={rootRef}>
         <ProfileBit post={post} filled={false} />
         <GenericText content={`Added to List ${window.origin}/lists/${subject_uuid}`} padding="8px" />
-        <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600} paddingLeft="8px">
-          {formatDateTime(new Date(post.post_date))}
-        </Typography>
+        <PostMeta post={post} paddingLeft="8px" />
       </CardContent>
       {(profile?.uuid === person.uuid && !isPreview) && (
         <>
