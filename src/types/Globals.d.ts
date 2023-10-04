@@ -19,6 +19,14 @@ type FeedPostProps = FeedPost & {
   isIndividual?: true;
 
   /**
+   * Post is embedded on the vehicle page
+   *
+   * Disables:
+   * - Add to List (Redundant)
+   */
+  isVehiclePage?: true;
+
+  /**
    * Adds a ref to the post container.
    */
   ref?: Ref<HTMLDivElement>;

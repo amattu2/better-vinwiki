@@ -233,7 +233,7 @@ const View: FC<Props> = ({ vin }: Props) => {
                 <Alert severity="info" sx={{ mb: 1 }}>Uh oh. We have no posts to show.</Alert>
               )}
               {feedStatus === FeedProviderStatus.LOADING && (<Repeater count={3} Component={PostSkeleton} />)}
-              {slicedPosts?.map((post) => (<FeedPost key={post.uuid} {...post} />))}
+              {slicedPosts?.map((post) => (<FeedPost key={post.uuid} {...post} isVehiclePage />))}
               {hasNext && (
                 <Box sx={{ textAlign: "center", mt: 2 }}>
                   <LoadingButton

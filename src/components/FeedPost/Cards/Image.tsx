@@ -1,5 +1,5 @@
 import React, { FC, Ref, forwardRef, useRef, useState } from "react";
-import { Delete, MoreVert, Share } from "@mui/icons-material";
+import { Delete, MoreVert, PlaylistAdd, Share } from "@mui/icons-material";
 import {
   Box, Card, CardContent, Grid,
   IconButton, ListItemIcon, ListItemText,
@@ -16,6 +16,7 @@ import PostComments from "../Components/PostComments";
 import ProfileBit, { PostProfileSkeleton } from "../Components/PostProfile";
 import Repeater from "../../Repeater";
 import PostMeta from "../Components/PostMeta";
+import ListAssignmentDialog from "../../ListAssignmentDialog";
 
 const StyledCard = styled(Card, { shouldForwardProp: (p) => p !== "hoverAction" })(({ hoverAction } : { hoverAction?: boolean }) => ({
   borderRadius: "8px",
@@ -86,16 +87,17 @@ export const ImagePostSkeleton: FC = () => (
  * @param {FeedPostProps} post
  * @returns {JSX.Element}
  */
-const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, isIndividual, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
+const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, isIndividual, isVehiclePage, ...post }: FeedPostProps, ref: Ref<HTMLDivElement>) => {
   const { token, profile } = useAuthProvider();
   const { removePost: deletePostByUUID } = usePostDeleteWrapper();
-  const { uuid, image, comment_count, post_text, person } = post;
+  const { uuid, image, comment_count, post_text, person, vehicle } = post;
   const rootRef = useRef<HTMLDivElement>(null);
 
   const [open, setOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   const [, copyValue] = useCopyToClipboard();
+  const [listDialogOpen, setListDialogOpen] = useState<boolean>(false);
 
   const menuToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -104,6 +106,11 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, isIndividual, ...p
 
   const confirmDelete = () => {
     setDeleteDialogOpen(true);
+    setOpen(false);
+  };
+
+  const addToList = () => {
+    setListDialogOpen(true);
     setOpen(false);
   };
 
@@ -157,32 +164,43 @@ const ImagePost: FC<FeedPostProps> = forwardRef(({ isPreview, isIndividual, ...p
         {(!isPreview && !isIndividual) && <PostComments key={uuid} uuid={uuid} count={comment_count} />}
       </CardContent>
       {!isPreview && (
-        <StyledMenuButton size="small" onClick={menuToggle}>
-          <MoreVert fontSize="small" />
-        </StyledMenuButton>
+        <>
+          <StyledMenuButton size="small" onClick={menuToggle}>
+            <MoreVert fontSize="small" />
+          </StyledMenuButton>
+          <Menu open={open} anchorEl={anchorEl} onClose={() => setOpen(false)}>
+            <MenuItem onClick={copyPostURL}>
+              <ListItemIcon>
+                <Share fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Copy Link</ListItemText>
+            </MenuItem>
+            {!isVehiclePage && (
+              <MenuItem onClick={addToList}>
+                <ListItemIcon>
+                  <PlaylistAdd fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Add to List</ListItemText>
+              </MenuItem>
+            )}
+            {profile?.uuid === person.uuid && (
+              <MenuItem onClick={confirmDelete}>
+                <ListItemIcon>
+                  <Delete fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Delete</ListItemText>
+              </MenuItem>
+            )}
+          </Menu>
+        </>
       )}
-      <Menu open={open} anchorEl={anchorEl} onClose={() => setOpen(false)}>
-        <MenuItem onClick={copyPostURL}>
-          <ListItemIcon>
-            <Share fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Copy Link</ListItemText>
-        </MenuItem>
-        {profile?.uuid === person.uuid && (
-          <MenuItem onClick={confirmDelete}>
-            <ListItemIcon>
-              <Delete fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Delete</ListItemText>
-          </MenuItem>
-        )}
-      </Menu>
       <DeleteContentDialog
         type="post"
         open={deleteDialogOpen}
         onConfirm={deletePost}
         onCancel={() => setDeleteDialogOpen(false)}
       />
+      {listDialogOpen && (<ListAssignmentDialog vehicle={vehicle} onClose={() => setListDialogOpen(false)} />)}
     </StyledCard>
   );
 });
