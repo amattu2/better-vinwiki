@@ -9,7 +9,6 @@ import { LoadingButton } from '@mui/lab';
 import { useIntersectionObserver, useLocalStorage } from 'usehooks-ts';
 import { ProviderStatus, useFeedProvider } from '../../Providers/FeedProvider';
 import FeedPost, { PostSkeleton } from '../../components/FeedPost';
-import Loader from '../../components/Loader';
 import SuggestionCard from '../../components/SuggestionCards/ProfileSuggestion';
 import TransitionGroup from '../../components/TransitionGroup';
 import TrendingPost from '../../components/TrendingPost';
