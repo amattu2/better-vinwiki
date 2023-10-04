@@ -12,7 +12,7 @@ import Repeater from "../../components/Repeater";
 import useProfileListsLookup, { LookupStatus } from "../../hooks/useProfileListsLookup";
 import { sortLists } from "../../utils/lists";
 import CreateListDialog from "../../components/CreateListDialog";
-import { ScrollToTop } from "../../components/ScrollToTop";
+import { ScrollToTop } from "../../components/ScrollToTop/ScrollButton";
 
 const StyledLink = styled(Link)({
   textDecoration: "none",

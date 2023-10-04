@@ -11,7 +11,7 @@ import FollowersDialog from "../../components/FollowersDialog";
 import GenericText from "../../components/GenericText/GenericText";
 import Loader from "../../components/Loader";
 import { StatisticItem } from "../../components/ProfileStatistic";
-import { ScrollToTop } from "../../components/ScrollToTop";
+import { ScrollToTop } from "../../components/ScrollToTop/ScrollButton";
 import { useListVehiclesProvider, ProviderStatus as ListProviderStatus } from "../../Providers/ListVehiclesProvider";
 import useListLookup, { LookupStatus as ListLookupStatus } from "../../hooks/useListLookup";
 import { VehicleTable } from "../../components/VehicleTable";

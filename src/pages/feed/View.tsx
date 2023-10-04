@@ -14,7 +14,7 @@ import TransitionGroup from '../../components/TransitionGroup';
 import TrendingPost from '../../components/TrendingPost';
 import BlogPostCard from '../../components/BlogPost';
 import CreatePost from '../../components/CreatePost';
-import { ScrollToTop } from '../../components/ScrollToTop';
+import { ScrollToTop } from '../../components/ScrollToTop/ScrollButton';
 import { CacheKeys } from '../../config/Cache';
 import Repeater from '../../components/Repeater';
 

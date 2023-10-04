@@ -28,7 +28,7 @@ import Loader from "../../components/Loader";
 import ProfileAvatar from "../../components/ProfileAvatar";
 import { StatisticItem } from "../../components/ProfileStatistic";
 import Repeater from "../../components/Repeater";
-import { ScrollToTop } from "../../components/ScrollToTop";
+import { ScrollToTop } from "../../components/ScrollToTop/ScrollButton";
 import VehicleTableDialog from "../../components/VehicleTableDialog";
 import useIsFollowingLookup, { LookupStatus } from "../../hooks/useIsFollowingLookup";
 import useProfileListsLookup from "../../hooks/useProfileListsLookup";
