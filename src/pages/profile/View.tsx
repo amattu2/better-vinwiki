@@ -34,6 +34,7 @@ import useIsFollowingLookup, { LookupStatus } from "../../hooks/useIsFollowingLo
 import useProfileListsLookup from "../../hooks/useProfileListsLookup";
 import useProfileLookup, { LookupStatus as ProfileProviderStatus } from "../../hooks/useProfileLookup";
 import { mapPostsToDate } from "../../utils/feed";
+import { HyperlinkRegexNG } from "../../config/RegEx";
 
 type Props = {
   uuid: string;
@@ -199,7 +200,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
               <StyledChip icon={<MyLocationOutlined />} label={profile.location} variant="filled" size="small" />
             </Tooltip>
           )}
-          {profile?.website_url && (
+          {HyperlinkRegexNG.test(profile?.website_url || "") && (
             <Link to={profile.website_url} target="_blank" rel="noopener noreferrer">
               <StyledChip icon={<LinkOutlined />} label={profile.website_url} variant="filled" size="small" />
             </Link>
