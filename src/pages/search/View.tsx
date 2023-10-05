@@ -14,7 +14,7 @@ import { ListSearchCard, ListSearchSkeleton } from "../../components/ListSearchC
 import PlateDecoder from "../../components/PlateDecoder/Dialog";
 import ProfileAvatar from "../../components/ProfileAvatar";
 import Repeater from "../../components/Repeater";
-import { ScrollToTop } from "../../components/ScrollToTop";
+import { ScrollToTop } from "../../components/ScrollToTop/ScrollButton";
 import ListSuggestion from "../../components/SuggestionCards/ListSuggestion";
 import VehicleSuggestion from "../../components/SuggestionCards/VehicleSuggestion";
 import { LookupStatus, SearchResult, SearchType, useSearch } from "../../hooks/useSearch";

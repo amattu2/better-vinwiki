@@ -18,7 +18,7 @@ import {
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { ProviderStatus as FeedProviderStatus, useFeedProvider } from "../../Providers/FeedProvider";
 import EditProfileDialog from "../../components/EditProfileDialog";
-import FeedPost from "../../components/FeedPost";
+import FeedPost, { PostSkeleton } from "../../components/FeedPost";
 import FollowersDialog from "../../components/FollowersDialog";
 import FollowingDialog from "../../components/FollowingDialog";
 import GenericText from "../../components/GenericText/GenericText";
@@ -28,7 +28,7 @@ import Loader from "../../components/Loader";
 import ProfileAvatar from "../../components/ProfileAvatar";
 import { StatisticItem } from "../../components/ProfileStatistic";
 import Repeater from "../../components/Repeater";
-import { ScrollToTop } from "../../components/ScrollToTop";
+import { ScrollToTop } from "../../components/ScrollToTop/ScrollButton";
 import VehicleTableDialog from "../../components/VehicleTableDialog";
 import useIsFollowingLookup, { LookupStatus } from "../../hooks/useIsFollowingLookup";
 import useProfileListsLookup from "../../hooks/useProfileListsLookup";
@@ -282,6 +282,20 @@ const View: FC<Props> = ({ uuid }: Props) => {
           </StyledTabBox>
           <TabPanel value="posts" ref={postPanelRef}>
             <Timeline position="alternate-reverse">
+              {(feedStatus === FeedProviderStatus.LOADING) && (
+                <TimelineItem>
+                  <TimelineOppositeContent color="textSecondary">
+                    <Skeleton variant="text" animation="wave" width={100} />
+                  </TimelineOppositeContent>
+                  <TimelineSeparator>
+                    <TimelineDot />
+                    <TimelineConnector />
+                  </TimelineSeparator>
+                  <StyledTimelineContent>
+                    <Repeater count={3} Component={PostSkeleton} />
+                  </StyledTimelineContent>
+                </TimelineItem>
+              )}
               {dateMappedPosts && Object.keys(dateMappedPosts).map((date) => (
                 <TimelineItem key={date}>
                   <TimelineOppositeContent color="textSecondary">
@@ -296,7 +310,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
                   </StyledTimelineContent>
                 </TimelineItem>
               ))}
-              {!hasNext && (
+              {(feedStatus !== FeedProviderStatus.LOADING && !hasNext) && (
                 <TimelineItem>
                   <TimelineOppositeContent color="textSecondary" fontWeight="bold">
                     End of Post History

@@ -1,24 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import { useReadLocalStorage } from 'usehooks-ts';
 import { Box, CssBaseline, Stack } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useReadLocalStorage } from 'usehooks-ts';
 import { AuthProvider } from './Providers/AuthProvider';
 import { NotificationCountProvider } from './Providers/NotificationCountProvider';
+import AutoScroll from './components/ScrollToTop/AutoScroll';
 import Sidebar from './components/Sidebar';
+import { CacheKeys } from './config/Cache';
 import Home from './pages';
+import Documentation from './pages/documentation';
 import Lists from './pages/lists/Controller';
 import Login from './pages/login/Controller';
 import Logout from './pages/logout/Controller';
+import Post from './pages/post/Controller';
 import Profile from './pages/profile/Controller';
 import Search from './pages/search/Controller';
 import Vehicle from './pages/vehicle/Controller';
-import Post from './pages/post/Controller';
-import Documentation from './pages/documentation';
 import reportWebVitals from './reportWebVitals';
-import { CacheKeys } from './config/Cache';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -34,6 +35,7 @@ const ProtectedRoutes = () => {
   return (
     <AuthProvider>
       <NotificationCountProvider>
+        <AutoScroll />
         <Stack direction="row">
           <Sidebar />
           <Box sx={{ flexGrow: 1, ml: "72px" }}>
