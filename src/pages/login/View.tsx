@@ -74,6 +74,15 @@ const StyledForgotDetails = styled(Typography)<{ component: ElementType } & Link
   marginLeft: theme.spacing(0.5),
 }));
 
+const StyledCopyright = styled(Typography)({
+  position: "absolute",
+  bottom: "10px",
+  left: "50%",
+  transform: "translateX(-50%)",
+  fontSize: "12px",
+  textAlign: "center",
+});
+
 const LoginView = () => {
   const navigate = useNavigate();
 
@@ -164,6 +173,13 @@ const LoginView = () => {
           </Typography>
         </StyledFooterBox>
       </FormContainer>
+      <StyledCopyright>
+        &copy;
+        {" "}
+        {new Date().getFullYear()}
+        {" Alec M. "}
+        <Link to="https://amattu.com" target="_blank" rel="noopener noreferrer">amattu.com</Link>
+      </StyledCopyright>
     </StyledContainer>
   );
 };
