@@ -41,6 +41,20 @@ const StyledHeaderBox = styled(Box)({
   textAlign: "center",
 });
 
+const StyledHeader = styled(Typography)(({ theme }) => ({
+  background: theme.palette.primary.main,
+  color: theme.palette.primary.contrastText,
+  padding: theme.spacing(1),
+  borderRadius: "6px",
+}));
+
+const StyledSubtitle = styled(Typography)(({ theme }) => ({
+  marginTop: theme.spacing(1),
+  fontStyle: "italic",
+  fontWeight: 400,
+  color: theme.palette.text.secondary,
+}));
+
 const StyledFooterBox = styled(Box)({
   marginTop: "30px",
   textAlign: "center",
@@ -72,6 +86,7 @@ const StyledForgotDetails = styled(Typography)<{ component: ElementType } & Link
   fontWeight: 500,
   color: theme.palette.primary.main,
   marginLeft: theme.spacing(0.5),
+  textDecoration: "none",
 }));
 
 const StyledCopyright = styled(Typography)({
@@ -124,12 +139,12 @@ const LoginView = () => {
       {loading && <Loader />}
       <FormContainer alignItems="center" justifyContent="center">
         <StyledHeaderBox>
-          <Typography component="h1" variant="h3">
+          <StyledHeader variant="h3">
             Better VINwiki
-          </Typography>
-          <Typography component="p" variant="subtitle1" sx={{ mt: 1, fontStyle: "italic", fontWeight: 400 }}>
-            A reimagined VINwiki&trade; web experience.
-          </Typography>
+          </StyledHeader>
+          <StyledSubtitle variant="subtitle1">
+            A reimagined VINwiki web experience.
+          </StyledSubtitle>
         </StyledHeaderBox>
         <Box component="form" onSubmit={handleSubmit(onSubmit)}>
           <StyledTextField
