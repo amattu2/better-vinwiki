@@ -151,9 +151,9 @@ paths:
           description: Successful request
 
 
-  /auth/register:
+  /auth/preregister:
     post:
-      operationId: /register
+      operationId: /preregister
       tags:
         - authentication
       security: []

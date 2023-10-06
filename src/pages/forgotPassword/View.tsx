@@ -125,7 +125,7 @@ const ForgotView = () => {
       navigate("/login", { state: { message: "Password reset email sent" } });
     } else {
       resetField("email");
-      setError(message || "Invalid username or password");
+      setError(message || "Failed to send password reset email");
     }
 
     setLoading(false);
@@ -166,7 +166,7 @@ const ForgotView = () => {
           <Typography component="p" variant="subtitle1">
             Already have an account?
             <StyledForgotDetails component={Link} to="/login" variant="subtitle1">
-              Login
+              Login.
             </StyledForgotDetails>
           </Typography>
         </StyledFooterBox>

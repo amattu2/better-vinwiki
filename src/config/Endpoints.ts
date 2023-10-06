@@ -11,6 +11,7 @@ export const ENDPOINTS = {
   authenticate: `${API_URL}auth/authenticate`,
   reset_password: `${API_URL}auth/pwreset`,
   logout: `${API_URL}auth/logout`,
+  register: `${API_URL}auth/preregister`,
   // TODO: Password Change Endpoint...
 
   /* Person Endpoints */
