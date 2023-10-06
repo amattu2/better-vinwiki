@@ -12,6 +12,7 @@ const LogoutView = () => {
 
       if (response.status === 200) {
         localStorage.clear();
+        sessionStorage.clear();
         navigate("/login");
       }
     };

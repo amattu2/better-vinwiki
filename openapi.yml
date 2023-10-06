@@ -114,6 +114,43 @@ paths:
                   mail_sent:
                     type: boolean
 
+  /auth/reset_password/{uuid}/{reset_token}:
+    post:
+      operationId: /auth/reset_password
+      tags:
+        - authentication
+      security: []
+      summary: Reset Password with Auth Token
+      description: This is the final stage to the Forgot Password flow. Reset the account password
+        using the account `uuid` and `token` provided in the email.
+      parameters:
+        - $ref: "#/components/parameters/profile_uuid"
+        - $ref: "#/components/parameters/reset_token"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - password1
+                - password2
+              properties:
+                password1:
+                  type: string
+                  example: strongPass123
+                password2:
+                  type: string
+                  example: strongPass123
+                  description: Must match `password1`
+                submit:
+                  type: string
+                  example: Reset Password
+      responses:
+        "302":
+          description: Successful request
+
+
   /auth/register:
     post:
       operationId: /register
@@ -1770,6 +1807,14 @@ components:
       schema:
         type: string
         example: 1GNEK13Z43J126164
+    reset_token:
+      name: reset_token
+      description: The `reset_token` provided by the reset password email
+      in: path
+      required: true
+      schema:
+        type: string
+        example: XXXXXXXXXXXXXXXXXXXXX
     profile_uuid:
       name: uuid
       description: The `uuid` of the profile to fetch content for or against

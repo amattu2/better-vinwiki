@@ -14,6 +14,7 @@ import Home from './pages';
 import Documentation from './pages/documentation';
 import Lists from './pages/lists/Controller';
 import Login from './pages/login/Controller';
+import ForgotPassword from './pages/forgotPassword/Controller';
 import Logout from './pages/logout/Controller';
 import Post from './pages/post/Controller';
 import Profile from './pages/profile/Controller';
@@ -62,6 +63,7 @@ root.render(
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/documentation" element={<Documentation />} />
           <Route path="*" element={<ProtectedRoutes />} />
