@@ -8,7 +8,7 @@ import {
 import { Link } from 'react-router-dom';
 import FeedPost, { PostSkeleton } from '../../components/FeedPost';
 import SuggestionCard from '../../components/SuggestionCards/ProfileSuggestion';
-import { ScrollToTop } from '../../components/ScrollToTop';
+import { ScrollToTop } from '../../components/ScrollToTop/ScrollButton';
 import PostComments from '../../components/FeedPost/Components/PostComments';
 import { CommentSkeleton } from '../../components/FeedPost/Components/PostComment';
 import Repeater from '../../components/Repeater';

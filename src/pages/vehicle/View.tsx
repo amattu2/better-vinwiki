@@ -18,7 +18,7 @@ import FollowersDialog from "../../components/FollowersDialog";
 import ListAssignmentDialog from "../../components/ListAssignmentDialog";
 import Loader from "../../components/Loader";
 import { StatisticItem, StatisticItemProps } from "../../components/ProfileStatistic";
-import { ScrollToTop } from "../../components/ScrollToTop";
+import { ScrollToTop } from "../../components/ScrollToTop/ScrollButton";
 import useIsFollowingVehicleLookup, { LookupStatus as IsFollowingStatus } from "../../hooks/useIsFollowingVehicleLookup";
 import { formatDateMMYY } from "../../utils/date";
 import { formatVehicleName } from "../../utils/vehicle";
