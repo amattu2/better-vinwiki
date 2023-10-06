@@ -1,16 +1,13 @@
 import React, { ElementType, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, LinkProps, useLocation, useNavigate } from "react-router-dom";
-import { Alert, Box, Button, Stack, TextField, Typography, styled } from "@mui/material";
-import { useLocalStorage } from "usehooks-ts";
+import { Link, LinkProps, useNavigate } from "react-router-dom";
+import { Box, Button, Stack, TextField, Typography, styled } from "@mui/material";
 import backgroundImage from "../../assets/images/shop-1864x1400.jpg";
 import Loader from "../../components/Loader";
-import { CacheKeys } from "../../config/Cache";
 import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
 
-type Inputs = {
-  username: string,
-  password: string,
+type FormInput = {
+  email: string;
 };
 
 const StyledContainer = styled(Box)({
@@ -62,7 +59,6 @@ const StyledFormBox = styled(Box)({
 const StyledFooterBox = styled(Box)({
   marginTop: "30px",
   textAlign: "center",
-  width: "100%",
 });
 
 const StyledTextField = styled(TextField)({
@@ -78,6 +74,13 @@ const StyledButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(2, 0),
   textTransform: "none",
   boxShadow: theme.shadows[4],
+}));
+
+const StyledError = styled(Typography)(({ theme }) => ({
+  fontSize: "12px",
+  lineHeight: "33px",
+  color: theme.palette.error.main,
+  textAlign: "right",
 }));
 
 const StyledForgotDetails = styled(Typography)<{ component: ElementType } & LinkProps>(({ theme }) => ({
@@ -96,38 +99,33 @@ const StyledCopyright = styled(Typography)({
   textAlign: "center",
 });
 
-const LoginView = () => {
+const ForgotView = () => {
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const [, setProfile] = useLocalStorage<AuthProfile | null>(CacheKeys.AUTH_PROFILE, null);
-  const [, setToken] = useLocalStorage<string>(CacheKeys.AUTH_TOKEN, "");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
-  const { register, handleSubmit, formState, resetField } = useForm<Inputs>();
+  const { register, handleSubmit, formState, resetField } = useForm<FormInput>();
   const { errors } = formState;
 
-  const onSubmit = async ({ username: login, password }: Inputs) => {
+  const onSubmit = async ({ email }: FormInput) => {
     setLoading(true);
     setError("");
 
-    const response = await fetch(ENDPOINTS.authenticate, {
+    const response = await fetch(ENDPOINTS.reset_password, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ login, password }),
+      body: JSON.stringify({ email }),
     }).catch(() => null);
 
-    const { status, person, token, message } = await response?.json() || {};
-    if (status === STATUS_OK && person && !!token?.token) {
-      setProfile(person);
-      setToken(token.token);
-      navigate("/");
+    const { status, mail_sent, message } = await response?.json() || {};
+    if (status === STATUS_OK && !!mail_sent) {
+      navigate("/login", { state: { message: "Password reset email sent" } });
     } else {
-      resetField("password");
-      setError(message || "Invalid username or password");
+      resetField("email");
+      setError(message || "Failed to send password reset email");
     }
 
     setLoading(false);
@@ -146,55 +144,29 @@ const LoginView = () => {
           </StyledSubtitle>
         </StyledHeaderBox>
         <StyledFormBox component="form" onSubmit={handleSubmit(onSubmit)}>
-          {location.state?.message && (
-            <Alert severity="success" sx={{ mb: 2 }}>
-              {location.state.message}
-            </Alert>
-          )}
-          {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {error}
-            </Alert>
-          )}
           <StyledTextField
-            {...register("username", { required: true })}
-            label="Username or Email"
-            type="text"
+            {...register("email", { required: true })}
+            label="Email Address"
+            type="email"
             autoComplete="username"
-            error={!!errors.username}
-            helperText={errors.username ? "Username or email address is required" : ""}
+            error={!!errors.email}
+            helperText={errors.email ? "Email address is required" : ""}
             variant="standard"
             size="medium"
             margin="normal"
             fullWidth
             autoFocus
           />
-          <StyledTextField
-            {...register("password", { required: true })}
-            label="Password"
-            type="password"
-            autoComplete="current-password"
-            error={!!errors.password}
-            helperText={errors.password ? "Password is required" : ""}
-            variant="standard"
-            size="medium"
-            margin="normal"
-            fullWidth
-          />
+          {error && (<StyledError>{error}</StyledError>)}
           <StyledButton type="submit" fullWidth variant="contained">
-            Sign In
+            Reset Password
           </StyledButton>
         </StyledFormBox>
         <StyledFooterBox>
           <Typography component="p" variant="subtitle1">
-            Forgot your login details?
-            <StyledForgotDetails component={Link} to="/forgot-password" variant="subtitle1">
-              Let's find them.
-            </StyledForgotDetails>
-            <br />
-            Need to register?
-            <StyledForgotDetails component={Link} to="/register" variant="subtitle1">
-              Sign up now.
+            Already have an account?
+            <StyledForgotDetails component={Link} to="/login" variant="subtitle1">
+              Login.
             </StyledForgotDetails>
           </Typography>
         </StyledFooterBox>
@@ -210,4 +182,4 @@ const LoginView = () => {
   );
 };
 
-export default LoginView;
+export default ForgotView;
