@@ -1,106 +1,168 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { ElementType, useState } from "react";
 import { useForm } from "react-hook-form";
+import { Link, LinkProps, useNavigate } from "react-router-dom";
+import { Box, Button, Stack, TextField, Typography, styled } from "@mui/material";
 import { useLocalStorage } from "usehooks-ts";
-import { Box, Button, Container, TextField, Typography, styled } from "@mui/material";
-import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
+import backgroundImage from "../../assets/images/shop-1864x1400.jpg";
 import Loader from "../../components/Loader";
 import { CacheKeys } from "../../config/Cache";
-
-const StyledContainer = styled(Container)({
-  height: "100%",
-});
-
-const FormContainer = styled(Box)({
-  marginTop: 8,
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: "100%",
-});
-
-const StyledFormBox = styled(Box)({
-  marginTop: "5px",
-});
-
-const StyledTextField = styled(TextField)({
-  marginTop: "25px",
-});
+import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
 
 type Inputs = {
   username: string,
   password: string,
 };
 
+const StyledContainer = styled(Box)({
+  height: "100%",
+  backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.75) 5%, rgba(255, 255, 255, 0.93) 70%), url(${backgroundImage})`,
+  backgroundSize: "cover",
+  backgroundRepeat: "no-repeat",
+  backgroundAttachment: "fixed",
+});
+
+const FormContainer = styled(Stack)(({ theme }) => ({
+  maxWidth: '470px',
+  margin: '0 auto',
+  background: "#fff",
+  borderRadius: "0 0 6px 6px",
+  padding: "98px 35px",
+  [theme.breakpoints.down('sm')]: {
+    height: '100%',
+    width: '100%',
+    maxWidth: '100%',
+    borderRadius: "0",
+    padding: "25px",
+  },
+}));
+
+const StyledHeaderBox = styled(Box)({
+  marginBottom: "50px",
+  textAlign: "center",
+});
+
+const StyledFooterBox = styled(Box)({
+  marginTop: "30px",
+  textAlign: "center",
+});
+
+const StyledTextField = styled(TextField)({
+  marginBottom: "30px",
+  "& .MuiFormLabel-root": {
+    fontSize: "18px",
+  },
+});
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  color: "#fff",
+  padding: theme.spacing(1.5, 2),
+  margin: theme.spacing(2, 0),
+  textTransform: "none",
+  boxShadow: theme.shadows[4],
+}));
+
+const StyledError = styled(Typography)(({ theme }) => ({
+  fontSize: "12px",
+  lineHeight: "33px",
+  color: theme.palette.error.main,
+  textAlign: "right",
+}));
+
+const StyledForgotDetails = styled(Typography)<{ component: ElementType } & LinkProps>(({ theme }) => ({
+  fontWeight: 500,
+  color: theme.palette.primary.main,
+  marginLeft: theme.spacing(0.5),
+}));
+
 const LoginView = () => {
   const navigate = useNavigate();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_profile, setProfile] = useLocalStorage<AuthProfile | null>(CacheKeys.AUTH_PROFILE, null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_token, setToken] = useLocalStorage<string>(CacheKeys.AUTH_TOKEN, "");
-  const [loading, setLoading] = useState<boolean>(false);
 
-  const { register, handleSubmit, formState } = useForm<Inputs>();
+  const [, setProfile] = useLocalStorage<AuthProfile | null>(CacheKeys.AUTH_PROFILE, null);
+  const [, setToken] = useLocalStorage<string>(CacheKeys.AUTH_TOKEN, "");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+
+  const { register, handleSubmit, formState, resetField } = useForm<Inputs>();
   const { errors } = formState;
 
-  const onSubmit = async ({ username, password }: Inputs) => {
+  const onSubmit = async ({ username: login, password }: Inputs) => {
     setLoading(true);
+    setError("");
 
     const response = await fetch(ENDPOINTS.authenticate, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ login: username, password }),
-    });
+      body: JSON.stringify({ login, password }),
+    }).catch(() => null);
 
-    const { person, token: { token }, status } = await response.json();
-    if (status === STATUS_OK) {
+    const { status, person, token, message } = await response?.json() || {};
+    if (status === STATUS_OK && person && !!token?.token) {
       setProfile(person);
-      setToken(token);
+      setToken(token.token);
       navigate("/");
+    } else {
+      resetField("password");
+      setError(message || "Invalid username or password");
     }
 
     setLoading(false);
   };
 
   return (
-    <StyledContainer maxWidth="xs">
+    <StyledContainer>
       {loading && <Loader />}
-      <FormContainer>
-        <Typography component="h1" variant="h4">
-          Sign in
-        </Typography>
-        <StyledFormBox component="form" onSubmit={handleSubmit(onSubmit)}>
+      <FormContainer alignItems="center" justifyContent="center">
+        <StyledHeaderBox>
+          <Typography component="h1" variant="h3">
+            Better VINwiki
+          </Typography>
+          <Typography component="p" variant="subtitle1" sx={{ mt: 1, fontStyle: "italic", fontWeight: 400 }}>
+            A reimagined VINwiki&trade; web experience.
+          </Typography>
+        </StyledHeaderBox>
+        <Box component="form" onSubmit={handleSubmit(onSubmit)}>
           <StyledTextField
-            fullWidth
+            {...register("username", { required: true })}
             label="Username"
             type="text"
             autoComplete="username"
-            autoFocus
-            {...register("username", { required: true })}
             error={!!errors.username}
-            helperText={errors.username ? "Username is required" : ""}
+            helperText={errors.username ? "Username or email is required" : ""}
+            variant="standard"
+            size="medium"
+            margin="normal"
+            fullWidth
+            autoFocus
           />
           <StyledTextField
-            fullWidth
+            {...register("password", { required: true })}
             label="Password"
             type="password"
             autoComplete="current-password"
-            {...register("password", { required: true })}
             error={!!errors.password}
             helperText={errors.password ? "Password is required" : ""}
-          />
-          <Button
-            type="submit"
+            variant="standard"
+            size="medium"
+            margin="normal"
             fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
+          />
+          {error && (
+            <StyledError>{error}</StyledError>
+          )}
+          <StyledButton type="submit" fullWidth variant="contained">
             Sign In
-          </Button>
-        </StyledFormBox>
+          </StyledButton>
+        </Box>
+        <StyledFooterBox>
+          <Typography component="p" variant="subtitle1">
+            Forgot your login details?
+            <StyledForgotDetails component={Link} to="/forgot-password" variant="subtitle1">
+              Let's find them.
+            </StyledForgotDetails>
+          </Typography>
+        </StyledFooterBox>
       </FormContainer>
     </StyledContainer>
   );
