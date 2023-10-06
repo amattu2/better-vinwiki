@@ -185,7 +185,7 @@ const RegisterView = () => {
           />
           {error && (<StyledError>{error}</StyledError>)}
           <StyledButton type="submit" fullWidth variant="contained">
-            Register
+            Sign Up
           </StyledButton>
         </StyledFormBox>
         <StyledFooterBox>
