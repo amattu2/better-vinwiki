@@ -12,7 +12,7 @@ import { useAuthProvider } from '../../Providers/AuthProvider';
 import { useNotificationCountProvider } from '../../Providers/NotificationCountProvider';
 import { Notifications } from '../Notifications';
 import { FollowersDrawer } from '../FollowersDrawer';
-import { MEDIA_CDN } from '../../config/Endpoints';
+import { MEDIA_CDN_URL } from '../../config/Endpoints';
 
 const StyledBox = styled(Box)({
   padding: "32px 12px",
@@ -97,7 +97,7 @@ const Sidebar: FC = () => {
           component={StyledLink}
           to={`/profile/${profile.uuid}`}
           sx={{ width: 36, height: 36 }}
-          src={profile.avatar ? `${MEDIA_CDN}${profile.avatar}` : undefined}
+          src={profile.avatar ? `${MEDIA_CDN_URL}${profile.avatar}` : undefined}
         >
           {profile?.username?.charAt(0).toUpperCase()}
         </Avatar>

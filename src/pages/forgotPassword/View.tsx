@@ -5,6 +5,7 @@ import { Box, Button, Stack, TextField, Typography, styled } from "@mui/material
 import backgroundImage from "../../assets/images/shop-1864x1400.jpg";
 import Loader from "../../components/Loader";
 import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
+import { CONFIG } from "../../config/AppConfig";
 
 type FormInput = {
   email: string;
@@ -137,10 +138,10 @@ const ForgotView = () => {
       <FormContainer alignItems="center" justifyContent="center">
         <StyledHeaderBox>
           <StyledHeader variant="h3">
-            Better VINwiki
+            {CONFIG.name}
           </StyledHeader>
           <StyledSubtitle variant="subtitle1">
-            A reimagined VINwiki web experience.
+            {CONFIG.slogan}
           </StyledSubtitle>
         </StyledHeaderBox>
         <StyledFormBox component="form" onSubmit={handleSubmit(onSubmit)}>

@@ -29,6 +29,12 @@ Install dependencies
 cd better-vinwiki && npm ci
 ```
 
+Setup the `.env` file
+
+```bash
+cp .env.example .env
+```
+
 Run the application
 
 ```bash
