@@ -9,10 +9,6 @@ on:
       - "src/**"
       - "public/**"
 
-      # TODO: import the env vars from the repo settings
-
-      # TODO: trigger github deployments
-
 jobs:
   certify:
     name: Certify the Build
