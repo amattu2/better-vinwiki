@@ -42,10 +42,12 @@ jobs:
       - name: Build
         env:
           REACT_APP_NAME: ${{ vars.REACT_APP_NAME }}
+          REACT_APP_DESCRIPTION: ${{ vars.REACT_APP_DESCRIPTION }}
           REACT_APP_SLOGAN: ${{ vars.REACT_APP_SLOGAN }}
           REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
           REACT_APP_MEDIA_API_URL: ${{ vars.REACT_APP_MEDIA_API_URL }}
           REACT_APP_MEDIA_CDN_URL: ${{ vars.REACT_APP_MEDIA_CDN_URL }}
+          REACT_APP_API_CLIENT: ${{ vars.REACT_APP_API_CLIENT }}
         run: npm run build
 
       - name: Publish to Cloudflare Pages
