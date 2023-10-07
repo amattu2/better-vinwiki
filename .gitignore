@@ -9,6 +9,7 @@ coverage/
 .openapi-generator/
 
 # Specific Files
+.env
 thunderEnvironment.json
 thunderActivity.json
 .openapi-generator-ignore

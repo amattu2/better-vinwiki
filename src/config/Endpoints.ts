@@ -1,6 +1,6 @@
-export const API_URL: string = 'https://rest.vinwiki.com/';
-export const MEDIA_URL: string = "https://media.vinwiki.com/media/";
-export const MEDIA_CDN: string = "https://media-cdn.vinwiki.com/";
+import { CONFIG } from "./AppConfig";
+
+export const { API_URL, MEDIA_API_URL, MEDIA_CDN_URL } = CONFIG;
 
 export const DEFAULT_DATE = "1970-01-01T00:00:00+00:00";
 export const DEFAULT_VEHICLE_SRC = "https://media.vinwiki.com/static/img/placeholders/car_100_sq.jpg";
@@ -12,7 +12,6 @@ export const ENDPOINTS = {
   reset_password: `${API_URL}auth/pwreset`,
   logout: `${API_URL}auth/logout`,
   register: `${API_URL}auth/preregister`,
-  // TODO: Password Change Endpoint...
 
   /* Person Endpoints */
   profile: `${API_URL}person/profile/`,
@@ -68,9 +67,9 @@ export const ENDPOINTS = {
 
 export const MEDIA_ENDPOINTS = {
   /* Vehicle Endpoints */
-  vehicle_image_add: `${MEDIA_URL}add/photo/vehicle/`,
-  vehicle_image: `${MEDIA_URL}photo/vehicle/`,
-  person_image_add: `${MEDIA_URL}photo/person/`,
+  vehicle_image_add: `${MEDIA_API_URL}add/photo/vehicle/`,
+  vehicle_image: `${MEDIA_API_URL}photo/vehicle/`,
+  person_image_add: `${MEDIA_API_URL}photo/person/`,
 };
 
 export const STATUS_OK = "ok";

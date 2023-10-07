@@ -29,6 +29,12 @@ Install dependencies
 cd better-vinwiki && npm ci
 ```
 
+Setup the `.env` file
+
+```bash
+cp .env.example .env
+```
+
 Run the application
 
 ```bash
@@ -36,6 +42,27 @@ npm start
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+# Advanced Configuration
+
+The default build will start out of the box, but needs to be tied to the correct
+VINwiki deployment tier (e.g. DEV/PROD). These should be injected during the build
+process.
+
+Configuration Options (See [.env.example](./.env.example) for all options):
+
+| Name | Description |
+|:-|:-|
+|`REACT_APP_NAME`|The name of the app. Used everywhere|
+|`REACT_APP_DESCRIPTION`|The description built into the HTML5 meta tags|
+|`REACT_APP_SLOGAN`|Sits under the App Name on the auth pages|
+|`REACT_APP_API_URL`|Base URL for the VINwiki API. Should have a trailing `/` at the end|
+|`REACT_APP_MEDIA_API_URL`|Base URL for the VINwiki Media API. Should have a trailing `/`|
+|`REACT_APP_MEDIA_CDN_URL`|Base URL for the VINwiki Media CDN. Should have a trailing `/`|
+|`REACT_APP_API_CLIENT`|The client name injected into a new post. Keep it simple and short|
+
+See [src/config/AppConfig.ts](./src/config/AppConfig.ts) for the build defaults.
+You likely will not want to leave them as the defaults.
 
 # VINwiki REST API Docs
 

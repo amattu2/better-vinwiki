@@ -35,7 +35,7 @@ import useProfileListsLookup from "../../hooks/useProfileListsLookup";
 import useProfileLookup, { LookupStatus as ProfileProviderStatus } from "../../hooks/useProfileLookup";
 import { mapPostsToDate } from "../../utils/feed";
 import { HyperlinkRegexNG } from "../../config/RegEx";
-import { MEDIA_CDN } from "../../config/Endpoints";
+import { MEDIA_CDN_URL } from "../../config/Endpoints";
 
 type Props = {
   uuid: string;
@@ -189,7 +189,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
 
       <StyledProfileDetails direction="column" gap={2}>
         <Stack direction="row" alignItems="center" justifyContent="flex-start" gap={2}>
-          <StyledProfileAvatar username={profile.username} avatar={`${MEDIA_CDN}${profile.avatar}`} rounded />
+          <StyledProfileAvatar username={profile.username} avatar={`${MEDIA_CDN_URL}${profile.avatar}`} rounded />
           <Stack direction="column" alignItems="flex-start" justifyContent="center" gap={1}>
             <Typography variant="h3" fontSize={18} fontWeight="bold">{`@${profile.username}`}</Typography>
             {profile.bio ? <GenericText content={profile.bio} /> : null}
