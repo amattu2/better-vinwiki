@@ -23,6 +23,7 @@ import PlateDecoder from "../PlateDecoder/Dialog";
 import ProfileAvatar from "../ProfileAvatar";
 import { VehicleSearch } from "../Typeahead/VehicleSearch";
 import { useFeedProvider } from "../../Providers/FeedProvider";
+import { CONFIG } from "../../config/AppConfig";
 
 type Props = {
   vehicle?: Vehicle;
@@ -181,7 +182,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        client: "better-vinwiki",
+        client: CONFIG.API_CLIENT,
         event_date: watch("event_date") ? dayjs(watch("event_date")).toISOString() : "",
         locale: watch("locale"),
         mileage: watch("mileage"),
