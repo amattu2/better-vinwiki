@@ -35,7 +35,7 @@ type ProfileNotification = {
   seen: boolean;
   sender: Pick<Profile, "avatar" | "username" | "uuid">;
   text: string;
-  type: "post_mention" | "origin_author"; // TODO: Add more types
+  type: "post_mention" | "origin_author" | "comment_peer" | "person_following";
   uuid: string;
 };
 
