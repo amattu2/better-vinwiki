@@ -10,26 +10,8 @@ on:
       - "public/**"
 
 jobs:
-  certify:
-    name: Certify the Build
-    if: ${{ github.repository_owner == 'amattu2' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Run Jest
-        run: npm run test:ci
-
-      - name: Run ESLint
-        run: npm run lint:ci
-
   publish:
     name: Publish to Cloudflare Pages
-    needs: certify
     if: ${{ github.repository_owner == 'amattu2' }}
     runs-on: ubuntu-latest
     steps:
@@ -38,6 +20,12 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci
+
+      - name: Test (Jest)
+        run: npm run test:ci
+
+      - name: Lint (EsLint)
+        run: npm run lint:ci
 
       - name: Build
         env:

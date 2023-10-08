@@ -8,6 +8,8 @@ on:
       - "public/**"
       - "*.json"
       - "*.js"
+      - "*.ts"
+      - "*.tsx"
 
 permissions:
   contents: read
