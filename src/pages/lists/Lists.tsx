@@ -28,6 +28,11 @@ const StyledHeaderSection = styled(Stack)(({ theme }) => ({
   zIndex: 8,
 }));
 
+const StyledHeaderButton = styled(Button)(({ theme }) => ({
+  marginTop: theme.spacing(-1),
+  marginBottom: theme.spacing(-1),
+}));
+
 const StyledStack = styled(Stack)(({ theme }) => ({
   padding: theme.spacing(2),
   background: "#fff",
@@ -92,9 +97,9 @@ const ListsView: FC = () => {
           <Typography>Lists</Typography>
         </Breadcrumbs>
         <Tooltip title="Create List" arrow>
-          <Button onClick={() => setCreateOpen(true)} startIcon={<Add />}>
+          <StyledHeaderButton onClick={() => setCreateOpen(true)} startIcon={<Add />}>
             Create List
-          </Button>
+          </StyledHeaderButton>
         </Tooltip>
       </StyledHeaderSection>
       <StyledStack gap={2}>

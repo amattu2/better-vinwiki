@@ -5,13 +5,13 @@ import {
   PeopleOutline, SearchOutlined, ListOutlined,
 } from '@mui/icons-material';
 import {
-  Avatar, Badge, IconButton, Popover,
-  Tooltip, Typography, Box, Stack, styled,
+  Avatar, Badge, IconButton, Tooltip,
+  Typography, Box, Stack, styled,
 } from '@mui/material';
 import { useAuthProvider } from '../../Providers/AuthProvider';
 import { useNotificationCountProvider } from '../../Providers/NotificationCountProvider';
-import { Notifications } from '../Notifications';
 import { FollowersDrawer } from '../FollowersDrawer';
+import { NotificationDrawer } from '../NotificationDrawer';
 import { MEDIA_CDN_URL } from '../../config/Endpoints';
 
 const StyledBox = styled(Box)({
@@ -71,12 +71,10 @@ const Sidebar: FC = () => {
   const { pathname } = useLocation();
 
   const [open, setOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
-  const openNotifications = (e: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(e.currentTarget);
-    setOpen(true);
+  const toggleNotifications = () => {
+    setOpen(!open);
   };
 
   const toggleDrawer = () => {
@@ -128,7 +126,7 @@ const Sidebar: FC = () => {
         <Typography variant="caption" color="textSecondary" fontWeight={600}>
           Tools
         </Typography>
-        <IconButton onClick={openNotifications}>
+        <IconButton onClick={toggleNotifications}>
           <Tooltip title="Notifications" placement="right">
             <Badge badgeContent={unseen} color="error">
               <NotificationsActive />
@@ -150,14 +148,7 @@ const Sidebar: FC = () => {
           </StyledLink>
         </IconButton>
       </StyledControlGroup>
-      <Popover
-        open={open}
-        onClose={() => setOpen(false)}
-        anchorEl={anchorEl}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Notifications preload={open} />
-      </Popover>
+      <NotificationDrawer open={open} onClose={() => setOpen(false)} />
       <FollowersDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </StyledBox>
   );

@@ -1,22 +1,28 @@
-name: Cloudflare Pages
+name: GitHub Pages
 
 concurrency:
-  group: "cloudflare-pages"
+  group: "github-pages"
   cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - master
-      - main
+      - development
+      - develop
     paths:
       - "src/**"
       - "public/**"
 
+
 jobs:
   publish:
-    name: Publish to Cloudflare Pages
+    name: Publish to GitHub Pages
     if: ${{ github.repository_owner == 'amattu2' }}
     runs-on: ubuntu-latest
     steps:
@@ -43,12 +49,14 @@ jobs:
           REACT_APP_API_CLIENT: ${{ vars.REACT_APP_API_CLIENT }}
         run: npm run build
 
-      - name: Publish to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
         with:
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: vinwiki
-          directory: ./build
-          branch: main
+          path: './build'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2

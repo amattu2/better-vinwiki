@@ -18,22 +18,36 @@ import { ScrollToTop } from '../../components/ScrollToTop/ScrollButton';
 import { CacheKeys } from '../../config/Cache';
 import Repeater from '../../components/Repeater';
 
+const StyledContainer = styled(Container)(({ theme }) => ({
+  [theme.breakpoints.down("lg")]: {
+    paddingLeft: 0,
+    paddingRight: 0,
+  },
+}));
+
 const StyledBox = styled(Box)({
   padding: "16px",
 });
 
-const StyledFeedBox = styled(StyledBox)({
+const StyledFeedBox = styled(StyledBox)(({ theme }) => ({
   backgroundColor: "#fff",
   flexGrow: 1,
   minHeight: "100vh",
   borderLeft: "1px solid #ddd",
   borderRight: "1px solid #ddd",
-});
+  [theme.breakpoints.down("lg")]: {
+    borderLeft: "none",
+    borderRight: "none",
+  },
+}));
 
-const StyledSidebarBox = styled(StyledBox)({
+const StyledSidebarBox = styled(StyledBox)(({ theme }) => ({
   minWidth: "400px",
   flexGrow: 1,
-});
+  [theme.breakpoints.down("lg")]: {
+    display: "none",
+  },
+}));
 
 // TODO: Dynamically fetch this from the blog
 const blogPost: BlogPost = {
@@ -115,7 +129,7 @@ const Feed : FC = () => {
 
   return (
     <Stack direction="row">
-      <Container maxWidth="xl">
+      <StyledContainer maxWidth="xl">
         <StyledFeedBox>
           <Container maxWidth="md">
             <Stack direction="row" alignItems="center" justifyContent="flex-start" gap={2}>
@@ -192,7 +206,7 @@ const Feed : FC = () => {
             )}
           </Container>
         </StyledFeedBox>
-      </Container>
+      </StyledContainer>
       <StyledSidebarBox>
         {blogPost && <BlogPostCard post={blogPost} />}
         {topPost && <TrendingPost reason={topPost.reason} post={topPost.post} />}
