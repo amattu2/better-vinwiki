@@ -22,6 +22,7 @@ import Profile from './pages/profile/Controller';
 import Search from './pages/search/Controller';
 import Vehicle from './pages/vehicle/Controller';
 import reportWebVitals from './reportWebVitals';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -90,4 +91,5 @@ root.render(
   </React.StrictMode>,
 );
 
+serviceWorkerRegistration.register();
 reportWebVitals();
