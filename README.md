@@ -53,6 +53,7 @@ Configuration Options (See [.env.example](./.env.example) for all options):
 
 | Name | Description |
 |:-|:-|
+|`PUBLIC_URL`|The base URL for the application. Optional|
 |`REACT_APP_NAME`|The name of the app. Used everywhere|
 |`REACT_APP_DESCRIPTION`|The description built into the HTML5 meta tags|
 |`REACT_APP_SLOGAN`|Sits under the App Name on the auth pages|
