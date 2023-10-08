@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import { Box, CssBaseline, Stack } from '@mui/material';
+import { Box, CssBaseline, Stack, ThemeProvider, createTheme } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useReadLocalStorage } from 'usehooks-ts';
@@ -26,6 +26,19 @@ import reportWebVitals from './reportWebVitals';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
+
+const theme = createTheme({
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          height: "100vh",
+          backgroundColor: "rgb(244, 247, 250)",
+        },
+      },
+    },
+  },
+});
 
 const ProtectedRoutes = () => {
   const token = useReadLocalStorage<string>("token");
@@ -60,17 +73,19 @@ const ProtectedRoutes = () => {
 root.render(
   <React.StrictMode>
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <CssBaseline />
-      <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="/documentation" element={<Documentation />} />
-          <Route path="*" element={<ProtectedRoutes />} />
-        </Routes>
-      </Router>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/logout" element={<Logout />} />
+            <Route path="/documentation" element={<Documentation />} />
+            <Route path="*" element={<ProtectedRoutes />} />
+          </Routes>
+        </Router>
+      </ThemeProvider>
     </LocalizationProvider>
   </React.StrictMode>,
 );
