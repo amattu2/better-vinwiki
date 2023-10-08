@@ -23,22 +23,36 @@ import useProfileListsLookup from "../../hooks/useProfileListsLookup";
 import { sortVehicles } from "../../utils/vehicle";
 import { VehicleTable } from "../../components/VehicleTable";
 
+const StyledContainer = styled(Container)(({ theme }) => ({
+  [theme.breakpoints.down("lg")]: {
+    paddingLeft: 0,
+    paddingRight: 0,
+  },
+}));
+
 const StyledBox = styled(Box)({
   padding: "16px",
 });
 
-const StyledSearchBox = styled(StyledBox)({
+const StyledSearchBox = styled(StyledBox)(({ theme }) => ({
   backgroundColor: "#fff",
   flexGrow: 1,
   minHeight: "100vh",
   borderLeft: "1px solid #ddd",
   borderRight: "1px solid #ddd",
-});
+  [theme.breakpoints.down("lg")]: {
+    borderLeft: "none",
+    borderRight: "none",
+  },
+}));
 
-const StyledSidebarBox = styled(StyledBox)({
+const StyledSidebarBox = styled(StyledBox)(({ theme }) => ({
   minWidth: "400px",
   flexGrow: 1,
-});
+  [theme.breakpoints.down("lg")]: {
+    display: "none",
+  },
+}));
 
 const StyledCard = styled(Card)({
   padding: "16px 24px",
@@ -162,7 +176,7 @@ const View : FC = () => {
 
   return (
     <Stack direction="row">
-      <Container maxWidth="xl">
+      <StyledContainer maxWidth="xl">
         <StyledSearchBox>
           <Container maxWidth="md">
             <Stack direction="column" gap={2}>
@@ -270,7 +284,7 @@ const View : FC = () => {
             />
           </Container>
         </StyledSearchBox>
-      </Container>
+      </StyledContainer>
       <StyledSidebarBox>
         {vehicles && <VehicleSuggestion suggestions={sortVehicles(vehicles)} limit={4} />}
         {lists && <ListSuggestion suggestions={lists} limit={4} />}
