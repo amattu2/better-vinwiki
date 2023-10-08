@@ -1,5 +1,9 @@
 name: Cloudflare Pages
 
+concurrency:
+  group: "cloudflare-pages"
+  cancel-in-progress: false
+
 on:
   workflow_dispatch:
   push:
