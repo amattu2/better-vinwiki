@@ -55,7 +55,6 @@ const StyledLink = styled(Link)({
 export const FollowersDrawer: FC<Props> = ({ open, onClose }: Props) => {
   const { profile } = useAuthProvider();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [status, { following }] = useFollowingLookup(profile!.uuid, false);
   const [sort, setSort] = useState<"alpha" | "date">("alpha");
 

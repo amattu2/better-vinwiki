@@ -14,7 +14,7 @@ type FormInput = {
 };
 
 const StyledContainer = styled(Box)({
-  height: "100%",
+  height: "100vh",
   backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.75) 5%, rgba(255, 255, 255, 0.93) 70%), url(${backgroundImage})`,
   backgroundSize: "cover",
   backgroundRepeat: "no-repeat",
@@ -23,10 +23,14 @@ const StyledContainer = styled(Box)({
 
 const FormContainer = styled(Stack)(({ theme }) => ({
   maxWidth: '470px',
+  maxHeight: '100vh',
   margin: '0 auto',
   background: "#fff",
   borderRadius: "0 0 6px 6px",
   padding: "98px 35px",
+  [theme.breakpoints.down('md')]: {
+    paddingTop: "50px",
+  },
   [theme.breakpoints.down('sm')]: {
     height: '100%',
     width: '100%',
