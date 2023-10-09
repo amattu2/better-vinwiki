@@ -194,7 +194,7 @@ const LoginView = () => {
           <Typography component="p" variant="subtitle1">
             Forgot your login details?
             <StyledForgotDetails component={Link} to="/forgot-password" variant="subtitle1">
-              Let's find them.
+              Let&apos;s find them.
             </StyledForgotDetails>
             <br />
             Need to register?
