@@ -65,6 +65,9 @@ Configuration Options (See [.env.example](./.env.example) for all options):
 See [src/config/AppConfig.ts](./src/config/AppConfig.ts) for the build defaults.
 You likely will not want to leave them as the defaults.
 
+> **Warning**: When using `PUBLIC_URL` for subdirectory deployments, some functionality may not work
+> as expected. This app does not officially support subdirectory deployments.
+
 # VINwiki REST API Docs
 
 The OpenAPI Documentation for the VINwiki REST API can be found [here](./openapi.yml).
