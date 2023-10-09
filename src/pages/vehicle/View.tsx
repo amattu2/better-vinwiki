@@ -61,6 +61,9 @@ const StyledVehicleDetails = styled(Stack)(({ theme }) => ({
   padding: theme.spacing(2),
   paddingTop: theme.spacing(4),
   paddingLeft: "24px !important",
+  [theme.breakpoints.down("md")]: {
+    borderRight: "none",
+  },
 }));
 
 const StyledAvatar = styled(Avatar)(({ theme }) => ({
@@ -87,6 +90,10 @@ const StyledPillGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
   background: "#fff",
   alignItems: "center",
+  [theme.breakpoints.down("md")]: {
+    borderTop: "1px solid #ddd",
+    marginLeft: theme.spacing(2),
+  },
 }));
 
 const StyledPill = styled(Grid)<{ component: ElementType } & StatisticItemProps>({
