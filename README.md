@@ -66,7 +66,8 @@ See [src/config/AppConfig.ts](./src/config/AppConfig.ts) for the build defaults.
 You likely will not want to leave them as the defaults.
 
 > **Warning**: When using `PUBLIC_URL` for subdirectory deployments, some functionality may not work
-> as expected. This app does not officially support subdirectory deployments.
+> as expected. This app does not officially support subdirectory deployments. If you aren't deploying
+> on a subdirectory, don't define this option.
 
 # VINwiki REST API Docs
 
