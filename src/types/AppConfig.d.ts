@@ -45,4 +45,13 @@ type AppConfig = {
    * a new Feed Post
    */
   API_CLIENT: string;
+  /**
+   * The base URL of the React application
+   *
+   * Defaults to empty string.
+   *
+   * @example https://example.com/
+   * @example https://example.com/subdirectory/
+   */
+  PUBLIC_URL: string;
 };
