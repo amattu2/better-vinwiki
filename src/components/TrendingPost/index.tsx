@@ -91,9 +91,9 @@ const TopPost: FC<Props> = ({ reason, post }: Props) => {
           {reason}
         </StyledReasonChip>
         <StyledPostText variant="h4">
-          "
+          &quot;
           {prettySubstring(post.post_text, 40)}
-          "
+          &quot;
         </StyledPostText>
       </StyledPostBox>
       <StyledAuthor direction="row" gap={1}>

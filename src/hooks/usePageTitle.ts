@@ -20,7 +20,9 @@ const usePageTitle = (title: string, suffix: boolean = true, restore: boolean = 
       return () => {};
     }
 
-    return () => document.title = CONFIG.name;
+    return () => {
+      document.title = CONFIG.name;
+    };
   }, []);
 };
 
