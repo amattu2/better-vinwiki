@@ -22,6 +22,7 @@ import Profile from './pages/profile/Controller';
 import Search from './pages/search/Controller';
 import Vehicle from './pages/vehicle/Controller';
 import reportWebVitals from './reportWebVitals';
+import { CONFIG } from './config/AppConfig';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -75,7 +76,7 @@ root.render(
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Router>
+        <Router basename={CONFIG.PUBLIC_URL}>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
