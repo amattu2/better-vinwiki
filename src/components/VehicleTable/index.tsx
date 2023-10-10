@@ -327,11 +327,9 @@ export const VehicleTable: FC<Props> = ({
         onPageChange={(e, newPage) => setPage(newPage)}
         onRowsPerPageChange={handleChangeRowsPerPage}
         nextIconButtonProps={{
-          disabled:
-            perPage === -1
-            || !dataset
-            || dataset.length === 0
-            || vehicles.length <= (page + 1) * perPage
+          disabled: !dataset
+            || count === 0
+            || count <= (page + 1) * perPage
             || status === "loading",
         }}
         backIconButtonProps={{ disabled: page === 0 || status === "loading" }}
