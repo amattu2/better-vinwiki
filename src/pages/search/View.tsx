@@ -215,13 +215,11 @@ const View : FC = () => {
 
             <TabContext value={searchType}>
               <StyledPanel value="Vehicle">
-                <StyledCard elevation={3} sx={{ padding: 0 }}>
-                  <VehicleTable
-                    status={status}
-                    vehicles={results as Vehicle[]}
-                    EmptyComponent={NoSearchResults}
-                  />
-                </StyledCard>
+                <VehicleTable
+                  status={status}
+                  vehicles={results as Vehicle[]}
+                  EmptyComponent={NoSearchResults}
+                />
               </StyledPanel>
               <StyledPanel value="Profile">
                 <List>

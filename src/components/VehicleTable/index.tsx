@@ -236,7 +236,7 @@ export const VehicleTable: FC<Props> = ({
   }, [page]);
 
   return (
-    <Paper>
+    <Paper elevation={0}>
       <StyledToolbar hasSelected={selected.length > 0} showCheckboxes={showCheckboxes}>
         <ToolbarTitle numSelected={selected.length} />
         <Stack direction="row" alignItems="center" sx={{ visibility: selected.length <= 0 ? "hidden" : "visible" }}>
