@@ -16,6 +16,7 @@ const usePostDeleteWrapper = (): Pick<FeedProviderState, "removePost"> => {
   };
 
   try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const { removePost } = useFeedProvider();
     return { removePost };
   } catch (e) {
