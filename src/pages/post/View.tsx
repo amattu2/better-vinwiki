@@ -93,7 +93,7 @@ const PostView: FC<Props> = ({ uuid }: Props) => {
 
     (comments.map((comment) => comment.person) || []).forEach((profile) => {
       if (profileMap[profile.uuid]) {
-        profileMap[profile.uuid].postCount++;
+        profileMap[profile.uuid].postCount += 1;
       } else {
         profileMap[profile.uuid] = { profile, postCount: 1 };
       }

@@ -13,6 +13,7 @@ const StyledCard = styled(Card)({
   margin: 0,
   borderRadius: 0,
   border: "1px solid #ddd",
+  borderRight: "unset",
   borderTop: "unset",
   "&:last-child": {
     borderRadius: "0 0 8px 8px",

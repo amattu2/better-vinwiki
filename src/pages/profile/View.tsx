@@ -1,7 +1,7 @@
 import React, { FC, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  Edit, Facebook, Instagram, LinkOutlined,
+  Edit, Facebook, InsertPhoto, Instagram, LinkOutlined,
   MyLocationOutlined, NavigateNext, Twitter,
 } from "@mui/icons-material";
 import {
@@ -18,6 +18,7 @@ import {
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { ProviderStatus as FeedProviderStatus, useFeedProvider } from "../../Providers/FeedProvider";
 import EditProfileDialog from "../../components/EditProfileDialog";
+import EditProfilePictureDialog from "../../components/EditProfilePictureDialog";
 import FeedPost, { PostSkeleton } from "../../components/FeedPost";
 import FollowersDialog from "../../components/FollowersDialog";
 import FollowingDialog from "../../components/FollowingDialog";
@@ -128,7 +129,7 @@ const TopListSkeleton: FC = () => (
 );
 
 const View: FC<Props> = ({ uuid }: Props) => {
-  const [{ status: profileStatus, profile }, editProfile] = useProfileLookup(uuid, true);
+  const [{ status: profileStatus, profile }, editProfile, editPFP] = useProfileLookup(uuid, true);
   const { profile: authProfile } = useAuthProvider();
   const { status: feedStatus, posts, hasNext, next } = useFeedProvider();
   const postPanelRef = useRef<HTMLDivElement>(null);
@@ -140,6 +141,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
   const [followingOpen, setFollowingOpen] = useState<boolean>(false);
   const [vehiclesOpen, setVehiclesOpen] = useState<boolean>(false);
   const [editOpen, setEditOpen] = useState<boolean>(false);
+  const [editPFPOpen, setEditPFPOpen] = useState<boolean>(false);
   const [limit, setLimit] = useState<number>(15);
 
   const listCount: number = useMemo(() => (lists?.owned?.length || 0) + (lists?.following?.length || 0), [lists]);
@@ -179,11 +181,18 @@ const View: FC<Props> = ({ uuid }: Props) => {
           <Typography>{`@${profile.username}`}</Typography>
         </Breadcrumbs>
         {profile.uuid === authProfile?.uuid && (
-          <Tooltip title="Edit Profile" arrow>
-            <StyledIconButton onClick={() => setEditOpen(true)}>
-              <Edit />
-            </StyledIconButton>
-          </Tooltip>
+          <>
+            <Tooltip title="Change Profile Picture" arrow>
+              <StyledIconButton onClick={() => setEditPFPOpen(true)}>
+                <InsertPhoto />
+              </StyledIconButton>
+            </Tooltip>
+            <Tooltip title="Edit Profile" arrow>
+              <StyledIconButton onClick={() => setEditOpen(true)}>
+                <Edit />
+              </StyledIconButton>
+            </Tooltip>
+          </>
         )}
       </StyledHeaderSection>
 
@@ -343,6 +352,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
       {(profile.following_count > 0 && followingOpen) && <FollowingDialog uuid={uuid} count={profile.following_count} onClose={() => setFollowingOpen(false)} />}
       {(profile.following_vehicle_count > 0 && vehiclesOpen) && <VehicleTableDialog uuid={uuid} onClose={() => setVehiclesOpen(false)} />}
       {(authProfile?.uuid === uuid && editOpen) && <EditProfileDialog profile={profile} onClose={() => setEditOpen(false)} onConfirm={editProfile} />}
+      {(authProfile?.uuid === uuid && editPFPOpen) && <EditProfilePictureDialog profile={profile} onClose={() => setEditPFPOpen(false)} onConfirm={editPFP} />}
     </Box>
   );
 };
