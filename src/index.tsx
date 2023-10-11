@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { Box, CssBaseline, Stack, ThemeProvider, createTheme } from '@mui/material';
@@ -10,18 +10,9 @@ import { NotificationCountProvider } from './Providers/NotificationCountProvider
 import AutoScroll from './components/ScrollToTop/AutoScroll';
 import Sidebar from './components/Sidebar';
 import { CacheKeys } from './config/Cache';
-import Home from './pages';
-import Documentation from './pages/documentation';
-import Lists from './pages/lists/Controller';
-import Login from './pages/login/Controller';
-import Register from './pages/register/Controller';
-import ForgotPassword from './pages/forgotPassword/Controller';
-import Logout from './pages/logout/Controller';
-import Post from './pages/post/Controller';
-import Profile from './pages/profile/Controller';
-import Search from './pages/search/Controller';
-import Vehicle from './pages/vehicle/Controller';
 import reportWebVitals from './reportWebVitals';
+import { CONFIG } from './config/AppConfig';
+import Loader from './components/Loader';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -39,6 +30,18 @@ const theme = createTheme({
     },
   },
 });
+
+const Login = lazy(() => import('./pages/login/Controller'));
+const Register = lazy(() => import('./pages/register/Controller'));
+const ForgotPassword = lazy(() => import('./pages/forgotPassword/Controller'));
+const Logout = lazy(() => import('./pages/logout/Controller'));
+const Home = lazy(() => import('./pages/index'));
+const Documentation = lazy(() => import('./pages/documentation'));
+const Lists = lazy(() => import('./pages/lists/Controller'));
+const Post = lazy(() => import('./pages/post/Controller'));
+const Profile = lazy(() => import('./pages/profile/Controller'));
+const Search = lazy(() => import('./pages/search/Controller'));
+const Vehicle = lazy(() => import('./pages/vehicle/Controller'));
 
 const ProtectedRoutes = () => {
   const token = useReadLocalStorage<string>("token");
@@ -75,15 +78,17 @@ root.render(
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Router>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/logout" element={<Logout />} />
-            <Route path="/documentation" element={<Documentation />} />
-            <Route path="*" element={<ProtectedRoutes />} />
-          </Routes>
+        <Router basename={CONFIG.PUBLIC_URL}>
+          <Suspense fallback={<Loader />}>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/logout" element={<Logout />} />
+              <Route path="/documentation" element={<Documentation />} />
+              <Route path="*" element={<ProtectedRoutes />} />
+            </Routes>
+          </Suspense>
         </Router>
       </ThemeProvider>
     </LocalizationProvider>
