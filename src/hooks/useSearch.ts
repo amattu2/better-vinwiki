@@ -1,22 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { isValidVin } from "@shaggytools/nhtsa-api-wrapper";
 import { useAuthProvider } from "../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
+import { buildPlaceholderVehicle } from "../utils/vehicle";
 
 export enum LookupStatus {
   Loading = "loading",
+  LoadingMore = "loading_more",
   Success = "success",
   Error = "error",
 }
 
 export type SearchType = "Vehicle" | "List" | "Profile";
 
-export type SearchResult<T extends SearchType> = T extends "Vehicle"
-  ? Vehicle[] : T extends "List"
-    ? List[] : T extends "Profile"
-      ? Profile[] : never;
+export type SearchResult<T extends SearchType> =
+  T extends "Vehicle" ? Vehicle[] :
+    T extends "List" ? List[] :
+      T extends "Profile" ? Profile[] :
+        never;
 
-const vehicleSearch = async (query: string, limit: number, token: string, signal: AbortSignal): Promise<Vehicle[]> => {
-  const response = await fetch(`${ENDPOINTS.vehicle_search}0/${limit}`, {
+export type SearchResponse<T extends SearchType> = {
+  type: T;
+  count: number;
+  hasMore: boolean;
+  data: SearchResult<T> | null;
+} | null;
+
+const vehicleSearch = async (query: string, limit: number, token: string, signal: AbortSignal): Promise<SearchResponse<"Vehicle">> => {
+  // NOTE: We're offsetting by 10 because of some strange bug in the API
+  // Where we sometimes get less than `limit` results even though there are more
+  const response = await fetch(`${ENDPOINTS.vehicle_search}0/${limit + 10}`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -26,11 +39,30 @@ const vehicleSearch = async (query: string, limit: number, token: string, signal
   }).catch(() => null);
 
   const { status, results } = await response?.json() || {};
+  const { vehicles } = results || {};
+  if (status === STATUS_OK && vehicles?.length) {
+    return {
+      type: "Vehicle",
+      count: vehicles.length - 10,
+      hasMore: vehicles.length > limit,
+      data: vehicles.slice(0, limit),
+    };
+  }
 
-  return status === STATUS_OK && results?.vehicles ? results.vehicles : [];
+  // Augment the response with the vehicle if the query is a valid VIN
+  if (status === STATUS_OK && !vehicles?.length && isValidVin(query)) {
+    return {
+      type: "Vehicle",
+      count: 1,
+      hasMore: false,
+      data: [buildPlaceholderVehicle(query)],
+    };
+  }
+
+  return null;
 };
 
-const listSearch = async (query: string, token: string, signal: AbortSignal): Promise<List[]> => {
+const listSearch = async (query: string, token: string, signal: AbortSignal): Promise<SearchResponse<"List">> => {
   const response = await fetch(ENDPOINTS.list_search, {
     method: "POST",
     headers: {
@@ -41,11 +73,21 @@ const listSearch = async (query: string, token: string, signal: AbortSignal): Pr
   }).catch(() => null);
 
   const { status, results } = await response?.json() || {};
-  return status === STATUS_OK && results?.lists ? results.lists : [];
+  const { lists } = results || {};
+  if (status !== STATUS_OK || !lists?.length) {
+    return null;
+  }
+
+  return {
+    type: "List",
+    count: lists.length - 1,
+    hasMore: false,
+    data: lists,
+  };
 };
 
-const profileSearch = async (query: string, limit: number, token: string, signal: AbortSignal): Promise<Profile[]> => {
-  const response = await fetch(`${ENDPOINTS.profile_search}0/${limit}`, {
+const profileSearch = async (query: string, limit: number, token: string, signal: AbortSignal): Promise<SearchResponse<"Profile">> => {
+  const response = await fetch(`${ENDPOINTS.profile_search}0/${limit + 1}`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -55,10 +97,20 @@ const profileSearch = async (query: string, limit: number, token: string, signal
   }).catch(() => null);
 
   const { status, results } = await response?.json() || {};
-  return status === STATUS_OK && results?.people ? results.people : [];
+  const { people } = results || {};
+  if (status !== STATUS_OK || !people?.length) {
+    return null;
+  }
+
+  return {
+    type: "Profile",
+    count: people.length - 1,
+    hasMore: people.length > limit,
+    data: people.slice(0, limit),
+  };
 };
 
-const mapTypeToSearch = async (type: SearchType, query: string, limit: number, token: string, signal: AbortSignal): Promise<SearchResult<SearchType>> => {
+const mapTypeToSearch = async (type: SearchType, query: string, limit: number, token: string, signal: AbortSignal): Promise<SearchResponse<SearchType>> => {
   switch (type) {
     case "Vehicle":
       return vehicleSearch(query, limit, token, signal);
@@ -67,40 +119,66 @@ const mapTypeToSearch = async (type: SearchType, query: string, limit: number, t
     case "Profile":
       return profileSearch(query, limit, token, signal);
     default:
-      return [];
+      return null;
   }
 };
 
 /**
- * A hook to search for SearchType
+ * A hook to search for data by `SearchType`
  *
  * @param uuid the uuid of the user to lookup
  * @param [limit] the number of results to return if the endpoint supports limiting. Default 25
- * @returns [status, SearchResult<SearchType>, setQuery]
+ * @returns [status, SearchResult<SearchType>, setQuery, getNext]
  */
 export const useSearch = (type: SearchType, limit = 25): [
   LookupStatus,
-  SearchResult<SearchType>,
+  SearchResponse<SearchType>,
   React.Dispatch<React.SetStateAction<string>>,
+  (count: number) => Promise<boolean>,
 ] => {
   const { token } = useAuthProvider();
 
   const [status, setStatus] = useState<LookupStatus>(LookupStatus.Loading);
-  const [data, setData] = useState<SearchResult<SearchType>>([]);
+  const [data, setData] = useState<SearchResponse<SearchType>>(null);
   const [query, setQuery] = useState<string>("");
+  const loadingNext = useRef(false);
 
   // TODO: cache results for type, query, limit for faster lookup
   // otherwise it will refetch data each time we switch tabs
 
+  const getNext = async (count: number = 250): Promise<boolean> => {
+    if (!query || !token || !data?.hasMore || !data?.count) {
+      return false;
+    }
+    if (loadingNext.current) {
+      return false;
+    }
+
+    setStatus(LookupStatus.LoadingMore);
+    loadingNext.current = true;
+
+    const d = await mapTypeToSearch(type, query, data.count + count, token, new AbortController().signal);
+    if (!d) {
+      setStatus(LookupStatus.Error);
+      loadingNext.current = false;
+      return false;
+    }
+
+    setStatus(LookupStatus.Success);
+    setData(d);
+    loadingNext.current = false;
+
+    return true;
+  };
+
   useEffect(() => {
     if (!token || query?.trim().length <= 1) {
       setStatus(LookupStatus.Success);
-      setData([]);
+      setData(null);
       return () => {};
     }
 
     setStatus(LookupStatus.Loading);
-    setData([]);
 
     const controller = new AbortController();
     const { signal } = controller;
@@ -112,6 +190,7 @@ export const useSearch = (type: SearchType, limit = 25): [
         return;
       }
       if (!d) {
+        setData(null);
         setStatus(LookupStatus.Error);
         return;
       }
@@ -123,7 +202,7 @@ export const useSearch = (type: SearchType, limit = 25): [
     return () => controller.abort();
   }, [type, query, limit]);
 
-  return [status, data, setQuery];
+  return [status, data, setQuery, getNext];
 };
 
 export default useSearch;

@@ -1,3 +1,22 @@
+import { DEFAULT_VEHICLE_SRC } from "../config/Endpoints";
+
+/**
+ * Builds a placeholder vehicle from the `Vehicle` type
+ *
+ * @param vin the VIN for the placeholder vehicle
+ * @param fill the value to fill fields with
+ * @returns Vehicle
+ */
+export const buildPlaceholderVehicle = (vin: string = "", fill: string = "-"): Vehicle => ({
+  icon_photo: DEFAULT_VEHICLE_SRC,
+  long_name: fill,
+  make: fill,
+  model: fill,
+  trim: fill,
+  vin: vin || fill,
+  year: fill,
+});
+
 /**
  * General Vehicle Description Formatter
  *
