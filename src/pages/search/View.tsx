@@ -230,7 +230,7 @@ const View : FC = () => {
 
             <Divider sx={{ my: 3 }} textAlign="center">
               <Typography variant="h5">
-                {resultCount}
+                {Math.ceil(resultCount / 100) * 100}
                 {(resultCount > 0 && results?.hasMore) && "+"}
                 {" "}
                 Results
@@ -242,7 +242,7 @@ const View : FC = () => {
                 <VehicleTable
                   status={status !== LookupStatus.Loading ? "success" : "loading"}
                   vehicles={status !== LookupStatus.Loading && results?.type === "Vehicle" && results?.data ? results.data as Vehicle[] : []}
-                  totalCount={resultCount + (results?.hasMore ? 1 : 0)}
+                  totalCount={results?.hasMore ? -1 : resultCount}
                   rowPerPageOptions={[5, 10, 25]}
                   rowsPerPage={25}
                   onPageChange={handlePaginationChange}

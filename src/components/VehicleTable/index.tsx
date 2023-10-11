@@ -303,7 +303,7 @@ export const VehicleTable: FC<Props> = ({
                 </TableCell>
               </TableRow>
             )}
-            {dataset.map((d: T) => (
+            {(status !== "loading" && vehicles.length > 0) && dataset.map((d: T) => (
               <TableRow key={`${d["vin"]}`} selected={selected.includes(d.vin)} tabIndex={-1} hover>
                 {showCheckboxes && (
                   <TableCell padding="checkbox">
@@ -340,7 +340,7 @@ export const VehicleTable: FC<Props> = ({
         nextIconButtonProps={{
           disabled: !dataset
             || count === 0
-            || count <= (page + 1) * perPage
+            || (count !== -1 && count <= (page + 1) * perPage)
             || status === "loading",
         }}
         backIconButtonProps={{ disabled: page === 0 || status === "loading" }}
