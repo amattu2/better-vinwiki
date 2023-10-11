@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import { isValidVin } from "@shaggytools/nhtsa-api-wrapper";
 import { useAuthProvider } from "../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
+import { buildPlaceholderVehicle } from "../utils/vehicle";
 
 export enum LookupStatus {
   Loading = "loading",
@@ -38,16 +40,26 @@ const vehicleSearch = async (query: string, limit: number, token: string, signal
 
   const { status, results } = await response?.json() || {};
   const { vehicles } = results || {};
-  if (status !== STATUS_OK || !vehicles?.length) {
-    return null;
+  if (status === STATUS_OK && vehicles?.length) {
+    return {
+      type: "Vehicle",
+      count: vehicles.length - 10,
+      hasMore: vehicles.length > limit,
+      data: vehicles.slice(0, limit),
+    };
   }
 
-  return {
-    type: "Vehicle",
-    count: vehicles.length - 10,
-    hasMore: vehicles.length > limit,
-    data: vehicles.slice(0, limit),
-  };
+  // Augment the response with the vehicle if the query is a valid VIN
+  if (status === STATUS_OK && !vehicles?.length && isValidVin(query)) {
+    return {
+      type: "Vehicle",
+      count: 1,
+      hasMore: false,
+      data: [buildPlaceholderVehicle(query)],
+    };
+  }
+
+  return null;
 };
 
 const listSearch = async (query: string, token: string, signal: AbortSignal): Promise<SearchResponse<"List">> => {
