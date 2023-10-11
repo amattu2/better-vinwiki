@@ -1,8 +1,9 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { Autocomplete, Stack, TextField, Typography, debounce } from "@mui/material";
+import { isValidVin } from "@shaggytools/nhtsa-api-wrapper";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
-import { formatVehicleName } from "../../utils/vehicle";
+import { buildPlaceholderVehicle, formatVehicleName } from "../../utils/vehicle";
 import useFollowingVehiclesLookup from "../../hooks/useFollowingVehiclesLookup";
 
 type Props = {
@@ -31,7 +32,17 @@ const fetchVehicles = async (searchValue: string, token: string, controller: Rea
   }).catch(() => null);
 
   const { status, results } = await response?.json() || {};
-  return status === STATUS_OK && results?.vehicles ? results.vehicles : [];
+  const { vehicles } = results || {};
+  if (status === STATUS_OK && vehicles?.length) {
+    return vehicles;
+  }
+
+  // Augment the response with the vehicle if the query is a valid VIN
+  if (status === STATUS_OK && !vehicles?.length && isValidVin(searchValue)) {
+    return [buildPlaceholderVehicle(searchValue, "Unknown")];
+  }
+
+  return [];
 };
 
 /**
@@ -110,7 +121,7 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
         recentVehicles?.find((v) => v.vin === option.vin) ? "Recents & Following" : option.make.toUpperCase()
       )}
       renderInput={(params) => <TextField {...params} inputRef={inputRef} label="Search by VIN or Description" />}
-      getOptionLabel={(option: Vehicle) => formatVehicleName(option)}
+      getOptionLabel={(option: Vehicle) => option.vin}
       onInputChange={debouncedSearch}
       renderOption={(props, option: Vehicle) => (
         <li {...props} key={option.vin}>

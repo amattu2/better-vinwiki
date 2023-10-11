@@ -24,8 +24,8 @@ import { sortVehicles } from "../../utils/vehicle";
 import { VehicleTable } from "../../components/VehicleTable";
 
 const StyledContainer = styled(Container)(({ theme }) => ({
+  paddingLeft: "0 !important",
   [theme.breakpoints.down("lg")]: {
-    paddingLeft: 0,
     paddingRight: 0,
   },
 }));
@@ -38,10 +38,8 @@ const StyledSearchBox = styled(StyledBox)(({ theme }) => ({
   backgroundColor: "#fff",
   flexGrow: 1,
   minHeight: "100vh",
-  borderLeft: "1px solid #ddd",
   borderRight: "1px solid #ddd",
   [theme.breakpoints.down("lg")]: {
-    borderLeft: "none",
     borderRight: "none",
   },
 }));
@@ -121,18 +119,24 @@ const View : FC = () => {
     : "Vehicle");
   const [plateDecoderOpen, setPlateDecoderOpen] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
-  const [perPage, setPerPage] = useState<number>(15);
-  const [status, results, setQuery] = useSearch(searchType, 100);
+  const [perPage] = useState<number>(30);
+  const [status, results, setQuery, getNext] = useSearch(searchType, 100);
 
   const paginatedResults: SearchResult<SearchType> = useMemo(() => {
-    if (results.length === 0) {
+    if (results?.type !== searchType || !results.data?.length) {
       return [];
     }
 
-    return results.slice((page - 1) * perPage, page * perPage);
+    return results.data.slice((page - 1) * perPage, page * perPage);
   }, [searchType, results, page, perPage]);
 
-  const resultCount: number = useMemo(() => (status === LookupStatus.Success ? results.length : 0), [status, results]);
+  const resultCount: number = useMemo(() => {
+    if (!results?.data?.length || results.type !== searchType) {
+      return 0;
+    }
+
+    return results.data.length;
+  }, [status, results, searchType]);
 
   const placeholder: string = useMemo(() => {
     switch (searchType) {
@@ -148,7 +152,6 @@ const View : FC = () => {
   const searchChange = (event: React.SyntheticEvent, type: SearchType) => {
     setSearchType(type);
     setPage(1);
-    setPerPage(type === "Vehicle" ? 15 : 30);
   };
 
   const handleSearch = (data: { query: string }) => {
@@ -158,7 +161,19 @@ const View : FC = () => {
 
   const handlePageChange = (page: number) => {
     setPage(page);
+    handlePaginationChange(page, resultCount - ((page - 1) * perPage));
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handlePaginationChange = (page: number, remaining: number) => {
+    if (remaining > 50) {
+      return;
+    }
+    if (!results?.hasMore) {
+      return;
+    }
+
+    getNext?.(100);
   };
 
   const onDecoderSelect = (vehicle: PlateDecodeResponse | null) => {
@@ -173,6 +188,12 @@ const View : FC = () => {
   useEffect(() => {
     setSearchParams({ query: watch("query"), type: searchType });
   }, [searchType, watch("query")]);
+
+  useEffect(() => {
+    if (searchType && watch("query")) {
+      setQuery(watch("query"));
+    }
+  }, []);
 
   return (
     <Stack direction="row">
@@ -207,7 +228,8 @@ const View : FC = () => {
 
             <Divider sx={{ my: 3 }} textAlign="center">
               <Typography variant="h5">
-                {resultCount}
+                {Math.ceil(resultCount / 100) * 100}
+                {(resultCount > 0 && results?.hasMore) && "+"}
                 {" "}
                 Results
               </Typography>
@@ -215,13 +237,15 @@ const View : FC = () => {
 
             <TabContext value={searchType}>
               <StyledPanel value="Vehicle">
-                <StyledCard elevation={3} sx={{ padding: 0 }}>
-                  <VehicleTable
-                    status={status}
-                    vehicles={results as Vehicle[]}
-                    EmptyComponent={NoSearchResults}
-                  />
-                </StyledCard>
+                <VehicleTable
+                  status={status !== LookupStatus.Loading ? "success" : "loading"}
+                  vehicles={status !== LookupStatus.Loading && results?.type === "Vehicle" && results?.data ? results.data as Vehicle[] : []}
+                  totalCount={results?.hasMore ? -1 : resultCount}
+                  rowPerPageOptions={[5, 10, 25]}
+                  rowsPerPage={25}
+                  onPageChange={handlePaginationChange}
+                  EmptyComponent={NoSearchResults}
+                />
               </StyledPanel>
               <StyledPanel value="Profile">
                 <List>
@@ -229,13 +253,9 @@ const View : FC = () => {
                   {(status === LookupStatus.Success && paginatedResults.length === 0) && (
                     <NoSearchResults />
                   )}
-                  {(status === LookupStatus.Success && paginatedResults.length > 0) && (
+                  {(status === LookupStatus.Success && paginatedResults.length > 0 && results?.type === "Profile") && (
                     paginatedResults.map((result) => {
                       const { uuid, username, avatar, display_name } = result as ProfileSearchResult;
-
-                      if (!uuid || !username) {
-                        return null;
-                      }
 
                       return (
                         <ListItem key={uuid} component={StyledLink} to={`/profile/${uuid}`} divider>
@@ -264,7 +284,7 @@ const View : FC = () => {
                 {(status === LookupStatus.Success && paginatedResults.length === 0) && (
                   <NoSearchResults />
                 )}
-                {(status === LookupStatus.Success && paginatedResults.length > 0 && searchType === "List") && (
+                {(status === LookupStatus.Success && paginatedResults.length > 0 && results?.type === "List") && (
                   paginatedResults.map((result) => (<ListSearchCard key={(result as List).uuid} list={result as List} />))
                 )}
                 <StyledPagination

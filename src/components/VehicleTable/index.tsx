@@ -26,6 +26,21 @@ type Props = {
    */
   totalCount?: number;
   /**
+   * A component to render when there are no vehicles in the list
+   */
+  EmptyComponent?: React.FC;
+  /**
+   * The options for the rows per page dropdown
+   */
+  rowPerPageOptions?: number[];
+  /**
+   * The number of vehicles to show per page
+   * Must be in `rowPerPageOptions`
+   *
+   * @default 20
+   */
+  rowsPerPage?: number;
+  /**
    * A callback to be called when the page changes
    *
    * @param {number} page The new page number
@@ -33,10 +48,6 @@ type Props = {
    * @returns {void}
    */
   onPageChange?: (page: number, remainingCount: number) => void;
-  /**
-   * A component to render when there are no vehicles in the list
-   */
-  EmptyComponent?: React.FC;
   /**
    * Callback function to be called when the delete button is clicked
    * If not provided, the delete button will not be shown
@@ -152,13 +163,13 @@ const columns: Column[] = [
  * @returns {JSX.Element}
  */
 export const VehicleTable: FC<Props> = ({
-  status, vehicles, totalCount, EmptyComponent,
+  status, vehicles, totalCount, EmptyComponent, rowPerPageOptions = [5, 10, 20, 50, 100], rowsPerPage = 20,
   onPageChange, onDelete, onExport,
 }: Props) => {
   const [order, setOrder] = useState<"asc" | "desc">("desc");
   const [orderBy, setOrderBy] = useState<Column>(columns[1]);
   const [page, setPage] = useState<number>(0);
-  const [perPage, setPerPage] = useState<number>(20);
+  const [perPage, setPerPage] = useState<number>(rowsPerPage);
   const [selected, setSelected] = useState<readonly T["vin"][]>([]);
   const lastPageRef = useRef<number>(0);
 
@@ -236,7 +247,7 @@ export const VehicleTable: FC<Props> = ({
   }, [page]);
 
   return (
-    <Paper>
+    <Paper elevation={0}>
       <StyledToolbar hasSelected={selected.length > 0} showCheckboxes={showCheckboxes}>
         <ToolbarTitle numSelected={selected.length} />
         <Stack direction="row" alignItems="center" sx={{ visibility: selected.length <= 0 ? "hidden" : "visible" }}>
@@ -292,7 +303,7 @@ export const VehicleTable: FC<Props> = ({
                 </TableCell>
               </TableRow>
             )}
-            {dataset.map((d: T) => (
+            {(status !== "loading" && vehicles.length > 0) && dataset.map((d: T) => (
               <TableRow key={`${d["vin"]}`} selected={selected.includes(d.vin)} tabIndex={-1} hover>
                 {showCheckboxes && (
                   <TableCell padding="checkbox">
@@ -319,7 +330,7 @@ export const VehicleTable: FC<Props> = ({
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 20, 50, 100]}
+        rowsPerPageOptions={rowPerPageOptions}
         component="div"
         count={count}
         rowsPerPage={perPage}
@@ -327,11 +338,9 @@ export const VehicleTable: FC<Props> = ({
         onPageChange={(e, newPage) => setPage(newPage)}
         onRowsPerPageChange={handleChangeRowsPerPage}
         nextIconButtonProps={{
-          disabled:
-            perPage === -1
-            || !dataset
-            || dataset.length === 0
-            || vehicles.length <= (page + 1) * perPage
+          disabled: !dataset
+            || count === 0
+            || (count !== -1 && count <= (page + 1) * perPage)
             || status === "loading",
         }}
         backIconButtonProps={{ disabled: page === 0 || status === "loading" }}
