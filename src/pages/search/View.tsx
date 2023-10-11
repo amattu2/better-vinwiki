@@ -24,8 +24,8 @@ import { sortVehicles } from "../../utils/vehicle";
 import { VehicleTable } from "../../components/VehicleTable";
 
 const StyledContainer = styled(Container)(({ theme }) => ({
+  paddingLeft: "0 !important",
   [theme.breakpoints.down("lg")]: {
-    paddingLeft: 0,
     paddingRight: 0,
   },
 }));
@@ -38,10 +38,8 @@ const StyledSearchBox = styled(StyledBox)(({ theme }) => ({
   backgroundColor: "#fff",
   flexGrow: 1,
   minHeight: "100vh",
-  borderLeft: "1px solid #ddd",
   borderRight: "1px solid #ddd",
   [theme.breakpoints.down("lg")]: {
-    borderLeft: "none",
     borderRight: "none",
   },
 }));
