@@ -190,6 +190,7 @@ export const useSearch = (type: SearchType, limit = 25): [
         return;
       }
       if (!d) {
+        setData(null);
         setStatus(LookupStatus.Error);
         return;
       }
