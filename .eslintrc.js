@@ -4,6 +4,7 @@ module.exports = {
     "plugin:@typescript-eslint/recommended",
     "airbnb",
     "airbnb-typescript",
+    "plugin:react-hooks/recommended",
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -52,5 +53,7 @@ module.exports = {
     "no-plusplus": ["off"],
     "max-len": ["off"],
     "no-param-reassign": ["off"],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "off",
   },
 };
