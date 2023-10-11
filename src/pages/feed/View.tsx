@@ -100,7 +100,7 @@ const Feed : FC = () => {
 
     (filteredPosts.map((post) => post.person) || []).forEach((profile) => {
       if (profileMap[profile.uuid]) {
-        profileMap[profile.uuid].postCount++;
+        profileMap[profile.uuid].postCount += 1;
       } else {
         profileMap[profile.uuid] = { profile, postCount: 1 };
       }
@@ -183,7 +183,7 @@ const Feed : FC = () => {
               <Repeater count={5} Component={PostSkeleton} />
             )}
             {status === ProviderStatus.RELOADING && (
-              <Alert severity="info" sx={{ mb: 1 }}>Hang tight. We're fetching your latest feed...</Alert>
+              <Alert severity="info" sx={{ mb: 1 }}>Hang tight. We&apos;re fetching your latest feed...</Alert>
             )}
             {(status === ProviderStatus.LOADED && slicedPosts.length === 0) && (
               <Alert severity="info" sx={{ mb: 1 }}>Uh oh. We have no posts to show.</Alert>
