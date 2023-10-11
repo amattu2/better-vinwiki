@@ -100,11 +100,14 @@ const StyledPill = styled(Grid)<{ component: ElementType } & StatisticItemProps>
   flex: "calc(1/2)",
 });
 
-const StyledActionsGrid = styled(Grid)({
+const StyledActionsGrid = styled(Grid)(({ theme }) => ({
   paddingLeft: "0 !important",
   position: "sticky",
   top: "57px",
-});
+  [theme.breakpoints.down("md")]: {
+    display: "none",
+  },
+}));
 
 const View: FC<Props> = ({ vin }: Props) => {
   const { status, vehicle, editVehicle } = useVehicleProvider();
@@ -232,7 +235,7 @@ const View: FC<Props> = ({ vin }: Props) => {
       </StyledDetailsGrid>
       <Box>
         <Grid container columnSpacing={2} alignItems="flex-start">
-          <Grid item md={12} lg={8} ref={postsContainer}>
+          <Grid item sm={12} md={8} ref={postsContainer}>
             <Box sx={{ p: 2, pt: 0 }}>
               <StyledContainerTitle variant="h5">Posts</StyledContainerTitle>
               <CreatePost vehicle={vehicle} />
@@ -254,7 +257,7 @@ const View: FC<Props> = ({ vin }: Props) => {
               )}
             </Box>
           </Grid>
-          <StyledActionsGrid item md={12} lg={4}>
+          <StyledActionsGrid item md={4}>
             <ActionableCard
               title="Recalls"
               subtitle="Search for manufacturer recalls by year, make, and model"
