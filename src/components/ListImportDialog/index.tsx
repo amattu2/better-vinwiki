@@ -1,16 +1,15 @@
-import React, { FC, useEffect, useId, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import {
   Box, Button, Dialog, DialogActions, DialogContent,
-  DialogTitle, IconButton, Stack, Tooltip, styled,
+  DialogTitle, Stack, Step, StepLabel, Stepper, styled,
 } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import { parse } from 'papaparse';
 import { LoadingButton } from '@mui/lab';
-import { Restore } from '@mui/icons-material';
-import { csvToObject } from '../../utils/objectToCSV';
 import GenericSpreadsheet, { ValueBase } from '../GenericSpreadsheet';
 
 type Props = {
-  onConfirm: (selection: Vehicle["vin"]) => void;
+  onConfirm: (selection: Vehicle["vin"][]) => void;
   onClose: () => void;
 };
 
@@ -58,18 +57,19 @@ const StyledInput = styled("input")({
  * @returns {JSX.Element}
  */
 const ListImportDialog: FC<Props> = ({ onConfirm, onClose }: Props) => {
-  const id = useId();
-  const { register, handleSubmit, watch, resetField, setValue } = useForm<{ file: FileList }>();
-  const [saving, setSaving] = useState(false);
+  const { register, watch, setValue } = useForm<{ file: FileList }>();
+  const [saving, setSaving] = useState<boolean>(false);
   const [data, setData] = useState<ValueBase[]>([]);
+  const [step, setStep] = useState<number>(0);
   const inputRef = useRef<HTMLInputElement>();
 
   const { ref, ...fileRest } = register("file", { required: false });
   const fileUpload = watch("file");
 
-  const clearData = () => {
-    resetField("file");
-    setData([]);
+  const onConfirmWrapper = async () => {
+    setSaving(true);
+    await onConfirm([]);
+    setSaving(false);
   };
 
   const handleClick = () => {
@@ -91,28 +91,44 @@ const ListImportDialog: FC<Props> = ({ onConfirm, onClose }: Props) => {
 
   useEffect(() => {
     if (fileUpload?.[0]) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        console.log(csvToObject(reader.result as string, true));
-        setData(csvToObject(reader.result as string, true) as ValueBase[]);
-      };
-      reader.readAsText(fileUpload[0]);
+      parse(fileUpload[0], {
+        header: true, // TODO: configurable by user
+        skipEmptyLines: true,
+        dynamicTyping: true,
+        complete: (results) => setData(results.data as ValueBase[]),
+      });
+      setStep(1);
     }
   }, [fileUpload]);
 
   return (
-    <StyledDialog maxWidth={!data?.length ? "sm" : "md"} open onClose={onClose} fullWidth>
+    <StyledDialog maxWidth="sm" onClose={onClose} fullWidth open>
       <DialogTitle component={Stack} direction="row" alignItems="center">
-        Import Vehicles
+        Import CSV
       </DialogTitle>
-      <StyledDialogContent sx={{ p: data?.length ? "0 !important" : undefined }} dividers={!data?.length}>
-        {!data.length ? (
-          <form id={id}>
+      <StyledDialogContent dividers>
+        <Stepper activeStep={step} alternativeLabel>
+          <Step>
+            <StepLabel>File Upload</StepLabel>
+          </Step>
+          <Step>
+            <StepLabel>Preview</StepLabel>
+          </Step>
+          <Step>
+            <StepLabel>VIN Selection</StepLabel>
+          </Step>
+          <Step>
+            <StepLabel>Import</StepLabel>
+          </Step>
+        </Stepper>
+        <Box sx={{ mt: 4 }}>
+          <Box component="form" sx={{ display: step !== 0 ? "none" : undefined }}>
             <StyledDropzone
               onClick={handleClick}
               onDrop={handleDrop}
               onDragOver={handleDragOver}
             />
+            {/* TODO: header first row checkbox */}
             <StyledInput
               {...fileRest}
               accept="text/csv"
@@ -125,19 +141,15 @@ const ListImportDialog: FC<Props> = ({ onConfirm, onClose }: Props) => {
                 ref(node);
               }}
             />
-          </form>
-        ) : (
-          <GenericSpreadsheet data={data} />
-        )}
+          </Box>
+          <Box sx={{ display: step !== 1 ? "none" : undefined, maxWidth: "100%", overflow: "auto", borderRadius: "8px" }}>
+            <GenericSpreadsheet data={data || []} />
+          </Box>
+        </Box>
       </StyledDialogContent>
       <DialogActions>
-        <Tooltip title="Clear upload" arrow>
-          <IconButton onClick={clearData} sx={{ mr: "auto" }} disabled={!data.length}>
-            <Restore />
-          </IconButton>
-        </Tooltip>
         <Button onClick={onClose} color="error">Cancel</Button>
-        <LoadingButton type="submit" form={id} loading={saving}>Import</LoadingButton>
+        <LoadingButton type="submit" onClick={onConfirmWrapper} loading={saving} disabled>Import</LoadingButton>
       </DialogActions>
     </StyledDialog>
   );

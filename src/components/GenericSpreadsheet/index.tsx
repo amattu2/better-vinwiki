@@ -61,7 +61,7 @@ const GenericSpreadsheet = <T extends ValueBase>({
       return columnKeys;
     }
 
-    return Object.keys(data[0]);
+    return Object.keys(data?.[0] ?? {});
   }, [data, columnKeys]);
 
   const colLabs: string[] = useMemo(() => {
