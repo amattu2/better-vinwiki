@@ -6,6 +6,7 @@ import {
   IconButton, Skeleton, Stack, Tooltip,
   Typography, styled,
 } from "@mui/material";
+import { unparse } from "papaparse";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import FollowersDialog from "../../components/FollowersDialog";
 import GenericText from "../../components/GenericText/GenericText";
@@ -20,7 +21,7 @@ import { formatDate, formatDateMMYY } from "../../utils/date";
 import ProfileAvatar from "../../components/ProfileAvatar";
 import EditListDialog from "../../components/EditListDialog";
 import useIsFollowingListLookup, { LookupStatus as IsFollowingLookupStatus } from "../../hooks/useIsFollowingListLookup";
-import { objectToCSV } from "../../utils/objectToCSV";
+import { downloadBlob } from "../../utils/files";
 import VehicleSelectionDialog from "../../components/VehicleSelectionDialog";
 import DeleteContentDialog from "../../components/DeleteContentConfirm";
 import ListImportDialog from "../../components/ListImportDialog";
@@ -129,7 +130,8 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
   };
 
   const exportSelection = (vehicles: Vehicle[]) => {
-    objectToCSV<Vehicle>(vehicles);
+    const d = unparse(vehicles);
+    downloadBlob(d, 'export.csv', 'text/csv');
   };
 
   const onDeleteWrapper = async () => {
