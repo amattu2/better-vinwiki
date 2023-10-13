@@ -2,11 +2,11 @@ import React, { useMemo } from 'react';
 import Spreadsheet, { CellBase, EntireColumnsSelection, EntireRowsSelection, Matrix, Selection } from "react-spreadsheet";
 import { cloneDeep } from 'lodash';
 
-type ValueBase = {
+export type ValueBase = {
   [key: string]: string | number | boolean | null | undefined;
 };
 
-type Props<T extends ValueBase> = {
+export type Props<T extends ValueBase> = {
   /**
    * The data to display
    */

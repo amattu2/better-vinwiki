@@ -20,7 +20,38 @@ export const objectToCSV = <T extends Record<string, unknown>>(data: T[]): void 
   downloadBlob(csv, 'export.csv', 'text/csv');
 };
 
+/**
+ * Converts a CSV string to an array of objects
+ *
+ * @param csv the raw CSV string
+ * @param headers whether the CSV has headers or not
+ */
+export const csvToObject = (csv: string, headers: boolean): Record<string, unknown>[] => {
+  if (!csv || !csv.length) {
+    return [];
+  }
+
+  const lines = csv.split(/\r?\n/);
+  const result = [];
+  const start = headers ? 1 : 0;
+  const keys = headers ? lines[0].split(',') : [];
+
+  for (let i = start; i < lines.length; i += 1) {
+    const obj: Record<string, unknown> = {};
+    const currentline = lines[i].split(',');
+
+    for (let j = 0; j < keys.length; j += 1) {
+      obj[keys[j]] = decodeFromCSV(currentline[j]);
+    }
+
+    result.push(obj);
+  }
+
+  return result;
+};
+
 const encodeForCSV = (value: unknown): string => `"${String(value).replaceAll('"', '""')}"`;
+const decodeFromCSV = (value: string): string => value.replaceAll('""', '"');
 
 /**
  * Build a file with data and download it
