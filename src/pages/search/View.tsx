@@ -253,7 +253,7 @@ const View : FC = () => {
                   {(status === LookupStatus.Success && paginatedResults.length === 0) && (
                     <NoSearchResults />
                   )}
-                  {(status === LookupStatus.Success && paginatedResults.length > 0 && results?.type === "Profile") && (
+                  {(status !== LookupStatus.Loading && paginatedResults.length > 0 && results?.type === "Profile") && (
                     paginatedResults.map((result) => {
                       const { uuid, username, avatar, display_name } = result as ProfileSearchResult;
 
@@ -284,7 +284,7 @@ const View : FC = () => {
                 {(status === LookupStatus.Success && paginatedResults.length === 0) && (
                   <NoSearchResults />
                 )}
-                {(status === LookupStatus.Success && paginatedResults.length > 0 && results?.type === "List") && (
+                {(status !== LookupStatus.Loading && paginatedResults.length > 0 && results?.type === "List") && (
                   paginatedResults.map((result) => (<ListSearchCard key={(result as List).uuid} list={result as List} />))
                 )}
                 <StyledPagination
