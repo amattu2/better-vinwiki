@@ -1,4 +1,7 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import React, { useState, FC, useEffect, useMemo } from "react";
+import { isValidVin } from "@shaggytools/nhtsa-api-wrapper";
 import { useAuthProvider } from "./AuthProvider";
 import { ENDPOINTS, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
 
@@ -6,9 +9,37 @@ export type ProviderState = {
   status: ProviderStatus;
   count: number;
   vehicles?: Vehicle[];
-  addVehicle?: (vehicle: Vehicle) => Promise<boolean>;
-  removeVehicle?: (vin: Vehicle["vin"]) => Promise<boolean>;
   hasNext?: boolean;
+  /**
+   * Add a vehicle to the list
+   *
+   * @param vehicles The vehicles to add
+   * @returns Promise<boolean> Whether the operation was successful
+   */
+  addVehicles?: (vehicles: Vehicle[]) => Promise<boolean>;
+  /**
+   * Will add `vins` to the list and refetch the list vehicles
+   *
+   * NOTE: This is used in place of `addVehicles` when we don't
+   * have a `Vehicle` object to work from.
+   *
+   * @param vins The VINs to add to the list
+   * @returns Promise<boolean> Whether the operation was successful
+   */
+  addVins?: (vins: Vehicle["vin"][]) => Promise<boolean>;
+  /**
+   * Removes vehicles from the list
+   *
+   * @param vins The VINs to remove from the list
+   * @returns Promise<boolean> Whether the operation was successful
+   */
+  removeVehicles?: (vins: Vehicle["vin"][]) => Promise<boolean>;
+  /**
+   * Fetch the next `count` vehicles from the list
+   *
+   * @param count The number of vehicles to fetch
+   * @returns Promise<boolean> Whether the operation was successful
+   */
   next?: (count: number) => Promise<boolean>;
 };
 
@@ -44,62 +75,115 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
   const [lastID, setLastID] = useState<string>("");
   const [hasNext, setHasNext] = useState<boolean>(false);
 
-  const removeVehicle = async (vin: Vehicle["vin"]) : Promise<boolean> => {
-    if (!token || !uuid || !vin || !state.vehicles?.find((v) => v.vin === vin)) {
+  const removeVehicles = async (vins: Vehicle["vin"][]) : Promise<boolean> => {
+    if (!token || !uuid || !vins?.length) {
       return false;
     }
 
-    const response = await fetch(`${ENDPOINTS.list_remove_vehicle}${uuid}/${vin}`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).catch(() => null);
+    for (const vin of vins) {
+      if (!state.vehicles?.find((v) => v.vin === vin)) {
+        continue;
+      }
 
-    const { status, list } = await response?.json().catch(() => null) || {};
-    if (status !== STATUS_OK || !list?.uuid) {
-      return false;
+      const response = await fetch(`${ENDPOINTS.list_remove_vehicle}${uuid}/${vin}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).catch(() => null);
+
+      const { status, list } = await response?.json().catch(() => null) || {};
+      if (status !== STATUS_OK || !list?.uuid) {
+        continue;
+      }
+
+      setState((prev) => ({
+        ...prev,
+        count: list?.vehicles?.count || prev.count - 1,
+        vehicles: prev.vehicles?.filter((v) => v.vin !== vin),
+      }));
     }
-
-    setState((prev) => ({
-      ...prev,
-      count: list?.vehicles?.count || prev.count - 1,
-      vehicles: prev.vehicles?.filter((v) => v.vin !== vin),
-    }));
 
     return true;
   };
 
-  const addVehicle = async (vehicle: Vehicle) : Promise<boolean> => {
-    if (!token || !uuid || !vehicle?.vin) {
+  const addVehicles = async (vehicles: Vehicle[]) : Promise<boolean> => {
+    if (!token || !uuid) {
       return false;
     }
 
-    const response = await fetch(`${ENDPOINTS.list_add_vehicle}${uuid}/${vehicle.vin}`, {
-      method: "POST",
+    for (const vehicle of vehicles) {
+      if (state.vehicles?.find((v) => v.vin === vehicle.vin)) {
+        continue;
+      }
+
+      const response = await fetch(`${ENDPOINTS.list_add_vehicle}${uuid}/${vehicle.vin}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).catch(() => null);
+
+      const { status, list } = await response?.json().catch(() => null) || {};
+      if (status !== STATUS_OK || !list?.uuid) {
+        continue;
+      }
+
+      setState((prev) => ({
+        ...prev,
+        count: list?.vehicles?.count || prev.count + 1,
+        vehicles: [...(prev.vehicles || []), vehicle],
+      }));
+    }
+
+    return true;
+  };
+
+  const addVins = async (vins: Vehicle["vin"][]) : Promise<boolean> => {
+    if (!token || !uuid || !vins?.length) {
+      return false;
+    }
+
+    for (const vin of vins) {
+      if (!vin || !isValidVin(vin)) {
+        continue;
+      }
+
+      const response = await fetch(`${ENDPOINTS.list_add_vehicle}${uuid}/${vin}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).catch(() => null);
+
+      const { status, list } = await response?.json().catch(() => null) || {};
+      if (status !== STATUS_OK || !list?.uuid) {
+        return false;
+      }
+    }
+
+    const response = await fetch(`${ENDPOINTS.list_vehicles}${uuid}/${state.count + vins.length}`, {
+      method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
       },
     }).catch(() => null);
 
-    const { status, list } = await response?.json().catch(() => null) || {};
-    if (status !== STATUS_OK || !list?.uuid) {
-      return false;
+    const { status, total, vehicles, last_id, end } = await response?.json().catch(() => null) || {};
+    if (status === STATUS_OK && vehicles) {
+      setState((prev) => ({
+        ...prev,
+        status: ProviderStatus.LOADED,
+        count: parseInt(total, 10),
+        vehicles,
+      }));
+      setHasNext(!end);
+      setLastID(last_id || "");
+    } else if (status === STATUS_ERROR) {
+      setState((prev) => ({ ...prev, status: ProviderStatus.ERROR }));
     }
 
-    let result = true;
-    setState((prev) => {
-      if (prev.vehicles?.find((v) => v.vin === vehicle.vin)) {
-        result = false;
-        return prev;
-      }
-
-      const newCount = list?.vehicles?.count || prev.count + 1;
-
-      return { ...prev, count: newCount, vehicles: [...(prev.vehicles || []), vehicle] };
-    });
-
-    return result;
+    return true;
   };
 
   const next = async (count = 1000) : Promise<boolean> => {
@@ -166,13 +250,15 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
         setLastID(last_id || "");
       } else if (status === STATUS_ERROR) {
         setState((prev) => ({ ...prev, status: ProviderStatus.ERROR }));
+      } else {
+        setState((prev) => ({ ...prev, status: ProviderStatus.LOADED }));
       }
     })();
 
     return () => controller.abort();
   }, [token, uuid]);
 
-  const value = useMemo(() => ({ ...state, addVehicle, removeVehicle, next, hasNext }), [state, hasNext]);
+  const value: ProviderState = useMemo(() => ({ ...state, addVehicles, removeVehicles, next, addVins, hasNext }), [state, hasNext]);
 
   return (
     <Context.Provider value={value}>
