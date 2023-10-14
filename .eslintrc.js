@@ -47,6 +47,7 @@ module.exports = {
     "no-underscore-dangle": "off",
     "max-len": "off",
     "no-param-reassign": "off",
+    "no-continue": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "off",
   },
