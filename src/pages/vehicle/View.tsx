@@ -17,7 +17,7 @@ import FeedPost, { PostSkeleton } from "../../components/FeedPost";
 import FollowersDialog from "../../components/FollowersDialog";
 import ListAssignmentDialog from "../../components/ListAssignmentDialog";
 import Loader from "../../components/Loader";
-import { StatisticItem, StatisticItemProps } from "../../components/ProfileStatistic";
+import { StatisticItem, StatisticItemProps } from "../../components/StatisticItem";
 import { ScrollToTop } from "../../components/ScrollToTop/ScrollButton";
 import useIsFollowingVehicleLookup, { LookupStatus as IsFollowingStatus } from "../../hooks/useIsFollowingVehicleLookup";
 import { formatDateMMYY } from "../../utils/date";

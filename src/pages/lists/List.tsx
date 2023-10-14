@@ -1,16 +1,17 @@
 import React, { FC, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Add, Edit, NavigateNext } from "@mui/icons-material";
+import { Add, Edit, NavigateNext, UploadFile } from "@mui/icons-material";
 import {
   Box, Breadcrumbs, Button, Card,
   IconButton, Skeleton, Stack, Tooltip,
   Typography, styled,
 } from "@mui/material";
+import { unparse } from "papaparse";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import FollowersDialog from "../../components/FollowersDialog";
 import GenericText from "../../components/GenericText/GenericText";
 import Loader from "../../components/Loader";
-import { StatisticItem } from "../../components/ProfileStatistic";
+import { StatisticItem } from "../../components/StatisticItem";
 import { ScrollToTop } from "../../components/ScrollToTop/ScrollButton";
 import { useListVehiclesProvider, ProviderStatus as ListProviderStatus } from "../../Providers/ListVehiclesProvider";
 import useListLookup, { LookupStatus as ListLookupStatus } from "../../hooks/useListLookup";
@@ -20,9 +21,10 @@ import { formatDate, formatDateMMYY } from "../../utils/date";
 import ProfileAvatar from "../../components/ProfileAvatar";
 import EditListDialog from "../../components/EditListDialog";
 import useIsFollowingListLookup, { LookupStatus as IsFollowingLookupStatus } from "../../hooks/useIsFollowingListLookup";
-import { objectToCSV } from "../../utils/objectToCSV";
+import { downloadBlob } from "../../utils/files";
 import VehicleSelectionDialog from "../../components/VehicleSelectionDialog";
 import DeleteContentDialog from "../../components/DeleteContentConfirm";
+import ListImportDialog from "../../components/ListImportDialog";
 
 type Props = {
   uuid: string;
@@ -79,7 +81,10 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
   const [{ status, list }, editList, deleteList] = useListLookup(uuid, true);
   const [{ status: isFollowingStatus, following }, toggleFollow] = useIsFollowingListLookup(uuid);
   const { profile } = useAuthProvider();
-  const { status: listVehiclesStatus, count, vehicles, hasNext, next, addVehicle, removeVehicle } = useListVehiclesProvider();
+  const {
+    status: listVehiclesStatus, count, vehicles, hasNext,
+    next, addVehicles, removeVehicles, addVins,
+  } = useListVehiclesProvider();
   const tableCardRef = useRef<HTMLDivElement>(null);
   const deleteVehiclesRef = useRef<Vehicle[]>([]);
 
@@ -87,6 +92,7 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
   const [editOpen, setEditOpen] = useState<boolean>(false);
   const [addVehiclesOpen, setAddVehiclesOpen] = useState<boolean>(false);
   const [deleteVehiclesOpen, setDeleteVehiclesOpen] = useState<boolean>(false);
+  const [uploadOpen, setUploadOpen] = useState<boolean>(false);
 
   const tablePageChange = (page: number, remaining: number) => {
     tableCardRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -102,10 +108,7 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
   };
 
   const onConfirmDelete = async () => {
-    await Promise.all(deleteVehiclesRef.current.map(async (vehicle) => {
-      await removeVehicle?.(vehicle.vin);
-    }));
-
+    await removeVehicles?.(deleteVehiclesRef.current.map((v) => v.vin));
     deleteVehiclesRef.current = [];
     setDeleteVehiclesOpen(false);
   };
@@ -121,13 +124,16 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
   };
 
   const addVehiclesWrapper = async (vehicles: Vehicle[]) => {
-    await Promise.all(vehicles.map(async (vehicle) => {
-      await addVehicle?.(vehicle);
-    }));
+    addVehicles?.(vehicles);
+  };
+
+  const importVehicles = async (vins: Vehicle["vin"][]) => {
+    await addVins?.(vins);
   };
 
   const exportSelection = (vehicles: Vehicle[]) => {
-    objectToCSV(vehicles);
+    const d = unparse(vehicles);
+    downloadBlob(d, 'export.csv', 'text/csv');
   };
 
   const onDeleteWrapper = async () => {
@@ -153,6 +159,11 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
         </Breadcrumbs>
         {list.owner.uuid === profile?.uuid && (
           <>
+            <Tooltip title="Import Vehicles" arrow>
+              <StyledIconButton onClick={() => setUploadOpen(true)}>
+                <UploadFile />
+              </StyledIconButton>
+            </Tooltip>
             <Tooltip title="Add Vehicles" arrow>
               <StyledIconButton onClick={() => setAddVehiclesOpen(true)}>
                 <Add />
@@ -236,6 +247,7 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
       {(list.follower_count > 0 && followersOpen) && <FollowersDialog identifier={uuid} type="List" count={list.follower_count} onClose={() => setFollowersOpen(false)} />}
       {editOpen && <EditListDialog list={list} onClose={() => setEditOpen(false)} onDelete={onDeleteWrapper} onConfirm={editList} />}
       {addVehiclesOpen && <VehicleSelectionDialog onSelect={addVehiclesWrapper} onClose={() => setAddVehiclesOpen(false)} />}
+      {uploadOpen && (<ListImportDialog onConfirm={importVehicles} onClose={() => setUploadOpen(false)} />)}
     </Box>
   );
 };

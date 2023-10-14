@@ -27,7 +27,7 @@ import { ListSearchCard, ListSearchSkeleton } from "../../components/ListSearchC
 import ListsDialog from "../../components/ListsDialog";
 import Loader from "../../components/Loader";
 import ProfileAvatar from "../../components/ProfileAvatar";
-import { StatisticItem } from "../../components/ProfileStatistic";
+import { StatisticItem } from "../../components/StatisticItem";
 import Repeater from "../../components/Repeater";
 import { ScrollToTop } from "../../components/ScrollToTop/ScrollButton";
 import VehicleTableDialog from "../../components/VehicleTableDialog";
