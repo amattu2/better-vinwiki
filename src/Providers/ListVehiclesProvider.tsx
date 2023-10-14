@@ -1,4 +1,7 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import React, { useState, FC, useEffect, useMemo } from "react";
+import { isValidVin } from "@shaggytools/nhtsa-api-wrapper";
 import { useAuthProvider } from "./AuthProvider";
 import { ENDPOINTS, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
 
@@ -6,9 +9,16 @@ export type ProviderState = {
   status: ProviderStatus;
   count: number;
   vehicles?: Vehicle[];
-  addVehicle?: (vehicle: Vehicle) => Promise<boolean>;
-  removeVehicle?: (vin: Vehicle["vin"]) => Promise<boolean>;
   hasNext?: boolean;
+  addVehicle?: (vehicle: Vehicle) => Promise<boolean>;
+  /**
+   * Will add `vins` to the list and refetch the list vehicles
+   *
+   * @param vins The VINs to import
+   * @returns Promise<boolean> Whether the operation was successful
+   */
+  addVins?: (vins: Vehicle["vin"][]) => Promise<boolean>;
+  removeVehicle?: (vin: Vehicle["vin"]) => Promise<boolean>;
   next?: (count: number) => Promise<boolean>;
 };
 
@@ -102,6 +112,54 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
     return result;
   };
 
+  const addVins = async (vins: Vehicle["vin"][]) : Promise<boolean> => {
+    if (!token || !uuid || !vins?.length) {
+      return false;
+    }
+
+    // NOTE: We're awaiting each request to avoid overloading the server
+    for (const vin of vins) {
+      if (!vin || !isValidVin(vin)) {
+        continue;
+      }
+
+      const response = await fetch(`${ENDPOINTS.list_add_vehicle}${uuid}/${vin}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).catch(() => null);
+
+      const { status, list } = await response?.json().catch(() => null) || {};
+      if (status !== STATUS_OK || !list?.uuid) {
+        return false;
+      }
+    }
+
+    const response = await fetch(`${ENDPOINTS.list_vehicles}${uuid}/${state.count + vins.length}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).catch(() => null);
+
+    const { status, total, vehicles, last_id, end } = await response?.json().catch(() => null) || {};
+    if (status === STATUS_OK && vehicles) {
+      setState((prev) => ({
+        ...prev,
+        status: ProviderStatus.LOADED,
+        count: parseInt(total, 10),
+        vehicles,
+      }));
+      setHasNext(!end);
+      setLastID(last_id || "");
+    } else if (status === STATUS_ERROR) {
+      setState((prev) => ({ ...prev, status: ProviderStatus.ERROR }));
+    }
+
+    return true;
+  };
+
   const next = async (count = 1000) : Promise<boolean> => {
     if (!token || !hasNext || !lastID) {
       return false;
@@ -166,13 +224,15 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
         setLastID(last_id || "");
       } else if (status === STATUS_ERROR) {
         setState((prev) => ({ ...prev, status: ProviderStatus.ERROR }));
+      } else {
+        setState((prev) => ({ ...prev, status: ProviderStatus.LOADED }));
       }
     })();
 
     return () => controller.abort();
   }, [token, uuid]);
 
-  const value = useMemo(() => ({ ...state, addVehicle, removeVehicle, next, hasNext }), [state, hasNext]);
+  const value = useMemo(() => ({ ...state, addVehicle, removeVehicle, next, addVins, hasNext }), [state, hasNext]);
 
   return (
     <Context.Provider value={value}>

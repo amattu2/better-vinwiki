@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import React, { FC, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Add, Edit, NavigateNext, UploadFile } from "@mui/icons-material";
@@ -81,7 +83,10 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
   const [{ status, list }, editList, deleteList] = useListLookup(uuid, true);
   const [{ status: isFollowingStatus, following }, toggleFollow] = useIsFollowingListLookup(uuid);
   const { profile } = useAuthProvider();
-  const { status: listVehiclesStatus, count, vehicles, hasNext, next, addVehicle, removeVehicle } = useListVehiclesProvider();
+  const {
+    status: listVehiclesStatus, count, vehicles, hasNext,
+    next, addVehicle, removeVehicle, addVins,
+  } = useListVehiclesProvider();
   const tableCardRef = useRef<HTMLDivElement>(null);
   const deleteVehiclesRef = useRef<Vehicle[]>([]);
 
@@ -105,9 +110,9 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
   };
 
   const onConfirmDelete = async () => {
-    await Promise.all(deleteVehiclesRef.current.map(async (vehicle) => {
+    for (const vehicle of deleteVehiclesRef.current) {
       await removeVehicle?.(vehicle.vin);
-    }));
+    }
 
     deleteVehiclesRef.current = [];
     setDeleteVehiclesOpen(false);
@@ -124,9 +129,13 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
   };
 
   const addVehiclesWrapper = async (vehicles: Vehicle[]) => {
-    await Promise.all(vehicles.map(async (vehicle) => {
+    for (const vehicle of vehicles) {
       await addVehicle?.(vehicle);
-    }));
+    }
+  };
+
+  const importVehicles = async (vins: Vehicle["vin"][]) => {
+    await addVins?.(vins);
   };
 
   const exportSelection = (vehicles: Vehicle[]) => {
@@ -245,7 +254,7 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
       {(list.follower_count > 0 && followersOpen) && <FollowersDialog identifier={uuid} type="List" count={list.follower_count} onClose={() => setFollowersOpen(false)} />}
       {editOpen && <EditListDialog list={list} onClose={() => setEditOpen(false)} onDelete={onDeleteWrapper} onConfirm={editList} />}
       {addVehiclesOpen && <VehicleSelectionDialog onSelect={addVehiclesWrapper} onClose={() => setAddVehiclesOpen(false)} />}
-      {uploadOpen && (<ListImportDialog onConfirm={() => setUploadOpen(false)} onClose={() => setUploadOpen(false)} />)}
+      {uploadOpen && (<ListImportDialog onConfirm={importVehicles} onClose={() => setUploadOpen(false)} />)}
     </Box>
   );
 };
