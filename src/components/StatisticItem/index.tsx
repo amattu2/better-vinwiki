@@ -44,7 +44,7 @@ const getFormattedValue = (value: number | string, precise?: boolean): string =>
 };
 
 /**
- * A statistic item for the profile page
+ * A general statistic card item component.
  *
  * @param {StatisticItemProps} props
  * @returns {JSX.Element}
