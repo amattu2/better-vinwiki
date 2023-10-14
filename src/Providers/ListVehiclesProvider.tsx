@@ -20,7 +20,10 @@ export type ProviderState = {
   /**
    * Will add `vins` to the list and refetch the list vehicles
    *
-   * @param vins The VINs to import
+   * NOTE: This is used in place of `addVehicles` when we don't
+   * have a `Vehicle` object to work from.
+   *
+   * @param vins The VINs to add to the list
    * @returns Promise<boolean> Whether the operation was successful
    */
   addVins?: (vins: Vehicle["vin"][]) => Promise<boolean>;
@@ -141,7 +144,6 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
       return false;
     }
 
-    // NOTE: We're awaiting each request to avoid overloading the server
     for (const vin of vins) {
       if (!vin || !isValidVin(vin)) {
         continue;
