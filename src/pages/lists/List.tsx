@@ -1,5 +1,3 @@
-/* eslint-disable no-await-in-loop */
-/* eslint-disable no-restricted-syntax */
 import React, { FC, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Add, Edit, NavigateNext, UploadFile } from "@mui/icons-material";
@@ -85,7 +83,7 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
   const { profile } = useAuthProvider();
   const {
     status: listVehiclesStatus, count, vehicles, hasNext,
-    next, addVehicle, removeVehicle, addVins,
+    next, addVehicles, removeVehicles, addVins,
   } = useListVehiclesProvider();
   const tableCardRef = useRef<HTMLDivElement>(null);
   const deleteVehiclesRef = useRef<Vehicle[]>([]);
@@ -110,10 +108,7 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
   };
 
   const onConfirmDelete = async () => {
-    for (const vehicle of deleteVehiclesRef.current) {
-      await removeVehicle?.(vehicle.vin);
-    }
-
+    await removeVehicles?.(deleteVehiclesRef.current.map((v) => v.vin));
     deleteVehiclesRef.current = [];
     setDeleteVehiclesOpen(false);
   };
@@ -129,9 +124,7 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
   };
 
   const addVehiclesWrapper = async (vehicles: Vehicle[]) => {
-    for (const vehicle of vehicles) {
-      await addVehicle?.(vehicle);
-    }
+    addVehicles?.(vehicles);
   };
 
   const importVehicles = async (vins: Vehicle["vin"][]) => {
