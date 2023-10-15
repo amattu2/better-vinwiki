@@ -2,7 +2,7 @@ import React, { ElementType, FC, useState } from 'react';
 import { Link, NavigateProps, useLocation } from 'react-router-dom';
 import {
   Code, DashboardOutlined, Logout, NotificationsActive,
-  PeopleOutline, SearchOutlined, ListOutlined, DarkMode,
+  PeopleOutline, SearchOutlined, ListOutlined, DarkMode, LightMode,
 } from '@mui/icons-material';
 import {
   Avatar, Badge, IconButton, Tooltip,
@@ -70,7 +70,7 @@ const Sidebar: FC = () => {
   const { authenticated, profile } = useAuthProvider();
   const { unseen } = useNotificationCountProvider();
   const { pathname } = useLocation();
-  const { toggle } = useDarkMode();
+  const { isDarkMode, toggle } = useDarkMode();
 
   const [open, setOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -144,7 +144,7 @@ const Sidebar: FC = () => {
         </IconButton>
         <IconButton onClick={toggle}>
           <Tooltip title="Toggle Theme" placement="right">
-            <DarkMode />
+            {!isDarkMode ? <DarkMode /> : <LightMode />}
           </Tooltip>
         </IconButton>
         <IconButton>
