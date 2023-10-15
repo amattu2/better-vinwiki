@@ -16,7 +16,7 @@ import Repeater from "../Repeater";
 import { ExpandableImage } from "../ExpandableImage";
 
 type Props = {
-  status: "loading" | "success" | "error";
+  status: "loading" | "loading_more" | "success" | "error";
   vehicles: Vehicle[];
   /**
    * The total number of vehicles in the list
@@ -176,12 +176,11 @@ export const VehicleTable: FC<Props> = ({
   const showCheckboxes = !!onDelete || !!onExport;
 
   const dataset: T[] = useMemo(() => {
-    if (!vehicles?.length || status !== "success") {
+    if (!vehicles?.length || status === "loading") {
       return [];
     }
 
     const sorted = vehicles.sort((a, b) => orderBy?.comparator?.(a, b) || 0);
-
     if (order === "desc") {
       sorted.reverse();
     }
@@ -196,6 +195,15 @@ export const VehicleTable: FC<Props> = ({
 
     return vehicles?.length;
   }, [vehicles, totalCount]);
+
+  const repeaterCount: number = useMemo(() => {
+    if (status === "loading_more") {
+      const availableCount = perPage - dataset.length;
+      return availableCount <= 5 ? 5 : availableCount;
+    }
+
+    return 5;
+  }, [status, perPage, dataset.length]);
 
   const handleRequestSort = (column: Column) => {
     setOrder(orderBy === column && order === "asc" ? "desc" : "asc");
@@ -322,9 +330,9 @@ export const VehicleTable: FC<Props> = ({
                 </TableCell>
               </TableRow>
             ))}
-            {(status === "loading") && (
+            {(status === "loading" || (status === "loading_more" && dataset.length < perPage)) && (
               // eslint-disable-next-line react/no-unstable-nested-components
-              <Repeater count={5} Component={() => <ResultSkeleton hasCheckbox={showCheckboxes} />} />
+              <Repeater count={repeaterCount} Component={() => <ResultSkeleton hasCheckbox={showCheckboxes} />} />
             )}
           </TableBody>
         </Table>
@@ -341,6 +349,7 @@ export const VehicleTable: FC<Props> = ({
           disabled: !dataset
             || count === 0
             || (count !== -1 && count <= (page + 1) * perPage)
+            || (dataset.length < perPage && status === "loading_more")
             || status === "loading",
         }}
         backIconButtonProps={{ disabled: page === 0 || status === "loading" }}

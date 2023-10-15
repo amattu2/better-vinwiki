@@ -149,6 +149,17 @@ const View : FC = () => {
     }
   }, [searchType]);
 
+  const tableStatus = useMemo(() => {
+    switch (status) {
+      case LookupStatus.Loading:
+        return "loading";
+      case LookupStatus.LoadingMore:
+        return "loading_more";
+      default:
+        return "success";
+    }
+  }, [status]);
+
   const searchChange = (event: React.SyntheticEvent, type: SearchType) => {
     setSearchType(type);
     setPage(1);
@@ -238,7 +249,7 @@ const View : FC = () => {
             <TabContext value={searchType}>
               <StyledPanel value="Vehicle">
                 <VehicleTable
-                  status={status !== LookupStatus.Loading ? "success" : "loading"}
+                  status={tableStatus}
                   vehicles={status !== LookupStatus.Loading && results?.type === "Vehicle" && results?.data ? results.data as Vehicle[] : []}
                   totalCount={results?.hasMore ? -1 : resultCount}
                   rowPerPageOptions={[5, 10, 25]}
@@ -253,7 +264,7 @@ const View : FC = () => {
                   {(status === LookupStatus.Success && paginatedResults.length === 0) && (
                     <NoSearchResults />
                   )}
-                  {(status === LookupStatus.Success && paginatedResults.length > 0 && results?.type === "Profile") && (
+                  {(status !== LookupStatus.Loading && paginatedResults.length > 0 && results?.type === "Profile") && (
                     paginatedResults.map((result) => {
                       const { uuid, username, avatar, display_name } = result as ProfileSearchResult;
 
@@ -284,7 +295,7 @@ const View : FC = () => {
                 {(status === LookupStatus.Success && paginatedResults.length === 0) && (
                   <NoSearchResults />
                 )}
-                {(status === LookupStatus.Success && paginatedResults.length > 0 && results?.type === "List") && (
+                {(status !== LookupStatus.Loading && paginatedResults.length > 0 && results?.type === "List") && (
                   paginatedResults.map((result) => (<ListSearchCard key={(result as List).uuid} list={result as List} />))
                 )}
                 <StyledPagination

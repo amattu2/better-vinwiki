@@ -1,4 +1,4 @@
-import React, { FC, useRef, useState } from "react";
+import React, { FC, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Add, Edit, NavigateNext, UploadFile } from "@mui/icons-material";
 import {
@@ -94,9 +94,21 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
   const [deleteVehiclesOpen, setDeleteVehiclesOpen] = useState<boolean>(false);
   const [uploadOpen, setUploadOpen] = useState<boolean>(false);
 
-  const tablePageChange = (page: number, remaining: number) => {
-    tableCardRef.current?.scrollIntoView({ behavior: "smooth" });
+  const tableStatus = useMemo(() => {
+    if (list && list.vehicle_count === 0) {
+      return "success";
+    }
+    if (listVehiclesStatus === ListProviderStatus.LOADING) {
+      return "loading";
+    }
+    if (listVehiclesStatus === ListProviderStatus.LOADING_MORE) {
+      return "loading_more";
+    }
 
+    return "success";
+  }, [listVehiclesStatus]);
+
+  const tablePageChange = (page: number, remaining: number) => {
     if (remaining > 50) {
       return;
     }
@@ -228,7 +240,7 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
 
       <Card sx={{ mx: 2, mb: 2 }} elevation={2} ref={tableCardRef}>
         <VehicleTable
-          status={list.vehicle_count === 0 || listVehiclesStatus !== ListProviderStatus.LOADING ? "success" : "loading"}
+          status={tableStatus}
           vehicles={vehicles || []}
           totalCount={listVehiclesStatus !== ListProviderStatus.LOADING ? count : list.vehicle_count}
           onPageChange={tablePageChange}
