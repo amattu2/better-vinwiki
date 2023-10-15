@@ -5,10 +5,10 @@ built with a cohesive user experience in mind.
 
 Top Features:
 
-- Modernized post feed with Trending Posts
-- Individual post page with comments (Similar to Reddit)
+- Dark Mode
+- Modernized post feed with integrated comments
 - Profile pages with comprehensive information on Activity, Vehicles, Lists, etc
-- Vehicle diagnostic scan histories, VIN decoding, recall information, and more
+- Vehicle diagnostic scan histories, VIN decoding, and recall information
 - Enhanced bio and post content w/support for OBD-ii Codes, `@mentions`, `#VIN`,
 and more
 - Powerful list managment with bulk importing and exporting
