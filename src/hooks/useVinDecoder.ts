@@ -36,7 +36,9 @@ const useVinDecoder = (vin: Vehicle["vin"], modelYear?: Vehicle["year"]): [Looku
     }
 
     (async () => {
-      const { Count, Results } = await DecodeVinValues(vin, { modelYear });
+      const { Count, Results } = await DecodeVinValues(vin, {
+        modelYear: modelYear && parseInt(modelYear, 10) > 0 ? modelYear : undefined,
+      });
 
       if (Count > 0 && Results?.[0]) {
         const resultKeys: (keyof DecodeVinValuesResults)[] = Object.keys(Results[0]) as (keyof DecodeVinValuesResults)[];
