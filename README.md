@@ -11,6 +11,7 @@ Top Features:
 - Vehicle diagnostic scan histories, VIN decoding, recall information, and more
 - Enhanced bio and post content w/support for OBD-ii Codes, `@mentions`, `#VIN`,
 and more
+- Powerful list managment with bulk importing and exporting
 
 > **Note**: This application uses the native vinwiki.com API,
 > but is not affiliated with VINwiki.com in any way.
