@@ -149,6 +149,17 @@ const View : FC = () => {
     }
   }, [searchType]);
 
+  const tableStatus = useMemo(() => {
+    switch (status) {
+      case LookupStatus.Loading:
+        return "loading";
+      case LookupStatus.LoadingMore:
+        return "loading_more";
+      default:
+        return "success";
+    }
+  }, [status]);
+
   const searchChange = (event: React.SyntheticEvent, type: SearchType) => {
     setSearchType(type);
     setPage(1);
@@ -238,7 +249,7 @@ const View : FC = () => {
             <TabContext value={searchType}>
               <StyledPanel value="Vehicle">
                 <VehicleTable
-                  status={status !== LookupStatus.Loading ? "success" : "loading"}
+                  status={tableStatus}
                   vehicles={status !== LookupStatus.Loading && results?.type === "Vehicle" && results?.data ? results.data as Vehicle[] : []}
                   totalCount={results?.hasMore ? -1 : resultCount}
                   rowPerPageOptions={[5, 10, 25]}
