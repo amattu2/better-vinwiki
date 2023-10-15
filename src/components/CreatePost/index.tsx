@@ -10,6 +10,7 @@ import {
   Divider, IconButton, Stack, Step,
   StepButton, StepContent,
   Stepper, Tab, Tabs, TextField,
+  Theme,
   Tooltip, Typography, styled,
 } from "@mui/material";
 import { DateTimePicker } from '@mui/x-date-pickers';
@@ -38,13 +39,13 @@ type PostForm = {
   image: FileList;
 };
 
-const StyledCard = styled(Card, { shouldForwardProp: (p) => p !== "expanded" })(({ expanded }: { expanded?: boolean }) => ({
+const StyledCard = styled(Card, { shouldForwardProp: (p) => p !== "expanded" })<{ expanded?: boolean, theme?: Theme }>(({ expanded = false, theme }) => ({
   position: expanded ? "sticky" : "relative",
   top: expanded ? "16px" : "unset",
   padding: "16px 24px",
   borderRadius: "8px",
   margin: "8px 0",
-  border: "1px solid #e5e5e5",
+  border: `1px solid ${theme?.palette.divider}`,
   zIndex: expanded ? 10 : "unset",
 }));
 

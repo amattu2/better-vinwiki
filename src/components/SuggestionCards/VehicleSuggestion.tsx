@@ -23,11 +23,11 @@ const StyledCard = styled(Card)({
   marginBottom: "16px",
 });
 
-const StyledCardHeader = styled(CardHeader)({
+const StyledCardHeader = styled(CardHeader)(({ theme }) => ({
   paddingTop: "8px",
   paddingBottom: "8px",
-  backgroundColor: "#fff",
-});
+  backgroundColor: theme.palette.background.default,
+}));
 
 const StyledList = styled(List)({
   "& .MuiCollapse-root:last-child li": {

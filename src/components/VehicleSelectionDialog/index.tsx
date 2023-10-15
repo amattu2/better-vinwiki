@@ -37,16 +37,16 @@ const StyledLink = styled(Link)({
   color: "inherit",
 });
 
-const StyledDialogContent = styled(DialogContent)({
+const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
   padding: "0 !important",
-  backgroundColor: "#fff",
+  backgroundColor: theme.palette.modal.background,
   "& .MuiList-root": {
     padding: "0 !important",
   },
   "& .MuiListItem-root:last-child": {
     borderBottom: "unset",
   },
-});
+}));
 
 const StyledSearchBox = styled(Stack)({
   padding: "16px 24px",

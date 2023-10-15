@@ -24,16 +24,16 @@ const StyledDialog = styled(Dialog)({
   },
 });
 
-const StyledDialogContent = styled(DialogContent)({
-  backgroundColor: "#f4f7fa",
-});
+const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
+  backgroundColor: theme.palette.modal.background,
+}));
 
-const StyledTextField = styled(TextField)({
+const StyledTextField = styled(TextField)(({ theme }) => ({
   marginTop: "16px",
   "& .MuiInputBase-root": {
-    backgroundColor: "#fff",
+    backgroundColor: theme.palette.modal.contrast,
   },
-});
+}));
 
 /**
  * A dialog that handles the creation of a Vehicle List

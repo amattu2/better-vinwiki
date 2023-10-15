@@ -2,23 +2,24 @@ import React, { ElementType, FC, useState } from 'react';
 import { Link, NavigateProps, useLocation } from 'react-router-dom';
 import {
   Code, DashboardOutlined, Logout, NotificationsActive,
-  PeopleOutline, SearchOutlined, ListOutlined,
+  PeopleOutline, SearchOutlined, ListOutlined, DarkMode,
 } from '@mui/icons-material';
 import {
   Avatar, Badge, IconButton, Tooltip,
   Typography, Box, Stack, styled,
 } from '@mui/material';
+import { useDarkMode } from 'usehooks-ts';
 import { useAuthProvider } from '../../Providers/AuthProvider';
 import { useNotificationCountProvider } from '../../Providers/NotificationCountProvider';
 import { FollowersDrawer } from '../FollowersDrawer';
 import { NotificationDrawer } from '../NotificationDrawer';
 import { MEDIA_CDN_URL } from '../../config/Endpoints';
 
-const StyledBox = styled(Box)({
+const StyledBox = styled(Box)(({ theme }) => ({
   padding: "32px 12px",
-  background: "#fff",
+  background: theme.palette.background.default,
   width: "72px",
-  borderRight: "1px solid #ddd",
+  borderRight: `1px solid ${theme.palette.divider}`,
   position: "fixed",
   top: "0",
   left: "0",
@@ -26,18 +27,18 @@ const StyledBox = styled(Box)({
   "& *": {
     userSelect: "none",
   },
-});
+}));
 
 const StyledLogoBox = styled(Box)({
   margin: "15px auto",
 });
 
-const StyledLogo = styled('img')({
+const StyledLogo = styled('img')(({ theme }) => ({
   width: "100%",
   height: "auto",
-  border: "1px solid #ddd",
+  border: `1px solid ${theme.palette.divider}`,
   borderRadius: "6px",
-});
+}));
 
 const StyledAvatarBox = styled(StyledLogoBox)({
   marginTop: "35px",
@@ -55,10 +56,10 @@ const StyledControlGroup = styled(Stack)({
   },
 });
 
-const StyledIconButton = styled(IconButton)<{ component?: ElementType, to?: NavigateProps["to"] }>({
-  color: "rgba(0, 0, 0, 0.54)",
+const StyledIconButton = styled(IconButton)<{ component?: ElementType, to?: NavigateProps["to"] }>(({ theme }) => ({
+  color: theme.palette.action.active,
   height: "47px",
-});
+}));
 
 const StyledLink = styled(Link)({
   color: "inherit",
@@ -69,6 +70,7 @@ const Sidebar: FC = () => {
   const { authenticated, profile } = useAuthProvider();
   const { unseen } = useNotificationCountProvider();
   const { pathname } = useLocation();
+  const { toggle } = useDarkMode();
 
   const [open, setOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -139,6 +141,11 @@ const Sidebar: FC = () => {
               <Code />
             </Tooltip>
           </StyledLink>
+        </IconButton>
+        <IconButton onClick={toggle}>
+          <Tooltip title="Toggle Theme" placement="right">
+            <DarkMode />
+          </Tooltip>
         </IconButton>
         <IconButton>
           <StyledLink to="/logout">

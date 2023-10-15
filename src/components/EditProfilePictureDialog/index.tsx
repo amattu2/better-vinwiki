@@ -24,9 +24,9 @@ const StyledDialog = styled(Dialog)({
   },
 });
 
-const StyledDialogContent = styled(DialogContent)({
-  backgroundColor: "#f4f7fa",
-});
+const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
+  backgroundColor: theme.palette.modal.background,
+}));
 
 /**
  * A dialog that displays the edit form for a profile picture.

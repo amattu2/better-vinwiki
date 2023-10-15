@@ -39,8 +39,8 @@ const StyledLink = styled(Link)({
 
 const StyledHeaderSection = styled(Stack)(({ theme }) => ({
   padding: `${theme.spacing(2)} ${theme.spacing(3)}`,
-  background: "#fff",
-  borderBottom: `1px solid #ddd`,
+  borderBottom: `1px solid ${theme.palette.divider}`,
+  background: theme.palette.background.default,
   position: "sticky",
   top: 0,
   zIndex: 8,
@@ -50,14 +50,14 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
   margin: theme.spacing(-1),
 }));
 
-const StyledDetailsGrid = styled(Grid)({
-  borderBottom: "1px solid #ddd",
-});
+const StyledDetailsGrid = styled(Grid)(({ theme }) => ({
+  borderBottom: `1px solid ${theme.palette.divider}`,
+}));
 
 const StyledVehicleDetails = styled(Stack)(({ theme }) => ({
-  borderRight: "1px solid #ddd",
+  borderRight: `1px solid ${theme.palette.divider}`,
   paddingBottom: theme.spacing(4),
-  background: "#fff",
+  background: theme.palette.background.default,
   padding: theme.spacing(2),
   paddingTop: theme.spacing(4),
   paddingLeft: "24px !important",
@@ -88,10 +88,10 @@ const StyledButton = styled(Button)(({ theme }) => ({
 
 const StyledPillGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
-  background: "#fff",
+  background: theme.palette.background.default,
   alignItems: "center",
   [theme.breakpoints.down("md")]: {
-    borderTop: "1px solid #ddd",
+    borderTop: `1px solid ${theme.palette.divider}`,
     marginLeft: theme.spacing(2),
   },
 }));

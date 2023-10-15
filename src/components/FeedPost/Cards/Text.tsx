@@ -3,7 +3,7 @@ import { Delete, MoreVert, PlaylistAdd, Share } from "@mui/icons-material";
 import {
   Card, CardContent, IconButton,
   ListItemIcon, ListItemText, Menu,
-  MenuItem, Skeleton, styled,
+  MenuItem, Skeleton, Theme, styled,
 } from "@mui/material";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useAuthProvider } from "../../../Providers/AuthProvider";
@@ -16,10 +16,10 @@ import ProfileBit, { PostProfileSkeleton } from "../Components/PostProfile";
 import PostMeta from "../Components/PostMeta";
 import ListAssignmentDialog from "../../ListAssignmentDialog";
 
-const StyledCard = styled(Card, { shouldForwardProp: (p) => p !== "hoverAction" })(({ hoverAction } : { hoverAction?: boolean }) => ({
+const StyledCard = styled(Card, { shouldForwardProp: (p) => p !== "hoverAction" })<{ hoverAction?: boolean; theme?: Theme }>(({ hoverAction, theme }) => ({
   borderRadius: "8px",
   marginBottom: "8px",
-  border: "1px solid #e5e5e5",
+  border: `1px solid ${theme?.palette.divider}`,
   position: "relative",
   transition: "border-color 0.2s ease-out",
   [hoverAction ? "&:hover" : ""]: {
@@ -40,7 +40,7 @@ const StyledMenuButton = styled(IconButton)({
  * @returns {JSX.Element}
  */
 export const TextPostSkeleton: FC = () => (
-  <StyledCard elevation={0} sx={{ "&:hover": { cursor: "initial", borderColor: "#e5e5e5" } }}>
+  <StyledCard elevation={0} sx={{ "&:hover": { cursor: "initial", borderColor: (theme) => theme.palette.divider } }}>
     <CardContent>
       <PostProfileSkeleton filled={false} />
       <Skeleton variant="text" width={375} sx={{ fontSize: "0.875rem", ml: "8px" }} animation="wave" />

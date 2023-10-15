@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { Link } from "react-router-dom";
-import { Skeleton, Stack, Typography, styled } from "@mui/material";
+import { Skeleton, Stack, Theme, Typography, styled } from "@mui/material";
 import ProfileAvatar from "../../ProfileAvatar";
 import { formatVehicleName, formatOdometer } from "../../../utils/vehicle";
 
@@ -9,10 +9,10 @@ type Props = {
   filled?: boolean;
 };
 
-const StyledStack = styled(Stack, { shouldForwardProp: (p) => p !== "filled" })(({ filled }: { filled: boolean }) => ({
+const StyledStack = styled(Stack, { shouldForwardProp: (p) => p !== "filled" })<{ filled: boolean; theme?: Theme }>(({ filled, theme }) => ({
   borderRadius: "8px",
   padding: "8px",
-  backgroundColor: !filled ? "transparent" : "rgb(244, 247, 250)",
+  backgroundColor: !filled || !theme ? "transparent" : theme.palette.action.selected,
 }));
 
 const StyledLink = styled(Link)({

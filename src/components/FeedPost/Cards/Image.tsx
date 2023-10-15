@@ -3,7 +3,7 @@ import { Delete, MoreVert, PlaylistAdd, Share } from "@mui/icons-material";
 import {
   Box, Card, CardContent, Grid,
   IconButton, ListItemIcon, ListItemText,
-  Menu, MenuItem, Skeleton, Stack, styled,
+  Menu, MenuItem, Skeleton, Stack, Theme, styled,
 } from "@mui/material";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useAuthProvider } from "../../../Providers/AuthProvider";
@@ -18,10 +18,10 @@ import Repeater from "../../Repeater";
 import PostMeta from "../Components/PostMeta";
 import ListAssignmentDialog from "../../ListAssignmentDialog";
 
-const StyledCard = styled(Card, { shouldForwardProp: (p) => p !== "hoverAction" })(({ hoverAction } : { hoverAction?: boolean }) => ({
+const StyledCard = styled(Card, { shouldForwardProp: (p) => p !== "hoverAction" })<{ hoverAction?: boolean; theme?: Theme }>(({ hoverAction, theme }) => ({
   borderRadius: "8px",
   marginBottom: "8px",
-  border: "1px solid #e5e5e5",
+  border: `1px solid ${theme?.palette.divider}`,
   position: "relative",
   transition: "border-color 0.2s ease-out",
   [hoverAction ? "&:hover" : ""]: {
@@ -59,7 +59,7 @@ const PostTextSkeleton: FC = () => (
  * @returns {JSX.Element}
  */
 export const ImagePostSkeleton: FC = () => (
-  <StyledCard elevation={0} sx={{ "&:hover": { cursor: "initial", borderColor: "#e5e5e5" } }}>
+  <StyledCard elevation={0} sx={{ "&:hover": { cursor: "initial", borderColor: (theme) => theme.palette.divider } }}>
     <CardContent>
       <Grid container>
         <Grid item xs={8}>

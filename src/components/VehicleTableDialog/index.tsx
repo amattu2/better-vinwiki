@@ -20,10 +20,10 @@ const StyledDialog = styled(Dialog)({
   },
 });
 
-const StyledDialogContent = styled(DialogContent)({
+const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
   padding: "0 !important",
-  backgroundColor: "#f4f7fa",
-});
+  backgroundColor: theme.palette.modal.background,
+}));
 
 const NoVehicles = () => (
   <Typography variant="body1" color="textSecondary" sx={{ padding: "16px" }} textAlign="center" fontSize={14}>

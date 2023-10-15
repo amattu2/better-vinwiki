@@ -35,10 +35,10 @@ const StyledBox = styled(Box)({
 });
 
 const StyledSearchBox = styled(StyledBox)(({ theme }) => ({
-  backgroundColor: "#fff",
+  backgroundColor: theme.palette.background.default,
   flexGrow: 1,
   minHeight: "100vh",
-  borderRight: "1px solid #ddd",
+  borderRight: `1px solid ${theme.palette.divider}`,
   [theme.breakpoints.down("lg")]: {
     borderRight: "none",
   },
@@ -52,12 +52,12 @@ const StyledSidebarBox = styled(StyledBox)(({ theme }) => ({
   },
 }));
 
-const StyledCard = styled(Card)({
+const StyledCard = styled(Card)(({ theme }) => ({
   padding: "16px 24px",
   borderRadius: "8px",
   margin: "8px 0",
-  border: "1px solid #e5e5e5",
-});
+  border: `1px solid ${theme.palette.divider}`,
+}));
 
 const StyledTab = styled(Tab)({
   minHeight: "48px",

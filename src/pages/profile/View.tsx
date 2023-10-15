@@ -53,18 +53,18 @@ const StyledTab = styled(Tab)({
 
 const StyledHeaderSection = styled(Stack)(({ theme }) => ({
   padding: `${theme.spacing(2)} ${theme.spacing(3)}`,
-  borderBottom: "1px solid #ddd",
-  background: "#fff",
+  borderBottom: `1px solid ${theme.palette.divider}`,
+  background: theme.palette.background.default,
   position: "sticky",
   top: 0,
   zIndex: 8,
 }));
 
 const StyledProfileDetails = styled(Stack)(({ theme }) => ({
-  borderBottom: "1px solid #ddd",
+  borderBottom: `1px solid ${theme.palette.divider}`,
   paddingTop: theme.spacing(4),
   paddingBottom: theme.spacing(4),
-  background: "#fff",
+  background: theme.palette.background.default,
   paddingLeft: "24px !important",
 }));
 
@@ -100,7 +100,7 @@ const StyledTopLists = styled(Stack)(({ theme }) => ({
 }));
 
 const StyledTabBox = styled(Box)(({ theme }) => ({
-  borderBottom: "1px solid #ddd",
+  borderBottom: `1px solid ${theme.palette.divider}`,
   marginLeft: "-20px",
   marginRight: "-20px",
   paddingLeft: theme.spacing(2),

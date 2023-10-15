@@ -1,10 +1,10 @@
-import React, { Suspense, lazy } from 'react';
+import React, { FC, Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import { Box, CssBaseline, Stack, ThemeProvider, createTheme } from '@mui/material';
+import { Box, CssBaseline, Stack, ThemeProvider } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { useReadLocalStorage } from 'usehooks-ts';
+import { useReadLocalStorage, useDarkMode } from 'usehooks-ts';
 import { AuthProvider } from './Providers/AuthProvider';
 import { NotificationCountProvider } from './Providers/NotificationCountProvider';
 import AutoScroll from './components/ScrollToTop/AutoScroll';
@@ -13,23 +13,27 @@ import { CacheKeys } from './config/Cache';
 import reportWebVitals from './reportWebVitals';
 import { CONFIG } from './config/AppConfig';
 import Loader from './components/Loader';
+import { DarkTheme } from './themes/dark';
+import { LightTheme } from './themes/light';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 
-const theme = createTheme({
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: {
-        body: {
-          height: "100vh",
-          backgroundColor: "rgb(244, 247, 250)",
-        },
-      },
-    },
-  },
-});
+declare module '@mui/material/styles' {
+  interface Palette {
+    modal: {
+      background: string;
+      contrast: string
+    };
+  }
+  interface PaletteOptions {
+    modal?: {
+      background?: string;
+      contrast?: string
+    };
+  }
+}
 
 const Login = lazy(() => import('./pages/login/Controller'));
 const Register = lazy(() => import('./pages/register/Controller'));
@@ -73,24 +77,32 @@ const ProtectedRoutes = () => {
   );
 };
 
+const App: FC = () => {
+  const { isDarkMode } = useDarkMode();
+
+  return (
+    <ThemeProvider theme={isDarkMode ? DarkTheme : LightTheme}>
+      <CssBaseline />
+      <Router basename={CONFIG.PUBLIC_URL}>
+        <Suspense fallback={<Loader />}>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/logout" element={<Logout />} />
+            <Route path="/documentation" element={<Documentation />} />
+            <Route path="*" element={<ProtectedRoutes />} />
+          </Routes>
+        </Suspense>
+      </Router>
+    </ThemeProvider>
+  );
+};
+
 root.render(
   <React.StrictMode>
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Router basename={CONFIG.PUBLIC_URL}>
-          <Suspense fallback={<Loader />}>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/logout" element={<Logout />} />
-              <Route path="/documentation" element={<Documentation />} />
-              <Route path="*" element={<ProtectedRoutes />} />
-            </Routes>
-          </Suspense>
-        </Router>
-      </ThemeProvider>
+      <App />
     </LocalizationProvider>
   </React.StrictMode>,
 );

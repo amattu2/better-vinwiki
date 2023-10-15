@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
-import { Box, CircularProgress, styled } from '@mui/material';
+import { Box, CircularProgress, Theme, styled } from '@mui/material';
 
-type Props = {
-  fullscreen?: boolean;
-};
-
-const StyledBox = styled(Box, { shouldForwardProp: (p) => p !== "fullscreen" })(({ fullscreen } : Props) => ({
+const StyledBox = styled(Box, {
+  shouldForwardProp: (p) => p !== "fullscreen",
+})(({
+  fullscreen, theme,
+} : { fullscreen: boolean; theme?: Theme }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -15,10 +15,10 @@ const StyledBox = styled(Box, { shouldForwardProp: (p) => p !== "fullscreen" })(
   left: 0,
   right: 0,
   zIndex: 9999,
-  background: "#fff",
+  background: theme?.palette.background.default || "#fff",
 }));
 
-const Loader : FC<Props> = ({ fullscreen = true } : Props) => (
+const Loader : FC<{ fullscreen?: boolean }> = ({ fullscreen = true }) => (
   <StyledBox fullscreen={fullscreen}>
     <CircularProgress />
   </StyledBox>

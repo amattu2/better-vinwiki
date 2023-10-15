@@ -10,18 +10,18 @@ type Props = {
   onDrop?: (e: React.DragEvent<HTMLDivElement>) => void;
 };
 
-const StyledDropzone = styled(Box)({
+const StyledDropzone = styled(Box)(({ theme }) => ({
   width: "100%",
   height: "150px",
   border: "2px dashed",
   borderRadius: "8px",
   position: "relative",
   transition: "color 0.2s ease-out",
-  color: "rgba(0, 0, 0, 0.38)",
+  color: theme.palette.action.disabled,
   cursor: "pointer",
   "&:after": {
     content: "'Drop an image here or click to find one'",
-    color: "rgba(0, 0, 0, 0.38)",
+    color: theme.palette.action.disabled,
     position: "absolute",
     top: "50%",
     left: "50%",
@@ -29,15 +29,15 @@ const StyledDropzone = styled(Box)({
     fontSize: "14px",
   },
   "&:hover": {
-    color: "#3b3b3b",
+    color: theme.palette.action.hover,
   },
-});
+}));
 
 const StyledInput = styled("input")({
   display: "none",
 });
 
-const StyledImageBox = styled(Paper)({
+const StyledImageBox = styled(Paper)(({ theme }) => ({
   height: "175px",
   width: "100%",
   margin: "0 auto",
@@ -45,7 +45,7 @@ const StyledImageBox = styled(Paper)({
   overflow: "hidden",
   borderRadius: "8px",
   position: "relative",
-  background: "#ddd",
+  background: theme.palette.divider,
   cursor: "pointer",
   "&:hover .image-delete": {
     opacity: 1,
@@ -53,7 +53,7 @@ const StyledImageBox = styled(Paper)({
   "&:hover .image-preview": {
     filter: "blur(2px) brightness(0.6)",
   },
-});
+}));
 
 const StyledBackground = styled("div", { shouldForwardProp: (p) => p !== "bg" && p !== "blur" })(({ bg, blur }: { bg?: string, blur?: boolean }) => ({
   backgroundImage: `url(${bg})`,

@@ -22,19 +22,19 @@ const StyledCard = styled(Card)({
   overflow: "visible",
 });
 
-const StyledImageBox = styled(Paper)({
+const StyledImageBox = styled(Paper)(({ theme }) => ({
   height: "175px",
   width: "175px",
   overflow: "hidden",
   borderRadius: "8px",
   position: "relative",
-  background: "#ddd",
+  background: theme.palette.divider,
   flexShrink: 0,
   marginLeft: "-35px !important",
   "&:hover .expand-button": {
     opacity: 1,
   },
-});
+}));
 
 const StyledBackground = styled("div", {
   shouldForwardProp: (p) => p !== "bg" && p !== "blur",

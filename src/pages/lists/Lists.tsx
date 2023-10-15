@@ -21,8 +21,8 @@ const StyledLink = styled(Link)({
 
 const StyledHeaderSection = styled(Stack)(({ theme }) => ({
   padding: theme.spacing(2, 3),
-  borderBottom: "1px solid #ddd",
-  background: "#fff",
+  borderBottom: `1px solid ${theme.palette.divider}`,
+  background: theme.palette.background.default,
   position: "sticky",
   top: 0,
   zIndex: 8,
@@ -35,7 +35,7 @@ const StyledHeaderButton = styled(Button)(({ theme }) => ({
 
 const StyledStack = styled(Stack)(({ theme }) => ({
   padding: theme.spacing(2),
-  background: "#fff",
+  background: theme.palette.background.default,
   minHeight: "calc(100vh - 57px)",
 }));
 

@@ -68,11 +68,11 @@ const StyledPostText = styled(Typography)({
   marginRight: "auto",
 });
 
-const StyledAuthor = styled(Stack)({
+const StyledAuthor = styled(Stack)(({ theme }) => ({
   padding: "8px",
-  backgroundColor: "#fff",
-  borderRadius: "8px",
-});
+  backgroundColor: theme.palette.background.default,
+  borderRadius: "0 0 8px 8px",
+}));
 
 const TopPost: FC<Props> = ({ reason, post }: Props) => {
   const navigate = useNavigate();

@@ -88,6 +88,11 @@ const StyledToolbar = styled(Toolbar, { shouldForwardProp: (p) => p !== "showChe
   backgroundColor: hasSelected && theme ? alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity) : "",
 }));
 
+const StyledLink = styled(Link)(({ theme }) => ({
+  textDecoration: "none",
+  color: theme.palette.action.active,
+}));
+
 const ToolbarTitle: FC<{ numSelected: number }> = ({ numSelected }) => (
   numSelected > 0 ? (
     <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
@@ -324,9 +329,9 @@ export const VehicleTable: FC<Props> = ({
                   </TableCell>
                 ))}
                 <TableCell>
-                  <Link to={`/vehicle/${d["vin"]}`}>
+                  <StyledLink to={`/vehicle/${d["vin"]}`}>
                     View
-                  </Link>
+                  </StyledLink>
                 </TableCell>
               </TableRow>
             ))}
