@@ -1,8 +1,8 @@
 import React, { FC } from "react";
-import { Link } from "react-router-dom";
 import { Skeleton, Stack, Theme, Typography, styled } from "@mui/material";
 import ProfileAvatar from "../../ProfileAvatar";
 import { formatVehicleName, formatOdometer } from "../../../utils/vehicle";
+import { StyledLink } from "../../StyledLink";
 
 type Props = {
   post: FeedPost;
@@ -14,11 +14,6 @@ const StyledStack = styled(Stack, { shouldForwardProp: (p) => p !== "filled" })<
   padding: "8px",
   backgroundColor: !filled || !theme ? "transparent" : theme.palette.action.selected,
 }));
-
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
-});
 
 export const PostProfileSkeleton: FC<{ filled?: boolean }> = ({ filled = true }) => (
   <StyledStack direction="row" gap={1} filled={filled}>

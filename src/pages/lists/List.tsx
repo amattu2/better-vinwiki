@@ -1,5 +1,5 @@
 import React, { FC, useMemo, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Add, Edit, NavigateNext, UploadFile } from "@mui/icons-material";
 import {
   Box, Breadcrumbs, Button, Card,
@@ -25,15 +25,11 @@ import { downloadBlob } from "../../utils/files";
 import VehicleSelectionDialog from "../../components/VehicleSelectionDialog";
 import DeleteContentDialog from "../../components/DeleteContentConfirm";
 import ListImportDialog from "../../components/ListImportDialog";
+import { StyledLink } from "../../components/StyledLink";
 
 type Props = {
   uuid: string;
 };
-
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
-});
 
 const StyledHeaderSection = styled(Stack)(({ theme }) => ({
   padding: `${theme.spacing(2)} ${theme.spacing(3)}`,

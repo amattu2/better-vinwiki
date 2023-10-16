@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import {
   Paper, Skeleton, Table, TableBody,
   TableCell, TableContainer, TableHead,
@@ -14,6 +13,7 @@ import { Delete, SaveOutlined } from "@mui/icons-material";
 import numeral from "numeral";
 import Repeater from "../Repeater";
 import { ExpandableImage } from "../ExpandableImage";
+import { StyledLink } from "../StyledLink";
 
 type Props = {
   status: "loading" | "loading_more" | "success" | "error";
@@ -86,11 +86,6 @@ const StyledToolbar = styled(Toolbar, { shouldForwardProp: (p) => p !== "showChe
   display: !showCheckboxes ? "none" : "flex",
   paddingRight: 1,
   backgroundColor: hasSelected && theme ? alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity) : "",
-}));
-
-const StyledLink = styled(Link)(({ theme }) => ({
-  textDecoration: "none",
-  color: theme.palette.action.active,
 }));
 
 const ToolbarTitle: FC<{ numSelected: number }> = ({ numSelected }) => (

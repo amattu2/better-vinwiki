@@ -7,9 +7,9 @@ import {
   Typography,
   styled,
 } from '@mui/material';
-import { Link } from 'react-router-dom';
 import TransitionGroup from '../TransitionGroup';
 import ProfileAvatar from '../ProfileAvatar';
+import { StyledLink } from '../StyledLink';
 
 type ProfileSuggestion = {
   profile: Profile;
@@ -43,11 +43,6 @@ const StyledCardContent = styled(CardContent)({
   paddingTop: "0px",
   backgroundColor: "transparent",
   paddingBottom: "8px !important",
-});
-
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
 });
 
 const SuggestionItem: FC<ProfileSuggestion> = ({ profile, postCount }: ProfileSuggestion) => (

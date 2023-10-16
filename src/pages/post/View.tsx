@@ -5,7 +5,6 @@ import {
   Divider,
   Stack, Typography, styled,
 } from '@mui/material';
-import { Link } from 'react-router-dom';
 import FeedPost, { PostSkeleton } from '../../components/FeedPost';
 import SuggestionCard from '../../components/SuggestionCards/ProfileSuggestion';
 import { ScrollToTop } from '../../components/ScrollToTop/ScrollButton';
@@ -14,15 +13,11 @@ import { CommentSkeleton } from '../../components/FeedPost/Components/PostCommen
 import Repeater from '../../components/Repeater';
 import { ENDPOINTS, STATUS_OK } from '../../config/Endpoints';
 import { useAuthProvider } from '../../Providers/AuthProvider';
+import { StyledLink } from '../../components/StyledLink';
 
 type Props = {
   uuid: FeedPost["uuid"];
 };
-
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
-});
 
 const StyledHeaderSection = styled(Stack)(({ theme }) => ({
   padding: `${theme.spacing(2)} ${theme.spacing(3)}`,

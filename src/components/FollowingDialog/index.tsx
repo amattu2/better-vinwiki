@@ -1,5 +1,4 @@
 import React, { FC, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { FixedSizeList } from 'react-window';
 import {
   Dialog,
@@ -22,6 +21,7 @@ import { cloneDeep } from 'lodash';
 import ProfileAvatar from '../ProfileAvatar';
 import Repeater from '../Repeater';
 import useFollowingLookup, { LookupStatus } from '../../hooks/useFollowingLookup';
+import { StyledLink } from '../StyledLink';
 
 type Props = {
   uuid: Profile["uuid"];
@@ -33,11 +33,6 @@ const StyledDialog = styled(Dialog)({
   "& .MuiDialog-paper": {
     overflowX: "hidden",
   },
-});
-
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
 });
 
 const StyledDialogContent = styled(DialogContent)(({ theme }) => ({

@@ -1,5 +1,4 @@
 import React, { ElementType, FC, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import { Edit, NavigateNext, PlaylistAdd } from "@mui/icons-material";
 import {
   Alert, Avatar, Box, Breadcrumbs, Button,
@@ -27,15 +26,11 @@ import VinDecodeDialog from "../../components/VinDecodeDialog";
 import RecallLookupDialog from "../../components/RecallLookupDialog";
 import Repeater from "../../components/Repeater";
 import { DEFAULT_DATE } from "../../config/Endpoints";
+import { StyledLink } from "../../components/StyledLink";
 
 type Props = {
   vin: Vehicle["vin"];
 };
-
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
-});
 
 const StyledHeaderSection = styled(Stack)(({ theme }) => ({
   padding: `${theme.spacing(2)} ${theme.spacing(3)}`,

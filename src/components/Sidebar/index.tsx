@@ -1,5 +1,5 @@
 import React, { ElementType, FC, useState } from 'react';
-import { Link, NavigateProps, useLocation } from 'react-router-dom';
+import { NavigateProps, useLocation } from 'react-router-dom';
 import {
   Code, DashboardOutlined, Logout, NotificationsActive,
   PeopleOutline, SearchOutlined, ListOutlined, DarkMode, LightMode,
@@ -14,6 +14,7 @@ import { useNotificationCountProvider } from '../../Providers/NotificationCountP
 import { FollowersDrawer } from '../FollowersDrawer';
 import { NotificationDrawer } from '../NotificationDrawer';
 import { MEDIA_CDN_URL } from '../../config/Endpoints';
+import { StyledLink } from '../StyledLink';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   padding: "32px 12px",
@@ -60,11 +61,6 @@ const StyledIconButton = styled(IconButton)<{ component?: ElementType, to?: Navi
   color: theme.palette.action.active,
   height: "47px",
 }));
-
-const StyledLink = styled(Link)({
-  color: "inherit",
-  textDecoration: "none",
-});
 
 const Sidebar: FC = () => {
   const { authenticated, profile } = useAuthProvider();

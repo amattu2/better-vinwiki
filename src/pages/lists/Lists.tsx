@@ -1,5 +1,5 @@
 import React, { FC, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Add, Event, NavigateNext, Numbers, SortByAlpha } from "@mui/icons-material";
 import {
   Box, Breadcrumbs, Button, Grid,
@@ -13,11 +13,7 @@ import useProfileListsLookup, { LookupStatus } from "../../hooks/useProfileLists
 import { sortLists } from "../../utils/lists";
 import CreateListDialog from "../../components/CreateListDialog";
 import { ScrollToTop } from "../../components/ScrollToTop/ScrollButton";
-
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
-});
+import { StyledLink } from "../../components/StyledLink";
 
 const StyledHeaderSection = styled(Stack)(({ theme }) => ({
   padding: theme.spacing(2, 3),

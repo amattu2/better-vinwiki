@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Badge, DirectionsCar, PersonSearch, Search } from "@mui/icons-material";
 import { TabContext, TabPanel } from "@mui/lab";
 import {
@@ -22,6 +22,7 @@ import useFollowingVehiclesLookup from "../../hooks/useFollowingVehiclesLookup";
 import useProfileListsLookup from "../../hooks/useProfileListsLookup";
 import { sortVehicles } from "../../utils/vehicle";
 import { VehicleTable } from "../../components/VehicleTable";
+import { StyledLink } from "../../components/StyledLink";
 
 const StyledContainer = styled(Container)(({ theme }) => ({
   paddingLeft: "0 !important",
@@ -74,11 +75,6 @@ const StyledPagination = styled(Pagination)({
   "& .MuiPagination-ul": {
     justifyContent: "center",
   },
-});
-
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
 });
 
 const NoSearchResults: FC = () => (

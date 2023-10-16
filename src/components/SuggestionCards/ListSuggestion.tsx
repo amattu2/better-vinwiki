@@ -9,9 +9,9 @@ import {
   styled,
 } from '@mui/material';
 import { ExpandMore } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
 import TransitionGroup from '../TransitionGroup';
 import { prettySubstring } from '../../utils/text';
+import { StyledLink } from '../StyledLink';
 
 type Props = {
   suggestions: ProfileLists;
@@ -34,11 +34,6 @@ const StyledCardContent = styled(CardContent)({
   paddingTop: "8px",
   backgroundColor: "transparent",
   paddingBottom: "8px !important",
-});
-
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
 });
 
 const SuggestionItem: FC<List> = (list: List) => {

@@ -1,5 +1,4 @@
 import React, { FC, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import {
   Edit, Facebook, InsertPhoto, Instagram, LinkOutlined,
   MyLocationOutlined, NavigateNext, Twitter,
@@ -37,15 +36,11 @@ import useProfileLookup, { LookupStatus as ProfileProviderStatus } from "../../h
 import { mapPostsToDate } from "../../utils/feed";
 import { HyperlinkRegexNG } from "../../config/RegEx";
 import { MEDIA_CDN_URL } from "../../config/Endpoints";
+import { StyledLink } from "../../components/StyledLink";
 
 type Props = {
   uuid: string;
 };
-
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
-});
 
 const StyledTab = styled(Tab)({
   textTransform: "none",
@@ -211,9 +206,9 @@ const View: FC<Props> = ({ uuid }: Props) => {
             </Tooltip>
           )}
           {HyperlinkRegexNG.test(profile?.website_url || "") && (
-            <Link to={profile.website_url} target="_blank" rel="noopener noreferrer">
+            <StyledLink to={profile.website_url} target="_blank" rel="noopener noreferrer">
               <StyledChip icon={<LinkOutlined />} label={profile.website_url} variant="filled" size="small" />
-            </Link>
+            </StyledLink>
           )}
           {profile?.social_facebook && (
             <Tooltip title="Facebook" arrow>
