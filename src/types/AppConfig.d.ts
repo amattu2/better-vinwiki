@@ -57,8 +57,8 @@ type AppConfig = {
    *
    * Defaults to empty string.
    *
-   * @example https://example.com/
-   * @example https://example.com/subdirectory/
+   * @default ""
+   * @example /subdirectory
    */
   PUBLIC_URL: string;
 };
