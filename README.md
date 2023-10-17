@@ -54,8 +54,9 @@ Configuration Options (See [.env.example](./.env.example) for all options):
 
 | Name | Description |
 |:-|:-|
-|`PUBLIC_URL`|The base URL for the application. Optional but useful for deployment under a subdirectory.|
+|`PUBLIC_URL`|The base URL for the application. **Optional** unless deploying under a subdirectory.|
 |`REACT_APP_NAME`|The name of the app. Used everywhere|
+|`REACT_APP_URL`|The base URL for the application deployment location. **Required** for HTML5 meta tags|
 |`REACT_APP_DESCRIPTION`|The description built into the HTML5 meta tags|
 |`REACT_APP_SLOGAN`|Sits under the App Name on the auth pages|
 |`REACT_APP_API_URL`|Base URL for the VINwiki API. Should have a trailing `/` at the end|

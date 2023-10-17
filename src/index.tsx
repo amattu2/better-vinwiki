@@ -9,6 +9,7 @@ import reportWebVitals from './reportWebVitals';
 import { DarkTheme } from './themes/dark';
 import { LightTheme } from './themes/light';
 import { routes } from './routes';
+import { CONFIG } from './config/AppConfig';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -29,7 +30,7 @@ declare module '@mui/material/styles' {
   }
 }
 
-const router = createBrowserRouter(routes);
+const router = createBrowserRouter(routes, { basename: CONFIG.PUBLIC_URL });
 
 const App: FC = () => {
   const { isDarkMode } = useDarkMode();

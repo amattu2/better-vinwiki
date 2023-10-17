@@ -12,6 +12,13 @@ type AppConfig = {
    */
   name: string;
   /**
+   * The deployed URL of the application
+   *
+   * Used by:
+   * - *Nothing yet*
+   */
+  url: string;
+  /**
    * The HTML meta description of the application
    *
    * Used by:
