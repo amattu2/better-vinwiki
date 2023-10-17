@@ -14,7 +14,7 @@ on:
   push:
     branches:
       - development
-      - develop
+      - dev
     paths:
       - "src/**"
       - "public/**"
