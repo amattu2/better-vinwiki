@@ -35,18 +35,18 @@ const App: FC = () => {
   const { isDarkMode } = useDarkMode();
 
   return (
-    <ThemeProvider theme={isDarkMode ? DarkTheme : LightTheme}>
-      <CssBaseline />
-      <RouterProvider router={router} fallbackElement={<p>Error!</p>} />
-    </ThemeProvider>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <ThemeProvider theme={isDarkMode ? DarkTheme : LightTheme}>
+        <CssBaseline />
+        <RouterProvider router={router} fallbackElement={<p>Error!</p>} />
+      </ThemeProvider>
+    </LocalizationProvider>
   );
 };
 
 root.render(
   <React.StrictMode>
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <App />
-    </LocalizationProvider>
+    <App />
   </React.StrictMode>,
 );
 
