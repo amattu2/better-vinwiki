@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import AutoResizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList } from "react-window";
 import {
@@ -18,6 +17,7 @@ import ProfileAvatar from "../ProfileAvatar";
 import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
 import { formatDateTime } from "../../utils/date";
 import Repeater from "../Repeater";
+import { StyledLink } from "../StyledLink";
 
 type Props = {
   open: boolean;
@@ -46,11 +46,6 @@ const StyledList = styled(List)<{ component: React.ElementType }>({
 const StyledListItem = styled(ListItem, { shouldForwardProp: (p) => p !== "unread" })(({ unread }: { unread?: boolean }) => ({
   borderLeft: unread ? "4px solid #1976d2" : "none",
 }));
-
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
-});
 
 const NotificationSkeleton: FC = () => (
   <StyledListItem alignItems="flex-start">

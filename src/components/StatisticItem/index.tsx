@@ -10,7 +10,7 @@ export type StatisticItemProps = {
 };
 
 const StyledBox = styled(Box)(({ theme, onClick }) => ({
-  backgroundColor: "#3b3b3b",
+  backgroundColor: theme.palette.mode === "light" ? "#3b3b3b" : theme.palette.divider,
   borderRadius: "16px",
   cursor: onClick ? "pointer" : "initial",
   padding: `${theme.spacing(1)} ${theme.spacing(2)}`,

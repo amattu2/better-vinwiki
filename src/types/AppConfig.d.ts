@@ -12,6 +12,13 @@ type AppConfig = {
    */
   name: string;
   /**
+   * The deployed URL of the application
+   *
+   * Used by:
+   * - *Nothing yet*
+   */
+  url: string;
+  /**
    * The HTML meta description of the application
    *
    * Used by:
@@ -50,8 +57,8 @@ type AppConfig = {
    *
    * Defaults to empty string.
    *
-   * @example https://example.com/
-   * @example https://example.com/subdirectory/
+   * @default ""
+   * @example /subdirectory
    */
   PUBLIC_URL: string;
 };

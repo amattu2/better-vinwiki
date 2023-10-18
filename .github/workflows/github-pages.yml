@@ -8,17 +8,17 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  deployments: write
 
 on:
   workflow_dispatch:
   push:
     branches:
       - development
-      - develop
+      - dev
     paths:
       - "src/**"
       - "public/**"
-
 
 jobs:
   publish:
@@ -42,6 +42,7 @@ jobs:
         env:
           PUBLIC_URL: ${{ vars.PUBLIC_URL }}
           REACT_APP_NAME: ${{ vars.REACT_APP_NAME }}
+          REACT_APP_URL: ${{ vars.REACT_APP_URL }}
           REACT_APP_DESCRIPTION: ${{ vars.REACT_APP_DESCRIPTION }}
           REACT_APP_SLOGAN: ${{ vars.REACT_APP_SLOGAN }}
           REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
@@ -58,6 +59,34 @@ jobs:
         with:
           path: './build'
 
+      - uses: chrnorm/deployment-action@v2
+        name: Create Deployment
+        id: deployment_create
+        with:
+          token: ${{ github.token }}
+          environment-url: ${{ vars.REACT_APP_URL }}
+          environment: better-vinwiki (Development)
+          auto-inactive: true
+          ref: ${{ github.head_ref || github.ref_name }}
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
+
+      - name: Deployment - Success
+        if: success()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ github.token }}
+          environment-url: ${{ steps.deployment_create.outputs.environment_url }}
+          deployment-id: ${{ steps.deployment_create.outputs.deployment_id }}
+          state: 'success'
+
+      - name: Deployment - Failed
+        if: failure()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ github.token }}
+          environment-url: ${{ steps.deployment_create.outputs.environment_url }}
+          deployment-id: ${{ steps.deployment_create.outputs.deployment_id }}
+          state: 'failure'

@@ -35,6 +35,7 @@ jobs:
       - name: Build
         env:
           REACT_APP_NAME: ${{ vars.REACT_APP_NAME }}
+          REACT_APP_URL: ${{ vars.REACT_APP_URL }}
           REACT_APP_DESCRIPTION: ${{ vars.REACT_APP_DESCRIPTION }}
           REACT_APP_SLOGAN: ${{ vars.REACT_APP_SLOGAN }}
           REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
@@ -49,6 +50,6 @@ jobs:
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: vinwiki
+          projectName: better-vinwiki
           directory: ./build
           branch: main

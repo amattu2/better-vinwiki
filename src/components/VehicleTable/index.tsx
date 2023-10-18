@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import {
   Paper, Skeleton, Table, TableBody,
   TableCell, TableContainer, TableHead,
@@ -14,6 +13,7 @@ import { Delete, SaveOutlined } from "@mui/icons-material";
 import numeral from "numeral";
 import Repeater from "../Repeater";
 import { ExpandableImage } from "../ExpandableImage";
+import { StyledLink } from "../StyledLink";
 
 type Props = {
   status: "loading" | "loading_more" | "success" | "error";
@@ -324,9 +324,9 @@ export const VehicleTable: FC<Props> = ({
                   </TableCell>
                 ))}
                 <TableCell>
-                  <Link to={`/vehicle/${d["vin"]}`}>
+                  <StyledLink to={`/vehicle/${d["vin"]}`}>
                     View
-                  </Link>
+                  </StyledLink>
                 </TableCell>
               </TableRow>
             ))}

@@ -9,17 +9,17 @@ type Props = {
   alt: string;
 };
 
-const StyledImageBox = styled(Box)({
+const StyledImageBox = styled(Box)(({ theme }) => ({
   height: "100%",
   width: "100%",
   overflow: "hidden",
   position: "relative",
-  background: "#ddd",
+  background: theme.palette.divider,
   cursor: "pointer",
   "&:hover .expand-button": {
     opacity: 1,
   },
-});
+}));
 
 const StyledBackground = styled("div", {
   shouldForwardProp: (p) => p !== "bg" && p !== "blur",

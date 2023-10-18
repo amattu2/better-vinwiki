@@ -1,5 +1,4 @@
 import React, { FC, useState } from "react";
-import { Link } from "react-router-dom";
 import { Delete, MoreVert } from "@mui/icons-material";
 import {
   Collapse, Divider, IconButton, ListItemIcon,
@@ -11,6 +10,7 @@ import { useAuthProvider } from "../../../Providers/AuthProvider";
 import { formatDateTime } from "../../../utils/date";
 import ProfileAvatar from "../../ProfileAvatar";
 import GenericText from "../../GenericText/GenericText";
+import { StyledLink } from "../../StyledLink";
 
 type Props = {
   comment: PostComment;
@@ -23,11 +23,6 @@ const StyledStack = styled(Stack)({
   borderRadius: "8px",
   padding: "8px",
   position: "relative",
-});
-
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
 });
 
 const StyledMenuButton = styled(IconButton)({

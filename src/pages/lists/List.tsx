@@ -1,9 +1,9 @@
 import React, { FC, useMemo, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Add, Edit, NavigateNext, UploadFile } from "@mui/icons-material";
 import {
   Box, Breadcrumbs, Button, Card,
-  IconButton, Skeleton, Stack, Tooltip,
+  IconButton, Skeleton, Stack, Theme, Tooltip,
   Typography, styled,
 } from "@mui/material";
 import { unparse } from "papaparse";
@@ -25,30 +25,26 @@ import { downloadBlob } from "../../utils/files";
 import VehicleSelectionDialog from "../../components/VehicleSelectionDialog";
 import DeleteContentDialog from "../../components/DeleteContentConfirm";
 import ListImportDialog from "../../components/ListImportDialog";
+import { StyledLink } from "../../components/StyledLink";
 
 type Props = {
   uuid: string;
 };
 
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
-});
-
 const StyledHeaderSection = styled(Stack)(({ theme }) => ({
   padding: `${theme.spacing(2)} ${theme.spacing(3)}`,
-  borderBottom: "1px solid #ddd",
-  background: "#fff",
+  borderBottom: `1px solid ${theme.palette.divider}`,
+  background: theme.palette.background.default,
   position: "sticky",
   top: 0,
   zIndex: 8,
 }));
 
 const StyledProfileDetails = styled(Stack)(({ theme }) => ({
-  borderBottom: "1px solid #ddd",
+  borderBottom: `1px solid ${theme.palette.divider}`,
   paddingTop: theme.spacing(4),
   paddingBottom: theme.spacing(4),
-  background: "#fff",
+  background: theme.palette.background.default,
   paddingLeft: "24px !important",
 }));
 
@@ -62,11 +58,11 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
   margin: theme.spacing(-1),
 }));
 
-const StyledListOwner = styled(Stack, { shouldForwardProp: (p) => p !== "filled" })(({ filled }: { filled?: boolean }) => ({
+const StyledListOwner = styled(Stack, { shouldForwardProp: (p) => p !== "filled" })(({ filled, theme }: { filled?: boolean; theme?: Theme }) => ({
   borderRadius: "8px",
   padding: "8px",
   paddingLeft: !filled ? "0" : "8px",
-  backgroundColor: !filled ? "transparent" : "rgb(244, 247, 250)",
+  backgroundColor: !filled || !theme ? "transparent" : theme.palette.action.selected,
   marginRight: "auto",
 }));
 
@@ -193,7 +189,7 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
       <StyledProfileDetails direction="column" gap={2}>
         <Stack direction="row" alignItems="center" justifyContent="flex-start" gap={2}>
           <Stack direction="column" alignItems="flex-start" justifyContent="center" gap={1}>
-            <Typography variant="caption" sx={{ mb: "-10px", color: "#3b3b3b" }}>
+            <Typography variant="caption" sx={{ mb: "-10px", color: (theme: Theme) => theme.palette.text.secondary }}>
               {`Created ${formatDate(new Date(list.created_date))}`}
             </Typography>
             <Typography variant="h5" sx={{ fontWeight: 600 }}>{list.name}</Typography>

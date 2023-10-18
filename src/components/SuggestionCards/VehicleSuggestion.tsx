@@ -7,10 +7,10 @@ import {
   Typography,
   styled,
 } from '@mui/material';
-import { Link } from 'react-router-dom';
 import TransitionGroup from '../TransitionGroup';
 import { formatVehicleName } from '../../utils/vehicle';
 import ProfileAvatar from '../ProfileAvatar';
+import { StyledLink } from '../StyledLink';
 
 type Props = {
   suggestions: Vehicle[];
@@ -23,11 +23,11 @@ const StyledCard = styled(Card)({
   marginBottom: "16px",
 });
 
-const StyledCardHeader = styled(CardHeader)({
+const StyledCardHeader = styled(CardHeader)(({ theme }) => ({
   paddingTop: "8px",
   paddingBottom: "8px",
-  backgroundColor: "#fff",
-});
+  backgroundColor: theme.palette.background.default,
+}));
 
 const StyledList = styled(List)({
   "& .MuiCollapse-root:last-child li": {
@@ -39,11 +39,6 @@ const StyledCardContent = styled(CardContent)({
   paddingTop: "0px",
   backgroundColor: "transparent",
   paddingBottom: "8px !important",
-});
-
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
 });
 
 const SuggestionItem: FC<Vehicle> = (vehicle: Vehicle) => {

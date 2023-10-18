@@ -38,7 +38,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && cp ./openapi.yml ./build",
+    "build": "react-scripts build",
+    "postbuild": "cp ./openapi.yml ./build",
     "test": "react-scripts test",
     "test:ci": "TZ=UTC CI=true react-scripts test --passWithNoTests",
     "lint:ci": "eslint --ext .js,.jsx,.ts,.tsx src",

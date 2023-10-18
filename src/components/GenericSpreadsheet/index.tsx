@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import Spreadsheet, { CellBase, EntireColumnsSelection, EntireRowsSelection, Matrix, Selection } from "react-spreadsheet";
 import { cloneDeep } from 'lodash';
+import { Theme, useTheme } from '@mui/material';
 
 export type ValueBase = {
   [key: string]: string | number | boolean | null | undefined;
@@ -56,6 +57,8 @@ const GenericSpreadsheet = <T extends ValueBase>({
   data, columnKeys, columnLabels, rowLabels, readOnly,
   onSelect,
 }: Props<T>) => {
+  const { palette }: Theme = useTheme();
+
   const colKeys: string[] = useMemo(() => {
     if (columnKeys) {
       return columnKeys;
@@ -108,6 +111,7 @@ const GenericSpreadsheet = <T extends ValueBase>({
       rowLabels={rowLabs}
       columnLabels={colLabs}
       onSelect={onSelectWrapper}
+      darkMode={palette.mode === "dark"}
     />
   );
 };

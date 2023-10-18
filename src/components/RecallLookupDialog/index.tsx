@@ -33,21 +33,21 @@ const StyledDialog = styled(Dialog)({
   },
 });
 
-const StyledDialogContent = styled(DialogContent)({
+const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
   padding: "0 !important",
-  backgroundColor: "#f4f7fa",
+  backgroundColor: theme.palette.modal.background,
   "& .MuiList-root": {
     padding: "0 !important",
   },
   "& .MuiListItem-root:last-child": {
     borderBottom: "unset",
   },
-});
+}));
 
 const StyledCard = styled(Card)(({ theme }) => ({
   margin: theme.spacing(1),
   padding: theme.spacing(1),
-  border: "1px solid #ddd",
+  border: `1px solid ${theme.palette.divider}`,
 }));
 
 const StyledCardContent = styled(CardContent)<{

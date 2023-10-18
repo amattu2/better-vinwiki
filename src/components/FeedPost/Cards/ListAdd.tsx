@@ -14,12 +14,12 @@ import ProfileBit, { PostProfileSkeleton } from "../Components/PostProfile";
 import PostMeta from "../Components/PostMeta";
 import ListAssignmentDialog from "../../ListAssignmentDialog";
 
-const StyledCard = styled(Card)({
+const StyledCard = styled(Card)(({ theme }) => ({
   borderRadius: "8px",
   marginBottom: "8px",
-  border: "1px solid #e5e5e5",
+  border: `1px solid ${theme.palette.divider}`,
   position: "relative",
-});
+}));
 
 const StyledMenuButton = styled(IconButton)({
   position: "absolute",
@@ -33,7 +33,7 @@ const StyledMenuButton = styled(IconButton)({
  * @returns {JSX.Element}
  */
 export const ListAddPostSkeleton: FC = () => (
-  <StyledCard elevation={0} sx={{ "&:hover": { cursor: "initial", borderColor: "#e5e5e5" } }}>
+  <StyledCard elevation={0} sx={{ "&:hover": { cursor: "initial", borderColor: (theme) => theme.palette.divider } }}>
     <CardContent>
       <PostProfileSkeleton filled={false} />
       <Skeleton variant="text" width={375} sx={{ fontSize: "0.875rem", mb: 1, ml: "8px" }} animation="wave" />

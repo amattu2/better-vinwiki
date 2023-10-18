@@ -9,6 +9,7 @@ import {
   Grid,
   Skeleton,
   Stack,
+  Theme,
   Typography,
   styled,
 } from "@mui/material";
@@ -20,17 +21,17 @@ type Props = {
   omitOwner?: boolean;
 };
 
-const StyledCard = styled(Card)({
+const StyledCard = styled(Card)(({ theme }) => ({
   padding: "16px 24px",
   borderRadius: "8px",
   margin: "8px 0",
-  border: "1px solid #e5e5e5",
-});
+  border: `1px solid ${theme.palette.divider}`,
+}));
 
-const StyledListOwner = styled(Stack, { shouldForwardProp: (p) => p !== "filled" })(({ filled }: { filled: boolean }) => ({
+const StyledListOwner = styled(Stack, { shouldForwardProp: (p) => p !== "filled" })(({ filled, theme }: { filled: boolean, theme?: Theme }) => ({
   borderRadius: "8px",
   padding: "8px",
-  backgroundColor: !filled ? "transparent" : "rgb(244, 247, 250)",
+  backgroundColor: !filled || !theme ? "transparent" : theme.palette.action.selected,
   marginLeft: "auto",
 }));
 
