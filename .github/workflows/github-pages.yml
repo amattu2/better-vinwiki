@@ -8,6 +8,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  deployments: write
 
 on:
   workflow_dispatch:
@@ -66,7 +67,7 @@ jobs:
           environment-url: ${{ vars.REACT_APP_URL }}
           environment: better-vinwiki (Development)
           auto-inactive: true
-          ref: ${{ github.ref }}
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Deploy to GitHub Pages
         id: deployment
