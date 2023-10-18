@@ -19,7 +19,6 @@ on:
       - "src/**"
       - "public/**"
 
-
 jobs:
   publish:
     name: Publish to GitHub Pages
@@ -59,6 +58,34 @@ jobs:
         with:
           path: './build'
 
+      - uses: chrnorm/deployment-action@v2
+        name: Create Deployment
+        id: deployment_create
+        with:
+          token: ${{ github.token }}
+          environment-url: ${{ vars.REACT_APP_URL }}
+          environment: better-vinwiki (Development)
+          auto-inactive: true
+          ref: ${{ github.ref }}
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
+
+      - name: Deployment - Success
+        if: success()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ github.token }}
+          environment-url: ${{ steps.deployment_create.outputs.environment_url }}
+          deployment-id: ${{ steps.deployment_create.outputs.deployment_id }}
+          state: 'success'
+
+      - name: Deployment - Failed
+        if: failure()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ github.token }}
+          environment-url: ${{ steps.deployment_create.outputs.environment_url }}
+          deployment-id: ${{ steps.deployment_create.outputs.deployment_id }}
+          state: 'failure'
