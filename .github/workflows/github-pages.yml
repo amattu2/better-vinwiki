@@ -25,6 +25,7 @@ jobs:
     name: Publish to GitHub Pages
     if: ${{ github.repository_owner == 'amattu2' }}
     runs-on: ubuntu-latest
+    environment: better-vinwiki (Development)
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -66,7 +67,6 @@ jobs:
           token: ${{ github.token }}
           environment-url: ${{ vars.REACT_APP_URL }}
           environment: better-vinwiki (Development)
-          auto-inactive: true
           ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Deploy to GitHub Pages

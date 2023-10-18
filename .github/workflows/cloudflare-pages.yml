@@ -19,6 +19,7 @@ jobs:
     name: Publish to Cloudflare Pages
     if: ${{ github.repository_owner == 'amattu2' }}
     runs-on: ubuntu-latest
+    environment: better-vinwiki (Production)
     steps:
       - name: Checkout
         uses: actions/checkout@v3
