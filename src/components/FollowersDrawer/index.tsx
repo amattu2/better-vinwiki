@@ -1,5 +1,4 @@
 import React, { FC, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import AutoResizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList } from "react-window";
 import {
@@ -16,6 +15,7 @@ import { cloneDeep } from "lodash";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import useFollowingLookup, { LookupStatus } from "../../hooks/useFollowingLookup";
 import ProfileAvatar from "../ProfileAvatar";
+import { StyledLink } from "../StyledLink";
 
 type Props = {
   open: boolean;
@@ -39,11 +39,6 @@ const StyledList = styled(List)<{ component: React.ElementType }>({
   "& .MuiListItem-root:last-child": {
     borderBottom: "unset",
   },
-});
-
-const StyledLink = styled(Link)({
-  color: "inherit",
-  textDecoration: "none",
 });
 
 /**

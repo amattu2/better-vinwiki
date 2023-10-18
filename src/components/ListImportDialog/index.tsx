@@ -30,22 +30,22 @@ const StyledDialog = styled(Dialog)({
   },
 });
 
-const StyledDialogContent = styled(DialogContent)({
-  backgroundColor: "#f4f7fa",
-});
+const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
+  backgroundColor: theme.palette.modal.background,
+}));
 
-const StyledDropzone = styled(Box)({
+const StyledDropzone = styled(Box)(({ theme }) => ({
   width: "100%",
   height: "150px",
   border: "2px dashed",
   borderRadius: "8px",
   position: "relative",
   transition: "color 0.2s ease-out",
-  color: "rgba(0, 0, 0, 0.38)",
+  color: theme.palette.action.disabled,
   cursor: "pointer",
   "&:after": {
     content: "'Drop a CSV here or click to find one'",
-    color: "rgba(0, 0, 0, 0.38)",
+    color: theme.palette.action.disabled,
     position: "absolute",
     top: "50%",
     left: "50%",
@@ -53,9 +53,9 @@ const StyledDropzone = styled(Box)({
     fontSize: "14px",
   },
   "&:hover": {
-    color: "#3b3b3b",
+    color: theme.palette.action.hover,
   },
-});
+}));
 
 const StyledFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
   marginTop: theme.spacing(1),
@@ -67,16 +67,16 @@ const StyledFormHelperText = styled(FormHelperText)({
   marginRight: "0 !important",
 });
 
-const StyledTextField = styled(TextField)({
+const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiInputBase-root": {
-    backgroundColor: "#fff",
+    backgroundColor: theme.palette.modal.contrast,
   },
   "& .MuiFormHelperText-root": {
     textAlign: "right !important",
     marginLeft: "auto !important",
     marginRight: "0 !important",
   },
-});
+}));
 
 const StyledInput = styled("input")({
   display: "none",

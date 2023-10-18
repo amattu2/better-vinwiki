@@ -7,12 +7,12 @@ import {
   TextField, Typography, styled,
 } from "@mui/material";
 import { Form, useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { DEFAULT_VEHICLE_SRC, ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
 import { Countries, Territories } from "../../config/Locations";
 import { formatVehicleName } from "../../utils/vehicle";
 import ProfileAvatar from "../ProfileAvatar";
+import { StyledLink } from "../StyledLink";
 
 type Props = {
   open: boolean;
@@ -34,11 +34,6 @@ const StyledDialog = styled(Dialog)({
 
 const StyledTextField = styled(TextField)({
   marginTop: "18px !important",
-});
-
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
 });
 
 const ResultItem : FC<{ vehicle: PlateDecodeResponse, onCancel: () => void }> = ({ vehicle, onCancel }) => {

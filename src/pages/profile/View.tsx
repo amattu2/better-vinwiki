@@ -1,5 +1,4 @@
 import React, { FC, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import {
   Edit, Facebook, InsertPhoto, Instagram, LinkOutlined,
   MyLocationOutlined, NavigateNext, Twitter,
@@ -37,15 +36,11 @@ import useProfileLookup, { LookupStatus as ProfileProviderStatus } from "../../h
 import { mapPostsToDate } from "../../utils/feed";
 import { HyperlinkRegexNG } from "../../config/RegEx";
 import { MEDIA_CDN_URL } from "../../config/Endpoints";
+import { StyledLink } from "../../components/StyledLink";
 
 type Props = {
   uuid: string;
 };
-
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
-});
 
 const StyledTab = styled(Tab)({
   textTransform: "none",
@@ -53,18 +48,18 @@ const StyledTab = styled(Tab)({
 
 const StyledHeaderSection = styled(Stack)(({ theme }) => ({
   padding: `${theme.spacing(2)} ${theme.spacing(3)}`,
-  borderBottom: "1px solid #ddd",
-  background: "#fff",
+  borderBottom: `1px solid ${theme.palette.divider}`,
+  background: theme.palette.background.default,
   position: "sticky",
   top: 0,
   zIndex: 8,
 }));
 
 const StyledProfileDetails = styled(Stack)(({ theme }) => ({
-  borderBottom: "1px solid #ddd",
+  borderBottom: `1px solid ${theme.palette.divider}`,
   paddingTop: theme.spacing(4),
   paddingBottom: theme.spacing(4),
-  background: "#fff",
+  background: theme.palette.background.default,
   paddingLeft: "24px !important",
 }));
 
@@ -100,7 +95,7 @@ const StyledTopLists = styled(Stack)(({ theme }) => ({
 }));
 
 const StyledTabBox = styled(Box)(({ theme }) => ({
-  borderBottom: "1px solid #ddd",
+  borderBottom: `1px solid ${theme.palette.divider}`,
   marginLeft: "-20px",
   marginRight: "-20px",
   paddingLeft: theme.spacing(2),
@@ -211,9 +206,9 @@ const View: FC<Props> = ({ uuid }: Props) => {
             </Tooltip>
           )}
           {HyperlinkRegexNG.test(profile?.website_url || "") && (
-            <Link to={profile.website_url} target="_blank" rel="noopener noreferrer">
+            <StyledLink to={profile.website_url} target="_blank" rel="noopener noreferrer">
               <StyledChip icon={<LinkOutlined />} label={profile.website_url} variant="filled" size="small" />
-            </Link>
+            </StyledLink>
           )}
           {profile?.social_facebook && (
             <Tooltip title="Facebook" arrow>

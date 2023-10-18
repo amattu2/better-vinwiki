@@ -5,11 +5,12 @@ import {
   Typography,
   styled,
 } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { formatDateTime } from '../../utils/date';
 import { prettySubstring } from '../../utils/text';
 import ProfileAvatar from '../ProfileAvatar';
 import { randomGradient } from '../../utils/gradient';
+import { StyledLink } from '../StyledLink';
 
 type Props = {
   reason: string;
@@ -22,11 +23,6 @@ const StyledCard = styled(Card)({
   marginBottom: "16px",
   maxWidth: "450px",
   cursor: "pointer",
-});
-
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
 });
 
 const StyledPostBox = styled(Stack)({
@@ -68,11 +64,11 @@ const StyledPostText = styled(Typography)({
   marginRight: "auto",
 });
 
-const StyledAuthor = styled(Stack)({
+const StyledAuthor = styled(Stack)(({ theme }) => ({
   padding: "8px",
-  backgroundColor: "#fff",
-  borderRadius: "8px",
-});
+  backgroundColor: theme.palette.background.default,
+  borderRadius: "0 0 8px 8px",
+}));
 
 const TopPost: FC<Props> = ({ reason, post }: Props) => {
   const navigate = useNavigate();

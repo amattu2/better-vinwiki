@@ -1,5 +1,4 @@
 import React, { FC, useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -20,6 +19,7 @@ import { LoadingButton } from '@mui/lab';
 import { formatVehicleName } from '../../utils/vehicle';
 import ProfileAvatar from '../ProfileAvatar';
 import { VehicleSearch } from '../Typeahead/VehicleSearch';
+import { StyledLink } from '../StyledLink';
 
 type Props = {
   onSelect: (vehicles: Vehicle[]) => Promise<void>;
@@ -32,21 +32,16 @@ const StyledDialog = styled(Dialog)({
   },
 });
 
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
-});
-
-const StyledDialogContent = styled(DialogContent)({
+const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
   padding: "0 !important",
-  backgroundColor: "#fff",
+  backgroundColor: theme.palette.modal.background,
   "& .MuiList-root": {
     padding: "0 !important",
   },
   "& .MuiListItem-root:last-child": {
     borderBottom: "unset",
   },
-});
+}));
 
 const StyledSearchBox = styled(Stack)({
   padding: "16px 24px",

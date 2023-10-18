@@ -1,7 +1,7 @@
 import React, { ElementType, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, LinkProps, useLocation, useNavigate } from "react-router-dom";
-import { Alert, Box, Button, Stack, TextField, Typography, styled } from "@mui/material";
+import { Alert, Box, Button, Stack, TextField, Typography, alpha, styled } from "@mui/material";
 import { useLocalStorage } from "usehooks-ts";
 import backgroundImage from "../../assets/images/shop-1864x1400.jpg";
 import Loader from "../../components/Loader";
@@ -14,19 +14,21 @@ type Inputs = {
   password: string,
 };
 
-const StyledContainer = styled(Box)({
+const StyledContainer = styled(Box)(({ theme }) => ({
   height: "100vh",
-  backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.75) 5%, rgba(255, 255, 255, 0.93) 70%), url(${backgroundImage})`,
+  backgroundImage: `linear-gradient(${alpha(theme.palette.background.default, 0.75)} 5%,
+  ${alpha(theme.palette.background.default, 0.93)} 70%),
+    url(${backgroundImage})`,
   backgroundSize: "cover",
   backgroundRepeat: "no-repeat",
   backgroundAttachment: "fixed",
-});
+}));
 
 const FormContainer = styled(Stack)(({ theme }) => ({
   maxWidth: '470px',
   maxHeight: '100vh',
   margin: '0 auto',
-  background: "#fff",
+  background: theme.palette.mode === 'dark' ? theme.palette.modal.background : theme.palette.background.paper,
   borderRadius: "0 0 6px 6px",
   padding: "98px 35px",
   [theme.breakpoints.down('md')]: {
@@ -78,7 +80,6 @@ const StyledTextField = styled(TextField)({
 });
 
 const StyledButton = styled(Button)(({ theme }) => ({
-  color: "#fff",
   padding: theme.spacing(1.5, 2),
   margin: theme.spacing(2, 0),
   textTransform: "none",

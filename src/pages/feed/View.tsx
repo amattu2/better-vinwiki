@@ -30,10 +30,10 @@ const StyledBox = styled(Box)({
 });
 
 const StyledFeedBox = styled(StyledBox)(({ theme }) => ({
-  backgroundColor: "#fff",
+  backgroundColor: theme.palette.background.default,
   flexGrow: 1,
   minHeight: "100vh",
-  borderRight: "1px solid #ddd",
+  borderRight: `1px solid ${theme.palette.divider}`,
   [theme.breakpoints.down("lg")]: {
     borderRight: "none",
   },
