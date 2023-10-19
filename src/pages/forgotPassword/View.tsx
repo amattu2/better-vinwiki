@@ -178,11 +178,7 @@ const ForgotView = () => {
         </StyledFooterBox>
       </FormContainer>
       <StyledCopyright>
-        &copy;
-        {" "}
-        {new Date().getFullYear()}
-        {" Alec M. "}
-        <Link to="https://amattu.com" target="_blank" rel="noopener noreferrer">amattu.com</Link>
+        DEV BUILD
       </StyledCopyright>
     </StyledContainer>
   );
