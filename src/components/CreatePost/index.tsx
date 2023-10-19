@@ -101,8 +101,8 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
 
   const resetPost = () => {
     setExpand(false);
-    setActiveStep(0);
-    setSelectedVehicle(null);
+    setActiveStep(!vehicle ? 0 : 1);
+    setSelectedVehicle(!vehicle ? null : vehicle);
     setPostType("generic");
     reset();
   };
