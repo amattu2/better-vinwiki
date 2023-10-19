@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import tz from "dayjs/plugin/timezone";
@@ -117,4 +117,22 @@ export const isValidEventDate = (event: FeedPost["event_date"], post: FeedPost["
   }
 
   return true;
+};
+
+/**
+ * Safely parse a date to a ISO string
+ *
+ * @param date Dayjs object
+ * @returns ISO Date or null
+ */
+export const safeIsoParse = (date: Dayjs | null): string | null => {
+  if (!date || !(date instanceof dayjs)) {
+    return null;
+  }
+
+  try {
+    return dayjs(date).toISOString();
+  } catch (e) {
+    return null;
+  }
 };
