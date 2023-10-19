@@ -25,6 +25,7 @@ import ProfileAvatar from "../ProfileAvatar";
 import { VehicleSearch } from "../Typeahead/VehicleSearch";
 import { useFeedProvider } from "../../Providers/FeedProvider";
 import { CONFIG } from "../../config/AppConfig";
+import { safeIsoParse } from "../../utils/date";
 
 type Props = {
   vehicle?: Vehicle;
@@ -137,7 +138,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
     mileage: watch("mileage"),
     locale: watch("locale"),
     vehicle: selectedVehicle,
-    event_date: dayjs(watch("event_date"))?.toISOString() || null,
+    event_date: safeIsoParse(watch("event_date")) || null,
     post_date: new Date().toISOString(),
   } as FeedPost);
 
@@ -185,7 +186,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
       },
       body: JSON.stringify({
         client: CONFIG.API_CLIENT,
-        event_date: watch("event_date") ? dayjs(watch("event_date")).toISOString() : "",
+        event_date: safeIsoParse(watch("event_date")) || "",
         locale: watch("locale"),
         mileage: watch("mileage"),
         text: watch("post_text"),
@@ -335,7 +336,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
               <Step disabled={!stepStatuses[2]} last>
                 <StepButton onClick={() => setActiveStep(3)}>Preview & Submit</StepButton>
                 <StyledStepContent>
-                  <FeedPost {...generateDemoPost()} isPreview />
+                  {activeStep === 3 && <FeedPost {...generateDemoPost()} isPreview />}
                   <Button disabled={Object.values(stepStatuses).some((s) => !s)} onClick={createPost}>Post</Button>
                 </StyledStepContent>
               </Step>
