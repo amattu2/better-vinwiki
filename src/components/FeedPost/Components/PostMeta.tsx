@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { Tooltip, Typography, TypographyProps, styled } from "@mui/material";
-import { formatDateTime } from "../../../utils/date";
+import { formatDate, formatDateTime } from "../../../utils/date";
 import { showEventDate } from "../../../utils/feed";
 
 type Props = {
@@ -20,7 +20,7 @@ const PostTime: FC<{ showEventDate: boolean } & Pick<FeedPost, "post_date" | "ev
   }
 
   return (
-    <Tooltip title={`Event date ${formatDateTime(new Date(event_date))}`} arrow>
+    <Tooltip title={`Event date ${formatDate(new Date(event_date))}`} arrow>
       <StyledPostDate>{postDate}</StyledPostDate>
     </Tooltip>
   );
