@@ -97,7 +97,9 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
       2: step2,
       3: step3,
     };
-  }, [selectedVehicle, imageUpload, postText, postType]);
+  }, [selectedVehicle, !!imageUpload?.[0], !!postText, postType]);
+
+  const imagePreview: string | undefined = useMemo(() => (imageUpload?.[0] ? URL.createObjectURL(imageUpload?.[0]) : undefined), [imageUpload?.[0]]);
 
   const resetPost = () => {
     setExpand(false);
@@ -259,7 +261,6 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
                       <Tabs value={postType} onChange={changePostType}>
                         <StyledTab icon={<PostAddOutlined />} iconPosition="start" label="Text" value="generic" />
                         <StyledTab icon={<AddPhotoAlternateOutlined />} iconPosition="start" label="Photo" value="photo" />
-                        {/* <StyledTab icon={<ReceiptLong />} iconPosition="start" label="Repair" disabled /> */}
                       </Tabs>
                       <TabPanel value="generic">
                         {/* TODO: Add support for typeahead user tags */}
@@ -284,7 +285,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
                         <Divider sx={{ my: 1.5 }} />
                         <ImageUpload
                           InputProps={register("image", { required: postType === "photo" })}
-                          preview={imageUpload?.[0] && URL.createObjectURL(imageUpload?.[0])}
+                          preview={imagePreview}
                           onPreviewClick={() => resetField("image")}
                           onDrop={(e) => setValue("image", e.dataTransfer.files)}
                         />
