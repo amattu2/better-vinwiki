@@ -125,7 +125,6 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
   const changePostType = (e: React.SyntheticEvent, type: FeedPost["type"]) => {
     setPostType(type);
     setValue("type", type);
-    resetField("image");
   };
 
   const generateDemoPost = (): FeedPost => ({
