@@ -12,7 +12,7 @@ import {
 import {
   Box, Breadcrumbs, Button, Chip,
   IconButton, Skeleton, Stack,
-  Tab, Tooltip, Typography, styled,
+  Tab, Tooltip, Typography, styled, useMediaQuery, useTheme,
 } from "@mui/material";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { ProviderStatus as FeedProviderStatus, useFeedProvider } from "../../Providers/FeedProvider";
@@ -106,11 +106,40 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
   margin: theme.spacing(-1),
 }));
 
+const StyledTabPanel = styled(TabPanel)({
+  padding: 0,
+});
+
+const StyledTimeline = styled(Timeline)(({ theme }) => ({
+  padding: theme.spacing(0.5, 0),
+}));
+
 const StyledTimelineContent = styled(TimelineContent)({
   "&.MuiTimelineContent-root": {
     textAlign: "unset !important",
   },
 });
+
+const StyledTimelineOppositeContent = styled(TimelineOppositeContent)(({ theme }) => ({
+  [theme.breakpoints.down("xl")]: {
+    "&.MuiTimelineOppositeContent-root": {
+      flex: "0.2 !important",
+    },
+  },
+  [theme.breakpoints.down("md")]: {
+    "&.MuiTimelineOppositeContent-root": {
+      display: "none !important",
+    },
+  },
+}));
+
+const StyledTimelineSeparator = styled(TimelineSeparator)(({ theme }) => ({
+  [theme.breakpoints.down("md")]: {
+    "&.MuiTimelineSeparator-root": {
+      display: "none !important",
+    },
+  },
+}));
 
 /**
  * A List Search Card Skeleton Wrapper
@@ -127,7 +156,9 @@ const View: FC<Props> = ({ uuid }: Props) => {
   const [{ status: profileStatus, profile }, editProfile, editPFP] = useProfileLookup(uuid, true);
   const { profile: authProfile } = useAuthProvider();
   const { status: feedStatus, posts, hasNext, next } = useFeedProvider();
+  const { breakpoints } = useTheme();
   const postPanelRef = useRef<HTMLDivElement>(null);
+  const aboveXL = useMediaQuery(breakpoints.up("xl"));
 
   const [{ status: isFollowingStatus, following }, toggleFollow] = useIsFollowingLookup(uuid);
   const [listLookupStatus, lists] = useProfileListsLookup(uuid, true);
@@ -284,17 +315,17 @@ const View: FC<Props> = ({ uuid }: Props) => {
               <StyledTab label="Posts" value="posts" />
             </TabList>
           </StyledTabBox>
-          <TabPanel value="posts" ref={postPanelRef}>
-            <Timeline position="alternate-reverse">
+          <StyledTabPanel value="posts" ref={postPanelRef}>
+            <StyledTimeline position={aboveXL ? "alternate-reverse" : "right"}>
               {(feedStatus === FeedProviderStatus.LOADING) && (
                 <TimelineItem>
-                  <TimelineOppositeContent color="textSecondary">
+                  <StyledTimelineOppositeContent color="textSecondary">
                     <Skeleton variant="text" animation="wave" width={100} />
-                  </TimelineOppositeContent>
-                  <TimelineSeparator>
+                  </StyledTimelineOppositeContent>
+                  <StyledTimelineSeparator>
                     <TimelineDot />
                     <TimelineConnector />
-                  </TimelineSeparator>
+                  </StyledTimelineSeparator>
                   <StyledTimelineContent>
                     <Repeater count={3} Component={PostSkeleton} />
                   </StyledTimelineContent>
@@ -302,13 +333,13 @@ const View: FC<Props> = ({ uuid }: Props) => {
               )}
               {dateMappedPosts && Object.keys(dateMappedPosts).map((date) => (
                 <TimelineItem key={date}>
-                  <TimelineOppositeContent color="textSecondary">
+                  <StyledTimelineOppositeContent color="textSecondary">
                     {date}
-                  </TimelineOppositeContent>
-                  <TimelineSeparator>
+                  </StyledTimelineOppositeContent>
+                  <StyledTimelineSeparator>
                     <TimelineDot />
                     <TimelineConnector />
-                  </TimelineSeparator>
+                  </StyledTimelineSeparator>
                   <StyledTimelineContent>
                     {dateMappedPosts[date]?.map((post) => (<FeedPost key={post.uuid} {...post} />))}
                   </StyledTimelineContent>
@@ -316,16 +347,16 @@ const View: FC<Props> = ({ uuid }: Props) => {
               ))}
               {(feedStatus !== FeedProviderStatus.LOADING && !hasNext) && (
                 <TimelineItem>
-                  <TimelineOppositeContent color="textSecondary" fontWeight="bold">
+                  <StyledTimelineOppositeContent color="textSecondary" fontWeight="bold">
                     End of Post History
-                  </TimelineOppositeContent>
-                  <TimelineSeparator>
+                  </StyledTimelineOppositeContent>
+                  <StyledTimelineSeparator>
                     <TimelineDot />
-                  </TimelineSeparator>
+                  </StyledTimelineSeparator>
                   <StyledTimelineContent />
                 </TimelineItem>
               )}
-            </Timeline>
+            </StyledTimeline>
             {hasNext && (
               <Box sx={{ textAlign: "center", mt: 2 }}>
                 <LoadingButton
@@ -337,7 +368,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
                 </LoadingButton>
               </Box>
             )}
-          </TabPanel>
+          </StyledTabPanel>
         </TabContext>
       </StyledProfileBox>
 

@@ -7,11 +7,12 @@ type Props = {
   topGap?: boolean;
 };
 
-const StyledFabBox = styled(Box)({
+const StyledFabBox = styled(Box)(({ theme }) => ({
   position: "fixed",
   bottom: "16px",
   right: "16px",
-});
+  zIndex: theme.zIndex.fab,
+}));
 
 export const ScrollToTop: FC<Props> = ({ topGap = true } : Props) => {
   const [direction, { offset, innerHeight }] = useScrollDirection();
