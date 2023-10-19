@@ -4,10 +4,7 @@ import {
   TableCell, TableContainer, TableHead,
   TablePagination, TableRow, TableSortLabel,
   Box, Toolbar, styled, alpha, Typography, Checkbox,
-  Theme,
-  Tooltip,
-  IconButton,
-  Stack,
+  Theme, Tooltip, IconButton, Stack,
 } from "@mui/material";
 import { Delete, SaveOutlined } from "@mui/icons-material";
 import numeral from "numeral";
@@ -88,6 +85,10 @@ const StyledToolbar = styled(Toolbar, { shouldForwardProp: (p) => p !== "showChe
   backgroundColor: hasSelected && theme ? alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity) : "",
 }));
 
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  borderBottom: `1px solid ${theme.palette.divider}`,
+}));
+
 const ToolbarTitle: FC<{ numSelected: number }> = ({ numSelected }) => (
   numSelected > 0 ? (
     <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
@@ -101,21 +102,21 @@ const ToolbarTitle: FC<{ numSelected: number }> = ({ numSelected }) => (
 );
 
 const TableCellSkeleton: FC = () => (
-  <TableCell>
+  <StyledTableCell>
     <Skeleton variant="text" animation="wave" />
-  </TableCell>
+  </StyledTableCell>
 );
 
 const ResultSkeleton: FC<{ hasCheckbox?: boolean }> = ({ hasCheckbox }: { hasCheckbox?: boolean }) => (
   <TableRow>
     {hasCheckbox && (
-      <TableCell padding="checkbox">
+      <StyledTableCell padding="checkbox">
         <Skeleton variant="rectangular" width={18} height={18} animation="wave" sx={{ borderRadius: "2px", margin: "0 auto" }} />
-      </TableCell>
+      </StyledTableCell>
     )}
-    <TableCell>
+    <StyledTableCell>
       <Skeleton variant="rectangular" width={75} height={75} animation="wave" sx={{ borderRadius: "8px" }} />
-    </TableCell>
+    </StyledTableCell>
     <Repeater count={6} Component={TableCellSkeleton} />
   </TableRow>
 );
@@ -276,17 +277,17 @@ export const VehicleTable: FC<Props> = ({
           <TableHead>
             <TableRow>
               {showCheckboxes && (
-                <TableCell padding="checkbox">
+                <StyledTableCell padding="checkbox">
                   <Checkbox
                     color="primary"
                     indeterminate={selected.length > 0 && selected.length < dataset.length}
                     checked={dataset.length > 0 && selected.length === dataset.length}
                     onChange={handleSelectAll}
                   />
-                </TableCell>
+                </StyledTableCell>
               )}
               {columns.map((col: Column) => (
-                <TableCell key={col.label}>
+                <StyledTableCell key={col.label}>
                   {col.comparator ? (
                     <TableSortLabel
                       active={orderBy === col}
@@ -298,36 +299,36 @@ export const VehicleTable: FC<Props> = ({
                   ) : (
                     col.label
                   )}
-                </TableCell>
+                </StyledTableCell>
               ))}
-              <TableCell>Options</TableCell>
+              <StyledTableCell>Options</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {(status !== "loading" && vehicles.length === 0) && (
               <TableRow>
-                <TableCell colSpan={columns.length + 2 + (showCheckboxes ? 1 : 0)} sx={{ textAlign: "center" }}>
+                <StyledTableCell colSpan={columns.length + 2 + (showCheckboxes ? 1 : 0)} sx={{ textAlign: "center" }}>
                   {EmptyComponent ? <EmptyComponent /> : "No results found"}
-                </TableCell>
+                </StyledTableCell>
               </TableRow>
             )}
             {(status !== "loading" && vehicles.length > 0) && dataset.map((d: T) => (
               <TableRow key={`${d["vin"]}`} selected={selected.includes(d.vin)} tabIndex={-1} hover>
                 {showCheckboxes && (
-                  <TableCell padding="checkbox">
+                  <StyledTableCell padding="checkbox">
                     <Checkbox color="primary" checked={selected.includes(d.vin)} onClick={() => handleSelectClick(d.vin)} />
-                  </TableCell>
+                  </StyledTableCell>
                 )}
                 {columns.map((col: Column) => (
-                  <TableCell key={`${d["vin"]}_${col.label}`}>
+                  <StyledTableCell key={`${d["vin"]}_${col.label}`}>
                     {col.value(d)}
-                  </TableCell>
+                  </StyledTableCell>
                 ))}
-                <TableCell>
+                <StyledTableCell>
                   <StyledLink to={`/vehicle/${d["vin"]}`}>
                     View
                   </StyledLink>
-                </TableCell>
+                </StyledTableCell>
               </TableRow>
             ))}
             {(status === "loading" || (status === "loading_more" && dataset.length < perPage)) && (
