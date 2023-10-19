@@ -94,7 +94,7 @@ export const parseNHTSADate = (date: string) => dayjs(date, "DD/MM/YYYY", true).
 export const isValidEventDate = (event: FeedPost["event_date"], post: FeedPost["post_date"]): boolean => {
   // Missing or invalid event date. This is not valid.
   const eventDate = dayjs(new Date(event));
-  if (!event || !eventDate.isValid() || eventDate.get("hours") === 0) {
+  if (!event || !eventDate.isValid()) {
     throw new Error("Invalid event date format");
   }
 

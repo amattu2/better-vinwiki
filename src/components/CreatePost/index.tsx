@@ -13,8 +13,8 @@ import {
   Theme,
   Tooltip, Typography, styled,
 } from "@mui/material";
-import { DateTimePicker } from '@mui/x-date-pickers';
-import dayjs from "dayjs";
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from "dayjs";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { ENDPOINTS, MEDIA_ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
 import { ImageUpload } from "../ImageUpload";
@@ -33,7 +33,7 @@ type Props = {
 type PostForm = {
   type: FeedPost["type"];
   post_text: string;
-  event_date: FeedPost["event_date"];
+  event_date: Dayjs | null;
   mileage: FeedPost["mileage"];
   locale: FeedPost["locale"];
   image: FileList;
@@ -136,7 +136,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
     mileage: watch("mileage"),
     locale: watch("locale"),
     vehicle: selectedVehicle,
-    event_date: watch("event_date"),
+    event_date: dayjs(watch("event_date"))?.toISOString() || null,
     post_date: new Date().toISOString(),
   } as FeedPost);
 
@@ -306,10 +306,11 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
                       name="event_date"
                       control={control}
                       render={({ field }) => (
-                        <DateTimePicker
+                        <DatePicker
                           {...field}
                           value={field.value ? dayjs(field.value) : null}
                           slotProps={{ textField: { size: "small", placeholder: "Event Date" } }}
+                          disableFuture
                         />
                       )}
                     />
