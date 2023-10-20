@@ -13,6 +13,7 @@ import {
   Theme,
   Tooltip, Typography, styled,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from "dayjs";
 import { useAuthProvider } from "../../Providers/AuthProvider";
@@ -73,6 +74,7 @@ const StyledTextField = styled(TextField)({
 const CreatePost: FC<Props> = ({ vehicle }: Props) => {
   const { profile, token } = useAuthProvider();
   const { addPost: addFeedPost } = useFeedProvider();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [expanded, setExpanded] = useState<boolean>(false);
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(vehicle || null);
@@ -173,6 +175,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
       const { status, image } = await response?.json() || {};
       if (status !== STATUS_OK || !image) {
         setPosting(false);
+        enqueueSnackbar("Failed to upload image. Please retry later.", { variant: "error" });
         return;
       }
 
@@ -198,6 +201,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
     const { status, post } = await response?.json() || {};
     if (status !== STATUS_OK || !post) {
       setPosting(false);
+      enqueueSnackbar("Failed to create post. Please retry later.", { variant: "error" });
       return;
     }
 
