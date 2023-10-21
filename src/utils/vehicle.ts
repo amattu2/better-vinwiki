@@ -42,4 +42,10 @@ export const formatVehicleName = ({ year, make, model }: Vehicle | PlateDecodeRe
 
 export const sortVehicles = (vehicles: Vehicle[]) => vehicles.sort((a, b) => a.long_name.localeCompare(b.long_name));
 
-export const formatOdometer = (mileage: number) => (new Intl.NumberFormat('en-US', { maximumSignificantDigits: 3 }).format(mileage)) || 0;
+export const formatOdometer = (mileage: number): string => {
+  if (typeof mileage !== "number") {
+    return "";
+  }
+
+  return mileage.toLocaleString("en-US");
+};
