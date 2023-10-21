@@ -14,9 +14,9 @@ export type ProviderState = {
    * Add a vehicle to the list
    *
    * @param vehicles The vehicles to add
-   * @returns Promise<boolean> Whether the operation was successful
+   * @returns Promise<number> The number of vehicles added
    */
-  addVehicles?: (vehicles: Vehicle[]) => Promise<boolean>;
+  addVehicles?: (vehicles: Vehicle[]) => Promise<number>;
   /**
    * Will add `vins` to the list and refetch the list vehicles
    *
@@ -24,16 +24,16 @@ export type ProviderState = {
    * have a `Vehicle` object to work from.
    *
    * @param vins The VINs to add to the list
-   * @returns Promise<boolean> Whether the operation was successful
+   * @returns Promise<number> The number of vehicles added
    */
-  addVins?: (vins: Vehicle["vin"][]) => Promise<boolean>;
+  addVins?: (vins: Vehicle["vin"][]) => Promise<number>;
   /**
    * Removes vehicles from the list
    *
    * @param vins The VINs to remove from the list
-   * @returns Promise<boolean> Whether the operation was successful
+   * @returns Promise<number> The number of vehicles removed
    */
-  removeVehicles?: (vins: Vehicle["vin"][]) => Promise<boolean>;
+  removeVehicles?: (vins: Vehicle["vin"][]) => Promise<number>;
   /**
    * Fetch the next `count` vehicles from the list
    *
@@ -75,11 +75,12 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
   const [lastID, setLastID] = useState<string>("");
   const [hasNext, setHasNext] = useState<boolean>(false);
 
-  const removeVehicles = async (vins: Vehicle["vin"][]) : Promise<boolean> => {
+  const removeVehicles = async (vins: Vehicle["vin"][]) : Promise<number> => {
     if (!token || !uuid || !vins?.length) {
-      return false;
+      return 0;
     }
 
+    let count = 0;
     for (const vin of vins) {
       if (!state.vehicles?.find((v) => v.vin === vin)) {
         continue;
@@ -102,16 +103,18 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
         count: list?.vehicles?.count || prev.count - 1,
         vehicles: prev.vehicles?.filter((v) => v.vin !== vin),
       }));
+      count += 1;
     }
 
-    return true;
+    return count;
   };
 
-  const addVehicles = async (vehicles: Vehicle[]) : Promise<boolean> => {
+  const addVehicles = async (vehicles: Vehicle[]) : Promise<number> => {
     if (!token || !uuid) {
-      return false;
+      return 0;
     }
 
+    let count = 0;
     for (const vehicle of vehicles) {
       if (state.vehicles?.find((v) => v.vin === vehicle.vin)) {
         continue;
@@ -134,14 +137,15 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
         count: list?.vehicles?.count || prev.count + 1,
         vehicles: [...(prev.vehicles || []), vehicle],
       }));
+      count += 1;
     }
 
-    return true;
+    return count;
   };
 
-  const addVins = async (vins: Vehicle["vin"][]) : Promise<boolean> => {
+  const addVins = async (vins: Vehicle["vin"][]) : Promise<number> => {
     if (!token || !uuid || !vins?.length) {
-      return false;
+      return 0;
     }
 
     for (const vin of vins) {
@@ -158,7 +162,7 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
 
       const { status, list } = await response?.json().catch(() => null) || {};
       if (status !== STATUS_OK || !list?.uuid) {
-        return false;
+        continue;
       }
     }
 
@@ -183,7 +187,8 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
       setState((prev) => ({ ...prev, status: ProviderStatus.ERROR }));
     }
 
-    return true;
+    const addedCount = parseInt(total, 10) - state.count;
+    return addedCount > 0 ? addedCount : 0;
   };
 
   const next = async (count = 1000) : Promise<boolean> => {
