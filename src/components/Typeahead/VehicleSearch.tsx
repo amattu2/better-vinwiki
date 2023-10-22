@@ -162,7 +162,6 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
       sx={{ width: 300 }}
       size="small"
       noOptionsText="No vehicles found"
-
     />
   );
 };
