@@ -1,6 +1,7 @@
 import React, { FC, lazy } from 'react';
 import { Navigate, RouteObject } from 'react-router-dom';
 import { useReadLocalStorage } from 'usehooks-ts';
+import { SnackbarProvider } from 'notistack';
 import { AuthProvider } from './Providers/AuthProvider';
 import { NotificationCountProvider } from './Providers/NotificationCountProvider';
 import { SuspenseWrapper } from './components/SuspenseWrapper';
@@ -28,11 +29,18 @@ const AuthenticatedWrapper: FC<{ Component: FC }> = ({ Component }) => {
   }
 
   return (
-    <AuthProvider>
-      <NotificationCountProvider>
-        <Component />
-      </NotificationCountProvider>
-    </AuthProvider>
+    <SnackbarProvider
+      maxSnack={3}
+      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+      autoHideDuration={3000}
+      preventDuplicate
+    >
+      <AuthProvider>
+        <NotificationCountProvider>
+          <Component />
+        </NotificationCountProvider>
+      </AuthProvider>
+    </SnackbarProvider>
   );
 };
 

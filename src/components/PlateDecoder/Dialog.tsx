@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { LoadingButton } from "@mui/lab";
 import {
   Button, Dialog, DialogActions,
@@ -84,7 +84,7 @@ const plateLookup = async (token: string, data: Fields): Promise<PlateDecodeResp
  */
 const DecoderDialog: FC<Props> = ({ open, onConfirm, onCancel }: Props) => {
   const { token } = useAuthProvider();
-  const { control, register, watch } = useForm<Fields>();
+  const { control, register, watch, reset } = useForm<Fields>();
   const [selectedVehicle, setSelectedVehicle] = useState<PlateDecodeResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -104,6 +104,13 @@ const DecoderDialog: FC<Props> = ({ open, onConfirm, onCancel }: Props) => {
   };
 
   const clearSelection = () => setSelectedVehicle(null);
+
+  useEffect(() => {
+    if (!open) {
+      clearSelection();
+      reset();
+    }
+  }, [open]);
 
   return (
     <StyledDialog open={open} onClose={onCancel}>

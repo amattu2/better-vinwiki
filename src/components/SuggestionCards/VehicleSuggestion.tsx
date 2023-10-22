@@ -44,6 +44,10 @@ const StyledCardContent = styled(CardContent)({
 const SuggestionItem: FC<Vehicle> = (vehicle: Vehicle) => {
   const { vin, long_name, icon_photo } = vehicle;
 
+  if (!long_name) {
+    return null;
+  }
+
   return (
     <ListItem key={vin} divider>
       <ListItemAvatar>

@@ -1,11 +1,11 @@
 type Vehicle = {
   icon_photo: string;
-  long_name: string;
-  make: string;
-  model: string;
-  trim: string;
+  long_name: string | null;
+  make: string | null;
+  model: string | null;
+  trim: string | null;
   vin: string;
-  year: string;
+  year: string | null;
 };
 
 type VehicleResponse = Vehicle & {

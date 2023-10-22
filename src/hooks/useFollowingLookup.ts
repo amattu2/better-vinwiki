@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSessionStorage } from "usehooks-ts";
 import { isEqual } from "lodash";
 import { useAuthProvider } from "../Providers/AuthProvider";
-import { ENDPOINTS, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
+import { ENDPOINTS, ERROR_KEY, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
 import { CacheKeys } from "../config/Cache";
 
 type Cache = Record<Profile["uuid"], Profile[]>;
@@ -48,12 +48,16 @@ const useFollowingLookup = (uuid: Profile["uuid"], refetch = false): [LookupStat
         return null;
       });
 
-      const { status, following } = await response?.json() || {};
+      const { status, key, following } = await response?.json() || {};
       if (status === STATUS_OK) {
         setCache((prev) => ({ ...prev, [uuid]: following }));
         setStatus(LookupStatus.Success);
         setFollowing(following);
-      } else if (status === STATUS_ERROR) {
+      } else if (status === STATUS_ERROR && key === ERROR_KEY.NOT_FOLLOWING) {
+        setCache((prev) => ({ ...prev, [uuid]: [] }));
+        setStatus(LookupStatus.Success);
+        setFollowing([]);
+      } else {
         setStatus(LookupStatus.Error);
       }
     })();
