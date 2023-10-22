@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
-import { Autocomplete, Stack, TextField, Typography, debounce } from "@mui/material";
+import { Autocomplete, CircularProgress, Stack, TextField, Typography, debounce } from "@mui/material";
 import { isValidVin } from "@shaggytools/nhtsa-api-wrapper";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
@@ -61,6 +61,7 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
 
   const [searchValue, setSearchValue] = useState<string>("");
   const [options, setOptions] = useState<Vehicle[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -96,7 +97,7 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
     onChange(e, value, reason);
   };
 
-  const debouncedSearch = useMemo(() => debounce(onInputChange, 100), []);
+  const debouncedSearch = useMemo(() => debounce(onInputChange, 200), []);
 
   useEffect(() => {
     if (!token || !searchValue || searchValue.length < 3) {
@@ -110,8 +111,12 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
 
     (async () => {
       const vehicles = await fetchVehicles(searchValue, token, searchController.signal);
+      if (searchController.signal.aborted) {
+        return;
+      }
       setLoading(false);
 
+      // Results were found or the VIN is invalid
       if (vehicles.length || !isValidVin(searchValue)) {
         setOptions(vehicles);
         return;
@@ -131,11 +136,20 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
     };
   }, [searchValue]);
 
+  useEffect(() => {
+    if (!open) {
+      setOptions([]);
+    }
+  }, [open]);
+
   return (
     <Autocomplete
       autoComplete
       value={value}
       loading={loading}
+      open={open}
+      onOpen={() => setOpen(true)}
+      onClose={() => setOpen(false)}
       options={mergedOptions}
       groupBy={(option: Vehicle) => (
         recentVehicles?.find((v) => v.vin === option.vin) ? "Recents & Following" : (option.make || "Unknown").toUpperCase()
@@ -145,6 +159,15 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
           {...params}
           inputRef={inputRef}
           label="Search by VIN or Description"
+          InputProps={{
+            ...params.InputProps,
+            endAdornment: (
+              <>
+                {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                {params.InputProps.endAdornment}
+              </>
+            ),
+          }}
         />
       )}
       getOptionLabel={(option: Vehicle) => option.vin}
@@ -158,10 +181,11 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
         </li>
       )}
       isOptionEqualToValue={(option: Vehicle, value: Vehicle) => option.vin === value.vin}
+      noOptionsText="No vehicles found"
+      filterOptions={(v) => v}
       onChange={onChangeWrapper}
       sx={{ width: 300 }}
       size="small"
-      noOptionsText="No vehicles found"
     />
   );
 };
