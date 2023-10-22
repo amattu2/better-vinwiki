@@ -53,7 +53,7 @@ const VehicleSelectionItem: FC<{ vehicle: Vehicle; onRemove: (vehicle: Vehicle) 
   return (
     <ListItem key={vin} divider>
       <ListItemAvatar>
-        <ProfileAvatar username={long_name} avatar={icon_photo} />
+        <ProfileAvatar username={long_name || "Unknown"} avatar={icon_photo} />
       </ListItemAvatar>
       <ListItemText
         primary={(
