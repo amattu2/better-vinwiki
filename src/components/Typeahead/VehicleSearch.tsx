@@ -64,7 +64,7 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
   const controllerRef = useRef<AbortController>(new AbortController());
   const mergedOptions = useMemo(() => {
     const cloned = [...options, value].filter((v: Vehicle | null | undefined) => v) as Vehicle[];
-    cloned.sort((a: Vehicle, b: Vehicle) => b.make.localeCompare(a.make));
+    cloned.sort((a: Vehicle, b: Vehicle) => (b?.make || "").localeCompare(a?.make || ""));
 
     recentVehicles?.forEach((v: Vehicle) => {
       if (cloned.find((c: Vehicle) => c.vin === v.vin)) {
@@ -118,7 +118,7 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
       loading={loading}
       options={mergedOptions}
       groupBy={(option: Vehicle) => (
-        recentVehicles?.find((v) => v.vin === option.vin) ? "Recents & Following" : option.make.toUpperCase()
+        recentVehicles?.find((v) => v.vin === option.vin) ? "Recents & Following" : (option.make || "Unknown").toUpperCase()
       )}
       renderInput={(params) => <TextField {...params} inputRef={inputRef} label="Search by VIN or Description" />}
       getOptionLabel={(option: Vehicle) => option.vin}

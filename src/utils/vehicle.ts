@@ -37,10 +37,10 @@ export const formatVehicleName = ({ year, make, model }: Vehicle | PlateDecodeRe
     result += `${model} `;
   }
 
-  return result.replace(/\s+$/, "");
+  return result.replace(/\s+$/, "") || "Unknown Vehicle";
 };
 
-export const sortVehicles = (vehicles: Vehicle[]) => vehicles.sort((a, b) => a.long_name.localeCompare(b.long_name));
+export const sortVehicles = (vehicles: Vehicle[]) => vehicles.sort((a, b) => (a?.long_name || "").localeCompare(b?.long_name || ""));
 
 export const formatOdometer = (mileage: number): string => {
   if (typeof mileage !== "number") {

@@ -124,31 +124,31 @@ const ResultSkeleton: FC<{ hasCheckbox?: boolean }> = ({ hasCheckbox }: { hasChe
 const columns: Column[] = [
   {
     label: "Preview",
-    value: ({ icon_photo, long_name }) => (
+    value: ({ vin, icon_photo }) => (
       <StyledImageBox>
-        <ExpandableImage lowRes={icon_photo} alt={long_name} />
+        <ExpandableImage lowRes={icon_photo} alt={vin} />
       </StyledImageBox>
     ),
   },
   {
     label: "Year",
-    value: (v) => v.year,
-    comparator: (a: T, b: T) => parseInt(a.year, 10) - parseInt(b.year, 10),
+    value: (v) => v.year || "-",
+    comparator: (a: T, b: T) => parseInt(a?.year || "", 10) - parseInt(b?.year || "", 10),
   },
   {
     label: "Make",
-    value: (v) => v.make,
-    comparator: (a: T, b: T) => a.make.localeCompare(b.make),
+    value: (v) => v.make || "-",
+    comparator: (a: T, b: T) => (a?.make || "").localeCompare(b?.make || ""),
   },
   {
     label: "Model",
-    value: (v) => v.model,
-    comparator: (a: T, b: T) => a.model.localeCompare(b.model),
+    value: (v) => v.model || "-",
+    comparator: (a: T, b: T) => (a?.model || "").localeCompare(b?.model || ""),
   },
   {
     label: "Trim",
     value: (v) => v.trim || "-",
-    comparator: (a: T, b: T) => a.trim?.localeCompare(b?.trim),
+    comparator: (a: T, b: T) => (a?.trim || "").localeCompare(b?.trim || ""),
   },
   {
     label: "VIN",
