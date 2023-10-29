@@ -33,6 +33,13 @@ export const HyperlinkRegexNG = /(https:\/\/[^\s]+)/;
 export const VinRegex = /(#[A-HJ-NPR-Z0-9]{17})/g;
 
 /**
+ * Vehicle Identification Number Character Regex
+ *
+ * Used to validate VIN integrity
+ */
+export const VinCharacterRegex = /^[A-HJ-NPR-Z0-9]+$/;
+
+/**
  * OBDii Trouble Code
  *
  * Matches:
