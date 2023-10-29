@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { isValidVin } from "@shaggytools/nhtsa-api-wrapper";
 import { useAuthProvider } from "../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../config/Endpoints";
-import { buildPlaceholderVehicle } from "../utils/vehicle";
+import { buildPlaceholderVehicle, validateVIN } from "../utils/vehicle";
 
 export enum LookupStatus {
   Loading = "loading",
@@ -50,7 +49,7 @@ const vehicleSearch = async (query: string, limit: number, token: string, signal
   }
 
   // Augment the response with the vehicle if the query is a valid VIN
-  if (status === STATUS_OK && !vehicles?.length && isValidVin(query)) {
+  if (status === STATUS_OK && !vehicles?.length && validateVIN(query)) {
     return {
       type: "Vehicle",
       count: 1,

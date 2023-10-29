@@ -6,7 +6,6 @@ import {
   Tooltip, Typography, styled,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-import { isValidVin } from "@shaggytools/nhtsa-api-wrapper";
 import { ProviderStatus as FeedProviderStatus, useFeedProvider } from "../../Providers/FeedProvider";
 import { ProviderStatus as VehicleProviderStatus, useVehicleProvider } from "../../Providers/VehicleProvider";
 import CreatePost from "../../components/CreatePost";
@@ -20,7 +19,7 @@ import { StatisticItem, StatisticItemProps } from "../../components/StatisticIte
 import { ScrollToTop } from "../../components/ScrollToTop/ScrollButton";
 import useIsFollowingVehicleLookup, { LookupStatus as IsFollowingStatus } from "../../hooks/useIsFollowingVehicleLookup";
 import { formatDateMMYY } from "../../utils/date";
-import { formatVehicleName } from "../../utils/vehicle";
+import { formatVehicleName, validateVIN } from "../../utils/vehicle";
 import ActionableCard from "../../components/ActionableCard";
 import VinDecodeDialog from "../../components/VinDecodeDialog";
 import RecallLookupDialog from "../../components/RecallLookupDialog";
@@ -262,7 +261,7 @@ const View: FC<Props> = ({ vin }: Props) => {
               title="VIN Decode"
               subtitle="Perform full VIN decode of manufacturer options and features"
               onClick={() => setDecodeOpen(true)}
-              disabled={!isValidVin(vin)}
+              disabled={!validateVIN(vin)}
             />
             <ActionableCard
               // TODO: CARFAX integration - disabled due to API key
