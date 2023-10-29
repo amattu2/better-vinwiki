@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useSessionStorage } from "usehooks-ts";
-import { DecodeVinValues, DecodeVinValuesResults, isValidVin } from "@shaggytools/nhtsa-api-wrapper";
+import { DecodeVinValues, DecodeVinValuesResults } from "@shaggytools/nhtsa-api-wrapper";
 import { CacheKeys } from "../config/Cache";
 import { SkipDecodeKeys } from "../config/NHTSA";
+import { validateVIN } from "../utils/vehicle";
 
 type Cache = Record<Vehicle["vin"], DecodeVinValuesResults>;
 
@@ -30,7 +31,7 @@ const useVinDecoder = (vin: Vehicle["vin"], modelYear?: Vehicle["year"]): [Looku
     if (cachedValue !== null) {
       return;
     }
-    if (!isValidVin(vin) || !vin) {
+    if (!validateVIN(vin) || !vin) {
       setStatus(LookupStatus.Error);
       return;
     }

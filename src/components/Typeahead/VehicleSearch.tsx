@@ -1,9 +1,8 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { Autocomplete, CircularProgress, Stack, TextField, Typography, debounce } from "@mui/material";
-import { isValidVin } from "@shaggytools/nhtsa-api-wrapper";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
-import { buildPlaceholderVehicle, formatVehicleName } from "../../utils/vehicle";
+import { buildPlaceholderVehicle, formatVehicleName, validateVIN } from "../../utils/vehicle";
 import useFollowingVehiclesLookup from "../../hooks/useFollowingVehiclesLookup";
 
 type Props = {
@@ -117,7 +116,7 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
       setLoading(false);
 
       // Results were found or the VIN is invalid
-      if (vehicles.length || !isValidVin(searchValue)) {
+      if (vehicles.length || !validateVIN(searchValue)) {
         setOptions(vehicles);
         return;
       }
