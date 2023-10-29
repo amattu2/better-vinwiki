@@ -1,4 +1,5 @@
 import { DEFAULT_VEHICLE_SRC } from "../config/Endpoints";
+import { VinCharacterRegex } from "../config/RegEx";
 
 /**
  * Builds a placeholder vehicle from the `Vehicle` type
@@ -48,4 +49,18 @@ export const formatOdometer = (mileage: number): string => {
   }
 
   return mileage.toLocaleString("en-US");
+};
+
+/**
+ * A loosely-defined VIN validation utility
+ *
+ * @param vin The VIN to validate
+ * @returns true if the VIN is valid, false otherwise
+ */
+export const validateVIN = (vin: string): boolean => {
+  if (vin.length !== 17) {
+    return false;
+  }
+
+  return VinCharacterRegex.test(vin);
 };

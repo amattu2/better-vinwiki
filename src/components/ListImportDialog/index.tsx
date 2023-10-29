@@ -7,11 +7,11 @@ import {
   Stack, Step, StepLabel, Stepper, TextField,
   styled,
 } from '@mui/material';
-import { isValidVin } from '@shaggytools/nhtsa-api-wrapper';
 import { cloneDeep } from 'lodash';
 import { parse } from 'papaparse';
 import GenericSpreadsheet, { ValueBase } from '../GenericSpreadsheet';
 import { StatisticItem } from '../StatisticItem';
+import { validateVIN } from '../../utils/vehicle';
 
 type Props = {
   onConfirm: (selection: Vehicle["vin"][]) => void;
@@ -113,7 +113,7 @@ const ListImportDialog: FC<Props> = ({ onConfirm, onClose }: Props) => {
     const dataValues = cloneDeep<ValueBase[]>(data).map(Object.values);
     const vinColumnIndex = fields.indexOf(vinColumn) + (fieldType === "index" ? 1 : 0);
 
-    return dataValues.map((row) => row?.[vinColumnIndex]).filter(isValidVin) || [];
+    return dataValues.map((row) => row?.[vinColumnIndex]).filter(validateVIN) || [];
   }, [data, vinColumn]);
 
   const nextUnlocked: boolean = useMemo(() => {

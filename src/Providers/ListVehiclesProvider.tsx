@@ -1,9 +1,9 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 import React, { useState, FC, useEffect, useMemo } from "react";
-import { isValidVin } from "@shaggytools/nhtsa-api-wrapper";
 import { useAuthProvider } from "./AuthProvider";
 import { ENDPOINTS, STATUS_ERROR, STATUS_OK } from "../config/Endpoints";
+import { validateVIN } from "../utils/vehicle";
 
 export type ProviderState = {
   status: ProviderStatus;
@@ -149,7 +149,7 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
     }
 
     for (const vin of vins) {
-      if (!vin || !isValidVin(vin)) {
+      if (!vin || !validateVIN(vin)) {
         continue;
       }
 
