@@ -36,7 +36,7 @@ const ListAssignmentDialog: FC<Props> = ({ vehicle, onClose }: Props) => {
   const controllerRef = useRef<AbortController>(new AbortController());
   const { token, profile } = useAuthProvider();
   const { register, handleSubmit } = useForm<{ uuid: List["uuid"] }>();
-  const [, lists] = useProfileListsLookup(profile?.uuid || "");
+  const [, lists] = useProfileListsLookup(profile?.uuid || "", true);
   const [saving, setSaving] = useState(false);
 
   const ownedLists: List[] = useMemo(() => {
