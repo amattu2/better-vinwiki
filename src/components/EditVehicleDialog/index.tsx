@@ -82,6 +82,7 @@ const EditVehicleDialog: FC<Props> = ({ vehicle, onConfirm, onClose }: Props) =>
             label="Make"
             defaultValue={vehicle.make}
             size="small"
+            required
             {...register("make", { required: true })}
           />
           <StyledTextField
@@ -89,6 +90,7 @@ const EditVehicleDialog: FC<Props> = ({ vehicle, onConfirm, onClose }: Props) =>
             label="Model"
             defaultValue={vehicle.model}
             size="small"
+            required
             {...register("model", { required: true })}
           />
           <StyledTextField
