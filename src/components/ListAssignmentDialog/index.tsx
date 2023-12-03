@@ -36,7 +36,7 @@ const ListAssignmentDialog: FC<Props> = ({ vehicle, onClose }: Props) => {
   const controllerRef = useRef<AbortController>(new AbortController());
   const { token, profile } = useAuthProvider();
   const { register, handleSubmit } = useForm<{ uuid: List["uuid"] }>();
-  const [, lists] = useProfileListsLookup(profile?.uuid || "");
+  const [, lists] = useProfileListsLookup(profile?.uuid || "", true);
   const [saving, setSaving] = useState(false);
 
   const ownedLists: List[] = useMemo(() => {
@@ -92,10 +92,11 @@ const ListAssignmentDialog: FC<Props> = ({ vehicle, onClose }: Props) => {
           </Typography>
         )}
         <form onSubmit={handleSubmit(submitForm)} id={id}>
-          <RadioGroup {...register("uuid")}>
+          <RadioGroup>
             {ownedLists.map(({ uuid, name, vehicle_count, follower_count, created_date }: List) => (
               <React.Fragment key={uuid}>
                 <FormControlLabel
+                  {...register("uuid")}
                   value={uuid}
                   control={<Radio />}
                   label={(
