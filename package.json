@@ -8,7 +8,7 @@
     "@mui/icons-material": "^5.14.6",
     "@mui/lab": "^5.0.0-alpha.151",
     "@mui/material": "^5.14.6",
-    "@mui/x-date-pickers": "^6.12.1",
+    "@mui/x-date-pickers": "^6.18.6",
     "@shaggytools/nhtsa-api-wrapper": "^3.0.4",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
