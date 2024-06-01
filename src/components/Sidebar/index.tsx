@@ -30,9 +30,12 @@ const StyledBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-const StyledLogoBox = styled(Box)({
+const StyledLogoBox = styled(Box)(({ theme }) => ({
   margin: "15px auto",
-});
+  [theme.breakpoints.down("sm")]: {
+    display: "none",
+  },
+}));
 
 const StyledLogo = styled('img')(({ theme }) => ({
   width: "100%",
@@ -41,12 +44,14 @@ const StyledLogo = styled('img')(({ theme }) => ({
   borderRadius: "6px",
 }));
 
-const StyledAvatarBox = styled(StyledLogoBox)({
-  marginTop: "35px",
+const StyledAvatarBox = styled(StyledLogoBox)(({ theme }) => ({
+  [theme.breakpoints.up("sm")]: {
+    marginTop: "35px",
+  },
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-});
+}));
 
 const StyledControlGroup = styled(Stack)({
   marginTop: "42px",
@@ -88,7 +93,7 @@ const Sidebar: FC = () => {
   return (
     <StyledBox>
       <StyledLogoBox>
-        <StyledLogo src="https://api.placeholder.app/image/90x90/3b3b3b?text=BV" alt="logo" />
+        <StyledLogo src="https://placehold.co/90x90/3b3b3b?text=BV" alt="logo" />
       </StyledLogoBox>
       <StyledAvatarBox>
         <Avatar
