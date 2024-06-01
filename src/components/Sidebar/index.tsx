@@ -93,7 +93,7 @@ const Sidebar: FC = () => {
   return (
     <StyledBox>
       <StyledLogoBox>
-        <StyledLogo src="https://placehold.co/90x90/3b3b3b?text=BV" alt="logo" />
+        <StyledLogo src="https://placehold.co/90x90/3b3b3b/ffffff?text=BV" alt="logo" />
       </StyledLogoBox>
       <StyledAvatarBox>
         <Avatar
