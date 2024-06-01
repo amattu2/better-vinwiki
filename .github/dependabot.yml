@@ -5,3 +5,4 @@ updates:
     schedule:
       interval: "monthly"
     versioning-strategy: "increase"
+    target-branch: "dev"

@@ -13,8 +13,9 @@ import {
   Theme,
   Tooltip, Typography, styled,
 } from "@mui/material";
-import { DateTimePicker } from '@mui/x-date-pickers';
-import dayjs from "dayjs";
+import { useSnackbar } from "notistack";
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from "dayjs";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { ENDPOINTS, MEDIA_ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
 import { ImageUpload } from "../ImageUpload";
@@ -25,6 +26,7 @@ import ProfileAvatar from "../ProfileAvatar";
 import { VehicleSearch } from "../Typeahead/VehicleSearch";
 import { useFeedProvider } from "../../Providers/FeedProvider";
 import { CONFIG } from "../../config/AppConfig";
+import { safeIsoParse } from "../../utils/date";
 
 type Props = {
   vehicle?: Vehicle;
@@ -33,7 +35,7 @@ type Props = {
 type PostForm = {
   type: FeedPost["type"];
   post_text: string;
-  event_date: FeedPost["event_date"];
+  event_date: Dayjs | null;
   mileage: FeedPost["mileage"];
   locale: FeedPost["locale"];
   image: FileList;
@@ -72,6 +74,7 @@ const StyledTextField = styled(TextField)({
 const CreatePost: FC<Props> = ({ vehicle }: Props) => {
   const { profile, token } = useAuthProvider();
   const { addPost: addFeedPost } = useFeedProvider();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [expanded, setExpanded] = useState<boolean>(false);
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(vehicle || null);
@@ -97,12 +100,14 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
       2: step2,
       3: step3,
     };
-  }, [selectedVehicle, imageUpload, postText, postType]);
+  }, [selectedVehicle, !!imageUpload?.[0], !!postText, postType]);
+
+  const imagePreview: string | undefined = useMemo(() => (imageUpload?.[0] ? URL.createObjectURL(imageUpload?.[0]) : undefined), [imageUpload?.[0]]);
 
   const resetPost = () => {
     setExpand(false);
-    setActiveStep(0);
-    setSelectedVehicle(null);
+    setActiveStep(!vehicle ? 0 : 1);
+    setSelectedVehicle(!vehicle ? null : vehicle);
     setPostType("generic");
     reset();
   };
@@ -123,7 +128,6 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
   const changePostType = (e: React.SyntheticEvent, type: FeedPost["type"]) => {
     setPostType(type);
     setValue("type", type);
-    resetField("image");
   };
 
   const generateDemoPost = (): FeedPost => ({
@@ -136,7 +140,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
     mileage: watch("mileage"),
     locale: watch("locale"),
     vehicle: selectedVehicle,
-    event_date: watch("event_date"),
+    event_date: safeIsoParse(watch("event_date")) || null,
     post_date: new Date().toISOString(),
   } as FeedPost);
 
@@ -171,6 +175,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
       const { status, image } = await response?.json() || {};
       if (status !== STATUS_OK || !image) {
         setPosting(false);
+        enqueueSnackbar("Failed to upload image. Please retry later.", { variant: "error" });
         return;
       }
 
@@ -184,7 +189,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
       },
       body: JSON.stringify({
         client: CONFIG.API_CLIENT,
-        event_date: watch("event_date") ? dayjs(watch("event_date")).toISOString() : "",
+        event_date: safeIsoParse(watch("event_date")) || "",
         locale: watch("locale"),
         mileage: watch("mileage"),
         text: watch("post_text"),
@@ -196,6 +201,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
     const { status, post } = await response?.json() || {};
     if (status !== STATUS_OK || !post) {
       setPosting(false);
+      enqueueSnackbar("Failed to create post. Please retry later.", { variant: "error" });
       return;
     }
 
@@ -259,7 +265,6 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
                       <Tabs value={postType} onChange={changePostType}>
                         <StyledTab icon={<PostAddOutlined />} iconPosition="start" label="Text" value="generic" />
                         <StyledTab icon={<AddPhotoAlternateOutlined />} iconPosition="start" label="Photo" value="photo" />
-                        {/* <StyledTab icon={<ReceiptLong />} iconPosition="start" label="Repair" disabled /> */}
                       </Tabs>
                       <TabPanel value="generic">
                         {/* TODO: Add support for typeahead user tags */}
@@ -284,7 +289,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
                         <Divider sx={{ my: 1.5 }} />
                         <ImageUpload
                           InputProps={register("image", { required: postType === "photo" })}
-                          preview={imageUpload?.[0] && URL.createObjectURL(imageUpload?.[0])}
+                          preview={imagePreview}
                           onPreviewClick={() => resetField("image")}
                           onDrop={(e) => setValue("image", e.dataTransfer.files)}
                         />
@@ -306,10 +311,11 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
                       name="event_date"
                       control={control}
                       render={({ field }) => (
-                        <DateTimePicker
+                        <DatePicker
                           {...field}
                           value={field.value ? dayjs(field.value) : null}
                           slotProps={{ textField: { size: "small", placeholder: "Event Date" } }}
+                          disableFuture
                         />
                       )}
                     />
@@ -334,7 +340,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
               <Step disabled={!stepStatuses[2]} last>
                 <StepButton onClick={() => setActiveStep(3)}>Preview & Submit</StepButton>
                 <StyledStepContent>
-                  <FeedPost {...generateDemoPost()} isPreview />
+                  {activeStep === 3 && <FeedPost {...generateDemoPost()} isPreview />}
                   <Button disabled={Object.values(stepStatuses).some((s) => !s)} onClick={createPost}>Post</Button>
                 </StyledStepContent>
               </Step>

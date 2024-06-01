@@ -6,6 +6,7 @@ import {
   IconButton, Skeleton, Stack, Theme, Tooltip,
   Typography, styled,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
 import { unparse } from "papaparse";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import FollowersDialog from "../../components/FollowersDialog";
@@ -74,6 +75,7 @@ const StyledListOwner = styled(Stack, { shouldForwardProp: (p) => p !== "filled"
  */
 const ListView: FC<Props> = ({ uuid }: Props) => {
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
   const [{ status, list }, editList, deleteList] = useListLookup(uuid, true);
   const [{ status: isFollowingStatus, following }, toggleFollow] = useIsFollowingListLookup(uuid);
   const { profile } = useAuthProvider();
@@ -116,9 +118,10 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
   };
 
   const onConfirmDelete = async () => {
-    await removeVehicles?.(deleteVehiclesRef.current.map((v) => v.vin));
+    const removed = await removeVehicles?.(deleteVehiclesRef.current.map((v) => v.vin));
     deleteVehiclesRef.current = [];
     setDeleteVehiclesOpen(false);
+    enqueueSnackbar(`${removed} vehicle${removed !== 1 ? "s" : ""} deleted from list`, { variant: "success" });
   };
 
   const deleteSelectionPrompt = async (vehicles: Vehicle[]) => {
@@ -132,11 +135,13 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
   };
 
   const addVehiclesWrapper = async (vehicles: Vehicle[]) => {
-    addVehicles?.(vehicles);
+    const added = await addVehicles?.(vehicles);
+    enqueueSnackbar(`${added} new vehicle${added !== 1 ? "s" : ""} added to list`, { variant: "success" });
   };
 
   const importVehicles = async (vins: Vehicle["vin"][]) => {
-    await addVins?.(vins);
+    const added = await addVins?.(vins);
+    enqueueSnackbar(`${added} new vehicle${added !== 1 ? "s" : ""} imported`, { variant: "success" });
   };
 
   const exportSelection = (vehicles: Vehicle[]) => {

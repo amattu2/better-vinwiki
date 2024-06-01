@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import tz from "dayjs/plugin/timezone";
@@ -94,7 +94,7 @@ export const parseNHTSADate = (date: string) => dayjs(date, "DD/MM/YYYY", true).
 export const isValidEventDate = (event: FeedPost["event_date"], post: FeedPost["post_date"]): boolean => {
   // Missing or invalid event date. This is not valid.
   const eventDate = dayjs(new Date(event));
-  if (!event || !eventDate.isValid() || eventDate.get("hours") === 0) {
+  if (!event || !eventDate.isValid()) {
     throw new Error("Invalid event date format");
   }
 
@@ -117,4 +117,22 @@ export const isValidEventDate = (event: FeedPost["event_date"], post: FeedPost["
   }
 
   return true;
+};
+
+/**
+ * Safely parse a date to a ISO string
+ *
+ * @param date Dayjs object
+ * @returns ISO Date or null
+ */
+export const safeIsoParse = (date: Dayjs | null): string | null => {
+  if (!date || !(date instanceof dayjs)) {
+    return null;
+  }
+
+  try {
+    return dayjs(date).toISOString();
+  } catch (e) {
+    return null;
+  }
 };

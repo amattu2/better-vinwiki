@@ -1,4 +1,5 @@
 import { DEFAULT_VEHICLE_SRC } from "../config/Endpoints";
+import { VinCharacterRegex } from "../config/RegEx";
 
 /**
  * Builds a placeholder vehicle from the `Vehicle` type
@@ -37,9 +38,29 @@ export const formatVehicleName = ({ year, make, model }: Vehicle | PlateDecodeRe
     result += `${model} `;
   }
 
-  return result.replace(/\s+$/, "");
+  return result.replace(/\s+$/, "") || "Unknown Vehicle";
 };
 
-export const sortVehicles = (vehicles: Vehicle[]) => vehicles.sort((a, b) => a.long_name.localeCompare(b.long_name));
+export const sortVehicles = (vehicles: Vehicle[]) => vehicles.sort((a, b) => (a?.long_name || "").localeCompare(b?.long_name || ""));
 
-export const formatOdometer = (mileage: number) => (new Intl.NumberFormat('en-US', { maximumSignificantDigits: 3 }).format(mileage)) || 0;
+export const formatOdometer = (mileage: number): string => {
+  if (typeof mileage !== "number") {
+    return "";
+  }
+
+  return mileage.toLocaleString("en-US");
+};
+
+/**
+ * A loosely-defined VIN validation utility
+ *
+ * @param vin The VIN to validate
+ * @returns true if the VIN is valid, false otherwise
+ */
+export const validateVIN = (vin: string): boolean => {
+  if (vin.length !== 17) {
+    return false;
+  }
+
+  return VinCharacterRegex.test(vin);
+};
