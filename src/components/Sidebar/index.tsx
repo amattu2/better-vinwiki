@@ -30,28 +30,28 @@ const StyledBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-const StyledLogoBox = styled(Box)(({ theme }) => ({
+const StyledLogoBox = styled(Box)({
   margin: "15px auto",
-  [theme.breakpoints.down("sm")]: {
-    display: "none",
-  },
-}));
+});
 
 const StyledLogo = styled('img')(({ theme }) => ({
   width: "100%",
   height: "auto",
   border: `1px solid ${theme.palette.divider}`,
   borderRadius: "6px",
+  "@media (max-height: 700px)": {
+    display: "none",
+  },
 }));
 
-const StyledAvatarBox = styled(StyledLogoBox)(({ theme }) => ({
-  [theme.breakpoints.up("sm")]: {
-    marginTop: "35px",
-  },
+const StyledAvatarBox = styled(StyledLogoBox)({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-}));
+  "@media (min-height: 700px)": {
+    marginTop: "35px",
+  },
+});
 
 const StyledControlGroup = styled(Stack)({
   marginTop: "42px",
