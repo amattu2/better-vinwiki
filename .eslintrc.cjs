@@ -1,11 +1,20 @@
-module.exports = {
+/**
+ * @type {import("eslint").Linter.Config}
+ */
+const config = {
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "airbnb",
     "airbnb-typescript",
     "plugin:react-hooks/recommended",
+    "react-app",
+    "react-app/jest",
   ],
+  globals: {
+    window: true,
+    document: true,
+  },
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaFeatures: {
@@ -52,3 +61,5 @@ module.exports = {
     "react-hooks/exhaustive-deps": "off",
   },
 };
+
+module.exports = config;
