@@ -8,7 +8,7 @@ import { VinCharacterRegex } from "../config/RegEx";
  * @param fill the value to fill fields with
  * @returns Vehicle
  */
-export const buildPlaceholderVehicle = (vin: string = "", fill: string = "-"): Vehicle => ({
+export const buildPlaceholderVehicle = (vin = "", fill = "-"): Vehicle => ({
   icon_photo: DEFAULT_VEHICLE_SRC,
   long_name: fill,
   make: fill,
@@ -41,7 +41,8 @@ export const formatVehicleName = ({ year, make, model }: Vehicle | PlateDecodeRe
   return result.replace(/\s+$/, "") || "Unknown Vehicle";
 };
 
-export const sortVehicles = (vehicles: Vehicle[]) => vehicles.sort((a, b) => (a?.long_name || "").localeCompare(b?.long_name || ""));
+export const sortVehicles = (vehicles: Vehicle[]) =>
+  vehicles.sort((a, b) => (a?.long_name || "").localeCompare(b?.long_name || ""));
 
 export const formatOdometer = (mileage: number): string => {
   if (typeof mileage !== "number") {

@@ -4,10 +4,24 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Badge, DirectionsCar, PersonSearch, Search } from "@mui/icons-material";
 import { TabContext, TabPanel } from "@mui/lab";
 import {
-  Box, Card, Container, Divider, IconButton,
-  List, ListItem, ListItemAvatar, ListItemText,
-  Pagination, Skeleton, Stack, Tab, Tabs,
-  TextField, Tooltip, Typography, styled,
+  Box,
+  Card,
+  Container,
+  Divider,
+  IconButton,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Pagination,
+  Skeleton,
+  Stack,
+  Tab,
+  Tabs,
+  TextField,
+  Tooltip,
+  Typography,
+  styled,
 } from "@mui/material";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { ListSearchCard, ListSearchSkeleton } from "../../components/ListSearchCard";
@@ -101,18 +115,22 @@ const ProfileSkeleton: FC = () => (
   </ListItem>
 );
 
-const View : FC = () => {
+const View: FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams({ query: "", type: "Vehicle" });
 
   const { profile } = useAuthProvider();
   const [, { vehicles }] = useFollowingVehiclesLookup(profile?.uuid || "");
   const [, lists] = useProfileListsLookup(profile?.uuid || "");
-  const { register, handleSubmit, watch } = useForm<{ query: string }>({ defaultValues: { query: searchParams.get("query") || "" } });
+  const { register, handleSubmit, watch } = useForm<{ query: string }>({
+    defaultValues: { query: searchParams.get("query") || "" },
+  });
 
-  const [searchType, setSearchType] = useState<SearchType>(["Vehicle", "List", "Profile"].includes(searchParams.get("type") || "")
-    ? (searchParams.get("type") as SearchType)
-    : "Vehicle");
+  const [searchType, setSearchType] = useState<SearchType>(
+    ["Vehicle", "List", "Profile"].includes(searchParams.get("type") || "")
+      ? (searchParams.get("type") as SearchType)
+      : "Vehicle"
+  );
   const [plateDecoderOpen, setPlateDecoderOpen] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
   const [perPage] = useState<number>(30);
@@ -168,7 +186,7 @@ const View : FC = () => {
 
   const handlePageChange = (page: number) => {
     setPage(page);
-    handlePaginationChange(page, resultCount - ((page - 1) * perPage));
+    handlePaginationChange(page, resultCount - (page - 1) * perPage);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -212,12 +230,33 @@ const View : FC = () => {
               <StyledCard elevation={3} sx={{ pt: 1 }}>
                 <Stack direction="column" spacing={2}>
                   <Tabs value={searchType} variant="fullWidth" onChange={searchChange} centered>
-                    <StyledTab value="Vehicle" label="Vehicles" icon={<DirectionsCar />} iconPosition="start" />
-                    <StyledTab value="Profile" label="Profiles" icon={<PersonSearch />} iconPosition="start" />
+                    <StyledTab
+                      value="Vehicle"
+                      label="Vehicles"
+                      icon={<DirectionsCar />}
+                      iconPosition="start"
+                    />
+                    <StyledTab
+                      value="Profile"
+                      label="Profiles"
+                      icon={<PersonSearch />}
+                      iconPosition="start"
+                    />
                     <StyledTab value="List" label="Lists" icon={<List />} iconPosition="start" />
                   </Tabs>
-                  <Stack component="form" direction="row" spacing={1} alignItems="center" onSubmit={handleSubmit(handleSearch)}>
-                    <TextField {...register("query")} placeholder={`Search by ${placeholder}`} size="small" fullWidth />
+                  <Stack
+                    component="form"
+                    direction="row"
+                    spacing={1}
+                    alignItems="center"
+                    onSubmit={handleSubmit(handleSearch)}
+                  >
+                    <TextField
+                      {...register("query")}
+                      placeholder={`Search by ${placeholder}`}
+                      size="small"
+                      fullWidth
+                    />
                     {searchType === "Vehicle" && (
                       <Tooltip title="Advanced Search" placement="right" arrow>
                         <IconButton onClick={() => setPlateDecoderOpen(true)}>
@@ -236,9 +275,7 @@ const View : FC = () => {
             <Divider sx={{ my: 3 }} textAlign="center">
               <Typography variant="h5">
                 {Math.ceil(resultCount / 100) * 100}
-                {(resultCount > 0 && results?.hasMore) && "+"}
-                {" "}
-                Results
+                {resultCount > 0 && results?.hasMore && "+"} Results
               </Typography>
             </Divider>
 
@@ -246,7 +283,11 @@ const View : FC = () => {
               <StyledPanel value="Vehicle">
                 <VehicleTable
                   status={tableStatus}
-                  vehicles={status !== LookupStatus.Loading && results?.type === "Vehicle" && results?.data ? results.data as Vehicle[] : []}
+                  vehicles={
+                    status !== LookupStatus.Loading && results?.type === "Vehicle" && results?.data
+                      ? (results.data as Vehicle[])
+                      : []
+                  }
                   totalCount={results?.hasMore ? -1 : resultCount}
                   rowPerPageOptions={[5, 10, 25]}
                   rowsPerPage={25}
@@ -256,13 +297,18 @@ const View : FC = () => {
               </StyledPanel>
               <StyledPanel value="Profile">
                 <List>
-                  {(status === LookupStatus.Loading) && (<Repeater count={8} Component={ProfileSkeleton} />)}
-                  {(status === LookupStatus.Success && paginatedResults.length === 0) && (
+                  {status === LookupStatus.Loading && (
+                    <Repeater count={8} Component={ProfileSkeleton} />
+                  )}
+                  {status === LookupStatus.Success && paginatedResults.length === 0 && (
                     <NoSearchResults />
                   )}
-                  {(status !== LookupStatus.Loading && paginatedResults.length > 0 && results?.type === "Profile") && (
+                  {status !== LookupStatus.Loading &&
+                    paginatedResults.length > 0 &&
+                    results?.type === "Profile" &&
                     paginatedResults.map((result) => {
-                      const { uuid, username, avatar, display_name } = result as ProfileSearchResult;
+                      const { uuid, username, avatar, display_name } =
+                        result as ProfileSearchResult;
 
                       return (
                         <ListItem key={uuid} component={StyledLink} to={`/profile/${uuid}`} divider>
@@ -270,13 +316,18 @@ const View : FC = () => {
                             <ProfileAvatar username={username} avatar={avatar} />
                           </ListItemAvatar>
                           <ListItemText
-                            primary={display_name && <Typography variant="body1" fontWeight={600}>{display_name}</Typography>}
+                            primary={
+                              display_name && (
+                                <Typography variant="body1" fontWeight={600}>
+                                  {display_name}
+                                </Typography>
+                              )
+                            }
                             secondary={`@${username}`}
                           />
                         </ListItem>
                       );
-                    })
-                  )}
+                    })}
                 </List>
                 <StyledPagination
                   count={Math.ceil(resultCount / perPage) || 1}
@@ -287,13 +338,18 @@ const View : FC = () => {
                 />
               </StyledPanel>
               <StyledPanel value="List">
-                {(status === LookupStatus.Loading) && (<Repeater count={5} Component={ListSearchSkeleton} />)}
-                {(status === LookupStatus.Success && paginatedResults.length === 0) && (
+                {status === LookupStatus.Loading && (
+                  <Repeater count={5} Component={ListSearchSkeleton} />
+                )}
+                {status === LookupStatus.Success && paginatedResults.length === 0 && (
                   <NoSearchResults />
                 )}
-                {(status !== LookupStatus.Loading && paginatedResults.length > 0 && results?.type === "List") && (
-                  paginatedResults.map((result) => (<ListSearchCard key={(result as List).uuid} list={result as List} />))
-                )}
+                {status !== LookupStatus.Loading &&
+                  paginatedResults.length > 0 &&
+                  results?.type === "List" &&
+                  paginatedResults.map((result) => (
+                    <ListSearchCard key={(result as List).uuid} list={result as List} />
+                  ))}
                 <StyledPagination
                   count={Math.ceil(resultCount / perPage) || 1}
                   page={page}

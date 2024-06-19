@@ -1,17 +1,22 @@
-import React, { FC } from 'react';
+import React, { FC } from "react";
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Card, CardContent, CardHeader,
-  Chip, ListItem, ListItemText,
-  Stack, Typography,
+  Card,
+  CardContent,
+  CardHeader,
+  Chip,
+  ListItem,
+  ListItemText,
+  Stack,
+  Typography,
   styled,
-} from '@mui/material';
-import { ExpandMore } from '@mui/icons-material';
-import TransitionGroup from '../TransitionGroup';
-import { prettySubstring } from '../../utils/text';
-import { StyledLink } from '../StyledLink';
+} from "@mui/material";
+import { ExpandMore } from "@mui/icons-material";
+import TransitionGroup from "../TransitionGroup";
+import { prettySubstring } from "../../utils/text";
+import { StyledLink } from "../StyledLink";
 
 type Props = {
   suggestions: ProfileLists;
@@ -43,14 +48,14 @@ const SuggestionItem: FC<List> = (list: List) => {
   return (
     <ListItem key={uuid} divider>
       <ListItemText
-        primary={(
+        primary={
           <StyledLink to={`/list/${uuid}`}>
             <Typography variant="body1" fontWeight={600}>
               {prettySubstring(name, 30)}
             </Typography>
           </StyledLink>
-        )}
-        secondary={(
+        }
+        secondary={
           <>
             <span>By </span>
             <Typography component="span" variant="body2" fontWeight={600}>
@@ -61,12 +66,10 @@ const SuggestionItem: FC<List> = (list: List) => {
               <Chip label={`${follower_count} follower${follower_count !== 1 ? "s" : ""}`} />
             </Stack>
           </>
-        )}
+        }
         secondaryTypographyProps={{ component: "div" }}
       />
-      <StyledLink to={`/list/${uuid}`}>
-        View
-      </StyledLink>
+      <StyledLink to={`/list/${uuid}`}>View</StyledLink>
     </ListItem>
   );
 };
@@ -80,10 +83,7 @@ const ListSuggestion: FC<Props> = ({ suggestions, limit }: Props) => {
 
   return (
     <StyledCard raised>
-      <StyledCardHeader
-        title="List Suggestions"
-        titleTypographyProps={{ variant: 'h6' }}
-      />
+      <StyledCardHeader title="List Suggestions" titleTypographyProps={{ variant: "h6" }} />
       <StyledCardContent>
         <Accordion>
           <AccordionSummary expandIcon={<ExpandMore />}>
@@ -97,9 +97,11 @@ const ListSuggestion: FC<Props> = ({ suggestions, limit }: Props) => {
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            {(owned?.length) ? (
+            {owned?.length ? (
               <TransitionGroup
-                items={owned.slice(0, limit).map((suggestion: List) => ({ suggestion, key: suggestion.uuid }))}
+                items={owned
+                  .slice(0, limit)
+                  .map((suggestion: List) => ({ suggestion, key: suggestion.uuid }))}
                 render={({ suggestion }) => <SuggestionItem {...suggestion} />}
               />
             ) : (
@@ -121,9 +123,11 @@ const ListSuggestion: FC<Props> = ({ suggestions, limit }: Props) => {
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            {(following?.length) ? (
+            {following?.length ? (
               <TransitionGroup
-                items={following.slice(0, limit).map((suggestion: List) => ({ suggestion, key: suggestion.uuid }))}
+                items={following
+                  .slice(0, limit)
+                  .map((suggestion: List) => ({ suggestion, key: suggestion.uuid }))}
                 render={({ suggestion }) => <SuggestionItem {...suggestion} />}
               />
             ) : (

@@ -7,8 +7,8 @@ import { isValidEventDate } from "./date";
  * @param {FeedPost[]} posts
  * @returns {[date: string] : FeedPost[]} Sorted posts mapped into the YYYY-MM-DD date string
  */
-export const mapPostsToDate = (posts: FeedPost[]): { [date: string] : FeedPost[] } => {
-  const results: { [date: string] : FeedPost[] } = {};
+export const mapPostsToDate = (posts: FeedPost[]): { [date: string]: FeedPost[] } => {
+  const results: { [date: string]: FeedPost[] } = {};
 
   [...posts].forEach((post: FeedPost) => {
     const date = new Date(post.post_date).toISOString().split("T")[0];
@@ -19,7 +19,7 @@ export const mapPostsToDate = (posts: FeedPost[]): { [date: string] : FeedPost[]
   });
 
   Object.keys(results).forEach((date: string) => {
-    results[date].sort((a, b) => (new Date(b.post_date)).getTime() - (new Date(a.post_date)).getTime());
+    results[date].sort((a, b) => new Date(b.post_date).getTime() - new Date(a.post_date).getTime());
   });
 
   return results;

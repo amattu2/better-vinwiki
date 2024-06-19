@@ -22,19 +22,20 @@ const StyledContainer = styled(Box)(({ theme }) => ({
 }));
 
 const FormContainer = styled(Stack)(({ theme }) => ({
-  maxWidth: '470px',
-  maxHeight: '100vh',
-  margin: '0 auto',
-  background: theme.palette.mode === 'dark' ? theme.palette.modal.background : theme.palette.background.paper,
+  maxWidth: "470px",
+  maxHeight: "100vh",
+  margin: "0 auto",
+  background:
+    theme.palette.mode === "dark" ? theme.palette.modal.background : theme.palette.background.paper,
   borderRadius: "0 0 6px 6px",
   padding: "98px 35px",
-  [theme.breakpoints.down('md')]: {
+  [theme.breakpoints.down("md")]: {
     paddingTop: "50px",
   },
-  [theme.breakpoints.down('sm')]: {
-    height: '100%',
-    width: '100%',
-    maxWidth: '100%',
+  [theme.breakpoints.down("sm")]: {
+    height: "100%",
+    width: "100%",
+    maxWidth: "100%",
     borderRadius: "0",
     padding: "25px",
   },
@@ -89,12 +90,14 @@ const StyledError = styled(Typography)(({ theme }) => ({
   textAlign: "right",
 }));
 
-const StyledForgotDetails = styled(Typography)<{ component: ElementType } & LinkProps>(({ theme }) => ({
-  fontWeight: 500,
-  color: theme.palette.primary.main,
-  marginLeft: theme.spacing(0.5),
-  textDecoration: "none",
-}));
+const StyledForgotDetails = styled(Typography)<{ component: ElementType } & LinkProps>(
+  ({ theme }) => ({
+    fontWeight: 500,
+    color: theme.palette.primary.main,
+    marginLeft: theme.spacing(0.5),
+    textDecoration: "none",
+  })
+);
 
 const StyledCopyright = styled(Typography)({
   position: "absolute",
@@ -126,7 +129,7 @@ const ForgotView = () => {
       body: JSON.stringify({ email }),
     }).catch(() => null);
 
-    const { status, mail_sent, message } = await response?.json() || {};
+    const { status, mail_sent, message } = (await response?.json()) || {};
     if (status === STATUS_OK && !!mail_sent) {
       navigate("/login", { state: { message: "Password reset email sent" } });
     } else {
@@ -142,12 +145,8 @@ const ForgotView = () => {
       {loading && <Loader />}
       <FormContainer alignItems="center" justifyContent="center">
         <StyledHeaderBox>
-          <StyledHeader variant="h3">
-            {CONFIG.name}
-          </StyledHeader>
-          <StyledSubtitle variant="subtitle1">
-            {CONFIG.slogan}
-          </StyledSubtitle>
+          <StyledHeader variant="h3">{CONFIG.name}</StyledHeader>
+          <StyledSubtitle variant="subtitle1">{CONFIG.slogan}</StyledSubtitle>
         </StyledHeaderBox>
         <StyledFormBox component="form" onSubmit={handleSubmit(onSubmit)}>
           <StyledTextField
@@ -163,7 +162,7 @@ const ForgotView = () => {
             fullWidth
             autoFocus
           />
-          {error && (<StyledError>{error}</StyledError>)}
+          {error && <StyledError>{error}</StyledError>}
           <StyledButton type="submit" fullWidth variant="contained">
             Reset Password
           </StyledButton>
@@ -178,11 +177,11 @@ const ForgotView = () => {
         </StyledFooterBox>
       </FormContainer>
       <StyledCopyright>
-        &copy;
-        {" "}
-        {new Date().getFullYear()}
+        &copy; {new Date().getFullYear()}
         {" Alec M. "}
-        <Link to="https://amattu.com" target="_blank" rel="noopener noreferrer">amattu.com</Link>
+        <Link to="https://amattu.com" target="_blank" rel="noopener noreferrer">
+          amattu.com
+        </Link>
       </StyledCopyright>
     </StyledContainer>
   );

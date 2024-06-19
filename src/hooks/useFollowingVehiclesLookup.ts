@@ -19,12 +19,17 @@ export enum LookupStatus {
  * @param refetch if true, will refetch the status
  * @returns [status, { vehicles }]
  */
-const useFollowingVehiclesLookup = (uuid: Profile["uuid"], refetch = false): [LookupStatus, { vehicles: Vehicle[] | null }] => {
+const useFollowingVehiclesLookup = (
+  uuid: Profile["uuid"],
+  refetch = false
+): [LookupStatus, { vehicles: Vehicle[] | null }] => {
   const { token } = useAuthProvider();
   const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.PROFILE_VEHICLES, {});
   const cachedValue: Vehicle[] | null = cache[uuid] || null;
 
-  const [status, setStatus] = useState<LookupStatus>(cachedValue ? LookupStatus.Success : LookupStatus.Loading);
+  const [status, setStatus] = useState<LookupStatus>(
+    cachedValue ? LookupStatus.Success : LookupStatus.Loading
+  );
   const [vehicles, setVehicles] = useState<Vehicle[] | null>(cachedValue);
 
   useEffect(() => {
@@ -47,7 +52,7 @@ const useFollowingVehiclesLookup = (uuid: Profile["uuid"], refetch = false): [Lo
         return null;
       });
 
-      const { status, vehicles_following } = await response?.json() || {};
+      const { status, vehicles_following } = (await response?.json()) || {};
       if (status === STATUS_OK) {
         setCache((prev) => ({ ...prev, [uuid]: vehicles_following }));
         setStatus(LookupStatus.Success);

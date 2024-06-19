@@ -12,11 +12,13 @@ export enum LookupStatus {
 
 export type SearchType = "Vehicle" | "List" | "Profile";
 
-export type SearchResult<T extends SearchType> =
-  T extends "Vehicle" ? Vehicle[] :
-    T extends "List" ? List[] :
-      T extends "Profile" ? Profile[] :
-        never;
+export type SearchResult<T extends SearchType> = T extends "Vehicle"
+  ? Vehicle[]
+  : T extends "List"
+    ? List[]
+    : T extends "Profile"
+      ? Profile[]
+      : never;
 
 export type SearchResponse<T extends SearchType> = {
   type: T;
@@ -25,7 +27,12 @@ export type SearchResponse<T extends SearchType> = {
   data: SearchResult<T> | null;
 } | null;
 
-const vehicleSearch = async (query: string, limit: number, token: string, signal: AbortSignal): Promise<SearchResponse<"Vehicle">> => {
+const vehicleSearch = async (
+  query: string,
+  limit: number,
+  token: string,
+  signal: AbortSignal
+): Promise<SearchResponse<"Vehicle">> => {
   // NOTE: We're offsetting by 10 because of some strange bug in the API
   // Where we sometimes get less than `limit` results even though there are more
   const response = await fetch(`${ENDPOINTS.vehicle_search}0/${limit + 10}`, {
@@ -37,7 +44,7 @@ const vehicleSearch = async (query: string, limit: number, token: string, signal
     signal,
   }).catch(() => null);
 
-  const { status, results } = await response?.json() || {};
+  const { status, results } = (await response?.json()) || {};
   const { vehicles } = results || {};
   if (status === STATUS_OK && vehicles?.length) {
     return {
@@ -61,7 +68,11 @@ const vehicleSearch = async (query: string, limit: number, token: string, signal
   return null;
 };
 
-const listSearch = async (query: string, token: string, signal: AbortSignal): Promise<SearchResponse<"List">> => {
+const listSearch = async (
+  query: string,
+  token: string,
+  signal: AbortSignal
+): Promise<SearchResponse<"List">> => {
   const response = await fetch(ENDPOINTS.list_search, {
     method: "POST",
     headers: {
@@ -71,7 +82,7 @@ const listSearch = async (query: string, token: string, signal: AbortSignal): Pr
     signal,
   }).catch(() => null);
 
-  const { status, results } = await response?.json() || {};
+  const { status, results } = (await response?.json()) || {};
   const { lists } = results || {};
   if (status !== STATUS_OK || !lists?.length) {
     return null;
@@ -85,7 +96,12 @@ const listSearch = async (query: string, token: string, signal: AbortSignal): Pr
   };
 };
 
-const profileSearch = async (query: string, limit: number, token: string, signal: AbortSignal): Promise<SearchResponse<"Profile">> => {
+const profileSearch = async (
+  query: string,
+  limit: number,
+  token: string,
+  signal: AbortSignal
+): Promise<SearchResponse<"Profile">> => {
   const response = await fetch(`${ENDPOINTS.profile_search}0/${limit + 1}`, {
     method: "POST",
     headers: {
@@ -95,7 +111,7 @@ const profileSearch = async (query: string, limit: number, token: string, signal
     signal,
   }).catch(() => null);
 
-  const { status, results } = await response?.json() || {};
+  const { status, results } = (await response?.json()) || {};
   const { people } = results || {};
   if (status !== STATUS_OK || !people?.length) {
     return null;
@@ -109,7 +125,13 @@ const profileSearch = async (query: string, limit: number, token: string, signal
   };
 };
 
-const mapTypeToSearch = async (type: SearchType, query: string, limit: number, token: string, signal: AbortSignal): Promise<SearchResponse<SearchType>> => {
+const mapTypeToSearch = async (
+  type: SearchType,
+  query: string,
+  limit: number,
+  token: string,
+  signal: AbortSignal
+): Promise<SearchResponse<SearchType>> => {
   switch (type) {
     case "Vehicle":
       return vehicleSearch(query, limit, token, signal);
@@ -129,7 +151,10 @@ const mapTypeToSearch = async (type: SearchType, query: string, limit: number, t
  * @param [limit] the number of results to return if the endpoint supports limiting. Default 25
  * @returns [status, SearchResult<SearchType>, setQuery, getNext]
  */
-export const useSearch = (type: SearchType, limit = 25): [
+export const useSearch = (
+  type: SearchType,
+  limit = 25
+): [
   LookupStatus,
   SearchResponse<SearchType>,
   React.Dispatch<React.SetStateAction<string>>,
@@ -145,7 +170,7 @@ export const useSearch = (type: SearchType, limit = 25): [
   // TODO: cache results for type, query, limit for faster lookup
   // otherwise it will refetch data each time we switch tabs
 
-  const getNext = async (count: number = 250): Promise<boolean> => {
+  const getNext = async (count = 250): Promise<boolean> => {
     if (!query || !token || !data?.hasMore || !data?.count) {
       return false;
     }
@@ -156,7 +181,13 @@ export const useSearch = (type: SearchType, limit = 25): [
     setStatus(LookupStatus.LoadingMore);
     loadingNext.current = true;
 
-    const d = await mapTypeToSearch(type, query, data.count + count, token, new AbortController().signal);
+    const d = await mapTypeToSearch(
+      type,
+      query,
+      data.count + count,
+      token,
+      new AbortController().signal
+    );
     if (!d) {
       setStatus(LookupStatus.Error);
       loadingNext.current = false;

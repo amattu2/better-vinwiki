@@ -1,10 +1,19 @@
 import React, { FC, useEffect, useState } from "react";
 import { LoadingButton } from "@mui/lab";
 import {
-  Button, Dialog, DialogActions,
-  DialogContent, DialogTitle, List, ListItem,
-  ListItemAvatar, ListItemText, MenuItem,
-  TextField, Typography, styled,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  MenuItem,
+  TextField,
+  Typography,
+  styled,
 } from "@mui/material";
 import { Form, useForm } from "react-hook-form";
 import { useAuthProvider } from "../../Providers/AuthProvider";
@@ -36,7 +45,10 @@ const StyledTextField = styled(TextField)({
   marginTop: "18px !important",
 });
 
-const ResultItem : FC<{ vehicle: PlateDecodeResponse, onCancel: () => void }> = ({ vehicle, onCancel }) => {
+const ResultItem: FC<{ vehicle: PlateDecodeResponse; onCancel: () => void }> = ({
+  vehicle,
+  onCancel,
+}) => {
   const { description, vin } = vehicle;
 
   return (
@@ -46,13 +58,13 @@ const ResultItem : FC<{ vehicle: PlateDecodeResponse, onCancel: () => void }> = 
           <ProfileAvatar username={description} avatar={DEFAULT_VEHICLE_SRC} />
         </ListItemAvatar>
         <ListItemText
-          primary={(
+          primary={
             <StyledLink to={`/vehicle/${vin}`}>
               <Typography variant="body1" fontWeight={600}>
                 {formatVehicleName(vehicle)}
               </Typography>
             </StyledLink>
-          )}
+          }
           secondary={vin}
         />
         <Button onClick={onCancel} color="error">
@@ -72,7 +84,7 @@ const plateLookup = async (token: string, data: Fields): Promise<PlateDecodeResp
     body: JSON.stringify(data),
   }).catch(() => null);
 
-  const { status, plate_lookup } = await response?.json() || {};
+  const { status, plate_lookup } = (await response?.json()) || {};
   return status === STATUS_OK && plate_lookup ? plate_lookup : null;
 };
 
@@ -114,9 +126,7 @@ const DecoderDialog: FC<Props> = ({ open, onConfirm, onCancel }: Props) => {
 
   return (
     <StyledDialog open={open} onClose={onCancel}>
-      <DialogTitle>
-        License Plate Lookup
-      </DialogTitle>
+      <DialogTitle>License Plate Lookup</DialogTitle>
       <DialogContent dividers>
         <Form control={control}>
           <StyledTextField
@@ -140,7 +150,9 @@ const DecoderDialog: FC<Props> = ({ open, onConfirm, onCancel }: Props) => {
           >
             <MenuItem value="">Select a country</MenuItem>
             {Countries.map(({ code, name }) => (
-              <MenuItem key={`${code}-${name}`} value={code}>{name}</MenuItem>
+              <MenuItem key={`${code}-${name}`} value={code}>
+                {name}
+              </MenuItem>
             ))}
           </StyledTextField>
           <StyledTextField
@@ -157,7 +169,9 @@ const DecoderDialog: FC<Props> = ({ open, onConfirm, onCancel }: Props) => {
           >
             <MenuItem value="">Select a territory</MenuItem>
             {Territories[watch("country")]?.map(({ code, name }) => (
-              <MenuItem key={`${code}-${name}`} value={code}>{name}</MenuItem>
+              <MenuItem key={`${code}-${name}`} value={code}>
+                {name}
+              </MenuItem>
             ))}
           </StyledTextField>
         </Form>
@@ -173,7 +187,9 @@ const DecoderDialog: FC<Props> = ({ open, onConfirm, onCancel }: Props) => {
         <LoadingButton onClick={onConfirmWrapper} loading={loading}>
           {selectedVehicle ? `Select ${formatVehicleName(selectedVehicle)}` : "Lookup"}
         </LoadingButton>
-        <Button onClick={onCancel} autoFocus>Cancel</Button>
+        <Button onClick={onCancel} autoFocus>
+          Cancel
+        </Button>
       </DialogActions>
     </StyledDialog>
   );

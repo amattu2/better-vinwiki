@@ -9,16 +9,18 @@ dayjs.extend(utc);
 dayjs.extend(advancedFormat);
 dayjs.extend(customParseFormat);
 
-export const formatDate = (date: Date) => date.toLocaleDateString('en-US', {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-});
+export const formatDate = (date: Date) =>
+  date.toLocaleDateString("en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
-export const formatTime = (date: Date) => date.toLocaleTimeString('en-US', {
-  hour: 'numeric',
-  minute: 'numeric',
-});
+export const formatTime = (date: Date) =>
+  date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+  });
 
 /**
  * Parse a Date object into a formatted date and time string
@@ -31,7 +33,7 @@ export const formatDateTime = (date: Date, includePrefix = false) => {
   const now = new Date();
   const diff = now.getTime() - date.getTime();
 
-  if (diff < (12 * 60 * 60 * 1000)) {
+  if (diff < 12 * 60 * 60 * 1000) {
     return `${includePrefix ? "today at " : ""}${formatTime(date)}`;
   }
 
@@ -44,10 +46,11 @@ export const formatDateTime = (date: Date, includePrefix = false) => {
  * @param date JavaScript Date object
  * @returns formatted MM/YY string
  */
-export const formatDateMMYY = (date: Date) => date.toLocaleDateString('en-US', {
-  month: '2-digit',
-  year: '2-digit',
-});
+export const formatDateMMYY = (date: Date) =>
+  date.toLocaleDateString("en-US", {
+    month: "2-digit",
+    year: "2-digit",
+  });
 
 /**
  * Parse a NHTSA recall date DD/MM/YYYY into MMMM Do, YYYY
@@ -91,7 +94,10 @@ export const parseNHTSADate = (date: string) => dayjs(date, "DD/MM/YYYY", true).
  * @throws {Error} If any of the constraints are violated
  * @returns {boolean} true if the `event_date` is valid
  */
-export const isValidEventDate = (event: FeedPost["event_date"], post: FeedPost["post_date"]): boolean => {
+export const isValidEventDate = (
+  event: FeedPost["event_date"],
+  post: FeedPost["post_date"]
+): boolean => {
   // Missing or invalid event date. This is not valid.
   const eventDate = dayjs(new Date(event));
   if (!event || !eventDate.isValid()) {

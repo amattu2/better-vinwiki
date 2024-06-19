@@ -15,7 +15,7 @@ type ListResponse = List & {
     end: boolean;
     last_id: string;
     vehicles: Vehicle[];
-  }
+  };
 };
 
 type ProfileLists = {
