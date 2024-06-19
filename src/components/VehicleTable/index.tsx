@@ -1,10 +1,25 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import {
-  Paper, Skeleton, Table, TableBody,
-  TableCell, TableContainer, TableHead,
-  TablePagination, TableRow, TableSortLabel,
-  Box, Toolbar, styled, alpha, Typography, Checkbox,
-  Theme, Tooltip, IconButton, Stack,
+  Paper,
+  Skeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TableSortLabel,
+  Box,
+  Toolbar,
+  styled,
+  alpha,
+  Typography,
+  Checkbox,
+  Theme,
+  Tooltip,
+  IconButton,
+  Stack,
 } from "@mui/material";
 import { Delete, SaveOutlined } from "@mui/icons-material";
 import numeral from "numeral";
@@ -79,27 +94,41 @@ const StyledImageBox = styled(Box)({
   overflow: "hidden",
 });
 
-const StyledToolbar = styled(Toolbar, { shouldForwardProp: (p) => p !== "showCheckboxes" && p !== "hasSelected" })(({ theme, showCheckboxes, hasSelected }: { theme?: Theme, showCheckboxes: boolean, hasSelected: boolean }) => ({
-  display: !showCheckboxes ? "none" : "flex",
-  paddingRight: 1,
-  backgroundColor: hasSelected && theme ? alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity) : "",
-}));
+const StyledToolbar = styled(Toolbar, {
+  shouldForwardProp: (p) => p !== "showCheckboxes" && p !== "hasSelected",
+})(
+  ({
+    theme,
+    showCheckboxes,
+    hasSelected,
+  }: {
+    theme?: Theme;
+    showCheckboxes: boolean;
+    hasSelected: boolean;
+  }) => ({
+    display: !showCheckboxes ? "none" : "flex",
+    paddingRight: 1,
+    backgroundColor:
+      hasSelected && theme
+        ? alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
+        : "",
+  })
+);
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   borderBottom: `1px solid ${theme.palette.divider}`,
 }));
 
-const ToolbarTitle: FC<{ numSelected: number }> = ({ numSelected }) => (
+const ToolbarTitle: FC<{ numSelected: number }> = ({ numSelected }) =>
   numSelected > 0 ? (
-    <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
+    <Typography sx={{ flex: "1 1 100%" }} color="inherit" variant="subtitle1" component="div">
       {`${numeral(numSelected).format("0,0")} selected`}
     </Typography>
   ) : (
-    <Typography sx={{ flex: '1 1 100%' }} variant="h6" component="div">
+    <Typography sx={{ flex: "1 1 100%" }} variant="h6" component="div">
       Vehicles
     </Typography>
-  )
-);
+  );
 
 const TableCellSkeleton: FC = () => (
   <StyledTableCell>
@@ -107,15 +136,31 @@ const TableCellSkeleton: FC = () => (
   </StyledTableCell>
 );
 
-const ResultSkeleton: FC<{ hasCheckbox?: boolean }> = ({ hasCheckbox }: { hasCheckbox?: boolean }) => (
+const ResultSkeleton: FC<{ hasCheckbox?: boolean }> = ({
+  hasCheckbox,
+}: {
+  hasCheckbox?: boolean;
+}) => (
   <TableRow>
     {hasCheckbox && (
       <StyledTableCell padding="checkbox">
-        <Skeleton variant="rectangular" width={18} height={18} animation="wave" sx={{ borderRadius: "2px", margin: "0 auto" }} />
+        <Skeleton
+          variant="rectangular"
+          width={18}
+          height={18}
+          animation="wave"
+          sx={{ borderRadius: "2px", margin: "0 auto" }}
+        />
       </StyledTableCell>
     )}
     <StyledTableCell>
-      <Skeleton variant="rectangular" width={75} height={75} animation="wave" sx={{ borderRadius: "8px" }} />
+      <Skeleton
+        variant="rectangular"
+        width={75}
+        height={75}
+        animation="wave"
+        sx={{ borderRadius: "8px" }}
+      />
     </StyledTableCell>
     <Repeater count={6} Component={TableCellSkeleton} />
   </TableRow>
@@ -164,8 +209,15 @@ const columns: Column[] = [
  * @returns {JSX.Element}
  */
 export const VehicleTable: FC<Props> = ({
-  status, vehicles, totalCount, EmptyComponent, rowPerPageOptions = [5, 10, 20, 50, 100], rowsPerPage = 20,
-  onPageChange, onDelete, onExport,
+  status,
+  vehicles,
+  totalCount,
+  EmptyComponent,
+  rowPerPageOptions = [5, 10, 20, 50, 100],
+  rowsPerPage = 20,
+  onPageChange,
+  onDelete,
+  onExport,
 }: Props) => {
   const [order, setOrder] = useState<"asc" | "desc">("desc");
   const [orderBy, setOrderBy] = useState<Column>(columns[1]);
@@ -186,7 +238,7 @@ export const VehicleTable: FC<Props> = ({
       sorted.reverse();
     }
 
-    return sorted.slice(page * perPage, (page * perPage) + perPage);
+    return sorted.slice(page * perPage, page * perPage + perPage);
   }, [vehicles, perPage, page, orderBy, order]);
 
   const count: number = useMemo(() => {
@@ -250,7 +302,7 @@ export const VehicleTable: FC<Props> = ({
   useEffect(() => {
     if (lastPageRef.current !== page) {
       setSelected([]);
-      onPageChange?.(page, vehicles.length - ((page + 1) * perPage));
+      onPageChange?.(page, vehicles.length - (page + 1) * perPage);
       lastPageRef.current = page;
     }
   }, [page]);
@@ -259,7 +311,11 @@ export const VehicleTable: FC<Props> = ({
     <Paper elevation={0}>
       <StyledToolbar hasSelected={selected.length > 0} showCheckboxes={showCheckboxes}>
         <ToolbarTitle numSelected={selected.length} />
-        <Stack direction="row" alignItems="center" sx={{ visibility: selected.length <= 0 ? "hidden" : "visible" }}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{ visibility: selected.length <= 0 ? "hidden" : "visible" }}
+        >
           <Tooltip title="Export to CSV" sx={{ display: !onExport ? "none" : "initial" }} arrow>
             <IconButton onClick={onExportWrapper}>
               <SaveOutlined />
@@ -305,35 +361,50 @@ export const VehicleTable: FC<Props> = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {(status !== "loading" && vehicles.length === 0) && (
+            {status !== "loading" && vehicles.length === 0 && (
               <TableRow>
-                <StyledTableCell colSpan={columns.length + 2 + (showCheckboxes ? 1 : 0)} sx={{ textAlign: "center" }}>
+                <StyledTableCell
+                  colSpan={columns.length + 2 + (showCheckboxes ? 1 : 0)}
+                  sx={{ textAlign: "center" }}
+                >
                   {EmptyComponent ? <EmptyComponent /> : "No results found"}
                 </StyledTableCell>
               </TableRow>
             )}
-            {(status !== "loading" && vehicles.length > 0) && dataset.map((d: T) => (
-              <TableRow key={`${d["vin"]}`} selected={selected.includes(d.vin)} tabIndex={-1} hover>
-                {showCheckboxes && (
-                  <StyledTableCell padding="checkbox">
-                    <Checkbox color="primary" checked={selected.includes(d.vin)} onClick={() => handleSelectClick(d.vin)} />
+            {status !== "loading" &&
+              vehicles.length > 0 &&
+              dataset.map((d: T) => (
+                <TableRow
+                  key={`${d["vin"]}`}
+                  selected={selected.includes(d.vin)}
+                  tabIndex={-1}
+                  hover
+                >
+                  {showCheckboxes && (
+                    <StyledTableCell padding="checkbox">
+                      <Checkbox
+                        color="primary"
+                        checked={selected.includes(d.vin)}
+                        onClick={() => handleSelectClick(d.vin)}
+                      />
+                    </StyledTableCell>
+                  )}
+                  {columns.map((col: Column) => (
+                    <StyledTableCell key={`${d["vin"]}_${col.label}`}>
+                      {col.value(d)}
+                    </StyledTableCell>
+                  ))}
+                  <StyledTableCell>
+                    <StyledLink to={`/vehicle/${d["vin"]}`}>View</StyledLink>
                   </StyledTableCell>
-                )}
-                {columns.map((col: Column) => (
-                  <StyledTableCell key={`${d["vin"]}_${col.label}`}>
-                    {col.value(d)}
-                  </StyledTableCell>
-                ))}
-                <StyledTableCell>
-                  <StyledLink to={`/vehicle/${d["vin"]}`}>
-                    View
-                  </StyledLink>
-                </StyledTableCell>
-              </TableRow>
-            ))}
+                </TableRow>
+              ))}
             {(status === "loading" || (status === "loading_more" && dataset.length < perPage)) && (
               // eslint-disable-next-line react/no-unstable-nested-components
-              <Repeater count={repeaterCount} Component={() => <ResultSkeleton hasCheckbox={showCheckboxes} />} />
+              <Repeater
+                count={repeaterCount}
+                Component={() => <ResultSkeleton hasCheckbox={showCheckboxes} />}
+              />
             )}
           </TableBody>
         </Table>
@@ -347,11 +418,12 @@ export const VehicleTable: FC<Props> = ({
         onPageChange={(e, newPage) => setPage(newPage)}
         onRowsPerPageChange={handleChangeRowsPerPage}
         nextIconButtonProps={{
-          disabled: !dataset
-            || count === 0
-            || (count !== -1 && count <= (page + 1) * perPage)
-            || (dataset.length < perPage && status === "loading_more")
-            || status === "loading",
+          disabled:
+            !dataset ||
+            count === 0 ||
+            (count !== -1 && count <= (page + 1) * perPage) ||
+            (dataset.length < perPage && status === "loading_more") ||
+            status === "loading",
         }}
         backIconButtonProps={{ disabled: page === 0 || status === "loading" }}
       />

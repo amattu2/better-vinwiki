@@ -20,7 +20,14 @@ export enum LookupStatus {
  * @param refetch whether to refetch the profile even if it's cached
  * @returns [{ status, Profile }, (profile: Partial<Profile>) => Promise<boolean>, (image: FileList) => Promise<boolean>]
  */
-const useProfileLookup = (uuid: Profile["uuid"], refetch = false): [{ status: LookupStatus, profile: Profile | null }, (profile: Partial<Profile>) => Promise<boolean>, (image: FileList) => Promise<boolean>] => {
+const useProfileLookup = (
+  uuid: Profile["uuid"],
+  refetch = false
+): [
+  { status: LookupStatus; profile: Profile | null },
+  (profile: Partial<Profile>) => Promise<boolean>,
+  (image: FileList) => Promise<boolean>,
+] => {
   const { token, profile: authProfile } = useAuthProvider();
   const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.PROFILE, {});
 
@@ -31,7 +38,9 @@ const useProfileLookup = (uuid: Profile["uuid"], refetch = false): [{ status: Lo
   // find a way to prevent the 2nd request while the 1st is still loading
 
   const cachedValue: Profile | null = cache[uuid] || null;
-  const [status, setStatus] = useState<LookupStatus>(cachedValue ? LookupStatus.Success : LookupStatus.Loading);
+  const [status, setStatus] = useState<LookupStatus>(
+    cachedValue ? LookupStatus.Success : LookupStatus.Loading
+  );
   const [profile, setProfile] = useState<Profile | null>(cachedValue);
 
   /**
@@ -58,7 +67,7 @@ const useProfileLookup = (uuid: Profile["uuid"], refetch = false): [{ status: Lo
       body: JSON.stringify(editedProfile),
     }).catch(() => null);
 
-    const { status } = await response?.json() || {};
+    const { status } = (await response?.json()) || {};
     if (status === STATUS_OK) {
       setProfile((prev) => ({ ...prev!, ...editedProfile }));
       return true;
@@ -94,7 +103,7 @@ const useProfileLookup = (uuid: Profile["uuid"], refetch = false): [{ status: Lo
       body: formData,
     }).catch(() => null);
 
-    const { status, image } = await response?.json() || {};
+    const { status, image } = (await response?.json()) || {};
     if (status === STATUS_OK && image?.uuid) {
       setProfile((prev) => ({
         ...prev!,
@@ -127,7 +136,7 @@ const useProfileLookup = (uuid: Profile["uuid"], refetch = false): [{ status: Lo
         return null;
       });
 
-      const { status, profile } = await response?.json() || {};
+      const { status, profile } = (await response?.json()) || {};
       if (status === STATUS_OK && !!profile?.username) {
         setStatus(LookupStatus.Success);
         setProfile(profile);

@@ -1,9 +1,19 @@
 import React, { FC, useState } from "react";
 import { Delete, MoreVert } from "@mui/icons-material";
 import {
-  Collapse, Divider, IconButton, ListItemIcon,
-  ListItemText, Menu, MenuItem, Skeleton, Stack,
-  Typography, styled, Box, Chip,
+  Collapse,
+  Divider,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Skeleton,
+  Stack,
+  Typography,
+  styled,
+  Box,
+  Chip,
 } from "@mui/material";
 import { ENDPOINTS } from "../../../config/Endpoints";
 import { useAuthProvider } from "../../../Providers/AuthProvider";
@@ -82,16 +92,29 @@ const PostComment: FC<Props> = ({ comment, isAuthor, divider, onDelete }: Props)
         <StyledStack direction="row" gap={2}>
           <ProfileAvatar username={username} avatar={avatar} />
           <Stack direction="column" gap={1}>
-            <Typography component={StyledLink} variant="body1" fontWeight={600} to={`/profile/${authorUuid}`}>
+            <Typography
+              component={StyledLink}
+              variant="body1"
+              fontWeight={600}
+              to={`/profile/${authorUuid}`}
+            >
               {`@${username}`}
-              {isAuthor && (<Chip label="Author" size="small" color="primary" variant="outlined" sx={{ marginLeft: "8px" }} />)}
+              {isAuthor && (
+                <Chip
+                  label="Author"
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                  sx={{ marginLeft: "8px" }}
+                />
+              )}
             </Typography>
             <GenericText content={text} />
             <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600}>
               {formatDateTime(new Date(comment.created))}
             </Typography>
           </Stack>
-          {(profile?.uuid === authorUuid) && (
+          {profile?.uuid === authorUuid && (
             <>
               <StyledMenuButton size="small" onClick={menuToggle}>
                 <MoreVert fontSize="small" />
@@ -108,7 +131,7 @@ const PostComment: FC<Props> = ({ comment, isAuthor, divider, onDelete }: Props)
           )}
         </StyledStack>
       </Collapse>
-      {(divider && !deleted) && <Divider />}
+      {divider && !deleted && <Divider />}
     </>
   );
 };

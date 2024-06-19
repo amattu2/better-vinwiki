@@ -1,5 +1,12 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
-import { Autocomplete, CircularProgress, Stack, TextField, Typography, debounce } from "@mui/material";
+import {
+  Autocomplete,
+  CircularProgress,
+  Stack,
+  TextField,
+  Typography,
+  debounce,
+} from "@mui/material";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
 import { buildPlaceholderVehicle, formatVehicleName, validateVIN } from "../../utils/vehicle";
@@ -10,7 +17,11 @@ type Props = {
   onChange: (e: React.SyntheticEvent, value: Vehicle | null, reason: string) => void;
 };
 
-const fetchVehicles = async (searchValue: string, token: string, signal: AbortSignal): Promise<Vehicle[]> => {
+const fetchVehicles = async (
+  searchValue: string,
+  token: string,
+  signal: AbortSignal
+): Promise<Vehicle[]> => {
   if (!searchValue || searchValue.length < 3) {
     return [];
   }
@@ -24,13 +35,17 @@ const fetchVehicles = async (searchValue: string, token: string, signal: AbortSi
     signal,
   }).catch(() => null);
 
-  const { status, results } = await response?.json() || {};
+  const { status, results } = (await response?.json()) || {};
   const { vehicles } = results || {};
 
   return status === STATUS_OK && vehicles?.length ? vehicles : [];
 };
 
-const fetchVehicle = async (vin: string, token: string, signal: AbortSignal): Promise<Vehicle | null> => {
+const fetchVehicle = async (
+  vin: string,
+  token: string,
+  signal: AbortSignal
+): Promise<Vehicle | null> => {
   const response = await fetch(ENDPOINTS.vehicle + vin, {
     method: "GET",
     headers: {
@@ -39,7 +54,7 @@ const fetchVehicle = async (vin: string, token: string, signal: AbortSignal): Pr
     signal,
   }).catch(() => null);
 
-  const { status, vehicle } = await response?.json() || {};
+  const { status, vehicle } = (await response?.json()) || {};
   if (status === STATUS_OK && vehicle?.vin) {
     return vehicle;
   }
@@ -150,9 +165,11 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
       options={mergedOptions}
-      groupBy={(option: Vehicle) => (
-        recentVehicles?.find((v) => v.vin === option.vin) ? "Recents & Following" : (option.make || "Unknown").toUpperCase()
-      )}
+      groupBy={(option: Vehicle) =>
+        recentVehicles?.find((v) => v.vin === option.vin)
+          ? "Recents & Following"
+          : (option.make || "Unknown").toUpperCase()
+      }
       renderInput={(params) => (
         <TextField
           {...params}
@@ -175,7 +192,9 @@ export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
         <li {...props} key={option.vin}>
           <Stack direction="column">
             <Typography variant="body2">{formatVehicleName(option)}</Typography>
-            <Typography variant="caption" color="textSecondary">{option.vin}</Typography>
+            <Typography variant="caption" color="textSecondary">
+              {option.vin}
+            </Typography>
           </Stack>
         </li>
       )}

@@ -11,9 +11,9 @@ export const downloadBlob = (content: string, filename: string, contentType: str
   const url = URL.createObjectURL(blob);
 
   // Create a link to download it
-  const pom = document.createElement('a');
+  const pom = document.createElement("a");
   pom.href = url;
-  pom.setAttribute('download', filename);
+  pom.setAttribute("download", filename);
   pom.click();
   pom.remove();
 };

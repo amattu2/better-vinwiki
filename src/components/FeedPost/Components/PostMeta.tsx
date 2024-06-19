@@ -12,11 +12,15 @@ const StyledPostDate = styled("span")({
   cursor: "help",
 });
 
-const PostTime: FC<{ showEventDate: boolean } & Pick<FeedPost, "post_date" | "event_date">> = ({ showEventDate, post_date, event_date }) => {
+const PostTime: FC<{ showEventDate: boolean } & Pick<FeedPost, "post_date" | "event_date">> = ({
+  showEventDate,
+  post_date,
+  event_date,
+}) => {
   const postDate = formatDateTime(new Date(post_date));
 
   if (!showEventDate) {
-    return (<span>{postDate}</span>);
+    return <span>{postDate}</span>;
   }
 
   return (
@@ -37,7 +41,13 @@ const PostMeta: FC<Props> = ({ post, ...typographProps }: Props) => {
   const showEvent = showEventDate(post);
 
   return (
-    <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600} {...typographProps}>
+    <Typography
+      variant="body2"
+      color="textSecondary"
+      fontSize={12}
+      fontWeight={600}
+      {...typographProps}
+    >
       <PostTime post_date={post_date} event_date={event_date} showEventDate={showEvent} />
       {locale && (
         <>
@@ -45,7 +55,7 @@ const PostMeta: FC<Props> = ({ post, ...typographProps }: Props) => {
           {locale}
         </>
       )}
-      {(client && !["web", "vinbot"].includes(client)) && (
+      {client && !["web", "vinbot"].includes(client) && (
         <>
           {" • "}
           {client}

@@ -1,21 +1,47 @@
 import React, { FC, useMemo, useRef, useState } from "react";
 import {
-  Edit, Facebook, InsertPhoto, Instagram, LinkOutlined,
-  MyLocationOutlined, NavigateNext, Twitter,
+  Edit,
+  Facebook,
+  InsertPhoto,
+  Instagram,
+  LinkOutlined,
+  MyLocationOutlined,
+  NavigateNext,
+  Twitter,
 } from "@mui/icons-material";
 import {
-  LoadingButton, TabContext, TabList, TabPanel,
-  Timeline, TimelineConnector, TimelineContent,
-  TimelineDot, TimelineItem, TimelineOppositeContent,
+  LoadingButton,
+  TabContext,
+  TabList,
+  TabPanel,
+  Timeline,
+  TimelineConnector,
+  TimelineContent,
+  TimelineDot,
+  TimelineItem,
+  TimelineOppositeContent,
   TimelineSeparator,
 } from "@mui/lab";
 import {
-  Box, Breadcrumbs, Button, Chip,
-  IconButton, Skeleton, Stack,
-  Tab, Tooltip, Typography, styled, useMediaQuery, useTheme,
+  Box,
+  Breadcrumbs,
+  Button,
+  Chip,
+  IconButton,
+  Skeleton,
+  Stack,
+  Tab,
+  Tooltip,
+  Typography,
+  styled,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { useAuthProvider } from "../../Providers/AuthProvider";
-import { ProviderStatus as FeedProviderStatus, useFeedProvider } from "../../Providers/FeedProvider";
+import {
+  ProviderStatus as FeedProviderStatus,
+  useFeedProvider,
+} from "../../Providers/FeedProvider";
 import EditProfileDialog from "../../components/EditProfileDialog";
 import EditProfilePictureDialog from "../../components/EditProfilePictureDialog";
 import FeedPost, { PostSkeleton } from "../../components/FeedPost";
@@ -32,7 +58,9 @@ import { ScrollToTop } from "../../components/ScrollToTop/ScrollButton";
 import VehicleTableDialog from "../../components/VehicleTableDialog";
 import useIsFollowingLookup, { LookupStatus } from "../../hooks/useIsFollowingLookup";
 import useProfileListsLookup from "../../hooks/useProfileListsLookup";
-import useProfileLookup, { LookupStatus as ProfileProviderStatus } from "../../hooks/useProfileLookup";
+import useProfileLookup, {
+  LookupStatus as ProfileProviderStatus,
+} from "../../hooks/useProfileLookup";
 import { mapPostsToDate } from "../../utils/feed";
 import { HyperlinkRegexNG } from "../../config/RegEx";
 import { MEDIA_CDN_URL } from "../../config/Endpoints";
@@ -170,19 +198,38 @@ const View: FC<Props> = ({ uuid }: Props) => {
   const [editPFPOpen, setEditPFPOpen] = useState<boolean>(false);
   const [limit, setLimit] = useState<number>(15);
 
-  const listCount: number = useMemo(() => (lists?.owned?.length || 0) + (lists?.following?.length || 0), [lists]);
-  const topLists: List[] = useMemo(() => lists?.owned?.sort((b, a) => (a.follower_count + a.vehicle_count) - (b.follower_count + b.vehicle_count)).slice(0, 3) || [], [lists]);
+  const listCount: number = useMemo(
+    () => (lists?.owned?.length || 0) + (lists?.following?.length || 0),
+    [lists]
+  );
+  const topLists: List[] = useMemo(
+    () =>
+      lists?.owned
+        ?.sort((b, a) => a.follower_count + a.vehicle_count - (b.follower_count + b.vehicle_count))
+        .slice(0, 3) || [],
+    [lists]
+  );
 
-  const filteredPosts: FeedPost[] = useMemo(() => posts
-    .filter((p) => !(p.client === "vinbot" && p.person.username !== "vinbot" && !p.post_text))
-    .sort((a, b) => (new Date(b.post_date)).getTime() - (new Date(a.post_date)).getTime()), [posts]);
-  const slicedPosts: FeedPost[] = useMemo(() => filteredPosts.slice(0, limit), [filteredPosts, limit]);
-  const dateMappedPosts: { [date: string]: FeedPost[] } = useMemo(() => mapPostsToDate(slicedPosts), [slicedPosts]);
+  const filteredPosts: FeedPost[] = useMemo(
+    () =>
+      posts
+        .filter((p) => !(p.client === "vinbot" && p.person.username !== "vinbot" && !p.post_text))
+        .sort((a, b) => new Date(b.post_date).getTime() - new Date(a.post_date).getTime()),
+    [posts]
+  );
+  const slicedPosts: FeedPost[] = useMemo(
+    () => filteredPosts.slice(0, limit),
+    [filteredPosts, limit]
+  );
+  const dateMappedPosts: { [date: string]: FeedPost[] } = useMemo(
+    () => mapPostsToDate(slicedPosts),
+    [slicedPosts]
+  );
 
   const loadMore = () => {
     setLimit((prev) => prev + 15);
 
-    if ((limit + 16) >= filteredPosts.length) {
+    if (limit + 16 >= filteredPosts.length) {
       next?.(30);
     }
   };
@@ -224,47 +271,86 @@ const View: FC<Props> = ({ uuid }: Props) => {
 
       <StyledProfileDetails direction="column" gap={2}>
         <Stack direction="row" alignItems="center" justifyContent="flex-start" gap={2}>
-          <StyledProfileAvatar username={profile.username} avatar={`${MEDIA_CDN_URL}${profile.avatar}`} rounded />
+          <StyledProfileAvatar
+            username={profile.username}
+            avatar={`${MEDIA_CDN_URL}${profile.avatar}`}
+            rounded
+          />
           <Stack direction="column" alignItems="flex-start" justifyContent="center" gap={1}>
-            <Typography variant="h3" fontSize={18} fontWeight="bold">{`@${profile.username}`}</Typography>
+            <Typography
+              variant="h3"
+              fontSize={18}
+              fontWeight="bold"
+            >{`@${profile.username}`}</Typography>
             {profile.bio ? <GenericText content={profile.bio} /> : null}
           </Stack>
         </Stack>
         <Stack direction="row" alignItems="center" justifyContent="flex-start" gap={1}>
           {profile?.location && (
             <Tooltip title="Location" arrow>
-              <StyledChip icon={<MyLocationOutlined />} label={profile.location} variant="filled" size="small" />
+              <StyledChip
+                icon={<MyLocationOutlined />}
+                label={profile.location}
+                variant="filled"
+                size="small"
+              />
             </Tooltip>
           )}
           {HyperlinkRegexNG.test(profile?.website_url || "") && (
             <StyledLink to={profile.website_url} target="_blank" rel="noopener noreferrer">
-              <StyledChip icon={<LinkOutlined />} label={profile.website_url} variant="filled" size="small" />
+              <StyledChip
+                icon={<LinkOutlined />}
+                label={profile.website_url}
+                variant="filled"
+                size="small"
+              />
             </StyledLink>
           )}
           {profile?.social_facebook && (
             <Tooltip title="Facebook" arrow>
-              <StyledChip icon={<Facebook />} label={profile.social_facebook} variant="filled" size="small" />
+              <StyledChip
+                icon={<Facebook />}
+                label={profile.social_facebook}
+                variant="filled"
+                size="small"
+              />
             </Tooltip>
           )}
           {profile?.social_twitter && (
             <Tooltip title="Twitter" arrow>
-              <StyledChip icon={<Twitter />} label={profile.social_twitter} variant="filled" size="small" />
+              <StyledChip
+                icon={<Twitter />}
+                label={profile.social_twitter}
+                variant="filled"
+                size="small"
+              />
             </Tooltip>
           )}
           {profile?.social_instagram && (
             <Tooltip title="Instagram" arrow>
-              <StyledChip icon={<Instagram />} label={profile.social_instagram} variant="filled" size="small" />
+              <StyledChip
+                icon={<Instagram />}
+                label={profile.social_instagram}
+                variant="filled"
+                size="small"
+              />
             </Tooltip>
           )}
         </Stack>
 
-        {profile?.uuid !== authProfile?.uuid && (
-          isFollowingStatus === LookupStatus.Loading ? (
+        {profile?.uuid !== authProfile?.uuid &&
+          (isFollowingStatus === LookupStatus.Loading ? (
             <Skeleton variant="rectangular" width={100} height={32} sx={{ borderRadius: "8px" }} />
           ) : (
-            <Button variant="outlined" color="primary" onClick={toggleFollow} sx={{ mr: "auto", textTransform: "none" }}>{following ? "Unfollow" : "Follow"}</Button>
-          )
-        )}
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={toggleFollow}
+              sx={{ mr: "auto", textTransform: "none" }}
+            >
+              {following ? "Unfollow" : "Follow"}
+            </Button>
+          ))}
       </StyledProfileDetails>
 
       <StyledProfileBox>
@@ -284,28 +370,25 @@ const View: FC<Props> = ({ uuid }: Props) => {
             value={profile?.following_vehicle_count}
             onClick={() => setVehiclesOpen(true)}
           />
-          <StatisticItem
-            name="Posts"
-            value={profile.post_count}
-            onClick={viewPosts}
-          />
-          <StatisticItem
-            name="Lists"
-            value={listCount}
-            onClick={() => setListsOpen(true)}
-          />
+          <StatisticItem name="Posts" value={profile.post_count} onClick={viewPosts} />
+          <StatisticItem name="Lists" value={listCount} onClick={() => setListsOpen(true)} />
         </StyledStatisticStack>
 
         <StyledContainerTitle variant="h5">Top Lists</StyledContainerTitle>
         <StyledTopLists direction="row" alignItems="center" spacing={3}>
-          {listLookupStatus === LookupStatus.Loading && (<Repeater count={3} Component={TopListSkeleton} />)}
-          {listLookupStatus === LookupStatus.Success && topLists.map((list) => (
-            <Box key={list.uuid} sx={{ flex: "calc(1/3)" }}>
-              <ListSearchCard list={list} omitOwner />
-            </Box>
-          ))}
-          {(listLookupStatus !== LookupStatus.Loading && topLists.length === 0) && (
-            <Typography variant="body1" margin="auto">No lists found</Typography>
+          {listLookupStatus === LookupStatus.Loading && (
+            <Repeater count={3} Component={TopListSkeleton} />
+          )}
+          {listLookupStatus === LookupStatus.Success &&
+            topLists.map((list) => (
+              <Box key={list.uuid} sx={{ flex: "calc(1/3)" }}>
+                <ListSearchCard list={list} omitOwner />
+              </Box>
+            ))}
+          {listLookupStatus !== LookupStatus.Loading && topLists.length === 0 && (
+            <Typography variant="body1" margin="auto">
+              No lists found
+            </Typography>
           )}
         </StyledTopLists>
 
@@ -317,7 +400,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
           </StyledTabBox>
           <StyledTabPanel value="posts" ref={postPanelRef}>
             <StyledTimeline position={aboveXL ? "alternate-reverse" : "right"}>
-              {(feedStatus === FeedProviderStatus.LOADING) && (
+              {feedStatus === FeedProviderStatus.LOADING && (
                 <TimelineItem>
                   <StyledTimelineOppositeContent color="textSecondary">
                     <Skeleton variant="text" animation="wave" width={100} />
@@ -331,21 +414,22 @@ const View: FC<Props> = ({ uuid }: Props) => {
                   </StyledTimelineContent>
                 </TimelineItem>
               )}
-              {dateMappedPosts && Object.keys(dateMappedPosts).map((date) => (
-                <TimelineItem key={date}>
-                  <StyledTimelineOppositeContent color="textSecondary">
-                    {date}
-                  </StyledTimelineOppositeContent>
-                  <StyledTimelineSeparator>
-                    <TimelineDot />
-                    <TimelineConnector />
-                  </StyledTimelineSeparator>
-                  <StyledTimelineContent>
-                    {dateMappedPosts[date]?.map((post) => (<FeedPost key={post.uuid} {...post} />))}
-                  </StyledTimelineContent>
-                </TimelineItem>
-              ))}
-              {(feedStatus !== FeedProviderStatus.LOADING && !hasNext) && (
+              {dateMappedPosts &&
+                Object.keys(dateMappedPosts).map((date) => (
+                  <TimelineItem key={date}>
+                    <StyledTimelineOppositeContent color="textSecondary">
+                      {date}
+                    </StyledTimelineOppositeContent>
+                    <StyledTimelineSeparator>
+                      <TimelineDot />
+                      <TimelineConnector />
+                    </StyledTimelineSeparator>
+                    <StyledTimelineContent>
+                      {dateMappedPosts[date]?.map((post) => <FeedPost key={post.uuid} {...post} />)}
+                    </StyledTimelineContent>
+                  </TimelineItem>
+                ))}
+              {feedStatus !== FeedProviderStatus.LOADING && !hasNext && (
                 <TimelineItem>
                   <StyledTimelineOppositeContent color="textSecondary" fontWeight="bold">
                     End of Post History
@@ -373,12 +457,39 @@ const View: FC<Props> = ({ uuid }: Props) => {
       </StyledProfileBox>
 
       <ScrollToTop topGap={false} />
-      {(lists && listsOpen) && <ListsDialog lists={lists} onClose={() => setListsOpen(false)} />}
-      {(profile.follower_count > 0 && followersOpen) && <FollowersDialog identifier={uuid} type="Profile" count={profile.follower_count} onClose={() => setFollowersOpen(false)} />}
-      {(profile.following_count > 0 && followingOpen) && <FollowingDialog uuid={uuid} count={profile.following_count} onClose={() => setFollowingOpen(false)} />}
-      {(profile.following_vehicle_count > 0 && vehiclesOpen) && <VehicleTableDialog uuid={uuid} onClose={() => setVehiclesOpen(false)} />}
-      {(authProfile?.uuid === uuid && editOpen) && <EditProfileDialog profile={profile} onClose={() => setEditOpen(false)} onConfirm={editProfile} />}
-      {(authProfile?.uuid === uuid && editPFPOpen) && <EditProfilePictureDialog profile={profile} onClose={() => setEditPFPOpen(false)} onConfirm={editPFP} />}
+      {lists && listsOpen && <ListsDialog lists={lists} onClose={() => setListsOpen(false)} />}
+      {profile.follower_count > 0 && followersOpen && (
+        <FollowersDialog
+          identifier={uuid}
+          type="Profile"
+          count={profile.follower_count}
+          onClose={() => setFollowersOpen(false)}
+        />
+      )}
+      {profile.following_count > 0 && followingOpen && (
+        <FollowingDialog
+          uuid={uuid}
+          count={profile.following_count}
+          onClose={() => setFollowingOpen(false)}
+        />
+      )}
+      {profile.following_vehicle_count > 0 && vehiclesOpen && (
+        <VehicleTableDialog uuid={uuid} onClose={() => setVehiclesOpen(false)} />
+      )}
+      {authProfile?.uuid === uuid && editOpen && (
+        <EditProfileDialog
+          profile={profile}
+          onClose={() => setEditOpen(false)}
+          onConfirm={editProfile}
+        />
+      )}
+      {authProfile?.uuid === uuid && editPFPOpen && (
+        <EditProfilePictureDialog
+          profile={profile}
+          onClose={() => setEditPFPOpen(false)}
+          onConfirm={editPFP}
+        />
+      )}
     </Box>
   );
 };

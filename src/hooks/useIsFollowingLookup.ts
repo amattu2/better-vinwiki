@@ -19,14 +19,22 @@ export enum LookupStatus {
  * @param refetch if true, will refetch the status
  * @returns [{ status, following }, toggleFollowing]
  */
-const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status: LookupStatus, following: boolean | null }, () => Promise<boolean>] => {
+const useIsFollowingLookup = (
+  uuid: Profile["uuid"],
+  refetch = false
+): [{ status: LookupStatus; following: boolean | null }, () => Promise<boolean>] => {
   const { token, profile } = useAuthProvider();
   const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.IS_FOLLOWING_PROFILE, {});
   const cachedValue: boolean | null = cache[uuid] || null;
 
-  const [, setFollowingCache] = useSessionStorage<Record<Profile["uuid"], Profile[]>>(CacheKeys.PROFILE_FOLLOWING, {});
+  const [, setFollowingCache] = useSessionStorage<Record<Profile["uuid"], Profile[]>>(
+    CacheKeys.PROFILE_FOLLOWING,
+    {}
+  );
 
-  const [status, setStatus] = useState<LookupStatus>(cachedValue !== null ? LookupStatus.Success : LookupStatus.Loading);
+  const [status, setStatus] = useState<LookupStatus>(
+    cachedValue !== null ? LookupStatus.Success : LookupStatus.Loading
+  );
   const [following, setFollowing] = useState<boolean | null>(cachedValue);
 
   const followController = useRef<AbortController | null>(new AbortController());
@@ -49,7 +57,7 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
       signal,
     }).catch(() => null);
 
-    const { status, follow_result } = await response?.json() || {};
+    const { status, follow_result } = (await response?.json()) || {};
     if (status !== STATUS_OK) {
       setFollowing((prev) => !prev);
       return false;
@@ -65,8 +73,11 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
       signal,
     }).catch(() => null);
 
-    const { status: followingStatus, key, following } = await followingProfiles?.json() || {};
-    if (followingStatus === STATUS_OK || (followingStatus === STATUS_ERROR && key === ERROR_KEY.NOT_FOLLOWING)) {
+    const { status: followingStatus, key, following } = (await followingProfiles?.json()) || {};
+    if (
+      followingStatus === STATUS_OK ||
+      (followingStatus === STATUS_ERROR && key === ERROR_KEY.NOT_FOLLOWING)
+    ) {
       setFollowingCache((prev) => ({ ...prev, [profile!.uuid]: following || [] }));
     }
 
@@ -98,7 +109,7 @@ const useIsFollowingLookup = (uuid: Profile["uuid"], refetch = false): [{ status
         return null;
       });
 
-      const { status, following } = await response?.json() || {};
+      const { status, following } = (await response?.json()) || {};
       if (status === STATUS_OK) {
         setCache((prev) => ({ ...prev, [uuid]: following }));
         setStatus(LookupStatus.Success);

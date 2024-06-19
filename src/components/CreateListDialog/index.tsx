@@ -1,12 +1,17 @@
-import React, { FC, useId, useState } from 'react';
+import React, { FC, useId, useState } from "react";
 import {
-  Button, Dialog, DialogActions, DialogContent,
-  DialogTitle, TextField, styled,
-} from '@mui/material';
-import { useForm } from 'react-hook-form';
-import { LoadingButton } from '@mui/lab';
-import { ENDPOINTS, STATUS_OK } from '../../config/Endpoints';
-import { useAuthProvider } from '../../Providers/AuthProvider';
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  styled,
+} from "@mui/material";
+import { useForm } from "react-hook-form";
+import { LoadingButton } from "@mui/lab";
+import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
+import { useAuthProvider } from "../../Providers/AuthProvider";
 
 type Props = {
   onCreate: (list: List) => void;
@@ -62,7 +67,7 @@ const CreateListDialog: FC<Props> = ({ onCreate, onClose }: Props) => {
       body: JSON.stringify(data),
     }).catch(() => null);
 
-    const { status, list } = await response?.json() || {};
+    const { status, list } = (await response?.json()) || {};
     if (status === STATUS_OK && list?.uuid) {
       onCreate(list as List);
     }
@@ -72,9 +77,7 @@ const CreateListDialog: FC<Props> = ({ onCreate, onClose }: Props) => {
 
   return (
     <StyledDialog maxWidth="sm" onClose={onClose} fullWidth open>
-      <DialogTitle>
-        Create List
-      </DialogTitle>
+      <DialogTitle>Create List</DialogTitle>
       <StyledDialogContent dividers>
         <form onSubmit={handleSubmit(createList)} id={id}>
           <StyledTextField
@@ -95,8 +98,12 @@ const CreateListDialog: FC<Props> = ({ onCreate, onClose }: Props) => {
         </form>
       </StyledDialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="error">Cancel</Button>
-        <LoadingButton type="submit" form={id} loading={saving}>Create</LoadingButton>
+        <Button onClick={onClose} color="error">
+          Cancel
+        </Button>
+        <LoadingButton type="submit" form={id} loading={saving}>
+          Create
+        </LoadingButton>
       </DialogActions>
     </StyledDialog>
   );

@@ -8,7 +8,7 @@ import { CONFIG } from "../config/AppConfig";
  * @param [suffix] Include the application name suffix
  * @param [restore] Restore the title on unmount
  */
-const usePageTitle = (title: string, suffix: boolean = true, restore: boolean = true): void => {
+const usePageTitle = (title: string, suffix = true, restore = true): void => {
   // Update title on mount
   useEffect(() => {
     document.title = suffix ? `${title} - ${CONFIG.name}` : title;

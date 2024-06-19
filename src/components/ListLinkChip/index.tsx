@@ -19,11 +19,7 @@ const ListLinkChip: FC<Props> = ({ uuid }: Props) => {
   const [{ status, list }] = useListLookup(uuid);
 
   if (status !== LookupStatus.Success || !list?.name) {
-    return (
-      <Link to={`/list/${uuid}`}>
-        {`${window.origin}/list/${uuid}`}
-      </Link>
-    );
+    return <Link to={`/list/${uuid}`}>{`${window.origin}/list/${uuid}`}</Link>;
   }
 
   return (

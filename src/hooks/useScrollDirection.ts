@@ -10,7 +10,7 @@ export enum ScrollDirection {
  *
  * @returns [ScrollDirection, { offset: number, innerHeight: number }]
  */
-const useScrollDirection = (): [ScrollDirection, { offset: number, innerHeight: number }] => {
+const useScrollDirection = (): [ScrollDirection, { offset: number; innerHeight: number }] => {
   const [lastScrollTop, setLastScrollTop] = useState<number>(0);
   const [scrollDirection, setScrollDirection] = useState<ScrollDirection>(ScrollDirection.Down);
 

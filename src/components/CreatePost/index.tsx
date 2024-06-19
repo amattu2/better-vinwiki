@@ -1,20 +1,35 @@
 import React, { FC, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
-  AddPhotoAlternate, AddPhotoAlternateOutlined,
-  Cancel, PostAddOutlined, SavedSearch,
+  AddPhotoAlternate,
+  AddPhotoAlternateOutlined,
+  Cancel,
+  PostAddOutlined,
+  SavedSearch,
 } from "@mui/icons-material";
 import { TabContext, TabPanel } from "@mui/lab";
 import {
-  Backdrop, Button, Card, ClickAwayListener,
-  Divider, IconButton, Stack, Step,
-  StepButton, StepContent,
-  Stepper, Tab, Tabs, TextField,
+  Backdrop,
+  Button,
+  Card,
+  ClickAwayListener,
+  Divider,
+  IconButton,
+  Stack,
+  Step,
+  StepButton,
+  StepContent,
+  Stepper,
+  Tab,
+  Tabs,
+  TextField,
   Theme,
-  Tooltip, Typography, styled,
+  Tooltip,
+  Typography,
+  styled,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { DatePicker } from '@mui/x-date-pickers';
+import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { ENDPOINTS, MEDIA_ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
@@ -41,7 +56,10 @@ type PostForm = {
   image: FileList;
 };
 
-const StyledCard = styled(Card, { shouldForwardProp: (p) => p !== "expanded" })<{ expanded?: boolean, theme?: Theme }>(({ expanded = false, theme }) => ({
+const StyledCard = styled(Card, { shouldForwardProp: (p) => p !== "expanded" })<{
+  expanded?: boolean;
+  theme?: Theme;
+}>(({ expanded = false, theme }) => ({
   position: expanded ? "sticky" : "relative",
   top: expanded ? "16px" : "unset",
   padding: "16px 24px",
@@ -90,7 +108,8 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
 
   const stepStatuses: { [step: number]: boolean | undefined } = useMemo(() => {
     const step0 = !!selectedVehicle;
-    const step1 = (postType === "photo" && !!imageUpload?.[0]) || (postType === "generic" && !!postText);
+    const step1 =
+      (postType === "photo" && !!imageUpload?.[0]) || (postType === "generic" && !!postText);
     const step2 = step1;
     const step3 = step0 && step1 && step2;
 
@@ -102,7 +121,10 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
     };
   }, [selectedVehicle, !!imageUpload?.[0], !!postText, postType]);
 
-  const imagePreview: string | undefined = useMemo(() => (imageUpload?.[0] ? URL.createObjectURL(imageUpload?.[0]) : undefined), [imageUpload?.[0]]);
+  const imagePreview: string | undefined = useMemo(
+    () => (imageUpload?.[0] ? URL.createObjectURL(imageUpload?.[0]) : undefined),
+    [imageUpload?.[0]]
+  );
 
   const resetPost = () => {
     setExpand(false);
@@ -130,19 +152,21 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
     setValue("type", type);
   };
 
-  const generateDemoPost = (): FeedPost => ({
-    type: postType,
-    post_text: postText,
-    image: postType === "photo" && imageUpload?.[0]
-      ? { large: URL.createObjectURL(imageUpload?.[0]) }
-      : null,
-    person: { ...profile },
-    mileage: watch("mileage"),
-    locale: watch("locale"),
-    vehicle: selectedVehicle,
-    event_date: safeIsoParse(watch("event_date")) || null,
-    post_date: new Date().toISOString(),
-  } as FeedPost);
+  const generateDemoPost = (): FeedPost =>
+    ({
+      type: postType,
+      post_text: postText,
+      image:
+        postType === "photo" && imageUpload?.[0]
+          ? { large: URL.createObjectURL(imageUpload?.[0]) }
+          : null,
+      person: { ...profile },
+      mileage: watch("mileage"),
+      locale: watch("locale"),
+      vehicle: selectedVehicle,
+      event_date: safeIsoParse(watch("event_date")) || null,
+      post_date: new Date().toISOString(),
+    }) as FeedPost;
 
   const createPost = async () => {
     if (!token || !selectedVehicle?.vin) {
@@ -172,7 +196,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
         body: formData,
       }).catch(() => null);
 
-      const { status, image } = await response?.json() || {};
+      const { status, image } = (await response?.json()) || {};
       if (status !== STATUS_OK || !image) {
         setPosting(false);
         enqueueSnackbar("Failed to upload image. Please retry later.", { variant: "error" });
@@ -198,7 +222,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
       }),
     }).catch(() => null);
 
-    const { status, post } = await response?.json() || {};
+    const { status, post } = (await response?.json()) || {};
     if (status !== STATUS_OK || !post) {
       setPosting(false);
       enqueueSnackbar("Failed to create post. Please retry later.", { variant: "error" });
@@ -215,9 +239,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
       <Backdrop open={expanded} sx={{ zIndex: 9 }} />
       <ClickAwayListener onClickAway={() => setExpand(false)}>
         <StyledCard expanded={expanded} elevation={expanded ? 12 : 0} ref={cardRef}>
-          {(expanded && posting) && (
-            <Loader fullscreen={false} />
-          )}
+          {expanded && posting && <Loader fullscreen={false} />}
           {expanded && (
             <>
               <Stack direction="row" spacing={1} alignItems="center">
@@ -263,8 +285,18 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
                   <StyledCard elevation={4} sx={{ p: 0 }}>
                     <TabContext value={postType}>
                       <Tabs value={postType} onChange={changePostType}>
-                        <StyledTab icon={<PostAddOutlined />} iconPosition="start" label="Text" value="generic" />
-                        <StyledTab icon={<AddPhotoAlternateOutlined />} iconPosition="start" label="Photo" value="photo" />
+                        <StyledTab
+                          icon={<PostAddOutlined />}
+                          iconPosition="start"
+                          label="Text"
+                          value="generic"
+                        />
+                        <StyledTab
+                          icon={<AddPhotoAlternateOutlined />}
+                          iconPosition="start"
+                          label="Photo"
+                          value="photo"
+                        />
                       </Tabs>
                       <TabPanel value="generic">
                         {/* TODO: Add support for typeahead user tags */}
@@ -296,14 +328,17 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
                       </TabPanel>
                     </TabContext>
                   </StyledCard>
-                  <Button onClick={() => setActiveStep(2)} disabled={!stepStatuses[1]}>Next</Button>
+                  <Button onClick={() => setActiveStep(2)} disabled={!stepStatuses[1]}>
+                    Next
+                  </Button>
                 </StyledStepContent>
               </Step>
               <Step disabled={!stepStatuses[1]}>
                 <StepButton onClick={() => setActiveStep(2)}>
-                  Event Details
-                  {" "}
-                  <Typography variant="caption" color="text.secondary">(Optional)</Typography>
+                  Event Details{" "}
+                  <Typography variant="caption" color="text.secondary">
+                    (Optional)
+                  </Typography>
                 </StepButton>
                 <StyledStepContent>
                   <Stack direction="column" gap={1} alignItems="flex-start" sx={{ mb: 1 }}>
@@ -334,14 +369,21 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
                       sx={{ width: "267px" }}
                     />
                   </Stack>
-                  <Button onClick={() => setActiveStep(3)} disabled={!stepStatuses[2]}>Next</Button>
+                  <Button onClick={() => setActiveStep(3)} disabled={!stepStatuses[2]}>
+                    Next
+                  </Button>
                 </StyledStepContent>
               </Step>
               <Step disabled={!stepStatuses[2]} last>
                 <StepButton onClick={() => setActiveStep(3)}>Preview & Submit</StepButton>
                 <StyledStepContent>
                   {activeStep === 3 && <FeedPost {...generateDemoPost()} isPreview />}
-                  <Button disabled={Object.values(stepStatuses).some((s) => !s)} onClick={createPost}>Post</Button>
+                  <Button
+                    disabled={Object.values(stepStatuses).some((s) => !s)}
+                    onClick={createPost}
+                  >
+                    Post
+                  </Button>
                 </StyledStepContent>
               </Step>
             </Stepper>
@@ -350,8 +392,18 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
           {!expanded && (
             <Stack direction="row" spacing={2} alignItems="center">
               <ProfileAvatar username={profile?.username || ""} avatar={profile?.avatar} />
-              <TextField placeholder="Compose a new post" size="small" onClick={() => setExpand(true)} fullWidth />
-              <IconButton onClick={() => { setPostType("photo"); setExpand(true); }}>
+              <TextField
+                placeholder="Compose a new post"
+                size="small"
+                onClick={() => setExpand(true)}
+                fullWidth
+              />
+              <IconButton
+                onClick={() => {
+                  setPostType("photo");
+                  setExpand(true);
+                }}
+              >
                 <AddPhotoAlternate />
               </IconButton>
             </Stack>

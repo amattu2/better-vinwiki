@@ -9,7 +9,10 @@ type Props = {
   filled?: boolean;
 };
 
-const StyledStack = styled(Stack, { shouldForwardProp: (p) => p !== "filled" })<{ filled: boolean; theme?: Theme }>(({ filled, theme }) => ({
+const StyledStack = styled(Stack, { shouldForwardProp: (p) => p !== "filled" })<{
+  filled: boolean;
+  theme?: Theme;
+}>(({ filled, theme }) => ({
   borderRadius: "8px",
   padding: "8px",
   backgroundColor: !filled || !theme ? "transparent" : theme.palette.action.selected,
@@ -44,10 +47,7 @@ const PostProfile: FC<Props> = ({ post, filled = true }: Props) => {
       <ProfileAvatar username={username} avatar={avatar} />
       <Stack direction="column" justifyContent="center">
         <Typography variant="body1" fontWeight={600}>
-          <StyledLink to={`/profile/${uuid}`}>
-            @
-            {username}
-          </StyledLink>
+          <StyledLink to={`/profile/${uuid}`}>@{username}</StyledLink>
         </Typography>
         <Typography variant="body2">
           <StyledLink to={`/vehicle/${vin}`}>{formatVehicleName(vehicle)}</StyledLink>

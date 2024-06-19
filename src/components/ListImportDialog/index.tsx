@@ -1,17 +1,29 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { LoadingButton } from '@mui/lab';
+import React, { FC, useEffect, useMemo, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { LoadingButton } from "@mui/lab";
 import {
-  Box, Button, Checkbox, Dialog, DialogActions, DialogContent,
-  DialogTitle, FormControlLabel, FormHelperText, MenuItem,
-  Stack, Step, StepLabel, Stepper, TextField,
+  Box,
+  Button,
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControlLabel,
+  FormHelperText,
+  MenuItem,
+  Stack,
+  Step,
+  StepLabel,
+  Stepper,
+  TextField,
   styled,
-} from '@mui/material';
-import { cloneDeep } from 'lodash';
-import { parse } from 'papaparse';
-import GenericSpreadsheet, { ValueBase } from '../GenericSpreadsheet';
-import { StatisticItem } from '../StatisticItem';
-import { validateVIN } from '../../utils/vehicle';
+} from "@mui/material";
+import { cloneDeep } from "lodash";
+import { parse } from "papaparse";
+import GenericSpreadsheet, { ValueBase } from "../GenericSpreadsheet";
+import { StatisticItem } from "../StatisticItem";
+import { validateVIN } from "../../utils/vehicle";
 
 type Props = {
   onConfirm: (selection: Vehicle["vin"][]) => void;
@@ -152,7 +164,9 @@ const ListImportDialog: FC<Props> = ({ onConfirm, onClose }: Props) => {
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    if (!e.dataTransfer?.files?.length) { return; }
+    if (!e.dataTransfer?.files?.length) {
+      return;
+    }
 
     e.preventDefault();
     e.stopPropagation();
@@ -199,7 +213,12 @@ const ListImportDialog: FC<Props> = ({ onConfirm, onClose }: Props) => {
 
         if (!meta.fields || !fileHeader) {
           setFieldType("index");
-          setFields(Array.from({ length: (data as Array<string>)?.[0].length || 0 }, (_, i) => `Column ${i + 1}`));
+          setFields(
+            Array.from(
+              { length: (data as Array<string>)?.[0].length || 0 },
+              (_, i) => `Column ${i + 1}`
+            )
+          );
         } else {
           setFieldType("key");
           setFields(meta.fields as string[]);
@@ -233,11 +252,7 @@ const ListImportDialog: FC<Props> = ({ onConfirm, onClose }: Props) => {
         </Stepper>
         <Box component="form" sx={{ mt: 4 }}>
           <Box sx={{ display: step !== 0 ? "none" : undefined }}>
-            <StyledDropzone
-              onClick={handleClick}
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-            />
+            <StyledDropzone onClick={handleClick} onDrop={handleDrop} onDragOver={handleDragOver} />
             <Controller
               name="fileHeader"
               control={control}
@@ -255,7 +270,9 @@ const ListImportDialog: FC<Props> = ({ onConfirm, onClose }: Props) => {
               type="file"
               hidden
               ref={(node) => {
-                if (!node) { return; }
+                if (!node) {
+                  return;
+                }
 
                 inputRef.current = node;
                 ref(node);
@@ -266,9 +283,7 @@ const ListImportDialog: FC<Props> = ({ onConfirm, onClose }: Props) => {
             <Box sx={{ maxWidth: "100%", overflow: "auto", maxHeight: "calc(33px * 8 + 16px)" }}>
               <GenericSpreadsheet data={data || []} readOnly />
             </Box>
-            <StyledFormHelperText>
-              Any changes made here will not be saved.
-            </StyledFormHelperText>
+            <StyledFormHelperText>Any changes made here will not be saved.</StyledFormHelperText>
           </Stack>
           <Box sx={{ display: step !== 2 ? "none" : undefined, px: 2 }}>
             <Controller
@@ -286,17 +301,17 @@ const ListImportDialog: FC<Props> = ({ onConfirm, onClose }: Props) => {
                   fullWidth
                   select
                 >
-                  {fields.map((field) => (<MenuItem key={field} value={field}>{field}</MenuItem>))}
+                  {fields.map((field) => (
+                    <MenuItem key={field} value={field}>
+                      {field}
+                    </MenuItem>
+                  ))}
                 </StyledTextField>
               )}
             />
           </Box>
           <Box sx={{ display: step !== 3 ? "none" : undefined, px: 2 }}>
-            <StatisticItem
-              name="Valid VINs"
-              value={validVins.length}
-              precise
-            />
+            <StatisticItem name="Valid VINs" value={validVins.length} precise />
             <StyledFormHelperText>
               Please do not navigate away while the import is in progress.
             </StyledFormHelperText>
@@ -304,8 +319,12 @@ const ListImportDialog: FC<Props> = ({ onConfirm, onClose }: Props) => {
         </Box>
       </StyledDialogContent>
       <DialogActions sx={{ justifyContent: "space-between" }}>
-        <Button onClick={goBack} disabled={!prevUnlocked || saving}>Back</Button>
-        <LoadingButton onClick={goForward} disabled={!nextUnlocked} loading={saving}>{step === 3 ? "Import" : "Next"}</LoadingButton>
+        <Button onClick={goBack} disabled={!prevUnlocked || saving}>
+          Back
+        </Button>
+        <LoadingButton onClick={goForward} disabled={!nextUnlocked} loading={saving}>
+          {step === 3 ? "Import" : "Next"}
+        </LoadingButton>
       </DialogActions>
     </StyledDialog>
   );

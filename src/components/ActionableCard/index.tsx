@@ -20,7 +20,11 @@ const StyledCard = styled(Card)(({ theme }) => ({
   },
 }));
 
-const StyledCardHeader = styled(CardHeader)<{ component: ElementType; disabled?: boolean; theme?: Theme }>(({ disabled, theme }) => ({
+const StyledCardHeader = styled(CardHeader)<{
+  component: ElementType;
+  disabled?: boolean;
+  theme?: Theme;
+}>(({ disabled, theme }) => ({
   [disabled ? "& .MuiCardHeader-content .MuiTypography-root, & .MuiCardHeader-action" : ""]: {
     color: `${theme.palette.text.disabled} !important`,
   },
@@ -29,23 +33,25 @@ const StyledCardHeader = styled(CardHeader)<{ component: ElementType; disabled?:
   },
 }));
 
-const ActionableCard = forwardRef(({ title, subtitle, disabled, ...cardProps }: Props, ref: Ref<HTMLDivElement>) => (
-  <StyledCard
-    elevation={0}
-    ref={ref}
-    {...cardProps}
-    onClick={cardProps?.onClick && !disabled ? cardProps.onClick : undefined}
-  >
-    <StyledCardHeader
-      component={CardActionArea}
-      title={title}
-      titleTypographyProps={{ fontSize: 16, variant: "h6" }}
-      subheader={subtitle}
-      subheaderTypographyProps={{ variant: "body2", fontSize: 12 }}
-      action={(<ArrowForwardIos />)}
-      disabled={disabled}
-    />
-  </StyledCard>
-));
+const ActionableCard = forwardRef(
+  ({ title, subtitle, disabled, ...cardProps }: Props, ref: Ref<HTMLDivElement>) => (
+    <StyledCard
+      elevation={0}
+      ref={ref}
+      {...cardProps}
+      onClick={cardProps?.onClick && !disabled ? cardProps.onClick : undefined}
+    >
+      <StyledCardHeader
+        component={CardActionArea}
+        title={title}
+        titleTypographyProps={{ fontSize: 16, variant: "h6" }}
+        subheader={subtitle}
+        subheaderTypographyProps={{ variant: "body2", fontSize: 12 }}
+        action={<ArrowForwardIos />}
+        disabled={disabled}
+      />
+    </StyledCard>
+  )
+);
 
 export default ActionableCard;

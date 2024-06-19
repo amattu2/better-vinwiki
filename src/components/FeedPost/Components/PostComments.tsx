@@ -43,7 +43,10 @@ const StyledCommentStack = styled(Stack)({
 const PostComments: FC<Props> = ({ uuid, limit = 4, count: commentCount }: Props) => {
   const { token, profile } = useAuthProvider();
   const { register, watch, handleSubmit, setValue } = useForm<CommentForm>();
-  const isFormValid = useMemo(() => watch("text")?.length > 0 && watch("text")?.length <= 500, [watch("text")]);
+  const isFormValid = useMemo(
+    () => watch("text")?.length > 0 && watch("text")?.length <= 500,
+    [watch("text")]
+  );
 
   const [postAuthor, setPostAuthor] = useState<Profile["uuid"]>("");
   const [count, setCount] = useState<number>(commentCount);
@@ -66,12 +69,12 @@ const PostComments: FC<Props> = ({ uuid, limit = 4, count: commentCount }: Props
       body: JSON.stringify({ text }),
     }).catch(() => null);
 
-    const { status, uuid: commentUuid, comment } = await response?.json() || {};
+    const { status, uuid: commentUuid, comment } = (await response?.json()) || {};
     if (status === STATUS_OK && commentUuid) {
       const mockComment: PostComment = {
         uuid: commentUuid,
         text: comment,
-        created: (new Date()).toISOString(),
+        created: new Date().toISOString(),
         ago: "",
         // NOTE: We're casting here because the AuthProfile properties are ignored anyway
         person: { ...profile } as Profile,
@@ -105,9 +108,12 @@ const PostComments: FC<Props> = ({ uuid, limit = 4, count: commentCount }: Props
         signal,
       }).catch(() => null);
 
-      const { status, post, comments } = await response?.json() || {};
+      const { status, post, comments } = (await response?.json()) || {};
       if (status === STATUS_OK) {
-        comments?.sort((a: PostComment, b: PostComment) => (new Date(b.created).getTime() - new Date(a.created).getTime()));
+        comments?.sort(
+          (a: PostComment, b: PostComment) =>
+            new Date(b.created).getTime() - new Date(a.created).getTime()
+        );
         setComments(comments);
         setPostAuthor(post?.person?.uuid || "");
       }

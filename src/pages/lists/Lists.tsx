@@ -2,9 +2,16 @@ import React, { FC, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Add, Event, NavigateNext, Numbers, SortByAlpha } from "@mui/icons-material";
 import {
-  Box, Breadcrumbs, Button, Grid,
-  Stack, ToggleButton, ToggleButtonGroup,
-  Tooltip, Typography, styled,
+  Box,
+  Breadcrumbs,
+  Button,
+  Grid,
+  Stack,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
+  Typography,
+  styled,
 } from "@mui/material";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { ListSearchCard, ListSearchSkeleton } from "../../components/ListSearchCard";
@@ -126,11 +133,11 @@ const ListsView: FC = () => {
             </ToggleButton>
           </ToggleButtonGroup>
         </Stack>
-        {(status === LookupStatus.Success && lists?.owned.length === 0) && (
+        {status === LookupStatus.Success && lists?.owned.length === 0 && (
           <Typography color="textSecondary">You have not created any lists yet.</Typography>
         )}
         <Grid container columnSpacing={2} rowSpacing={0}>
-          {status === LookupStatus.Loading && (<Repeater count={2} Component={OwnedListSkeleton} />)}
+          {status === LookupStatus.Loading && <Repeater count={2} Component={OwnedListSkeleton} />}
           {ownedLists.map((list) => (
             <Grid key={list.uuid} sm={12} lg={6} item>
               <ListSearchCard list={list} omitOwner />
@@ -164,11 +171,11 @@ const ListsView: FC = () => {
             </ToggleButton>
           </ToggleButtonGroup>
         </Stack>
-        {(status === LookupStatus.Success && lists?.following.length === 0) && (
+        {status === LookupStatus.Success && lists?.following.length === 0 && (
           <Typography color="textSecondary">You are not following any lists.</Typography>
         )}
         <Grid container columnSpacing={2} rowSpacing={0}>
-          {status === LookupStatus.Loading && (<Repeater count={4} Component={ListSkeleton} />)}
+          {status === LookupStatus.Loading && <Repeater count={4} Component={ListSkeleton} />}
           {followingLists.map((list) => (
             <Grid key={list.uuid} sm={12} xl={6} item>
               <ListSearchCard list={list} />
@@ -177,7 +184,9 @@ const ListsView: FC = () => {
         </Grid>
       </StyledStack>
       <ScrollToTop />
-      {createOpen && (<CreateListDialog onClose={() => setCreateOpen(false)} onCreate={listCreated} />)}
+      {createOpen && (
+        <CreateListDialog onClose={() => setCreateOpen(false)} onCreate={listCreated} />
+      )}
     </Box>
   );
 };

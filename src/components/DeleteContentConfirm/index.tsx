@@ -1,7 +1,11 @@
 import React, { FC, useState } from "react";
 import {
-  Button, Dialog, DialogActions,
-  DialogContent, DialogContentText, DialogTitle,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
@@ -47,17 +51,17 @@ const DeleteContentDialog: FC<Props> = ({ type, open, onConfirm, onCancel }: Pro
 
   return (
     <Dialog open={open} onClose={onCancel}>
-      <DialogTitle>
-        {getTitle(type)}
-      </DialogTitle>
+      <DialogTitle>{getTitle(type)}</DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          {getContent(type)}
-        </DialogContentText>
+        <DialogContentText>{getContent(type)}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <LoadingButton onClick={onConfirmWrapper} loading={confirmPending} color="error">Delete</LoadingButton>
-        <Button onClick={onCancel} autoFocus>Cancel</Button>
+        <LoadingButton onClick={onConfirmWrapper} loading={confirmPending} color="error">
+          Delete
+        </LoadingButton>
+        <Button onClick={onCancel} autoFocus>
+          Cancel
+        </Button>
       </DialogActions>
     </Dialog>
   );

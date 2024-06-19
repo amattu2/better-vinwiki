@@ -20,17 +20,29 @@ export enum LookupStatus {
  * @param refetch if true, will refetch the list
  * @returns [{ status, List }, (list: Partial<List>) => Promise<boolean>, () => Promise<boolean>]
  */
-const useListLookup = (uuid: List["uuid"], refetch = false): [{ status: LookupStatus, list: List | null }, (list: Partial<List>) => Promise<boolean>, () => Promise<boolean>] => {
+const useListLookup = (
+  uuid: List["uuid"],
+  refetch = false
+): [
+  { status: LookupStatus; list: List | null },
+  (list: Partial<List>) => Promise<boolean>,
+  () => Promise<boolean>,
+] => {
   const { token, profile: authProfile } = useAuthProvider();
   const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.LIST_LOOKUP, {});
   const cachedValue: List | null = cache[uuid] || null;
 
-  const [, setProfileListsCache] = useSessionStorage<ProfileListsCache>(CacheKeys.PROFILE_LISTS, {});
+  const [, setProfileListsCache] = useSessionStorage<ProfileListsCache>(
+    CacheKeys.PROFILE_LISTS,
+    {}
+  );
 
   // TODO: Two identical lookups will cause two network requests
   // find a way to prevent the 2nd request while the 1st is still loading
 
-  const [status, setStatus] = useState<LookupStatus>(cachedValue ? LookupStatus.Success : LookupStatus.Loading);
+  const [status, setStatus] = useState<LookupStatus>(
+    cachedValue ? LookupStatus.Success : LookupStatus.Loading
+  );
   const [list, setList] = useState<List | null>(cachedValue);
 
   /**
@@ -57,7 +69,7 @@ const useListLookup = (uuid: List["uuid"], refetch = false): [{ status: LookupSt
       body: JSON.stringify(editedList),
     }).catch(() => null);
 
-    const { status } = await response?.json() || {};
+    const { status } = (await response?.json()) || {};
     if (status === STATUS_OK) {
       setCache((prev) => ({ ...prev, [uuid]: { ...list, ...editedList } }));
       setList((prev) => ({ ...prev!, ...editedList }));
@@ -66,7 +78,10 @@ const useListLookup = (uuid: List["uuid"], refetch = false): [{ status: LookupSt
 
         return {
           ...prev,
-          [authProfile.uuid]: { owned: owned?.map((l) => (l?.uuid === uuid ? { ...l, ...editedList } : l)), following },
+          [authProfile.uuid]: {
+            owned: owned?.map((l) => (l?.uuid === uuid ? { ...l, ...editedList } : l)),
+            following,
+          },
         };
       });
 
@@ -98,7 +113,7 @@ const useListLookup = (uuid: List["uuid"], refetch = false): [{ status: LookupSt
       },
     }).catch(() => null);
 
-    const { status, deleted } = await response?.json() || {};
+    const { status, deleted } = (await response?.json()) || {};
     if (status === STATUS_OK && !!deleted) {
       setCache((prev) => {
         const { [uuid]: _, ...rest } = prev;
@@ -137,7 +152,7 @@ const useListLookup = (uuid: List["uuid"], refetch = false): [{ status: LookupSt
         return null;
       });
 
-      const { status, list } = await response?.json() || {};
+      const { status, list } = (await response?.json()) || {};
       if (status === STATUS_OK && !!list?.uuid) {
         delete list.vehicles;
         setCache((prev) => ({ ...prev, [uuid]: list }));

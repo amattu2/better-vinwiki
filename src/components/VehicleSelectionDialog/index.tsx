@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState } from "react";
 import {
   Box,
   Button,
@@ -14,12 +14,12 @@ import {
   Stack,
   Typography,
   styled,
-} from '@mui/material';
-import { LoadingButton } from '@mui/lab';
-import { formatVehicleName } from '../../utils/vehicle';
-import ProfileAvatar from '../ProfileAvatar';
-import { VehicleSearch } from '../Typeahead/VehicleSearch';
-import { StyledLink } from '../StyledLink';
+} from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { formatVehicleName } from "../../utils/vehicle";
+import ProfileAvatar from "../ProfileAvatar";
+import { VehicleSearch } from "../Typeahead/VehicleSearch";
+import { StyledLink } from "../StyledLink";
 
 type Props = {
   onSelect: (vehicles: Vehicle[]) => Promise<void>;
@@ -47,7 +47,10 @@ const StyledSearchBox = styled(Stack)({
   padding: "16px 24px",
 });
 
-const VehicleSelectionItem: FC<{ vehicle: Vehicle; onRemove: (vehicle: Vehicle) => void }> = ({ vehicle, onRemove }) => {
+const VehicleSelectionItem: FC<{ vehicle: Vehicle; onRemove: (vehicle: Vehicle) => void }> = ({
+  vehicle,
+  onRemove,
+}) => {
   const { vin, long_name, icon_photo } = vehicle;
 
   return (
@@ -56,16 +59,18 @@ const VehicleSelectionItem: FC<{ vehicle: Vehicle; onRemove: (vehicle: Vehicle) 
         <ProfileAvatar username={long_name || "Unknown"} avatar={icon_photo} />
       </ListItemAvatar>
       <ListItemText
-        primary={(
+        primary={
           <StyledLink to={`/vehicle/${vin}`}>
             <Typography variant="body1" fontWeight={600}>
               {formatVehicleName(vehicle)}
             </Typography>
           </StyledLink>
-        )}
+        }
         secondary={vin}
       />
-      <Button color="error" onClick={() => onRemove(vehicle)}>Remove</Button>
+      <Button color="error" onClick={() => onRemove(vehicle)}>
+        Remove
+      </Button>
     </ListItem>
   );
 };
@@ -104,26 +109,32 @@ const VehicleSelectionDialog: FC<Props> = ({ onSelect, onClose }: Props) => {
 
   return (
     <StyledDialog maxWidth="sm" open onClose={onClose} fullWidth>
-      <DialogTitle>
-        Add Vehicles
-      </DialogTitle>
+      <DialogTitle>Add Vehicles</DialogTitle>
       <StyledDialogContent dividers>
         <StyledSearchBox alignItems="center">
           <VehicleSearch value={null} onChange={onChangeWrapper} />
         </StyledSearchBox>
         <Divider textAlign="center">Selection</Divider>
         <List>
-          {selection.map((vehicle) => (<VehicleSelectionItem key={vehicle.vin} vehicle={vehicle} onRemove={onRemove} />))}
+          {selection.map((vehicle) => (
+            <VehicleSelectionItem key={vehicle.vin} vehicle={vehicle} onRemove={onRemove} />
+          ))}
         </List>
         {selection.length === 0 && (
           <Box sx={{ p: 2 }}>
-            <Typography variant="body1" textAlign="center">No vehicles selected</Typography>
+            <Typography variant="body1" textAlign="center">
+              No vehicles selected
+            </Typography>
           </Box>
         )}
       </StyledDialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="error">Cancel</Button>
-        <LoadingButton onClick={onSelectWrapper} loading={saving}>Select</LoadingButton>
+        <Button onClick={onClose} color="error">
+          Cancel
+        </Button>
+        <LoadingButton onClick={onSelectWrapper} loading={saving}>
+          Select
+        </LoadingButton>
       </DialogActions>
     </StyledDialog>
   );

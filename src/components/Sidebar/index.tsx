@@ -1,20 +1,24 @@
-import React, { ElementType, FC, useState } from 'react';
-import { NavigateProps, useLocation } from 'react-router-dom';
+import React, { ElementType, FC, useState } from "react";
+import { NavigateProps, useLocation } from "react-router-dom";
 import {
-  Code, DashboardOutlined, Logout, NotificationsActive,
-  PeopleOutline, SearchOutlined, ListOutlined, DarkMode, LightMode,
-} from '@mui/icons-material';
-import {
-  Avatar, Badge, IconButton, Tooltip,
-  Typography, Box, Stack, styled,
-} from '@mui/material';
-import { useDarkMode } from 'usehooks-ts';
-import { useAuthProvider } from '../../Providers/AuthProvider';
-import { useNotificationCountProvider } from '../../Providers/NotificationCountProvider';
-import { FollowersDrawer } from '../FollowersDrawer';
-import { NotificationDrawer } from '../NotificationDrawer';
-import { MEDIA_CDN_URL } from '../../config/Endpoints';
-import { StyledLink } from '../StyledLink';
+  Code,
+  DashboardOutlined,
+  Logout,
+  NotificationsActive,
+  PeopleOutline,
+  SearchOutlined,
+  ListOutlined,
+  DarkMode,
+  LightMode,
+} from "@mui/icons-material";
+import { Avatar, Badge, IconButton, Tooltip, Typography, Box, Stack, styled } from "@mui/material";
+import { useDarkMode } from "usehooks-ts";
+import { useAuthProvider } from "../../Providers/AuthProvider";
+import { useNotificationCountProvider } from "../../Providers/NotificationCountProvider";
+import { FollowersDrawer } from "../FollowersDrawer";
+import { NotificationDrawer } from "../NotificationDrawer";
+import { MEDIA_CDN_URL } from "../../config/Endpoints";
+import { StyledLink } from "../StyledLink";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   padding: "32px 12px",
@@ -34,7 +38,7 @@ const StyledLogoBox = styled(Box)({
   margin: "15px auto",
 });
 
-const StyledLogo = styled('img')(({ theme }) => ({
+const StyledLogo = styled("img")(({ theme }) => ({
   width: "100%",
   height: "auto",
   border: `1px solid ${theme.palette.divider}`,
@@ -64,10 +68,12 @@ const StyledControlGroup = styled(Stack)({
   },
 });
 
-const StyledIconButton = styled(IconButton)<{ component?: ElementType, to?: NavigateProps["to"] }>(({ theme }) => ({
-  color: theme.palette.action.active,
-  height: "47px",
-}));
+const StyledIconButton = styled(IconButton)<{ component?: ElementType; to?: NavigateProps["to"] }>(
+  ({ theme }) => ({
+    color: theme.palette.action.active,
+    height: "47px",
+  })
+);
 
 const Sidebar: FC = () => {
   const { authenticated, profile } = useAuthProvider();

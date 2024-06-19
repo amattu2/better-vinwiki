@@ -55,20 +55,22 @@ const StyledImageBox = styled(Paper)(({ theme }) => ({
   },
 }));
 
-const StyledBackground = styled("div", { shouldForwardProp: (p) => p !== "bg" && p !== "blur" })(({ bg, blur }: { bg?: string, blur?: boolean }) => ({
-  backgroundImage: `url(${bg})`,
-  filter: blur ? "blur(6px)" : "none",
-  backgroundPosition: "center",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "contain",
-  position: "absolute",
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  zIndex: 1,
-  transition: "filter 0.2s ease-out",
-}));
+const StyledBackground = styled("div", { shouldForwardProp: (p) => p !== "bg" && p !== "blur" })(
+  ({ bg, blur }: { bg?: string; blur?: boolean }) => ({
+    backgroundImage: `url(${bg})`,
+    filter: blur ? "blur(6px)" : "none",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "contain",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1,
+    transition: "filter 0.2s ease-out",
+  })
+);
 
 const StyledDeleteIcon = styled(Delete)({
   position: "absolute",
@@ -94,7 +96,9 @@ export const ImageUpload: FC<Props> = ({ InputProps, preview, onDrop, onPreviewC
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    if (!e.dataTransfer?.files?.length) { return; }
+    if (!e.dataTransfer?.files?.length) {
+      return;
+    }
 
     e.preventDefault();
     e.stopPropagation();
@@ -114,11 +118,7 @@ export const ImageUpload: FC<Props> = ({ InputProps, preview, onDrop, onPreviewC
           <StyledDeleteIcon className="image-delete" />
         </StyledImageBox>
       ) : (
-        <StyledDropzone
-          onClick={handleClick}
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-        />
+        <StyledDropzone onClick={handleClick} onDrop={handleDrop} onDragOver={handleDragOver} />
       )}
       <StyledInput
         {...InputProps}
@@ -126,7 +126,9 @@ export const ImageUpload: FC<Props> = ({ InputProps, preview, onDrop, onPreviewC
         type="file"
         hidden
         ref={(node) => {
-          if (!node) { return; }
+          if (!node) {
+            return;
+          }
 
           inputRef.current = node;
           InputProps?.ref?.(node);

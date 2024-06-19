@@ -1,10 +1,16 @@
-import React, { FC, useId, useState } from 'react';
+import React, { FC, useId, useState } from "react";
 import {
-  Button, Dialog, DialogActions, DialogContent,
-  DialogTitle, Stack, TextField, styled,
-} from '@mui/material';
-import { useForm } from 'react-hook-form';
-import { LoadingButton } from '@mui/lab';
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Stack,
+  TextField,
+  styled,
+} from "@mui/material";
+import { useForm } from "react-hook-form";
+import { LoadingButton } from "@mui/lab";
 
 type Props = {
   profile: Profile;
@@ -95,9 +101,15 @@ const EditProfileDialog: FC<Props> = ({ profile, onConfirm, onClose }: Props) =>
         </form>
       </StyledDialogContent>
       <DialogActions>
-        <Button sx={{ mr: "auto" }} disabled>Change Password</Button>
-        <Button onClick={onClose} color="error">Cancel</Button>
-        <LoadingButton type="submit" form={id} loading={saving}>Save</LoadingButton>
+        <Button sx={{ mr: "auto" }} disabled>
+          Change Password
+        </Button>
+        <Button onClick={onClose} color="error">
+          Cancel
+        </Button>
+        <LoadingButton type="submit" form={id} loading={saving}>
+          Save
+        </LoadingButton>
       </DialogActions>
     </StyledDialog>
   );

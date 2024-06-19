@@ -54,7 +54,7 @@ export const VehicleProvider: FC<Props> = ({ vin, children }: Props) => {
         body: formData,
       }).catch(() => null);
 
-      const { status, image: result } = await response?.json() || {};
+      const { status, image: result } = (await response?.json()) || {};
       if (status === STATUS_OK && result?.uuid) {
         vehicle.image_uuid = result.uuid;
       }
@@ -68,7 +68,7 @@ export const VehicleProvider: FC<Props> = ({ vin, children }: Props) => {
       body: JSON.stringify(vehicle),
     }).catch(() => null);
 
-    const { status } = await response?.json() || {};
+    const { status } = (await response?.json()) || {};
     if (status === STATUS_OK) {
       setState((prev) => ({
         ...prev,
@@ -107,7 +107,7 @@ export const VehicleProvider: FC<Props> = ({ vin, children }: Props) => {
         return null;
       });
 
-      const { status, vehicle } = await response?.json() || {};
+      const { status, vehicle } = (await response?.json()) || {};
       if (status === STATUS_OK) {
         setState({
           status: ProviderStatus.LOADED,
@@ -123,9 +123,5 @@ export const VehicleProvider: FC<Props> = ({ vin, children }: Props) => {
 
   const value = useMemo(() => ({ ...state, editVehicle }), [state]);
 
-  return (
-    <Context.Provider value={value}>
-      {children}
-    </Context.Provider>
-  );
+  return <Context.Provider value={value}>{children}</Context.Provider>;
 };

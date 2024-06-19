@@ -19,14 +19,22 @@ export enum LookupStatus {
  * @param refetch if true, will refetch the status
  * @returns [{ status, following }, toggleFollowing]
  */
-const useIsFollowingVehicleLookup = (vin: Vehicle["vin"], refetch = false): [{ status: LookupStatus, following: boolean | null }, () => Promise<boolean>] => {
+const useIsFollowingVehicleLookup = (
+  vin: Vehicle["vin"],
+  refetch = false
+): [{ status: LookupStatus; following: boolean | null }, () => Promise<boolean>] => {
   const { token, profile } = useAuthProvider();
   const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.IS_FOLLOWING_VEHICLE, {});
   const cachedValue: boolean | null = cache[vin] || null;
 
-  const [, setFollowingCache] = useSessionStorage<Record<Vehicle["vin"], Vehicle[]>>(CacheKeys.PROFILE_VEHICLES, {});
+  const [, setFollowingCache] = useSessionStorage<Record<Vehicle["vin"], Vehicle[]>>(
+    CacheKeys.PROFILE_VEHICLES,
+    {}
+  );
 
-  const [status, setStatus] = useState<LookupStatus>(cachedValue !== null ? LookupStatus.Success : LookupStatus.Loading);
+  const [status, setStatus] = useState<LookupStatus>(
+    cachedValue !== null ? LookupStatus.Success : LookupStatus.Loading
+  );
   const [following, setFollowing] = useState<boolean | null>(cachedValue);
 
   const followController = useRef<AbortController | null>(new AbortController());
@@ -49,7 +57,7 @@ const useIsFollowingVehicleLookup = (vin: Vehicle["vin"], refetch = false): [{ s
       signal,
     }).catch(() => null);
 
-    const { status, follow_result } = await response?.json() || {};
+    const { status, follow_result } = (await response?.json()) || {};
     if (status !== STATUS_OK) {
       setFollowing((prev) => !prev);
       return false;
@@ -65,7 +73,8 @@ const useIsFollowingVehicleLookup = (vin: Vehicle["vin"], refetch = false): [{ s
       signal,
     }).catch(() => null);
 
-    const { status: followingLookupStatus, vehicles_following } = await followingVehicles?.json() || {};
+    const { status: followingLookupStatus, vehicles_following } =
+      (await followingVehicles?.json()) || {};
     if (followingLookupStatus === STATUS_OK) {
       setFollowingCache((prev) => ({ ...prev, [profile!.uuid]: vehicles_following }));
     }
@@ -93,7 +102,7 @@ const useIsFollowingVehicleLookup = (vin: Vehicle["vin"], refetch = false): [{ s
         return null;
       });
 
-      const { status, following } = await response?.json() || {};
+      const { status, following } = (await response?.json()) || {};
       if (status === STATUS_OK) {
         setCache((prev) => ({ ...prev, [vin]: following }));
         setStatus(LookupStatus.Success);
