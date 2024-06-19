@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useRef, useState } from "react";
+import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   AddPhotoAlternate,
@@ -9,6 +9,7 @@ import {
 } from "@mui/icons-material";
 import { TabContext, TabPanel } from "@mui/lab";
 import {
+  Alert,
   Backdrop,
   Button,
   Card,
@@ -31,6 +32,7 @@ import {
 import { useSnackbar } from "notistack";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
+import { load } from "exif-library";
 import { useAuthProvider } from "../../Providers/AuthProvider";
 import { ENDPOINTS, MEDIA_ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
 import { ImageUpload } from "../ImageUpload";
@@ -42,6 +44,7 @@ import { VehicleSearch } from "../Typeahead/VehicleSearch";
 import { useFeedProvider } from "../../Providers/FeedProvider";
 import { CONFIG } from "../../config/AppConfig";
 import { safeIsoParse } from "../../utils/date";
+import { imageToBase64 } from "../../utils/image";
 
 type Props = {
   vehicle?: Vehicle;
@@ -84,6 +87,10 @@ const StyledTextField = styled(TextField)({
   },
 });
 
+const StyledExifAlert = styled(Alert)({
+  marginTop: "8px",
+});
+
 /**
  * A general feed call-to-action for creating a post
  *
@@ -100,6 +107,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
   const [postType, setPostType] = useState<FeedPost["type"]>("generic");
   const [plateDecoderOpen, setPlateDecoderOpen] = useState<boolean>(false);
   const [posting, setPosting] = useState<boolean>(false);
+  const [imageHasGpsData, setImageHasGpsData] = useState<boolean>(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const { register, watch, setValue, reset, resetField, control } = useForm<PostForm>();
@@ -234,6 +242,29 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
     resetPost();
   };
 
+  useEffect(() => {
+    if (!imageUpload?.[0]) {
+      setImageHasGpsData(false);
+      return;
+    }
+
+    (async () => {
+      try {
+        const baseImage = await imageToBase64(imageUpload?.[0]).catch(() => null);
+        const exifData = load(baseImage || "");
+
+        if (exifData?.GPS && exifData.GPS[0]) {
+          setImageHasGpsData(true);
+          return;
+        }
+      } catch (e) {
+        /* Pass */
+      }
+
+      setImageHasGpsData(false);
+    })();
+  }, [imageUpload?.[0]]);
+
   return (
     <>
       <Backdrop open={expanded} sx={{ zIndex: 9 }} />
@@ -325,6 +356,12 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
                           onPreviewClick={() => resetField("image")}
                           onDrop={(e) => setValue("image", e.dataTransfer.files)}
                         />
+                        {imageHasGpsData === true && (
+                          <StyledExifAlert severity="error">
+                            This image contains GPS EXIF data that will be accessible to the public
+                            if posted.
+                          </StyledExifAlert>
+                        )}
                       </TabPanel>
                     </TabContext>
                   </StyledCard>
