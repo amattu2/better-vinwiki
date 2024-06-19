@@ -8,6 +8,11 @@ export const imageToBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
 
+    if (!(file instanceof Blob)) {
+      reject(new Error("Invalid file type"));
+      return;
+    }
+
     reader.onload = () =>
       typeof reader.result === "string"
         ? resolve(reader.result)
