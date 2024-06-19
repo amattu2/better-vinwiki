@@ -65,7 +65,7 @@ const useIsFollowingLookup = (
 
     setCache((prev) => ({ ...prev, [uuid]: follow_result.state === "following" }));
 
-    const followingProfiles = await fetch(ENDPOINTS.following + profile!.uuid, {
+    const followingProfiles = await fetch(ENDPOINTS.following + (profile?.uuid || ""), {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -78,7 +78,7 @@ const useIsFollowingLookup = (
       followingStatus === STATUS_OK ||
       (followingStatus === STATUS_ERROR && key === ERROR_KEY.NOT_FOLLOWING)
     ) {
-      setFollowingCache((prev) => ({ ...prev, [profile!.uuid]: following || [] }));
+      setFollowingCache((prev) => ({ ...prev, [profile?.uuid || ""]: following || [] }));
     }
 
     return true;

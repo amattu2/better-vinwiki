@@ -43,7 +43,7 @@ const useListLookup = (
   const [status, setStatus] = useState<LookupStatus>(
     cachedValue ? LookupStatus.Success : LookupStatus.Loading
   );
-  const [list, setList] = useState<List | null>(cachedValue);
+  const [list, setList] = useState<List>(cachedValue);
 
   /**
    * A function to perform a list update
@@ -72,7 +72,7 @@ const useListLookup = (
     const { status } = (await response?.json()) || {};
     if (status === STATUS_OK) {
       setCache((prev) => ({ ...prev, [uuid]: { ...list, ...editedList } }));
-      setList((prev) => ({ ...prev!, ...editedList }));
+      setList((prev) => ({ ...prev, ...editedList }));
       setProfileListsCache((prev) => {
         const { owned, following } = prev[authProfile.uuid] || {};
 

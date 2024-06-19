@@ -73,7 +73,7 @@ export const VehicleProvider: FC<Props> = ({ vin, children }: Props) => {
       setState((prev) => ({
         ...prev,
         vehicle: {
-          ...prev.vehicle!,
+          ...(prev?.vehicle || ({} as VehicleResponse)),
           ...vehicle,
           // NOTE: Rendering the new image takes a few minutes. Hide the old one until then.
           poster_photo: (vehicle.image_uuid ? null : prev.vehicle?.poster_photo) || "",

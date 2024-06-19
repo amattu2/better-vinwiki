@@ -71,7 +71,7 @@ const fetchVehicle = async (
  */
 export const VehicleSearch: FC<Props> = ({ value, onChange }: Props) => {
   const { token, profile } = useAuthProvider();
-  const [, { vehicles: recentVehicles }] = useFollowingVehiclesLookup(profile!.uuid);
+  const [, { vehicles: recentVehicles }] = useFollowingVehiclesLookup(profile?.uuid || "");
 
   const [searchValue, setSearchValue] = useState<string>("");
   const [options, setOptions] = useState<Vehicle[]>([]);

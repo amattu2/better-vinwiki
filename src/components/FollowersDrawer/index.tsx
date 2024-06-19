@@ -55,7 +55,7 @@ const StyledList = styled(List)<{ component: React.ElementType }>({
 export const FollowersDrawer: FC<Props> = ({ open, onClose }: Props) => {
   const { profile } = useAuthProvider();
 
-  const [status, { following }] = useFollowingLookup(profile!.uuid, false);
+  const [status, { following }] = useFollowingLookup(profile?.uuid || "", false);
   const [sort, setSort] = useState<"alpha" | "date">("alpha");
 
   const data: Profile[] = useMemo(() => {

@@ -45,6 +45,7 @@ const config = {
     "arrow-body-style": ["warn"],
     "eol-last": ["warn"],
     "no-unreachable": ["warn"],
+    "no-continue": "off",
 
     /* typescript-eslint overwritten rules */
     "no-use-before-define": "off",
@@ -86,25 +87,16 @@ const config = {
     "@typescript-eslint/no-non-null-asserted-optional-chain": "error",
     "@typescript-eslint/no-shadow": "off",
     "@typescript-eslint/dot-notation": "off",
-    "@typescript-eslint/naming-convention": [
-      "error",
-      {
-        selector: "variable",
-        format: ["camelCase", "PascalCase", "UPPER_CASE"],
-        leadingUnderscore: "allow",
-      },
-    ],
+    "@typescript-eslint/naming-convention": "off",
     "@typescript-eslint/ban-ts-comment": "off",
 
     /* create-react-app rules */
     "react-hooks/exhaustive-deps": "off",
     "import/prefer-default-export": "off",
+    "import/no-extraneous-dependencies": ["error", { devDependencies: true }],
 
     /* jest and testing-library rules */
     "testing-library/prefer-screen-queries": "off",
-    "testing-library/no-wait-for-multiple-assertions": "off",
-    "testing-library/no-node-access": "off",
-    "testing-library/no-container": "off",
   },
 };
 

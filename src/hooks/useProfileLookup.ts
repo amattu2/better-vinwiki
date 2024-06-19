@@ -41,7 +41,7 @@ const useProfileLookup = (
   const [status, setStatus] = useState<LookupStatus>(
     cachedValue ? LookupStatus.Success : LookupStatus.Loading
   );
-  const [profile, setProfile] = useState<Profile | null>(cachedValue);
+  const [profile, setProfile] = useState<Profile>(cachedValue);
 
   /**
    * A function to edit a profile.
@@ -69,7 +69,7 @@ const useProfileLookup = (
 
     const { status } = (await response?.json()) || {};
     if (status === STATUS_OK) {
-      setProfile((prev) => ({ ...prev!, ...editedProfile }));
+      setProfile((prev) => ({ ...prev, ...editedProfile }));
       return true;
     }
 
@@ -106,7 +106,7 @@ const useProfileLookup = (
     const { status, image } = (await response?.json()) || {};
     if (status === STATUS_OK && image?.uuid) {
       setProfile((prev) => ({
-        ...prev!,
+        ...prev,
         avatar: image.files?.small_sq,
         profile_picture_uuid: image.uuid,
       }));

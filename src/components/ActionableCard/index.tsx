@@ -1,4 +1,4 @@
-import React, { ElementType, FC, Ref, forwardRef } from "react";
+import React, { ElementType, Ref, forwardRef } from "react";
 import { Card, CardHeader, CardActionArea, styled, CardProps, Theme } from "@mui/material";
 import { ArrowForwardIos } from "@mui/icons-material";
 

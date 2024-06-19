@@ -65,7 +65,7 @@ const useIsFollowingVehicleLookup = (
 
     setCache((prev) => ({ ...prev, [vin]: follow_result.state === "following" }));
 
-    const followingVehicles = await fetch(ENDPOINTS.following_vehicles + profile!.uuid, {
+    const followingVehicles = await fetch(ENDPOINTS.following_vehicles + (profile?.uuid || ""), {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -75,8 +75,8 @@ const useIsFollowingVehicleLookup = (
 
     const { status: followingLookupStatus, vehicles_following } =
       (await followingVehicles?.json()) || {};
-    if (followingLookupStatus === STATUS_OK) {
-      setFollowingCache((prev) => ({ ...prev, [profile!.uuid]: vehicles_following }));
+    if (followingLookupStatus === STATUS_OK && profile?.uuid) {
+      setFollowingCache((prev) => ({ ...prev, [profile.uuid]: vehicles_following }));
     }
 
     return true;

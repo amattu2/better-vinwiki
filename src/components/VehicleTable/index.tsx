@@ -82,7 +82,7 @@ type T = Vehicle;
 
 type Column = {
   label: string;
-  value: (a: T) => string | boolean | number | React.ReactNode;
+  value: (a: T) => React.ReactNode;
   default?: true;
   comparator?: (a: T, b: T) => number;
 };
@@ -403,6 +403,7 @@ export const VehicleTable: FC<Props> = ({
               // eslint-disable-next-line react/no-unstable-nested-components
               <Repeater
                 count={repeaterCount}
+                // eslint-disable-next-line react/no-unstable-nested-components
                 Component={() => <ResultSkeleton hasCheckbox={showCheckboxes} />}
               />
             )}
