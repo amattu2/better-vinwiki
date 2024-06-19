@@ -29,7 +29,7 @@ type FeedPostProps = FeedPost & {
   /**
    * Adds a ref to the post container.
    */
-  ref?: Ref<HTMLDivElement>;
+  ref?: React.LegacyRef<HTMLDivElement>;
 };
 
 type Country = {
