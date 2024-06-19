@@ -2,7 +2,10 @@
  * VINwiki Username Tag
  *
  * Matches:
- * - `@username` or `(space)@username`
+ * - `@username`
+ * - `(space)@username`
+ * - `@user.name`
+ * - '@user.name.here'
  */
 export const MentionRegex = /(?:^|\s)@([\w]+)/g;
 
