@@ -9,14 +9,14 @@ export const imageToBase64 = (file: File): Promise<string> =>
     const reader = new FileReader();
 
     if (!(file instanceof Blob)) {
-      reject(new Error("Invalid file type"));
+      reject(new Error("imageToBase64 received a non-blob input"));
       return;
     }
 
     reader.onload = () =>
       typeof reader.result === "string"
         ? resolve(reader.result)
-        : reject(new Error("Failed to convert image to base64"));
+        : reject(new Error("imageToBase64 failed to convert image to base64"));
     reader.onerror = reject;
 
     reader.readAsDataURL(file);
