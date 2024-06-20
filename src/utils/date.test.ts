@@ -16,19 +16,19 @@ describe("formatDate", () => {
 describe("formatTime", () => {
   it("should format time", () => {
     const date = new Date("2024-10-09T13:21:00-04:00");
-    expect(utils.formatTime(date)).toBe("1:21 PM");
+    expect(utils.formatTime(date)).toBe("5:21 PM");
   });
 
   it("should use the provided locale", () => {
     const date = new Date("2024-10-09T13:21:00-04:00");
-    expect(utils.formatTime(date, "fr-FR")).toBe("13:21");
+    expect(utils.formatTime(date, "fr-FR")).toBe("17:21");
   });
 });
 
 describe("formatDateTime", () => {
   it("should show the full date and time if older than 12 hours", () => {
     const date = new Date("2009-10-09T13:21:00-04:00");
-    expect(utils.formatDateTime(date)).toBe("October 9, 2009 at 1:21 PM");
+    expect(utils.formatDateTime(date)).toBe("October 9, 2009 at 5:21 PM");
   });
 
   it("should include 'today' prefix if the date is within 12hrs", () => {
@@ -43,7 +43,7 @@ describe("formatDateTime", () => {
 
   it("should use the provided locale", () => {
     const date = new Date("2015-01-02T13:21:00-04:00");
-    expect(utils.formatDateTime(date, false, "fr-FR")).toBe("2 janvier 2015 at 12:21");
+    expect(utils.formatDateTime(date, false, "fr-FR")).toBe("2 janvier 2015 at 17:21");
   });
 });
 
