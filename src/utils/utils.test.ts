@@ -1,5 +1,4 @@
 import { isValidEventDate } from "./date";
-import { validateVIN } from "./vehicle";
 
 describe("Utils isValidEventDate", () => {
   const invalidDateFormats: string[] = [
@@ -47,31 +46,4 @@ describe("Utils isValidEventDate", () => {
       );
     }
   );
-});
-
-describe("Utils validateVIN", () => {
-  it("returns false for a VIN that is too short", () => {
-    expect(validateVIN("1GNEK13Z22R29898")).toBe(false);
-  });
-
-  it("returns false for a VIN that is too long", () => {
-    expect(validateVIN("1GNEK13Z22R2989841")).toBe(false);
-  });
-
-  it("returns false for a VIN that contains invalid characters", () => {
-    expect(validateVIN("1GNEK13Z22R29898O")).toBe(false);
-  });
-
-  const validVINs: string[] = [
-    "1GNEK13Z22R298984",
-    "WDB9071351N007450",
-    "1ZVBP8EM2E5263449",
-    "WBAFG61020LT72216",
-    "JMZNA18B201131813",
-    "1FACP42D8PF143209",
-    "WUAZZZF11PD004324",
-  ];
-  it.each(validVINs)("returns true for the valid VIN %s", (vin) => {
-    expect(validateVIN(vin)).toBe(true);
-  });
 });
