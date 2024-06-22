@@ -49,8 +49,8 @@ describe("PostMeta", () => {
       />
     );
 
-    expect(getByTestId("metadata-post-date")).toBeInTheDocument();
-    expect(getByTestId("metadata-post-date")).toHaveTextContent(/[\w]/i); // NOTE: Date format is covered by other test cases
+    expect(getByTestId("post-meta-date")).toBeInTheDocument();
+    expect(getByTestId("post-meta-date")).toHaveTextContent(/[\w]/i); // NOTE: Date format is covered by other test cases
   });
 
   it("should include a tooltip for the event date if different than the post date", async () => {
@@ -66,9 +66,9 @@ describe("PostMeta", () => {
       />
     );
 
-    expect(getByTestId("metadata-post-date")).toBeInTheDocument();
+    expect(getByTestId("post-meta-date")).toBeInTheDocument();
 
-    await userEvent.hover(getByTestId("metadata-post-date"));
+    await userEvent.hover(getByTestId("post-meta-date"));
 
     const tooltip = await findByRole("tooltip");
     expect(tooltip).toBeInTheDocument();
@@ -88,8 +88,8 @@ describe("PostMeta", () => {
       />
     );
 
-    expect(getByTestId("metadata-post-locale")).toBeInTheDocument();
-    expect(getByTestId("metadata-post-locale")).toHaveTextContent("Georgia, USA");
+    expect(getByTestId("post-meta-locale")).toBeInTheDocument();
+    expect(getByTestId("post-meta-locale")).toHaveTextContent("Georgia, USA");
   });
 
   it("should render the client if provided", () => {
@@ -105,8 +105,8 @@ describe("PostMeta", () => {
       />
     );
 
-    expect(getByTestId("metadata-post-client")).toBeInTheDocument();
-    expect(getByTestId("metadata-post-client")).toHaveTextContent("iOS");
+    expect(getByTestId("post-meta-client")).toBeInTheDocument();
+    expect(getByTestId("post-meta-client")).toHaveTextContent("iOS");
   });
 
   it.each<string>(["web", "vinbot"])("should not include the client if it is '%p'", (client) => {
@@ -122,7 +122,7 @@ describe("PostMeta", () => {
       />
     );
 
-    expect(queryByTestId("metadata-post-client")).not.toBeInTheDocument();
+    expect(queryByTestId("post-meta-client")).not.toBeInTheDocument();
     expect(queryByText(client)).not.toBeInTheDocument();
   });
 });
