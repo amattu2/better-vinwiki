@@ -1,19 +1,15 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
-import { NavigateNext } from '@mui/icons-material';
-import {
-  Box, Breadcrumbs, Container,
-  Divider,
-  Stack, Typography, styled,
-} from '@mui/material';
-import FeedPost, { PostSkeleton } from '../../components/FeedPost';
-import SuggestionCard from '../../components/SuggestionCards/ProfileSuggestion';
-import { ScrollToTop } from '../../components/ScrollToTop/ScrollButton';
-import PostComments from '../../components/FeedPost/Components/PostComments';
-import { CommentSkeleton } from '../../components/FeedPost/Components/PostComment';
-import Repeater from '../../components/Repeater';
-import { ENDPOINTS, STATUS_OK } from '../../config/Endpoints';
-import { useAuthProvider } from '../../Providers/AuthProvider';
-import { StyledLink } from '../../components/StyledLink';
+import React, { FC, useEffect, useMemo, useState } from "react";
+import { NavigateNext } from "@mui/icons-material";
+import { Box, Breadcrumbs, Container, Divider, Stack, Typography, styled } from "@mui/material";
+import FeedPost, { PostSkeleton } from "../../components/FeedPost";
+import SuggestionCard from "../../components/SuggestionCards/ProfileSuggestion";
+import { ScrollToTop } from "../../components/ScrollToTop/ScrollButton";
+import PostComments from "../../components/FeedPost/Components/PostComments";
+import { CommentSkeleton } from "../../components/FeedPost/Components/PostComment";
+import Repeater from "../../components/Repeater";
+import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
+import { useAuthProvider } from "../../Providers/AuthProvider";
+import { StyledLink } from "../../components/StyledLink";
 
 type Props = {
   uuid: FeedPost["uuid"];
@@ -83,8 +79,8 @@ const PostView: FC<Props> = ({ uuid }: Props) => {
   const [post, setPost] = useState<FeedPost | null>(null);
   const [comments, setComments] = useState<PostComment[]>([]);
 
-  const suggestions: { profile: Profile, postCount: number }[] = useMemo(() => {
-    const profileMap: { [uuid: string]: { profile: Profile, postCount: number } } = {};
+  const suggestions: { profile: Profile; postCount: number }[] = useMemo(() => {
+    const profileMap: { [uuid: string]: { profile: Profile; postCount: number } } = {};
 
     (comments.map((comment) => comment.person) || []).forEach((profile) => {
       if (profileMap[profile.uuid]) {
@@ -110,9 +106,12 @@ const PostView: FC<Props> = ({ uuid }: Props) => {
         signal,
       }).catch(() => null);
 
-      const { status, post, comments } = await response?.json() || {};
+      const { status, post, comments } = (await response?.json()) || {};
       if (status === STATUS_OK) {
-        comments?.sort((a: PostComment, b: PostComment) => (new Date(b.created).getTime() - new Date(a.created).getTime()));
+        comments?.sort(
+          (a: PostComment, b: PostComment) =>
+            new Date(b.created).getTime() - new Date(a.created).getTime()
+        );
         setPost(post);
         setComments(comments);
       }
@@ -124,7 +123,12 @@ const PostView: FC<Props> = ({ uuid }: Props) => {
   return (
     <>
       <StyledFeedBox>
-        <StyledHeaderSection direction="row" alignItems="center" justifyContent="flex-start" gap={2}>
+        <StyledHeaderSection
+          direction="row"
+          alignItems="center"
+          justifyContent="flex-start"
+          gap={2}
+        >
           <Breadcrumbs separator={<NavigateNext fontSize="small" />} sx={{ mr: "auto" }}>
             <StyledLink to="/">Home</StyledLink>
             <Typography>Post</Typography>

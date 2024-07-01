@@ -1,22 +1,29 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
-import { FilterList, Public, DynamicFeed, Image, Message } from '@mui/icons-material';
+import React, { FC, useEffect, useMemo, useRef, useState } from "react";
+import { FilterList, Public, DynamicFeed, Image, Message } from "@mui/icons-material";
 import {
-  Alert, Box, Container, Divider,
-  Stack, ToggleButton, ToggleButtonGroup,
-  Tooltip, Typography, styled,
-} from '@mui/material';
-import { LoadingButton } from '@mui/lab';
-import { useIntersectionObserver, useLocalStorage } from 'usehooks-ts';
-import { ProviderStatus, useFeedProvider } from '../../Providers/FeedProvider';
-import FeedPost, { PostSkeleton } from '../../components/FeedPost';
-import SuggestionCard from '../../components/SuggestionCards/ProfileSuggestion';
-import TransitionGroup from '../../components/TransitionGroup';
-import TrendingPost from '../../components/TrendingPost';
-import BlogPostCard from '../../components/BlogPost';
-import CreatePost from '../../components/CreatePost';
-import { ScrollToTop } from '../../components/ScrollToTop/ScrollButton';
-import { CacheKeys } from '../../config/Cache';
-import Repeater from '../../components/Repeater';
+  Alert,
+  Box,
+  Container,
+  Divider,
+  Stack,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
+  Typography,
+  styled,
+} from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { useIntersectionObserver, useLocalStorage } from "usehooks-ts";
+import { ProviderStatus, useFeedProvider } from "../../Providers/FeedProvider";
+import FeedPost, { PostSkeleton } from "../../components/FeedPost";
+import SuggestionCard from "../../components/SuggestionCards/ProfileSuggestion";
+import TransitionGroup from "../../components/TransitionGroup";
+import TrendingPost from "../../components/TrendingPost";
+import BlogPostCard from "../../components/BlogPost";
+import CreatePost from "../../components/CreatePost";
+import { ScrollToTop } from "../../components/ScrollToTop/ScrollButton";
+import { CacheKeys } from "../../config/Cache";
+import Repeater from "../../components/Repeater";
 
 const StyledContainer = styled(Container)(({ theme }) => ({
   paddingLeft: "0 !important",
@@ -49,33 +56,43 @@ const StyledSidebarBox = styled(StyledBox)(({ theme }) => ({
 
 // TODO: Dynamically fetch this from the blog
 const blogPost: BlogPost = {
-  created: '2016-07-14T01:00:00.000Z',
-  title: 'Discrepancy of Data',
-  body: 'In 2001 when the Ferrari 360 Spider came out, the market premiums were more than $150k over MSRP. It was the first time in years where it made sense to have gray market cars in the US. The values were closer to MSRP in Europe and the federalization fees were only $30-40k.',
-  link: 'https://vinwiki.com/discrepancy-of-data/',
-  image: 'https://api.placeholder.app/image/350x350/E4E4E0/3b3b3b?text=B%20VW',
+  created: "2016-07-14T01:00:00.000Z",
+  title: "Discrepancy of Data",
+  body: "In 2001 when the Ferrari 360 Spider came out, the market premiums were more than $150k over MSRP. It was the first time in years where it made sense to have gray market cars in the US. The values were closer to MSRP in Europe and the federalization fees were only $30-40k.",
+  link: "https://vinwiki.com/discrepancy-of-data/",
+  image: "https://api.placeholder.app/image/350x350/E4E4E0/3b3b3b?text=B%20VW",
 };
 
-const Feed : FC = () => {
+const Feed: FC = () => {
   const { status, posts, next, hasNext } = useFeedProvider();
   const lastElementRef = useRef<HTMLDivElement>(null);
 
   const [filtered, setFiltered] = useLocalStorage<boolean>(CacheKeys.FEED_TYPE, false);
-  const [postFilter, setPostFilter] = useLocalStorage<FeedPost["type"] | "">(CacheKeys.FEED_POST_TYPE, "");
+  const [postFilter, setPostFilter] = useLocalStorage<FeedPost["type"] | "">(
+    CacheKeys.FEED_POST_TYPE,
+    ""
+  );
   const [limit, setLimit] = useState<number>(10);
   const entry = useIntersectionObserver(lastElementRef, {});
   const isVisible = !!entry?.isIntersecting;
 
   // NOTE: These are posts matching client-side filters
-  const filteredPosts: FeedPost[] = useMemo(() => posts
-    .filter((p) => (postFilter ? p.type === postFilter : true))
-    .filter((p) => !(p.client === "vinbot" && p.person.username !== "vinbot" && !p.post_text))
-    .sort((a, b) => (new Date(b.post_date)).getTime() - (new Date(a.post_date)).getTime()), [posts, postFilter]);
+  const filteredPosts: FeedPost[] = useMemo(
+    () =>
+      posts
+        .filter((p) => (postFilter ? p.type === postFilter : true))
+        .filter((p) => !(p.client === "vinbot" && p.person.username !== "vinbot" && !p.post_text))
+        .sort((a, b) => new Date(b.post_date).getTime() - new Date(a.post_date).getTime()),
+    [posts, postFilter]
+  );
 
   // NOTE: These posts are a subset of filteredPosts, limited by the limit state
-  const slicedPosts: FeedPost[] = useMemo(() => filteredPosts.slice(0, limit), [filteredPosts, limit]);
+  const slicedPosts: FeedPost[] = useMemo(
+    () => filteredPosts.slice(0, limit),
+    [filteredPosts, limit]
+  );
 
-  const topPost: { reason: string, post: FeedPost } | null = useMemo(() => {
+  const topPost: { reason: string; post: FeedPost } | null = useMemo(() => {
     const topByComments = posts.sort((a, b) => b.comment_count - a.comment_count)?.[0];
     const topByLength = posts.sort((a, b) => b.post_text.length - a.post_text.length)?.[0];
     const topByRandom = posts[Math.floor(Math.random() * posts.length)];
@@ -93,8 +110,8 @@ const Feed : FC = () => {
     return null;
   }, [posts]);
 
-  const suggestions: { profile: Profile, postCount: number }[] = useMemo(() => {
-    const profileMap: { [uuid: string]: { profile: Profile, postCount: number } } = {};
+  const suggestions: { profile: Profile; postCount: number }[] = useMemo(() => {
+    const profileMap: { [uuid: string]: { profile: Profile; postCount: number } } = {};
 
     (filteredPosts.map((post) => post.person) || []).forEach((profile) => {
       if (profileMap[profile.uuid]) {
@@ -110,7 +127,7 @@ const Feed : FC = () => {
   const loadMore = () => {
     setLimit((prev) => prev + 10);
 
-    if ((limit + 11) >= filteredPosts.length) {
+    if (limit + 11 >= filteredPosts.length) {
       next?.(30);
     }
   };
@@ -131,7 +148,9 @@ const Feed : FC = () => {
         <StyledFeedBox>
           <Container maxWidth="md">
             <Stack direction="row" alignItems="center" justifyContent="flex-start" gap={2}>
-              <Typography variant="h4" sx={{ mr: "auto" }}>Feed</Typography>
+              <Typography variant="h4" sx={{ mr: "auto" }}>
+                Feed
+              </Typography>
               <ToggleButtonGroup
                 color="primary"
                 value={postFilter}
@@ -177,19 +196,23 @@ const Feed : FC = () => {
 
             <CreatePost />
 
-            {status === ProviderStatus.LOADING && (
-              <Repeater count={5} Component={PostSkeleton} />
-            )}
+            {status === ProviderStatus.LOADING && <Repeater count={5} Component={PostSkeleton} />}
             {status === ProviderStatus.RELOADING && (
-              <Alert severity="info" sx={{ mb: 1 }}>Hang tight. We&apos;re fetching your latest feed...</Alert>
+              <Alert severity="info" sx={{ mb: 1 }}>
+                Hang tight. We&apos;re fetching your latest feed...
+              </Alert>
             )}
-            {(status === ProviderStatus.LOADED && slicedPosts.length === 0) && (
-              <Alert severity="info" sx={{ mb: 1 }}>Uh oh. We have no posts to show.</Alert>
+            {status === ProviderStatus.LOADED && slicedPosts.length === 0 && (
+              <Alert severity="info" sx={{ mb: 1 }}>
+                Uh oh. We have no posts to show.
+              </Alert>
             )}
 
             <TransitionGroup
               items={slicedPosts.map((post) => ({ post, key: post.uuid }))}
-              render={({ post }, _, last) => <FeedPost {...post} ref={last ? lastElementRef : undefined} />}
+              render={({ post }, _, last) => (
+                <FeedPost {...post} ref={last ? lastElementRef : undefined} />
+              )}
             />
             {hasNext && (
               <Box sx={{ textAlign: "center", mt: 2 }}>

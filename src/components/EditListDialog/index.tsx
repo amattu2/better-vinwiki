@@ -1,11 +1,17 @@
-import React, { FC, useId, useState } from 'react';
+import React, { FC, useId, useState } from "react";
 import {
-  Button, Dialog, DialogActions, DialogContent,
-  DialogTitle, Stack, TextField, styled,
-} from '@mui/material';
-import { useForm } from 'react-hook-form';
-import { LoadingButton } from '@mui/lab';
-import DeleteContentDialog from '../DeleteContentConfirm';
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Stack,
+  TextField,
+  styled,
+} from "@mui/material";
+import { useForm } from "react-hook-form";
+import { LoadingButton } from "@mui/lab";
+import DeleteContentDialog from "../DeleteContentConfirm";
 
 type Props = {
   list: List;
@@ -83,9 +89,15 @@ const EditListDialog: FC<Props> = ({ list, onDelete, onConfirm, onClose }: Props
           </form>
         </StyledDialogContent>
         <DialogActions>
-          <Button sx={{ mr: "auto" }} color="error" onClick={() => setDeleteDialogOpen(true)}>Delete</Button>
-          <Button onClick={onClose} color="error">Cancel</Button>
-          <LoadingButton type="submit" form={id} loading={saving}>Save</LoadingButton>
+          <Button sx={{ mr: "auto" }} color="error" onClick={() => setDeleteDialogOpen(true)}>
+            Delete
+          </Button>
+          <Button onClick={onClose} color="error">
+            Cancel
+          </Button>
+          <LoadingButton type="submit" form={id} loading={saving}>
+            Save
+          </LoadingButton>
         </DialogActions>
       </StyledDialog>
       <DeleteContentDialog

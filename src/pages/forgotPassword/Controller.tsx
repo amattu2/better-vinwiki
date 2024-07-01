@@ -5,7 +5,7 @@ import usePageTitle from "../../hooks/usePageTitle";
 const ForgotController = () => {
   usePageTitle("Forgot Password");
 
-  return (<ForgotView />);
+  return <ForgotView />;
 };
 
 export default ForgotController;

@@ -1,16 +1,10 @@
-import React, { FC } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Typography,
-  styled,
-} from '@mui/material';
-import { VehicleTable } from '../VehicleTable';
-import useFollowingVehiclesLookup from '../../hooks/useFollowingVehiclesLookup';
+import React, { FC } from "react";
+import { Dialog, DialogContent, DialogTitle, Typography, styled } from "@mui/material";
+import { VehicleTable } from "../VehicleTable";
+import useFollowingVehiclesLookup from "../../hooks/useFollowingVehiclesLookup";
 
 type Props = {
-  uuid: Profile['uuid'];
+  uuid: Profile["uuid"];
   onClose: () => void;
 };
 
@@ -26,7 +20,13 @@ const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
 }));
 
 const NoVehicles = () => (
-  <Typography variant="body1" color="textSecondary" sx={{ padding: "16px" }} textAlign="center" fontSize={14}>
+  <Typography
+    variant="body1"
+    color="textSecondary"
+    sx={{ padding: "16px" }}
+    textAlign="center"
+    fontSize={14}
+  >
     Uh oh... no vehicles to see here.
   </Typography>
 );
@@ -42,15 +42,9 @@ const VehicleTableDialog: FC<Props> = ({ uuid, onClose }: Props) => {
 
   return (
     <StyledDialog maxWidth="md" open onClose={onClose} fullWidth>
-      <DialogTitle>
-        Following Vehicles
-      </DialogTitle>
+      <DialogTitle>Following Vehicles</DialogTitle>
       <StyledDialogContent dividers>
-        <VehicleTable
-          status={lookupStatus}
-          vehicles={vehicles || []}
-          EmptyComponent={NoVehicles}
-        />
+        <VehicleTable status={lookupStatus} vehicles={vehicles || []} EmptyComponent={NoVehicles} />
       </StyledDialogContent>
     </StyledDialog>
   );

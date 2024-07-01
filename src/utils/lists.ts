@@ -12,7 +12,9 @@ export const sortLists = (lists: List[], sortBy: "alpha" | "date" | "popularity"
 
   switch (sortBy) {
     case "date":
-      cloned.sort((a, b) => new Date(a.created_date).getTime() - new Date(b.created_date).getTime());
+      cloned.sort(
+        (a, b) => new Date(a.created_date).getTime() - new Date(b.created_date).getTime()
+      );
       break;
     case "popularity":
       cloned.sort((a, b) => b.follower_count - a.follower_count);

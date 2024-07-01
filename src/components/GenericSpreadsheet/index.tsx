@@ -1,7 +1,13 @@
-import React, { useMemo } from 'react';
-import Spreadsheet, { CellBase, EntireColumnsSelection, EntireRowsSelection, Matrix, Selection } from "react-spreadsheet";
-import { cloneDeep } from 'lodash';
-import { Theme, useTheme } from '@mui/material';
+import React, { useMemo } from "react";
+import Spreadsheet, {
+  CellBase,
+  EntireColumnsSelection,
+  EntireRowsSelection,
+  Matrix,
+  Selection,
+} from "react-spreadsheet";
+import { cloneDeep } from "lodash";
+import { Theme, useTheme } from "@mui/material";
 
 export type ValueBase = {
   [key: string]: string | number | boolean | null | undefined;
@@ -54,7 +60,11 @@ export type Props<T extends ValueBase> = {
  * @returns {JSX.Element}
  */
 const GenericSpreadsheet = <T extends ValueBase>({
-  data, columnKeys, columnLabels, rowLabels, readOnly,
+  data,
+  columnKeys,
+  columnLabels,
+  rowLabels,
+  readOnly,
   onSelect,
 }: Props<T>) => {
   const { palette }: Theme = useTheme();
@@ -95,10 +105,16 @@ const GenericSpreadsheet = <T extends ValueBase>({
 
   const onSelectWrapper = (selection: Selection) => {
     if (selection instanceof EntireColumnsSelection && selection.start === selection.end) {
-      return onSelect?.(dataset.map((v) => Object.values(v)[selection.start]?.value).filter((v) => !!v), selection);
+      return onSelect?.(
+        dataset.map((v) => Object.values(v)[selection.start]?.value).filter((v) => !!v),
+        selection
+      );
     }
     if (selection instanceof EntireRowsSelection && selection.start === selection.end) {
-      return onSelect?.(dataset[selection.start].map((v) => v?.value).filter((v) => !!v), selection);
+      return onSelect?.(
+        dataset[selection.start].map((v) => v?.value).filter((v) => !!v),
+        selection
+      );
     }
 
     // No selection or Empty Selection

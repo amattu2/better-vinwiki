@@ -1,5 +1,5 @@
-import React, { FC, useMemo, useState } from 'react';
-import { FixedSizeList } from 'react-window';
+import React, { FC, useMemo, useState } from "react";
+import { FixedSizeList } from "react-window";
 import {
   Dialog,
   DialogContent,
@@ -15,13 +15,13 @@ import {
   Tooltip,
   Typography,
   styled,
-} from '@mui/material';
-import { Event, SortByAlpha } from '@mui/icons-material';
-import { cloneDeep } from 'lodash';
-import ProfileAvatar from '../ProfileAvatar';
-import Repeater from '../Repeater';
-import useFollowersLookup, { LookupStatus, LookupType } from '../../hooks/useFollowersLookup';
-import { StyledLink } from '../StyledLink';
+} from "@mui/material";
+import { Event, SortByAlpha } from "@mui/icons-material";
+import { cloneDeep } from "lodash";
+import ProfileAvatar from "../ProfileAvatar";
+import Repeater from "../Repeater";
+import useFollowersLookup, { LookupStatus, LookupType } from "../../hooks/useFollowersLookup";
+import { StyledLink } from "../StyledLink";
 
 type Props = {
   identifier: Profile["uuid"] | Vehicle["vin"] | List["uuid"];
@@ -48,7 +48,13 @@ const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
 }));
 
 const NoFollowers = () => (
-  <Typography variant="body1" color="textSecondary" sx={{ padding: "16px" }} textAlign="center" fontSize={14}>
+  <Typography
+    variant="body1"
+    color="textSecondary"
+    sx={{ padding: "16px" }}
+    textAlign="center"
+    fontSize={14}
+  >
     Uh oh... No followers to see here
   </Typography>
 );
@@ -115,9 +121,11 @@ const FollowersDialog: FC<Props> = ({ identifier, type, count, onClose }: Props)
         </ToggleButtonGroup>
       </DialogTitle>
       <StyledDialogContent dividers>
-        {(status !== LookupStatus.Loading && data.length === 0) && (<NoFollowers />)}
+        {status !== LookupStatus.Loading && data.length === 0 && <NoFollowers />}
         <List>
-          {(status === LookupStatus.Loading) && (<Repeater count={skeletonCount} Component={ProfileSkeleton} />)}
+          {status === LookupStatus.Loading && (
+            <Repeater count={skeletonCount} Component={ProfileSkeleton} />
+          )}
           <FixedSizeList
             height={57 * skeletonCount}
             width="100%"
@@ -129,12 +137,24 @@ const FollowersDialog: FC<Props> = ({ identifier, type, count, onClose }: Props)
               const { uuid, username, avatar, display_name } = data[index];
 
               return (
-                <ListItem key={uuid} component={StyledLink} to={`/profile/${uuid}`} divider style={style}>
+                <ListItem
+                  key={uuid}
+                  component={StyledLink}
+                  to={`/profile/${uuid}`}
+                  divider
+                  style={style}
+                >
                   <ListItemAvatar>
                     <ProfileAvatar username={username} avatar={avatar} />
                   </ListItemAvatar>
                   <ListItemText
-                    primary={display_name && <Typography variant="body1" fontWeight={600}>{display_name}</Typography>}
+                    primary={
+                      display_name && (
+                        <Typography variant="body1" fontWeight={600}>
+                          {display_name}
+                        </Typography>
+                      )
+                    }
                     secondary={`@${username}`}
                   />
                 </ListItem>

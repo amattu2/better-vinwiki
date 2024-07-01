@@ -3,10 +3,10 @@ import { Box, Typography, styled } from "@mui/material";
 import numeral from "numeral";
 
 export type StatisticItemProps = {
-  name: string,
-  value: number | string,
-  precise?: boolean,
-  onClick?: () => void
+  name: string;
+  value: number | string;
+  precise?: boolean;
+  onClick?: () => void;
 };
 
 const StyledBox = styled(Box)(({ theme, onClick }) => ({
@@ -49,7 +49,12 @@ const getFormattedValue = (value: number | string, precise?: boolean): string =>
  * @param {StatisticItemProps} props
  * @returns {JSX.Element}
  */
-export const StatisticItem: FC<StatisticItemProps> = ({ name, value, precise, onClick }: StatisticItemProps) => (
+export const StatisticItem: FC<StatisticItemProps> = ({
+  name,
+  value,
+  precise,
+  onClick,
+}: StatisticItemProps) => (
   <StyledBox onClick={onClick}>
     <StyledValue variant="h3">{getFormattedValue(value, precise)}</StyledValue>
     <StyledName>{name}</StyledName>

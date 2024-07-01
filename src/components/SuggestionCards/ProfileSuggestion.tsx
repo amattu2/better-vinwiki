@@ -1,15 +1,18 @@
-import React, { FC } from 'react';
+import React, { FC } from "react";
 import {
-  Card, CardContent, CardHeader,
-  List, ListItem,
+  Card,
+  CardContent,
+  CardHeader,
+  List,
+  ListItem,
   ListItemAvatar,
   ListItemText,
   Typography,
   styled,
-} from '@mui/material';
-import TransitionGroup from '../TransitionGroup';
-import ProfileAvatar from '../ProfileAvatar';
-import { StyledLink } from '../StyledLink';
+} from "@mui/material";
+import TransitionGroup from "../TransitionGroup";
+import ProfileAvatar from "../ProfileAvatar";
+import { StyledLink } from "../StyledLink";
 
 type ProfileSuggestion = {
   profile: Profile;
@@ -51,32 +54,28 @@ const SuggestionItem: FC<ProfileSuggestion> = ({ profile, postCount }: ProfileSu
       <ProfileAvatar username={profile.username} avatar={profile.avatar} />
     </ListItemAvatar>
     <ListItemText
-      primary={(
+      primary={
         <StyledLink to={`/profile/${profile.uuid}`} target="_blank">
           <Typography variant="body1" fontWeight={600}>
-            @
-            {profile.username}
+            @{profile.username}
           </Typography>
         </StyledLink>
-      )}
-      secondary={`${postCount} ${postCount === 1 ? 'post' : 'posts'}`}
+      }
+      secondary={`${postCount} ${postCount === 1 ? "post" : "posts"}`}
     />
-    <StyledLink to={`/profile/${profile.uuid}`}>
-      View
-    </StyledLink>
+    <StyledLink to={`/profile/${profile.uuid}`}>View</StyledLink>
   </ListItem>
 );
 
 const SuggestionCard: FC<Props> = ({ cardTitle = "In this feed", suggestions, limit }: Props) => (
   <StyledCard raised>
-    <StyledCardHeader
-      title={cardTitle}
-      titleTypographyProps={{ variant: 'h6' }}
-    />
+    <StyledCardHeader title={cardTitle} titleTypographyProps={{ variant: "h6" }} />
     <StyledCardContent>
       <StyledList>
         <TransitionGroup
-          items={suggestions.slice(0, limit).map((suggestion) => ({ suggestion, key: suggestion.profile.uuid }))}
+          items={suggestions
+            .slice(0, limit)
+            .map((suggestion) => ({ suggestion, key: suggestion.profile.uuid }))}
           render={({ suggestion }) => <SuggestionItem {...suggestion} />}
         />
       </StyledList>

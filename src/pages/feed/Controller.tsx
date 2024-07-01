@@ -10,7 +10,11 @@ const Controller = () => {
   const filteredFeed = useReadLocalStorage<boolean>(CacheKeys.FEED_TYPE);
 
   return (
-    <FeedProvider type={filteredFeed ? "filtered" : "feed"} identifier={profile!.uuid} limit={30}>
+    <FeedProvider
+      type={filteredFeed ? "filtered" : "feed"}
+      identifier={profile?.uuid || ""}
+      limit={30}
+    >
       <FeedView />
     </FeedProvider>
   );

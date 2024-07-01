@@ -18,14 +18,18 @@ export enum LookupStatus {
  * @param username username to lookup
  * @returns [status, { uuid }]
  */
-const useUUIDLookup = (username: Profile["username"]): [LookupStatus, { uuid: Profile["uuid"] | null }] => {
+const useUUIDLookup = (
+  username: Profile["username"]
+): [LookupStatus, { uuid: Profile["uuid"] | null }] => {
   const { token } = useAuthProvider();
   const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.UUID_LOOKUP, {});
   const cachedValue: Profile["uuid"] | null = cache[username] || null;
 
   // TODO: Two identical mentions will cause two network requests
   // find a way to prevent the 2nd request while the 1st is still loading
-  const [status, setStatus] = useState<LookupStatus>(cachedValue ? LookupStatus.Success : LookupStatus.Loading);
+  const [status, setStatus] = useState<LookupStatus>(
+    cachedValue ? LookupStatus.Success : LookupStatus.Loading
+  );
   const [uuid, setUUID] = useState<Profile["uuid"] | null>(cachedValue);
 
   useEffect(() => {
@@ -48,7 +52,7 @@ const useUUIDLookup = (username: Profile["username"]): [LookupStatus, { uuid: Pr
         return null;
       });
 
-      const { status, person } = await response?.json() || {};
+      const { status, person } = (await response?.json()) || {};
       if (status === STATUS_OK && !!person?.uuid) {
         setCache((prev) => ({ ...prev, [username]: person.uuid }));
         setStatus(LookupStatus.Success);

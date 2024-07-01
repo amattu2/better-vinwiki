@@ -1,16 +1,19 @@
-import React, { FC } from 'react';
+import React, { FC } from "react";
 import {
-  Card, CardContent, CardHeader,
-  List, ListItem,
+  Card,
+  CardContent,
+  CardHeader,
+  List,
+  ListItem,
   ListItemAvatar,
   ListItemText,
   Typography,
   styled,
-} from '@mui/material';
-import TransitionGroup from '../TransitionGroup';
-import { formatVehicleName } from '../../utils/vehicle';
-import ProfileAvatar from '../ProfileAvatar';
-import { StyledLink } from '../StyledLink';
+} from "@mui/material";
+import TransitionGroup from "../TransitionGroup";
+import { formatVehicleName } from "../../utils/vehicle";
+import ProfileAvatar from "../ProfileAvatar";
+import { StyledLink } from "../StyledLink";
 
 type Props = {
   suggestions: Vehicle[];
@@ -54,32 +57,29 @@ const SuggestionItem: FC<Vehicle> = (vehicle: Vehicle) => {
         <ProfileAvatar username={long_name} avatar={icon_photo} />
       </ListItemAvatar>
       <ListItemText
-        primary={(
+        primary={
           <StyledLink to={`/vehicle/${vin}`}>
             <Typography variant="body1" fontWeight={600}>
               {formatVehicleName(vehicle)}
             </Typography>
           </StyledLink>
-        )}
+        }
         secondary={vin}
       />
-      <StyledLink to={`/vehicle/${vin}`}>
-        View
-      </StyledLink>
+      <StyledLink to={`/vehicle/${vin}`}>View</StyledLink>
     </ListItem>
   );
 };
 
 const VehicleSuggestion: FC<Props> = ({ suggestions, limit }: Props) => (
   <StyledCard raised>
-    <StyledCardHeader
-      title="Vehicle Suggestions"
-      titleTypographyProps={{ variant: 'h6' }}
-    />
+    <StyledCardHeader title="Vehicle Suggestions" titleTypographyProps={{ variant: "h6" }} />
     <StyledCardContent>
       <StyledList>
         <TransitionGroup
-          items={suggestions.slice(0, limit).map((suggestion: Vehicle) => ({ suggestion, key: suggestion.vin }))}
+          items={suggestions
+            .slice(0, limit)
+            .map((suggestion: Vehicle) => ({ suggestion, key: suggestion.vin }))}
           render={({ suggestion }) => <SuggestionItem {...suggestion} />}
         />
       </StyledList>

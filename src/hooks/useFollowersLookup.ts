@@ -6,11 +6,13 @@ import { CacheKeys } from "../config/Cache";
 
 export type LookupType = "Profile" | "Vehicle" | "List";
 
-type KeyType<T> =
-  T extends "Profile" ? Profile["uuid"] :
-    T extends "Vehicle" ? Vehicle["vin"] :
-      T extends "List" ? List["uuid"] :
-        never;
+type KeyType<T> = T extends "Profile"
+  ? Profile["uuid"]
+  : T extends "Vehicle"
+    ? Vehicle["vin"]
+    : T extends "List"
+      ? List["uuid"]
+      : never;
 
 type Cache<T extends LookupType> = Record<KeyType<T>, Profile[]>;
 
@@ -54,13 +56,19 @@ const getEndpoint = <T extends LookupType>(type: T): string => {
  * @param {boolean} [refetch] if true, will refetch the status
  * @returns [status, { followers }]
  */
-const useFollowersLookup = <T extends LookupType>(identifier: KeyType<T>, type: T, refetch: boolean = false): [LookupStatus, { followers: Profile[] | null }] => {
+const useFollowersLookup = <T extends LookupType>(
+  identifier: KeyType<T>,
+  type: T,
+  refetch = false
+): [LookupStatus, { followers: Profile[] | null }] => {
   const { token } = useAuthProvider();
 
   const [cache, setCache] = useSessionStorage<Cache<T>>(getCacheKey(type), {} as Cache<T>);
   const cachedValue: Profile[] | null = cache[identifier] || null;
 
-  const [status, setStatus] = useState<LookupStatus>(cachedValue ? LookupStatus.Success : LookupStatus.Loading);
+  const [status, setStatus] = useState<LookupStatus>(
+    cachedValue ? LookupStatus.Success : LookupStatus.Loading
+  );
   const [followers, setFollowers] = useState<Profile[] | null>(cachedValue);
 
   useEffect(() => {
@@ -83,7 +91,7 @@ const useFollowersLookup = <T extends LookupType>(identifier: KeyType<T>, type: 
         return null;
       });
 
-      const { status, followers } = await response?.json() || {};
+      const { status, followers } = (await response?.json()) || {};
       if (status === STATUS_OK) {
         setCache((prev) => ({ ...prev, [identifier]: followers }));
         setStatus(LookupStatus.Success);

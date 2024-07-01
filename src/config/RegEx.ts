@@ -45,7 +45,7 @@ export const VinCharacterRegex = /^[A-HJ-NPR-Z0-9]+$/;
  * Matches:
  * - `P`, `B`, `C`, or `U` code classes
  */
-export const OBDiiRegex = /(?:^|\s)([PBCU][0-3][0-9]{3})/ig;
+export const OBDiiRegex = /(?:^|\s)([PBCU][0-3][0-9]{3})/gi;
 
 /**
  * Profile Link
@@ -54,7 +54,8 @@ export const OBDiiRegex = /(?:^|\s)([PBCU][0-3][0-9]{3})/ig;
  * - Better VINwiki `/profile/:uuid`
  * - VINwiki `/#/person/:uuid`
  */
-export const ProfileLinkRegex = /(?:https?:\/\/[^\s]+\/(?:profile|person)\/)([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/g;
+export const ProfileLinkRegex =
+  /(?:https?:\/\/[^\s]+\/(?:profile|person)\/)([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/g;
 
 /**
  * Vehicle Link
@@ -72,4 +73,5 @@ export const VehicleLinkRegex = /(?:https?:\/\/[^\s]+\/(?:vehicle|vin)\/)([A-HJ-
  * - Better VINwiki `/list/:uuid`
  * - VINwiki `/#/lists/:uuid`
  */
-export const ListLinkRegex = /(?:https?:\/\/[^\s]+\/(?:lists?)\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}))/g;
+export const ListLinkRegex =
+  /(?:https?:\/\/[^\s]+\/(?:lists?)\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}))/g;

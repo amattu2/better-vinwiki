@@ -11,7 +11,7 @@ describe("AuthProvider General Tests", () => {
     render(
       <AuthProvider>
         <div>Test</div>
-      </AuthProvider>,
+      </AuthProvider>
     );
 
     const test = screen.getByText(/test/i);

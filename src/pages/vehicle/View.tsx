@@ -1,13 +1,28 @@
 import React, { ElementType, FC, useMemo, useRef, useState } from "react";
 import { Edit, NavigateNext, PlaylistAdd } from "@mui/icons-material";
 import {
-  Alert, Avatar, Box, Breadcrumbs, Button,
-  Grid, IconButton, Skeleton, Stack,
-  Tooltip, Typography, styled,
+  Alert,
+  Avatar,
+  Box,
+  Breadcrumbs,
+  Button,
+  Grid,
+  IconButton,
+  Skeleton,
+  Stack,
+  Tooltip,
+  Typography,
+  styled,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-import { ProviderStatus as FeedProviderStatus, useFeedProvider } from "../../Providers/FeedProvider";
-import { ProviderStatus as VehicleProviderStatus, useVehicleProvider } from "../../Providers/VehicleProvider";
+import {
+  ProviderStatus as FeedProviderStatus,
+  useFeedProvider,
+} from "../../Providers/FeedProvider";
+import {
+  ProviderStatus as VehicleProviderStatus,
+  useVehicleProvider,
+} from "../../Providers/VehicleProvider";
 import CreatePost from "../../components/CreatePost";
 import EditVehicleDialog from "../../components/EditVehicleDialog";
 import { ExpandableImage } from "../../components/ExpandableImage";
@@ -17,7 +32,9 @@ import ListAssignmentDialog from "../../components/ListAssignmentDialog";
 import Loader from "../../components/Loader";
 import { StatisticItem, StatisticItemProps } from "../../components/StatisticItem";
 import { ScrollToTop } from "../../components/ScrollToTop/ScrollButton";
-import useIsFollowingVehicleLookup, { LookupStatus as IsFollowingStatus } from "../../hooks/useIsFollowingVehicleLookup";
+import useIsFollowingVehicleLookup, {
+  LookupStatus as IsFollowingStatus,
+} from "../../hooks/useIsFollowingVehicleLookup";
 import { formatDateMMYY } from "../../utils/date";
 import { formatVehicleName, validateVIN } from "../../utils/vehicle";
 import ActionableCard from "../../components/ActionableCard";
@@ -115,15 +132,22 @@ const View: FC<Props> = ({ vin }: Props) => {
   const [recallsOpen, setRecallsOpen] = useState<boolean>(false);
   const postsContainer = useRef<HTMLDivElement>(null);
 
-  const filteredPosts: FeedPost[] = useMemo(() => posts
-    .filter((p) => !(p.client === "vinbot" && p.person.username !== "vinbot" && !p.post_text))
-    .sort((a, b) => (new Date(b.post_date)).getTime() - (new Date(a.post_date)).getTime()), [posts]);
-  const slicedPosts: FeedPost[] = useMemo(() => filteredPosts.slice(0, limit), [filteredPosts, limit]);
+  const filteredPosts: FeedPost[] = useMemo(
+    () =>
+      posts
+        .filter((p) => !(p.client === "vinbot" && p.person.username !== "vinbot" && !p.post_text))
+        .sort((a, b) => new Date(b.post_date).getTime() - new Date(a.post_date).getTime()),
+    [posts]
+  );
+  const slicedPosts: FeedPost[] = useMemo(
+    () => filteredPosts.slice(0, limit),
+    [filteredPosts, limit]
+  );
 
   const loadMore = () => {
     setLimit((prev) => prev + 15);
 
-    if ((limit + 16) >= filteredPosts.length) {
+    if (limit + 16 >= filteredPosts.length) {
       next?.(30);
     }
   };
@@ -160,40 +184,50 @@ const View: FC<Props> = ({ vin }: Props) => {
       </StyledHeaderSection>
       <StyledDetailsGrid container columnSpacing={2}>
         <Grid item xs={12} md={8}>
-          <StyledVehicleDetails direction="row" alignItems="center" justifyContent="flex-start" gap={2}>
+          <StyledVehicleDetails
+            direction="row"
+            alignItems="center"
+            justifyContent="flex-start"
+            gap={2}
+          >
             <Box>
               <StyledAvatar>
-                <ExpandableImage lowRes={vehicle.icon_photo} highRes={vehicle.poster_photo} alt={vehicle.vin} />
+                <ExpandableImage
+                  lowRes={vehicle.icon_photo}
+                  highRes={vehicle.poster_photo}
+                  alt={vehicle.vin}
+                />
               </StyledAvatar>
               <Typography variant="caption" textAlign="center">{`#${vehicle.vin}`}</Typography>
             </Box>
             <Stack direction="column" sx={{ p: 2, pt: 0 }}>
-              <Typography variant="h5" sx={{ mb: 1 }}>{formatVehicleName(vehicle)}</Typography>
-              <Typography>
-                <strong>VIN:</strong>
-                {' '}
-                {vehicle.vin}
+              <Typography variant="h5" sx={{ mb: 1 }}>
+                {formatVehicleName(vehicle)}
               </Typography>
               <Typography>
-                <strong>Make:</strong>
-                {' '}
-                {vehicle.make}
+                <strong>VIN:</strong> {vehicle.vin}
               </Typography>
               <Typography>
-                <strong>Model:</strong>
-                {' '}
-                {vehicle.model}
+                <strong>Make:</strong> {vehicle.make}
               </Typography>
               <Typography>
-                <strong>Trim:</strong>
-                {' '}
-                {vehicle.trim || "N/A"}
+                <strong>Model:</strong> {vehicle.model}
+              </Typography>
+              <Typography>
+                <strong>Trim:</strong> {vehicle.trim || "N/A"}
               </Typography>
 
               {isFollowingStatus === IsFollowingStatus.Loading ? (
-                <Skeleton variant="rectangular" width={100} height={32} sx={{ borderRadius: "8px" }} />
+                <Skeleton
+                  variant="rectangular"
+                  width={100}
+                  height={32}
+                  sx={{ borderRadius: "8px" }}
+                />
               ) : (
-                <StyledButton variant="outlined" color="primary" onClick={toggleFollow}>{following ? "Unfollow" : "Follow"}</StyledButton>
+                <StyledButton variant="outlined" color="primary" onClick={toggleFollow}>
+                  {following ? "Unfollow" : "Follow"}
+                </StyledButton>
               )}
             </Stack>
           </StyledVehicleDetails>
@@ -220,7 +254,9 @@ const View: FC<Props> = ({ vin }: Props) => {
           <StyledPill
             component={StatisticItem}
             name="Updated"
-            value={vehicle.updated !== DEFAULT_DATE ? formatDateMMYY(new Date(vehicle.updated)) : "N/A"}
+            value={
+              vehicle.updated !== DEFAULT_DATE ? formatDateMMYY(new Date(vehicle.updated)) : "N/A"
+            }
             xs={6}
             md={3}
             item
@@ -233,11 +269,15 @@ const View: FC<Props> = ({ vin }: Props) => {
             <Box sx={{ p: 2, pt: 0 }}>
               <StyledContainerTitle variant="h5">Posts</StyledContainerTitle>
               <CreatePost vehicle={vehicle} />
-              {(feedStatus === FeedProviderStatus.LOADED && slicedPosts.length === 0) && (
-                <Alert severity="info" sx={{ mb: 1 }}>Uh oh. We have no posts to show.</Alert>
+              {feedStatus === FeedProviderStatus.LOADED && slicedPosts.length === 0 && (
+                <Alert severity="info" sx={{ mb: 1 }}>
+                  Uh oh. We have no posts to show.
+                </Alert>
               )}
-              {feedStatus === FeedProviderStatus.LOADING && (<Repeater count={3} Component={PostSkeleton} />)}
-              {slicedPosts?.map((post) => (<FeedPost key={post.uuid} {...post} isVehiclePage />))}
+              {feedStatus === FeedProviderStatus.LOADING && (
+                <Repeater count={3} Component={PostSkeleton} />
+              )}
+              {slicedPosts?.map((post) => <FeedPost key={post.uuid} {...post} isVehiclePage />)}
               {hasNext && (
                 <Box sx={{ textAlign: "center", mt: 2 }}>
                   <LoadingButton
@@ -280,11 +320,35 @@ const View: FC<Props> = ({ vin }: Props) => {
       </Box>
 
       <ScrollToTop topGap={false} />
-      {editDialogOpen && (<EditVehicleDialog vehicle={vehicle} onClose={() => setEditDialogOpen(false)} onConfirm={editVehicle} />)}
-      {listDialogOpen && (<ListAssignmentDialog vehicle={vehicle} onClose={() => setListDialogOpen(false)} />)}
-      {decodeOpen && (<VinDecodeDialog vin={vin} year={vehicle.year} onClose={() => setDecodeOpen(false)} />)}
-      {recallsOpen && (<RecallLookupDialog year={vehicle.year} make={vehicle.make} model={vehicle.model} onClose={() => setRecallsOpen(false)} />)}
-      {(vehicle.follower_count > 0 && followersOpen) && <FollowersDialog identifier={vin} type="Vehicle" count={vehicle.follower_count} onClose={() => setFollowersOpen(false)} />}
+      {editDialogOpen && (
+        <EditVehicleDialog
+          vehicle={vehicle}
+          onClose={() => setEditDialogOpen(false)}
+          onConfirm={editVehicle}
+        />
+      )}
+      {listDialogOpen && (
+        <ListAssignmentDialog vehicle={vehicle} onClose={() => setListDialogOpen(false)} />
+      )}
+      {decodeOpen && (
+        <VinDecodeDialog vin={vin} year={vehicle.year} onClose={() => setDecodeOpen(false)} />
+      )}
+      {recallsOpen && (
+        <RecallLookupDialog
+          year={vehicle.year}
+          make={vehicle.make}
+          model={vehicle.model}
+          onClose={() => setRecallsOpen(false)}
+        />
+      )}
+      {vehicle.follower_count > 0 && followersOpen && (
+        <FollowersDialog
+          identifier={vin}
+          type="Vehicle"
+          count={vehicle.follower_count}
+          onClose={() => setFollowersOpen(false)}
+        />
+      )}
     </Box>
   );
 };

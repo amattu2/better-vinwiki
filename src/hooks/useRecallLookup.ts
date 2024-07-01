@@ -50,7 +50,8 @@ export enum LookupStatus {
   Error = "error",
 }
 
-const getCacheKey = (year: Vehicle["year"], make: Vehicle["make"], model: Vehicle["model"]) => `${year}-${make}-${model}`;
+const getCacheKey = (year: Vehicle["year"], make: Vehicle["make"], model: Vehicle["model"]) =>
+  `${year}-${make}-${model}`;
 
 /**
  * A hook to cache and perform a recall lookup by Year, Make, and Model
@@ -60,12 +61,18 @@ const getCacheKey = (year: Vehicle["year"], make: Vehicle["make"], model: Vehicl
  * @param model the model of the vehicle
  * @returns [status, RecallEvent[]]
  */
-const useRecallLookup = (year: Vehicle["year"], make: Vehicle["make"], model: Vehicle["model"]): [LookupStatus, RecallEvent[] | null] => {
+const useRecallLookup = (
+  year: Vehicle["year"],
+  make: Vehicle["make"],
+  model: Vehicle["model"]
+): [LookupStatus, RecallEvent[] | null] => {
   const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.VEHICLE_RECALLS, {});
   const cacheKey = getCacheKey(year, make, model);
   const cachedValue: RecallEvent[] | null = cache[cacheKey] || null;
 
-  const [status, setStatus] = useState<LookupStatus>(cachedValue !== null ? LookupStatus.Success : LookupStatus.Loading);
+  const [status, setStatus] = useState<LookupStatus>(
+    cachedValue !== null ? LookupStatus.Success : LookupStatus.Loading
+  );
   const [data, setData] = useState<RecallEvent[] | null>(cachedValue);
 
   useEffect(() => {
@@ -77,18 +84,21 @@ const useRecallLookup = (year: Vehicle["year"], make: Vehicle["make"], model: Ve
     const { signal } = controller;
 
     (async () => {
-      const response = await fetch(`https://api.nhtsa.gov/recalls/recallsByVehicle?make=${make}&model=${model}&modelYear=${year}`, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-        },
-        signal,
-      }).catch(({ name }) => {
+      const response = await fetch(
+        `https://api.nhtsa.gov/recalls/recallsByVehicle?make=${make}&model=${model}&modelYear=${year}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+          },
+          signal,
+        }
+      ).catch(({ name }) => {
         if (name !== "AbortError") setStatus(LookupStatus.Error);
         return null;
       });
 
-      const { Count, results } = await response?.json() || {};
+      const { Count, results } = (await response?.json()) || {};
       if (Count > 0 && results?.length > 0) {
         setCache((prev) => ({ ...prev, [cacheKey]: results }));
         setStatus(LookupStatus.Success);

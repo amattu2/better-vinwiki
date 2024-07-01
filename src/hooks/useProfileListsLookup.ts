@@ -19,12 +19,17 @@ export enum LookupStatus {
  * @param refetch if true, will refetch the lists behind the scenes
  * @returns [status, ProfileLists]
  */
-const useProfileListsLookup = (uuid: Profile["uuid"], refetch = false): [LookupStatus, ProfileLists | null] => {
+const useProfileListsLookup = (
+  uuid: Profile["uuid"],
+  refetch = false
+): [LookupStatus, ProfileLists | null] => {
   const { token } = useAuthProvider();
   const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.PROFILE_LISTS, {});
   const cachedValue: ProfileLists | null = cache[uuid] || null;
 
-  const [status, setStatus] = useState<LookupStatus>(cachedValue ? LookupStatus.Success : LookupStatus.Loading);
+  const [status, setStatus] = useState<LookupStatus>(
+    cachedValue ? LookupStatus.Success : LookupStatus.Loading
+  );
   const [lists, setLists] = useState<ProfileLists | null>(cachedValue);
 
   useEffect(() => {
@@ -47,13 +52,15 @@ const useProfileListsLookup = (uuid: Profile["uuid"], refetch = false): [LookupS
         return null;
       });
 
-      const { status, lists_my, lists_following } = await response?.json() || {};
+      const { status, lists_my, lists_following } = (await response?.json()) || {};
       if (status === STATUS_OK) {
         const result: ProfileLists = {
           owned: (lists_my as { list: List }[])?.map((r) => r?.list),
           // NOTE: We're filtering out lists owned by the `uuid` user because they're already in the `owned` array
           // NOTE: If this gets removed, the `useListLookup` edit/delete functions will need to be updated
-          following: (lists_following as { list: List }[])?.map((r) => r?.list)?.filter((l) => l?.owner?.uuid !== uuid),
+          following: (lists_following as { list: List }[])
+            ?.map((r) => r?.list)
+            ?.filter((l) => l?.owner?.uuid !== uuid),
         };
 
         setCache((prev) => ({ ...prev, [uuid]: result }));

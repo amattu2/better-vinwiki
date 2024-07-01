@@ -10,8 +10,8 @@ import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
 import { CONFIG } from "../../config/AppConfig";
 
 type Inputs = {
-  username: string,
-  password: string,
+  username: string;
+  password: string;
 };
 
 const StyledContainer = styled(Box)(({ theme }) => ({
@@ -25,19 +25,20 @@ const StyledContainer = styled(Box)(({ theme }) => ({
 }));
 
 const FormContainer = styled(Stack)(({ theme }) => ({
-  maxWidth: '470px',
-  maxHeight: '100vh',
-  margin: '0 auto',
-  background: theme.palette.mode === 'dark' ? theme.palette.modal.background : theme.palette.background.paper,
+  maxWidth: "470px",
+  maxHeight: "100vh",
+  margin: "0 auto",
+  background:
+    theme.palette.mode === "dark" ? theme.palette.modal.background : theme.palette.background.paper,
   borderRadius: "0 0 6px 6px",
   padding: "98px 35px",
-  [theme.breakpoints.down('md')]: {
+  [theme.breakpoints.down("md")]: {
     paddingTop: "50px",
   },
-  [theme.breakpoints.down('sm')]: {
-    height: '100%',
-    width: '100%',
-    maxWidth: '100%',
+  [theme.breakpoints.down("sm")]: {
+    height: "100%",
+    width: "100%",
+    maxWidth: "100%",
     borderRadius: "0",
     padding: "25px",
   },
@@ -86,12 +87,14 @@ const StyledButton = styled(Button)(({ theme }) => ({
   boxShadow: theme.shadows[4],
 }));
 
-const StyledForgotDetails = styled(Typography)<{ component: ElementType } & LinkProps>(({ theme }) => ({
-  fontWeight: 500,
-  color: theme.palette.primary.main,
-  marginLeft: theme.spacing(0.5),
-  textDecoration: "none",
-}));
+const StyledForgotDetails = styled(Typography)<{ component: ElementType } & LinkProps>(
+  ({ theme }) => ({
+    fontWeight: 500,
+    color: theme.palette.primary.main,
+    marginLeft: theme.spacing(0.5),
+    textDecoration: "none",
+  })
+);
 
 const StyledCopyright = styled(Typography)({
   position: "absolute",
@@ -126,7 +129,7 @@ const LoginView = () => {
       body: JSON.stringify({ login, password }),
     }).catch(() => null);
 
-    const { status, person, token, message } = await response?.json() || {};
+    const { status, person, token, message } = (await response?.json()) || {};
     if (status === STATUS_OK && person && !!token?.token) {
       setProfile(person);
       setToken(token.token);
@@ -144,12 +147,8 @@ const LoginView = () => {
       {loading && <Loader />}
       <FormContainer alignItems="center" justifyContent="center">
         <StyledHeaderBox>
-          <StyledHeader variant="h3">
-            {CONFIG.name}
-          </StyledHeader>
-          <StyledSubtitle variant="subtitle1">
-            {CONFIG.slogan}
-          </StyledSubtitle>
+          <StyledHeader variant="h3">{CONFIG.name}</StyledHeader>
+          <StyledSubtitle variant="subtitle1">{CONFIG.slogan}</StyledSubtitle>
         </StyledHeaderBox>
         <StyledFormBox component="form" onSubmit={handleSubmit(onSubmit)}>
           {location.state?.message && (
@@ -206,11 +205,11 @@ const LoginView = () => {
         </StyledFooterBox>
       </FormContainer>
       <StyledCopyright>
-        &copy;
-        {" "}
-        {new Date().getFullYear()}
+        &copy; {new Date().getFullYear()}
         {" Alec M. "}
-        <Link to="https://amattu.com" target="_blank" rel="noopener noreferrer">amattu.com</Link>
+        <Link to="https://amattu.com" target="_blank" rel="noopener noreferrer">
+          amattu.com
+        </Link>
       </StyledCopyright>
     </StyledContainer>
   );

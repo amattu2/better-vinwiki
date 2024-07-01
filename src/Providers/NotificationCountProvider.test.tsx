@@ -1,6 +1,9 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { NotificationCountProvider, useNotificationCountProvider } from "./NotificationCountProvider";
+import {
+  NotificationCountProvider,
+  useNotificationCountProvider,
+} from "./NotificationCountProvider";
 import { AuthProvider } from "./AuthProvider";
 
 describe("NotificationCountProvider General Tests", () => {
@@ -8,7 +11,7 @@ describe("NotificationCountProvider General Tests", () => {
     render(
       <AuthProvider>
         <NotificationCountProvider />
-      </AuthProvider>,
+      </AuthProvider>
     );
   });
 
@@ -18,7 +21,7 @@ describe("NotificationCountProvider General Tests", () => {
         <NotificationCountProvider>
           <div>Test</div>
         </NotificationCountProvider>
-      </AuthProvider>,
+      </AuthProvider>
     );
 
     const test = screen.getByText(/test/i);

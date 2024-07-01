@@ -37,8 +37,14 @@ export default forwardRef((props: FeedPostProps, ref: Ref<HTMLDivElement>) => {
  * @returns {JSX.Element}
  */
 export const PostSkeleton: FC<Partial<Pick<FeedPost, "type">>> = ({ type = null }) => {
-  const imageSkeletons = [<ImagePostSkeleton />, <VerticalImagePostSkeleton />];
-  const textSkeletons = [<TextPostSkeleton />, <ListAddPostSkeleton />];
+  const imageSkeletons = [
+    <ImagePostSkeleton key="horizontal-image-skeleton" />,
+    <VerticalImagePostSkeleton key="vertical-image-skeleton" />,
+  ];
+  const textSkeletons = [
+    <TextPostSkeleton key="text-skeleton" />,
+    <ListAddPostSkeleton key="list-skeleton" />,
+  ];
   const skeletons = [...imageSkeletons, ...textSkeletons];
 
   switch (type) {

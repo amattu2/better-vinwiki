@@ -39,6 +39,9 @@ type ProfileNotification = {
   uuid: string;
 };
 
-type ProfileFollower = Pick<Profile, "id" | "avatar" | "username" | "uuid" | "first_name" | "follower_count" | "profile_picture_uuid">;
+type ProfileFollower = Pick<
+  Profile,
+  "id" | "avatar" | "username" | "uuid" | "first_name" | "follower_count" | "profile_picture_uuid"
+>;
 
 type ProfileSearchResult = Pick<Profile, "display_name" | "avatar" | "username" | "uuid">;

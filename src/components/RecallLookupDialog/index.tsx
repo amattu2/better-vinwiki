@@ -1,4 +1,4 @@
-import React, { ElementType, FC, useMemo } from 'react';
+import React, { ElementType, FC, useMemo } from "react";
 import {
   Box,
   Breadcrumbs,
@@ -13,12 +13,12 @@ import {
   StackProps,
   Typography,
   styled,
-} from '@mui/material';
-import { NavigateNext } from '@mui/icons-material';
-import { cloneDeep } from 'lodash';
-import Repeater from '../Repeater';
-import useRecallLookup, { LookupStatus, RecallEvent } from '../../hooks/useRecallLookup';
-import { formatNHTSADate, parseNHTSADate } from '../../utils/date';
+} from "@mui/material";
+import { NavigateNext } from "@mui/icons-material";
+import { cloneDeep } from "lodash";
+import Repeater from "../Repeater";
+import useRecallLookup, { LookupStatus, RecallEvent } from "../../hooks/useRecallLookup";
+import { formatNHTSADate, parseNHTSADate } from "../../utils/date";
 
 type Props = {
   year: Vehicle["year"];
@@ -51,9 +51,9 @@ const StyledCard = styled(Card)(({ theme }) => ({
 }));
 
 const StyledCardContent = styled(CardContent)<{
-  component: ElementType,
-  direction: StackProps["direction"],
-  gap: StackProps["gap"]
+  component: ElementType;
+  direction: StackProps["direction"];
+  gap: StackProps["gap"];
 }>(({ theme }) => ({
   padding: 0,
   paddingBottom: "0 !important",
@@ -62,7 +62,13 @@ const StyledCardContent = styled(CardContent)<{
 }));
 
 const NoContent = () => (
-  <Typography variant="body1" color="textSecondary" sx={{ padding: "16px" }} textAlign="center" fontSize={14}>
+  <Typography
+    variant="body1"
+    color="textSecondary"
+    sx={{ padding: "16px" }}
+    textAlign="center"
+    fontSize={14}
+  >
     No recalls associated with this year, make, and model combination
   </Typography>
 );
@@ -110,54 +116,64 @@ const RecallLookupDialog: FC<Props> = ({ year, make, model, onClose }: Props) =>
     }
 
     const cloned: RecallEvent[] = cloneDeep(recalls);
-    cloned.sort((a, b) => parseNHTSADate(b.ReportReceivedDate).getTime() - parseNHTSADate(a.ReportReceivedDate).getTime());
+    cloned.sort(
+      (a, b) =>
+        parseNHTSADate(b.ReportReceivedDate).getTime() -
+        parseNHTSADate(a.ReportReceivedDate).getTime()
+    );
 
     return cloned;
   }, [recalls]);
 
   return (
     <StyledDialog maxWidth="md" open onClose={onClose} fullWidth>
-      <DialogTitle>
-        NHTSA Recalls
-      </DialogTitle>
+      <DialogTitle>NHTSA Recalls</DialogTitle>
       <StyledDialogContent dividers>
-        {(status !== LookupStatus.Loading && data?.length === 0) && (<NoContent />)}
-        {(status === LookupStatus.Loading) && (<Repeater count={2} Component={RecallItemSkeleton} />)}
-        {(status === LookupStatus.Success && data.length > 0) && data.map((recall: RecallEvent) => (
-          <StyledCard key={recall.NHTSACampaignNumber} elevation={0}>
-            <Typography variant="caption" color="#3b3b3b">
-              {formatNHTSADate(recall.ReportReceivedDate)}
-            </Typography>
-            <Typography variant="h3" fontSize={24} color="primary.main">
-              {`#${recall.NHTSACampaignNumber}`}
-            </Typography>
-            <Divider sx={{ my: 1 }} />
-            <StyledCardContent component={Stack} direction="column" gap={1.5}>
-              <Box>
-                <Typography variant="caption" fontWeight="bold">
-                  Component Tree
-                </Typography>
-                <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
-                  {recall.Component.split(":").map((component) => (
-                    <Typography key={component} fontSize={14} textTransform="capitalize">{component}</Typography>
-                  ))}
-                </Breadcrumbs>
-              </Box>
-              <Box>
-                <Typography variant="caption" fontWeight="bold">
-                  Summary
-                </Typography>
-                <Typography variant="body1" fontSize={14}>{recall.Summary}</Typography>
-              </Box>
-              <Box>
-                <Typography variant="caption" fontWeight="bold">
-                  Remedy
-                </Typography>
-                <Typography variant="body1" fontSize={14}>{recall.Remedy}</Typography>
-              </Box>
-            </StyledCardContent>
-          </StyledCard>
-        ))}
+        {status !== LookupStatus.Loading && data?.length === 0 && <NoContent />}
+        {status === LookupStatus.Loading && <Repeater count={2} Component={RecallItemSkeleton} />}
+        {status === LookupStatus.Success &&
+          data.length > 0 &&
+          data.map((recall: RecallEvent) => (
+            <StyledCard key={recall.NHTSACampaignNumber} elevation={0}>
+              <Typography variant="caption" color="#3b3b3b">
+                {formatNHTSADate(recall.ReportReceivedDate)}
+              </Typography>
+              <Typography variant="h3" fontSize={24} color="primary.main">
+                {`#${recall.NHTSACampaignNumber}`}
+              </Typography>
+              <Divider sx={{ my: 1 }} />
+              <StyledCardContent component={Stack} direction="column" gap={1.5}>
+                <Box>
+                  <Typography variant="caption" fontWeight="bold">
+                    Component Tree
+                  </Typography>
+                  <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
+                    {recall.Component.split(":").map((component) => (
+                      <Typography key={component} fontSize={14} textTransform="capitalize">
+                        {component}
+                      </Typography>
+                    ))}
+                  </Breadcrumbs>
+                </Box>
+                <Box>
+                  <Typography variant="caption" fontWeight="bold">
+                    Summary
+                  </Typography>
+                  <Typography variant="body1" fontSize={14}>
+                    {recall.Summary}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" fontWeight="bold">
+                    Remedy
+                  </Typography>
+                  <Typography variant="body1" fontSize={14}>
+                    {recall.Remedy}
+                  </Typography>
+                </Box>
+              </StyledCardContent>
+            </StyledCard>
+          ))}
       </StyledDialogContent>
     </StyledDialog>
   );

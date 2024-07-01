@@ -1,8 +1,8 @@
-import React, { FC } from 'react';
-import { Box, Stack } from '@mui/material';
-import { Outlet } from 'react-router-dom';
-import AutoScroll from '../components/ScrollToTop/AutoScroll';
-import Sidebar from '../components/Sidebar';
+import React, { FC } from "react";
+import { Box, Stack } from "@mui/material";
+import { Outlet } from "react-router-dom";
+import AutoScroll from "../components/ScrollToTop/AutoScroll";
+import Sidebar from "../components/Sidebar";
 
 /**
  * The layout for a Authenticated user

@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,11 +11,11 @@ import {
   Tooltip,
   Typography,
   styled,
-} from '@mui/material';
-import { Bookmark, SortByAlpha, Source, Event } from '@mui/icons-material';
-import { TabContext, TabPanel } from '@mui/lab';
-import { cloneDeep } from 'lodash';
-import { ListSearchCard } from '../ListSearchCard';
+} from "@mui/material";
+import { Bookmark, SortByAlpha, Source, Event } from "@mui/icons-material";
+import { TabContext, TabPanel } from "@mui/lab";
+import { cloneDeep } from "lodash";
+import { ListSearchCard } from "../ListSearchCard";
 
 type Props = {
   lists: ProfileLists;
@@ -47,7 +47,13 @@ const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
 }));
 
 const NoLists = () => (
-  <Typography variant="body1" color="textSecondary" sx={{ padding: "16px" }} textAlign="center" fontSize={14}>
+  <Typography
+    variant="body1"
+    color="textSecondary"
+    sx={{ padding: "16px" }}
+    textAlign="center"
+    fontSize={14}
+  >
     Uh oh... No lists to see here
   </Typography>
 );
@@ -73,7 +79,9 @@ const ListsDialog: FC<Props> = ({ lists: { owned, following }, onClose }: Props)
     if (sort === "alpha") {
       sorted.sort((a, b) => a.name.localeCompare(b.name));
     } else {
-      sorted.sort((a, b) => new Date(a.created_date).getTime() - new Date(b.created_date).getTime());
+      sorted.sort(
+        (a, b) => new Date(a.created_date).getTime() - new Date(b.created_date).getTime()
+      );
     }
     return sorted;
   }, [following, sort]);
@@ -89,8 +97,8 @@ const ListsDialog: FC<Props> = ({ lists: { owned, following }, onClose }: Props)
       <StyledDialogContent>
         <TabContext value={tab}>
           <TabPanel value="owned">
-            {sortedOwned?.length === 0 && (<NoLists />)}
-            {sortedOwned?.map((list) => (<ListSearchCard key={list.uuid} list={list} omitOwner />))}
+            {sortedOwned?.length === 0 && <NoLists />}
+            {sortedOwned?.map((list) => <ListSearchCard key={list.uuid} list={list} omitOwner />)}
           </TabPanel>
           <TabPanel value="following">
             <Stack direction="row" alignItems="center">
@@ -114,8 +122,8 @@ const ListsDialog: FC<Props> = ({ lists: { owned, following }, onClose }: Props)
                 </ToggleButton>
               </ToggleButtonGroup>
             </Stack>
-            {sortedFollowing?.length === 0 && (<NoLists />)}
-            {sortedFollowing?.map((list) => (<ListSearchCard key={list.uuid} list={list} />))}
+            {sortedFollowing?.length === 0 && <NoLists />}
+            {sortedFollowing?.map((list) => <ListSearchCard key={list.uuid} list={list} />)}
           </TabPanel>
         </TabContext>
       </StyledDialogContent>

@@ -8,7 +8,7 @@ describe("VehicleProvider General Tests", () => {
     render(
       <AuthProvider>
         <VehicleProvider vin="4JGFB4FB8RB047108" />
-      </AuthProvider>,
+      </AuthProvider>
     );
   });
 
@@ -18,7 +18,7 @@ describe("VehicleProvider General Tests", () => {
         <VehicleProvider vin="4JGFB4FB8RB047108">
           <div>Test</div>
         </VehicleProvider>
-      </AuthProvider>,
+      </AuthProvider>
     );
 
     const test = screen.getByText(/test/i);

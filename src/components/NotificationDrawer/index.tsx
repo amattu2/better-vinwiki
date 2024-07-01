@@ -1,15 +1,20 @@
 import React, { FC, useEffect, useMemo, useState } from "react";
-import AutoResizer from 'react-virtualized-auto-sizer';
+import AutoResizer from "react-virtualized-auto-sizer";
 import { FixedSizeList } from "react-window";
 import {
-  Divider, Drawer, List, ListItem,
-  ListItemAvatar, ListItemText,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
   Skeleton,
   Stack,
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
-  Typography, styled,
+  Typography,
+  styled,
 } from "@mui/material";
 import { MarkEmailUnread, AllInbox } from "@mui/icons-material";
 import { useAuthProvider } from "../../Providers/AuthProvider";
@@ -43,9 +48,11 @@ const StyledList = styled(List)<{ component: React.ElementType }>({
   },
 });
 
-const StyledListItem = styled(ListItem, { shouldForwardProp: (p) => p !== "unread" })(({ unread }: { unread?: boolean }) => ({
-  borderLeft: unread ? "4px solid #1976d2" : "none",
-}));
+const StyledListItem = styled(ListItem, { shouldForwardProp: (p) => p !== "unread" })(
+  ({ unread }: { unread?: boolean }) => ({
+    borderLeft: unread ? "4px solid #1976d2" : "none",
+  })
+);
 
 const NotificationSkeleton: FC = () => (
   <StyledListItem alignItems="flex-start">
@@ -54,17 +61,20 @@ const NotificationSkeleton: FC = () => (
     </ListItemAvatar>
     <ListItemText
       primary={<Skeleton variant="text" width={100} height={24} animation="wave" />}
-      secondary={(
+      secondary={
         <>
           <Skeleton variant="text" width={200} height={20} animation="wave" />
           <Skeleton variant="text" width={100} height={17} animation="wave" />
         </>
-      )}
+      }
     />
   </StyledListItem>
 );
 
-const getNotifications = async (token: string, signal: AbortSignal): Promise<ProfileNotification[]> => {
+const getNotifications = async (
+  token: string,
+  signal: AbortSignal
+): Promise<ProfileNotification[]> => {
   const response = await fetch(ENDPOINTS.notifications, {
     method: "GET",
     headers: {
@@ -73,9 +83,11 @@ const getNotifications = async (token: string, signal: AbortSignal): Promise<Pro
     signal,
   }).catch(() => null);
 
-  const { notifications, status } = await response?.json() || {};
+  const { notifications, status } = (await response?.json()) || {};
   if (status === STATUS_OK && notifications?.length) {
-    return notifications.map((notification: { notification: ProfileNotification }) => (notification.notification));
+    return notifications.map(
+      (notification: { notification: ProfileNotification }) => notification.notification
+    );
   }
 
   return [];
@@ -128,7 +140,9 @@ export const NotificationDrawer: FC<Props> = ({ open, onClose }: Props) => {
   return (
     <StyledDrawer anchor="left" open={open} onClose={onClose}>
       <StyledStack direction="row" alignItems="center">
-        <Typography variant="h6" fontWeight={600}>Notifications</Typography>
+        <Typography variant="h6" fontWeight={600}>
+          Notifications
+        </Typography>
         <ToggleButtonGroup
           color="primary"
           value={filter}
@@ -151,8 +165,8 @@ export const NotificationDrawer: FC<Props> = ({ open, onClose }: Props) => {
       </StyledStack>
       <Divider />
       <StyledList component="div">
-        {(!data.length && loading) && (<Repeater count={6} Component={NotificationSkeleton} />)}
-        {(!loading && !data?.length) && (
+        {!data.length && loading && <Repeater count={6} Component={NotificationSkeleton} />}
+        {!loading && !data?.length && (
           <StyledListItem unread={false} sx={{ textAlign: "center" }}>
             <ListItemText secondary="Start interacting with other users to see notifications here." />
           </StyledListItem>
@@ -170,36 +184,62 @@ export const NotificationDrawer: FC<Props> = ({ open, onClose }: Props) => {
                 const { uuid, sender, type, text, post, created_date, seen } = data[index] || {};
 
                 return (
-                  <StyledListItem key={uuid} divider={index < data.length - 1} unread={!seen} style={style} alignItems="flex-start">
+                  <StyledListItem
+                    key={uuid}
+                    divider={index < data.length - 1}
+                    unread={!seen}
+                    style={style}
+                    alignItems="flex-start"
+                  >
                     <ListItemAvatar>
                       <ProfileAvatar username={sender.username} avatar={sender.avatar} />
                     </ListItemAvatar>
                     <ListItemText
-                      primary={(
+                      primary={
                         <StyledLink to={`/profile/${sender.uuid}`} target="_blank">
                           <Typography variant="body1" fontWeight={600}>
                             {`@${sender.username}`}
                           </Typography>
                         </StyledLink>
-                      )}
-                      secondary={(
+                      }
+                      secondary={
                         <>
                           {["origin_author", "post_mention", "comment_peer"].includes(type) ? (
                             <StyledLink to={`/post/${post.uuid}`} target="_blank">
-                              <Typography variant="body2" sx={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                }}
+                              >
                                 {text}
                               </Typography>
                             </StyledLink>
                           ) : (
-                            <Typography variant="body2" sx={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                              }}
+                            >
                               {text}
                             </Typography>
                           )}
-                          <Typography variant="body2" color="textSecondary" fontSize={12} fontWeight={600} sx={{ mt: 0.5 }}>
+                          <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            fontSize={12}
+                            fontWeight={600}
+                            sx={{ mt: 0.5 }}
+                          >
                             {formatDateTime(new Date(created_date))}
                           </Typography>
                         </>
-                      )}
+                      }
                       secondaryTypographyProps={{ component: "div" }}
                     />
                   </StyledListItem>

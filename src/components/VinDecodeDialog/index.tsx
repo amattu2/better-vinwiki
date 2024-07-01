@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import { FixedSizeList } from 'react-window';
+import React, { FC } from "react";
+import { FixedSizeList } from "react-window";
 import {
   Dialog,
   DialogContent,
@@ -10,10 +10,10 @@ import {
   Skeleton,
   Typography,
   styled,
-} from '@mui/material';
-import { DecodeVinValuesResults } from '@shaggytools/nhtsa-api-wrapper';
-import Repeater from '../Repeater';
-import useVinDecoder, { LookupStatus } from '../../hooks/useVinDecoder';
+} from "@mui/material";
+import { DecodeVinValuesResults } from "@shaggytools/nhtsa-api-wrapper";
+import Repeater from "../Repeater";
+import useVinDecoder, { LookupStatus } from "../../hooks/useVinDecoder";
 
 type Props = {
   vin: Vehicle["vin"];
@@ -44,7 +44,13 @@ const StyledListItemText = styled(ListItemText)({
 });
 
 const NoContent = () => (
-  <Typography variant="body1" color="textSecondary" sx={{ padding: "16px" }} textAlign="center" fontSize={14}>
+  <Typography
+    variant="body1"
+    color="textSecondary"
+    sx={{ padding: "16px" }}
+    textAlign="center"
+    fontSize={14}
+  >
     Uh oh... Nothing to see here
   </Typography>
 );
@@ -52,8 +58,8 @@ const NoContent = () => (
 const DecoderItemSkeleton: FC = () => (
   <ListItem dense divider>
     <ListItemText
-      primary={(<Skeleton variant="text" width={100} height={24} animation="wave" />)}
-      secondary={(<Skeleton variant="text" width={200} height={24} animation="wave" />)}
+      primary={<Skeleton variant="text" width={100} height={24} animation="wave" />}
+      secondary={<Skeleton variant="text" width={200} height={24} animation="wave" />}
     />
   </ListItem>
 );
@@ -67,18 +73,18 @@ const DecoderItemSkeleton: FC = () => (
 const VinDecodeDialog: FC<Props> = ({ vin, year, onClose }: Props) => {
   const [status, options] = useVinDecoder(vin, year);
 
-  const optionKeys = options ? Object.keys(options) as (keyof DecodeVinValuesResults)[] : [];
+  const optionKeys = options ? (Object.keys(options) as (keyof DecodeVinValuesResults)[]) : [];
   const hasNoOptions = optionKeys.length === 0 && status !== LookupStatus.Loading;
 
   return (
     <StyledDialog maxWidth="sm" open onClose={onClose} fullWidth>
-      <DialogTitle>
-        VIN Decode
-      </DialogTitle>
+      <DialogTitle>VIN Decode</DialogTitle>
       <StyledDialogContent dividers>
-        {hasNoOptions && (<NoContent />)}
+        {hasNoOptions && <NoContent />}
         <List sx={{ display: hasNoOptions ? "none" : "block" }}>
-          {(status === LookupStatus.Loading) && (<Repeater count={6} Component={DecoderItemSkeleton} />)}
+          {status === LookupStatus.Loading && (
+            <Repeater count={6} Component={DecoderItemSkeleton} />
+          )}
           <FixedSizeList
             height={57 * 6}
             width="100%"
@@ -90,7 +96,11 @@ const VinDecodeDialog: FC<Props> = ({ vin, year, onClose }: Props) => {
               <ListItem key={optionKeys[index]} style={style} dense divider>
                 <StyledListItemText
                   primary={optionKeys[index]}
-                  primaryTypographyProps={{ fontWeight: 500, textTransform: "uppercase", fontSize: 12 }}
+                  primaryTypographyProps={{
+                    fontWeight: 500,
+                    textTransform: "uppercase",
+                    fontSize: 12,
+                  }}
                   secondary={options?.[optionKeys[index]]}
                 />
               </ListItem>

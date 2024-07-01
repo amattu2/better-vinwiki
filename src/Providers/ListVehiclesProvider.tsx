@@ -75,7 +75,7 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
   const [lastID, setLastID] = useState<string>("");
   const [hasNext, setHasNext] = useState<boolean>(false);
 
-  const removeVehicles = async (vins: Vehicle["vin"][]) : Promise<number> => {
+  const removeVehicles = async (vins: Vehicle["vin"][]): Promise<number> => {
     if (!token || !uuid || !vins?.length) {
       return 0;
     }
@@ -93,7 +93,7 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
         },
       }).catch(() => null);
 
-      const { status, list } = await response?.json().catch(() => null) || {};
+      const { status, list } = (await response?.json().catch(() => null)) || {};
       if (status !== STATUS_OK || !list?.uuid) {
         continue;
       }
@@ -109,7 +109,7 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
     return count;
   };
 
-  const addVehicles = async (vehicles: Vehicle[]) : Promise<number> => {
+  const addVehicles = async (vehicles: Vehicle[]): Promise<number> => {
     if (!token || !uuid) {
       return 0;
     }
@@ -127,7 +127,7 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
         },
       }).catch(() => null);
 
-      const { status, list } = await response?.json().catch(() => null) || {};
+      const { status, list } = (await response?.json().catch(() => null)) || {};
       if (status !== STATUS_OK || !list?.uuid) {
         continue;
       }
@@ -143,7 +143,7 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
     return count;
   };
 
-  const addVins = async (vins: Vehicle["vin"][]) : Promise<number> => {
+  const addVins = async (vins: Vehicle["vin"][]): Promise<number> => {
     if (!token || !uuid || !vins?.length) {
       return 0;
     }
@@ -160,7 +160,7 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
         },
       }).catch(() => null);
 
-      const { status, list } = await response?.json().catch(() => null) || {};
+      const { status, list } = (await response?.json().catch(() => null)) || {};
       if (status !== STATUS_OK || !list?.uuid) {
         continue;
       }
@@ -173,7 +173,8 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
       },
     }).catch(() => null);
 
-    const { status, total, vehicles, last_id, end } = await response?.json().catch(() => null) || {};
+    const { status, total, vehicles, last_id, end } =
+      (await response?.json().catch(() => null)) || {};
     if (status === STATUS_OK && vehicles) {
       setState((prev) => ({
         ...prev,
@@ -191,7 +192,7 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
     return addedCount > 0 ? addedCount : 0;
   };
 
-  const next = async (count = 1000) : Promise<boolean> => {
+  const next = async (count = 1000): Promise<boolean> => {
     if (!token || !hasNext || !lastID) {
       return false;
     }
@@ -243,7 +244,8 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
         return null;
       });
 
-      const { status, total, vehicles, last_id, end } = await response?.json().catch(() => null) || {};
+      const { status, total, vehicles, last_id, end } =
+        (await response?.json().catch(() => null)) || {};
       if (status === STATUS_OK && vehicles) {
         setState((prev) => ({
           ...prev,
@@ -263,11 +265,10 @@ export const ListVehiclesProvider: FC<Props> = ({ uuid, children }: Props) => {
     return () => controller.abort();
   }, [token, uuid]);
 
-  const value: ProviderState = useMemo(() => ({ ...state, addVehicles, removeVehicles, next, addVins, hasNext }), [state, hasNext]);
-
-  return (
-    <Context.Provider value={value}>
-      {children}
-    </Context.Provider>
+  const value: ProviderState = useMemo(
+    () => ({ ...state, addVehicles, removeVehicles, next, addVins, hasNext }),
+    [state, hasNext]
   );
+
+  return <Context.Provider value={value}>{children}</Context.Provider>;
 };

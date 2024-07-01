@@ -61,7 +61,7 @@ export const NotificationCountProvider: FC<Props> = ({ children }: Props) => {
       signal,
     }).catch(() => null);
 
-    const { notification_count, status } = await response?.json() || {};
+    const { notification_count, status } = (await response?.json()) || {};
     const { unseen } = notification_count || {};
 
     if (status === STATUS_OK) {
@@ -79,9 +79,5 @@ export const NotificationCountProvider: FC<Props> = ({ children }: Props) => {
     return () => clearInterval(trigger);
   }, []);
 
-  return (
-    <Context.Provider value={state}>
-      {children}
-    </Context.Provider>
-  );
+  return <Context.Provider value={state}>{children}</Context.Provider>;
 };

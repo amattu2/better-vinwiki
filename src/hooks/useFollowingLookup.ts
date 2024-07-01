@@ -20,12 +20,17 @@ export enum LookupStatus {
  * @param refetch if true, will refetch the status
  * @returns [status, { following }]
  */
-const useFollowingLookup = (uuid: Profile["uuid"], refetch = false): [LookupStatus, { following: Profile[] | null }] => {
+const useFollowingLookup = (
+  uuid: Profile["uuid"],
+  refetch = false
+): [LookupStatus, { following: Profile[] | null }] => {
   const { token } = useAuthProvider();
   const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.PROFILE_FOLLOWING, {});
   const cachedValue: Profile[] | null = cache[uuid] || null;
 
-  const [status, setStatus] = useState<LookupStatus>(cachedValue ? LookupStatus.Success : LookupStatus.Loading);
+  const [status, setStatus] = useState<LookupStatus>(
+    cachedValue ? LookupStatus.Success : LookupStatus.Loading
+  );
   const [following, setFollowing] = useState<Profile[] | null>(cachedValue);
 
   useEffect(() => {
@@ -48,7 +53,7 @@ const useFollowingLookup = (uuid: Profile["uuid"], refetch = false): [LookupStat
         return null;
       });
 
-      const { status, key, following } = await response?.json() || {};
+      const { status, key, following } = (await response?.json()) || {};
       if (status === STATUS_OK) {
         setCache((prev) => ({ ...prev, [uuid]: following }));
         setStatus(LookupStatus.Success);

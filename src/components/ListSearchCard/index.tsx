@@ -28,12 +28,14 @@ const StyledCard = styled(Card)(({ theme }) => ({
   border: `1px solid ${theme.palette.divider}`,
 }));
 
-const StyledListOwner = styled(Stack, { shouldForwardProp: (p) => p !== "filled" })(({ filled, theme }: { filled: boolean, theme?: Theme }) => ({
-  borderRadius: "8px",
-  padding: "8px",
-  backgroundColor: !filled || !theme ? "transparent" : theme.palette.action.selected,
-  marginLeft: "auto",
-}));
+const StyledListOwner = styled(Stack, { shouldForwardProp: (p) => p !== "filled" })(
+  ({ filled, theme }: { filled: boolean; theme?: Theme }) => ({
+    borderRadius: "8px",
+    padding: "8px",
+    backgroundColor: !filled || !theme ? "transparent" : theme.palette.action.selected,
+    marginLeft: "auto",
+  })
+);
 
 const StyledListCard = styled(StyledCard)({
   padding: 0,
@@ -48,7 +50,9 @@ const StyledListCard = styled(StyledCard)({
  *
  * @returns {JSX.Element}
  */
-export const ListSearchSkeleton: FC<Pick<Props, "omitOwner">> = ({ omitOwner }: Pick<Props, "omitOwner">) => (
+export const ListSearchSkeleton: FC<Pick<Props, "omitOwner">> = ({
+  omitOwner,
+}: Pick<Props, "omitOwner">) => (
   <StyledListCard elevation={0}>
     <Grid component={CardContent} container>
       <Grid item xs={!omitOwner ? 8 : 12}>
@@ -83,7 +87,7 @@ export const ListSearchSkeleton: FC<Pick<Props, "omitOwner">> = ({ omitOwner }: 
  * @param {Props} props
  * @returns {JSX.Element}
  */
-export const ListSearchCard: FC<Props> = ({ list, omitOwner } : Props) => {
+export const ListSearchCard: FC<Props> = ({ list, omitOwner }: Props) => {
   const navigate = useNavigate();
   const { uuid, name, description, owner, follower_count, vehicle_count, created_date } = list;
   const { uuid: ownerUUID, username, avatar } = owner || {};
@@ -117,13 +121,16 @@ export const ListSearchCard: FC<Props> = ({ list, omitOwner } : Props) => {
               <StyledListOwner direction="row" gap={1} sx={{ height: "55px" }} filled>
                 <ProfileAvatar username={username} avatar={avatar} />
                 <Stack direction="column" justifyContent="center">
-                  <Typography variant="body1" fontWeight={600} component="div" onClick={navigateToProfile}>
+                  <Typography
+                    variant="body1"
+                    fontWeight={600}
+                    component="div"
+                    onClick={navigateToProfile}
+                  >
                     {`@${username}`}
                   </Typography>
                   <Typography variant="body2" component="div">
-                    Created on
-                    {" "}
-                    {new Date(created_date).toLocaleDateString()}
+                    Created on {new Date(created_date).toLocaleDateString()}
                   </Typography>
                 </Stack>
               </StyledListOwner>

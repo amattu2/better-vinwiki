@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "noImplicitThis": true,
     "strictNullChecks": true,
     "target": "es5",
@@ -11,7 +11,7 @@
       "ES6"
     ],
     "allowJs": true,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -26,6 +26,6 @@
   },
   "include": [
     "src",
-    ".eslintrc.js"
+    ".eslintrc.cjs"
   ],
 }
