@@ -19,7 +19,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.50.1",
-    "react-router-dom": "^6.21.1",
+    "react-router-dom": "^6.25.1",
     "react-scripts": "^5.0.1",
     "react-spreadsheet": "^0.9.5",
     "react-string-replace": "^1.1.1",
