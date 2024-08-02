@@ -20,12 +20,12 @@ const PostTime: FC<{ showEventDate: boolean } & Pick<FeedPost, "post_date" | "ev
   const postDate = formatDateTime(new Date(post_date));
 
   if (!showEventDate) {
-    return <span>{postDate}</span>;
+    return <span data-testid="post-meta-date">{postDate}</span>;
   }
 
   return (
     <Tooltip title={`Event date ${formatDate(new Date(event_date))}`} arrow>
-      <StyledPostDate>{postDate}</StyledPostDate>
+      <StyledPostDate data-testid="post-meta-date">{postDate}</StyledPostDate>
     </Tooltip>
   );
 };
@@ -36,7 +36,7 @@ const PostTime: FC<{ showEventDate: boolean } & Pick<FeedPost, "post_date" | "ev
  * @param {FeedPost} post
  * @returns {JSX.Element}
  */
-const PostMeta: FC<Props> = ({ post, ...typographProps }: Props) => {
+const PostMeta: FC<Props> = ({ post, ...typographyProps }: Props) => {
   const { post_date, event_date, locale, client } = post;
   const showEvent = showEventDate(post);
 
@@ -46,19 +46,19 @@ const PostMeta: FC<Props> = ({ post, ...typographProps }: Props) => {
       color="textSecondary"
       fontSize={12}
       fontWeight={600}
-      {...typographProps}
+      {...typographyProps}
     >
       <PostTime post_date={post_date} event_date={event_date} showEventDate={showEvent} />
       {locale && (
         <>
           {" • "}
-          {locale}
+          <span data-testid="post-meta-locale">{locale}</span>
         </>
       )}
       {client && !["web", "vinbot"].includes(client) && (
         <>
           {" • "}
-          {client}
+          <span data-testid="post-meta-client">{client}</span>
         </>
       )}
     </Typography>

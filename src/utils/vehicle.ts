@@ -27,7 +27,7 @@ export const buildPlaceholderVehicle = (vin = "", fill = "-"): Vehicle => ({
 export const formatVehicleName = ({ year, make, model }: Vehicle | PlateDecodeResponse) => {
   let result = "";
 
-  if (year && year.toString().length === 4) {
+  if (year && year.toString().trim().length === 4) {
     result += `${year} `;
   }
   if (make) {
@@ -38,18 +38,36 @@ export const formatVehicleName = ({ year, make, model }: Vehicle | PlateDecodeRe
     result += `${model} `;
   }
 
-  return result.replace(/\s+$/, "") || "Unknown Vehicle";
+  return result.replace(/\s+/g, " ").trim() || "Unknown Vehicle";
 };
 
+/**
+ * Sorts an array of vehicles by their `long_name` property
+ *
+ * @note Does not mutate the original array
+ * @param vehicles The vehicles to sort
+ * @returns The sorted array of vehicles
+ */
 export const sortVehicles = (vehicles: Vehicle[]) =>
-  vehicles.sort((a, b) => (a?.long_name || "").localeCompare(b?.long_name || ""));
+  [...(vehicles || [])].sort((a, b) => (a?.long_name || "").localeCompare(b?.long_name || "")) ||
+  [];
 
-export const formatOdometer = (mileage: number): string => {
-  if (typeof mileage !== "number") {
+/**
+ * Format a odometer reading as a string in the proper locale
+ *
+ * @param odometer The unformatted odometer reading
+ * @param locale The locale to format the odometer in
+ * @returns formatted odometer reading string
+ */
+export const formatOdometer = (
+  odometer: number,
+  locale: Intl.LocalesArgument = "en-US"
+): string => {
+  if (typeof odometer !== "number") {
     return "";
   }
 
-  return mileage.toLocaleString("en-US");
+  return odometer.toLocaleString(locale);
 };
 
 /**

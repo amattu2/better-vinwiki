@@ -25,7 +25,7 @@ const ProfileAvatar: React.FC<Props> = ({ username, avatar, rounded, ...avatarPr
 
   return (
     <StyledAvatar rounded={rounded} {...avatarProps}>
-      {username.toUpperCase().slice(0, 2) ?? "NA"}
+      {username.toUpperCase().slice(0, 2) || "NA"}
     </StyledAvatar>
   );
 };

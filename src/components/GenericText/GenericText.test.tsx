@@ -400,3 +400,24 @@ describe("GenericText > List Chips", () => {
     );
   });
 });
+
+describe("GenericText > Email Addresses", () => {
+  it("renders a single email address nominally", () => {
+    const { getByTestId } = render(<GenericText content="Hey there abc@example.com is an email" />);
+
+    expect(getByTestId("generic-link")).toBeInTheDocument();
+    expect(getByTestId("generic-link")).toHaveAttribute("href", "mailto:abc@example.com");
+  });
+
+  it("renders multiple email addresses without errors", async () => {
+    const { findAllByTestId } = render(
+      <GenericText content="Please email email1@example.com and email2@google.com" />
+    );
+
+    const links = await findAllByTestId("generic-link");
+
+    expect(links.length).toBe(2);
+    expect(links[0]).toHaveAttribute("href", "mailto:email1@example.com");
+    expect(links[1]).toHaveAttribute("href", "mailto:email2@google.com");
+  });
+});
