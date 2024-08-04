@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import { FilterList, Public, DynamicFeed, Image, Message } from "@mui/icons-material";
 import {
   Alert,
@@ -208,9 +208,7 @@ const Feed: FC = () => {
 
             <TransitionGroup
               items={slicedPosts.map((post) => ({ post, key: post.uuid }))}
-              render={({ post }, _, last) => (
-                <FeedPost {...post} ref={last ? ref : undefined} />
-              )}
+              render={({ post }, _, last) => (<FeedPost {...post} ref={last ? ref : undefined} />)}
             />
             {hasNext && (
               <Box sx={{ textAlign: "center", mt: 2 }}>
