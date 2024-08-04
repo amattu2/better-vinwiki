@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import { FilterList, Public, DynamicFeed, Image, Message } from "@mui/icons-material";
 import {
   Alert,
@@ -65,7 +65,6 @@ const blogPost: BlogPost = {
 
 const Feed: FC = () => {
   const { status, posts, next, hasNext } = useFeedProvider();
-  const lastElementRef = useRef<HTMLDivElement>(null);
 
   const [filtered, setFiltered] = useLocalStorage<boolean>(CacheKeys.FEED_TYPE, false);
   const [postFilter, setPostFilter] = useLocalStorage<FeedPost["type"] | "">(
@@ -73,8 +72,7 @@ const Feed: FC = () => {
     ""
   );
   const [limit, setLimit] = useState<number>(10);
-  const entry = useIntersectionObserver(lastElementRef, {});
-  const isVisible = !!entry?.isIntersecting;
+  const { isIntersecting, ref } = useIntersectionObserver();
 
   // NOTE: These are posts matching client-side filters
   const filteredPosts: FeedPost[] = useMemo(
@@ -137,10 +135,10 @@ const Feed: FC = () => {
   }, [filtered, postFilter]);
 
   useEffect(() => {
-    if (isVisible) {
+    if (isIntersecting) {
       loadMore();
     }
-  }, [isVisible]);
+  }, [isIntersecting]);
 
   return (
     <Stack direction="row">
@@ -210,9 +208,7 @@ const Feed: FC = () => {
 
             <TransitionGroup
               items={slicedPosts.map((post) => ({ post, key: post.uuid }))}
-              render={({ post }, _, last) => (
-                <FeedPost {...post} ref={last ? lastElementRef : undefined} />
-              )}
+              render={({ post }, _, last) => <FeedPost {...post} ref={last ? ref : undefined} />}
             />
             {hasNext && (
               <Box sx={{ textAlign: "center", mt: 2 }}>
