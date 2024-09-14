@@ -60,7 +60,7 @@ const blogPost: BlogPost = {
   title: "Discrepancy of Data",
   body: "In 2001 when the Ferrari 360 Spider came out, the market premiums were more than $150k over MSRP. It was the first time in years where it made sense to have gray market cars in the US. The values were closer to MSRP in Europe and the federalization fees were only $30-40k.",
   link: "https://vinwiki.com/discrepancy-of-data/",
-  image: "https://api.placeholder.app/image/350x350/E4E4E0/3b3b3b?text=B%20VW",
+  image: "https://placehold.co/350x350/3b3b3b/E4E4E0?text=PLACEHOLDER",
 };
 
 const Feed: FC = () => {
