@@ -8,6 +8,10 @@ import { cloneDeep } from "lodash";
  * @returns {Lists[]} a cloned and sorted array of lists
  */
 export const sortLists = (lists: List[], sortBy: "alpha" | "date" | "popularity"): List[] => {
+  if (!Array.isArray(lists)) {
+    return [];
+  }
+
   const cloned: List[] = cloneDeep(lists);
 
   switch (sortBy) {

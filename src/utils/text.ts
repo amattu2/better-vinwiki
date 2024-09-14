@@ -7,6 +7,9 @@
  * @returns String with length <= length
  */
 export const prettySubstring = (str: string, length: number): string => {
+  if (typeof str !== "string") {
+    return "";
+  }
   if (str.length <= length) {
     return str;
   }

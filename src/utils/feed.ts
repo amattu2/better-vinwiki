@@ -9,8 +9,15 @@ import { isValidEventDate } from "./date";
  */
 export const mapPostsToDate = (posts: FeedPost[]): { [date: string]: FeedPost[] } => {
   const results: { [date: string]: FeedPost[] } = {};
+  if (!posts || !Array.isArray(posts)) {
+    return results;
+  }
 
   [...posts].forEach((post: FeedPost) => {
+    if (!post || !post?.post_date) {
+      return;
+    }
+
     const date = new Date(post.post_date).toISOString().split("T")[0];
     if (!results[date]) {
       results[date] = [];
