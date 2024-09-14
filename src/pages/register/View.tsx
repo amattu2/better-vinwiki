@@ -24,19 +24,20 @@ const StyledContainer = styled(Box)(({ theme }) => ({
 }));
 
 const FormContainer = styled(Stack)(({ theme }) => ({
-  maxWidth: '470px',
-  maxHeight: '100vh',
-  margin: '0 auto',
-  background: theme.palette.mode === 'dark' ? theme.palette.modal.background : theme.palette.background.paper,
+  maxWidth: "470px",
+  maxHeight: "100vh",
+  margin: "0 auto",
+  background:
+    theme.palette.mode === "dark" ? theme.palette.modal.background : theme.palette.background.paper,
   borderRadius: "0 0 6px 6px",
   padding: "98px 35px",
-  [theme.breakpoints.down('md')]: {
+  [theme.breakpoints.down("md")]: {
     paddingTop: "50px",
   },
-  [theme.breakpoints.down('sm')]: {
-    height: '100%',
-    width: '100%',
-    maxWidth: '100%',
+  [theme.breakpoints.down("sm")]: {
+    height: "100%",
+    width: "100%",
+    maxWidth: "100%",
     borderRadius: "0",
     padding: "25px",
   },
@@ -91,12 +92,14 @@ const StyledError = styled(Typography)(({ theme }) => ({
   textAlign: "right",
 }));
 
-const StyledForgotDetails = styled(Typography)<{ component: ElementType } & LinkProps>(({ theme }) => ({
-  fontWeight: 500,
-  color: theme.palette.primary.main,
-  marginLeft: theme.spacing(0.5),
-  textDecoration: "none",
-}));
+const StyledForgotDetails = styled(Typography)<{ component: ElementType } & LinkProps>(
+  ({ theme }) => ({
+    fontWeight: 500,
+    color: theme.palette.primary.main,
+    marginLeft: theme.spacing(0.5),
+    textDecoration: "none",
+  })
+);
 
 const StyledCopyright = styled(Typography)({
   position: "absolute",
@@ -128,7 +131,7 @@ const RegisterView = () => {
       body: JSON.stringify({ email, username, password }),
     }).catch(() => null);
 
-    const { status, key, message } = await response?.json() || {};
+    const { status, key, message } = (await response?.json()) || {};
     if (status === STATUS_OK || (status === STATUS_ERROR && !key)) {
       navigate("/login", { state: { message: "Please confirm your email to login" } });
     } else {
@@ -143,12 +146,8 @@ const RegisterView = () => {
       {loading && <Loader />}
       <FormContainer alignItems="center" justifyContent="center">
         <StyledHeaderBox>
-          <StyledHeader variant="h3">
-            {CONFIG.name}
-          </StyledHeader>
-          <StyledSubtitle variant="subtitle1">
-            {CONFIG.slogan}
-          </StyledSubtitle>
+          <StyledHeader variant="h3">{CONFIG.name}</StyledHeader>
+          <StyledSubtitle variant="subtitle1">{CONFIG.slogan}</StyledSubtitle>
         </StyledHeaderBox>
         <StyledFormBox component="form" onSubmit={handleSubmit(onSubmit)}>
           <StyledTextField
@@ -189,7 +188,7 @@ const RegisterView = () => {
             margin="normal"
             fullWidth
           />
-          {error && (<StyledError>{error}</StyledError>)}
+          {error && <StyledError>{error}</StyledError>}
           <StyledButton type="submit" fullWidth variant="contained">
             Sign Up
           </StyledButton>
@@ -204,11 +203,11 @@ const RegisterView = () => {
         </StyledFooterBox>
       </FormContainer>
       <StyledCopyright>
-        &copy;
-        {" "}
-        {new Date().getFullYear()}
+        &copy; {new Date().getFullYear()}
         {" Alec M. "}
-        <Link to="https://amattu.com" target="_blank" rel="noopener noreferrer">amattu.com</Link>
+        <Link to="https://amattu.com" target="_blank" rel="noopener noreferrer">
+          amattu.com
+        </Link>
       </StyledCopyright>
     </StyledContainer>
   );

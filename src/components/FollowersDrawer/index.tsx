@@ -1,14 +1,19 @@
 import React, { FC, useMemo, useState } from "react";
-import AutoResizer from 'react-virtualized-auto-sizer';
+import AutoResizer from "react-virtualized-auto-sizer";
 import { FixedSizeList } from "react-window";
 import {
-  Divider, Drawer, List, ListItem,
-  ListItemAvatar, ListItemText,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
   Stack,
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
-  Typography, styled,
+  Typography,
+  styled,
 } from "@mui/material";
 import { SortByAlpha, Event } from "@mui/icons-material";
 import { cloneDeep } from "lodash";
@@ -50,7 +55,7 @@ const StyledList = styled(List)<{ component: React.ElementType }>({
 export const FollowersDrawer: FC<Props> = ({ open, onClose }: Props) => {
   const { profile } = useAuthProvider();
 
-  const [status, { following }] = useFollowingLookup(profile!.uuid, false);
+  const [status, { following }] = useFollowingLookup(profile?.uuid || "", false);
   const [sort, setSort] = useState<"alpha" | "date">("alpha");
 
   const data: Profile[] = useMemo(() => {
@@ -69,7 +74,9 @@ export const FollowersDrawer: FC<Props> = ({ open, onClose }: Props) => {
   return (
     <StyledDrawer anchor="left" open={open} onClose={onClose}>
       <StyledStack direction="row" alignItems="center">
-        <Typography variant="h6" fontWeight={600}>Following &ndash; Quick Look</Typography>
+        <Typography variant="h6" fontWeight={600}>
+          Following &ndash; Quick Look
+        </Typography>
         <ToggleButtonGroup
           color="primary"
           value={sort}
@@ -102,12 +109,7 @@ export const FollowersDrawer: FC<Props> = ({ open, onClose }: Props) => {
         )}
         <AutoResizer>
           {({ height = 100, width = 100 }) => (
-            <FixedSizeList
-              height={height}
-              width={width}
-              itemSize={57}
-              itemCount={data.length || 0}
-            >
+            <FixedSizeList height={height} width={width} itemSize={57} itemCount={data.length || 0}>
               {({ index, style }) => {
                 const { uuid, username, avatar, follower_count } = data[index] || {};
 
@@ -116,13 +118,22 @@ export const FollowersDrawer: FC<Props> = ({ open, onClose }: Props) => {
                 }
 
                 return (
-                  <ListItem key={uuid} component={StyledLink} to={`/profile/${uuid}`} onClick={onClose} style={style} divider>
+                  <ListItem
+                    key={uuid}
+                    component={StyledLink}
+                    to={`/profile/${uuid}`}
+                    onClick={onClose}
+                    style={style}
+                    divider
+                  >
                     <ListItemAvatar>
                       <ProfileAvatar username={username} avatar={avatar} />
                     </ListItemAvatar>
                     <ListItemText
-                      primary={<Typography variant="body1" fontWeight={600}>{`@${username}`}</Typography>}
-                      secondary={`${follower_count} follower${(parseInt(follower_count.toString(), 10)) !== 1 ? "s" : ""}`}
+                      primary={
+                        <Typography variant="body1" fontWeight={600}>{`@${username}`}</Typography>
+                      }
+                      secondary={`${follower_count} follower${parseInt(follower_count.toString(), 10) !== 1 ? "s" : ""}`}
                     />
                   </ListItem>
                 );

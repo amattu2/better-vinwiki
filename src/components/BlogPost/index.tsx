@@ -1,14 +1,7 @@
-import React, { FC } from 'react';
-import {
-  Button,
-  Card,
-  Paper,
-  Stack,
-  Typography,
-  styled,
-} from '@mui/material';
-import { Link } from 'react-router-dom';
-import { prettySubstring } from '../../utils/text';
+import React, { FC } from "react";
+import { Button, Card, Paper, Stack, Typography, styled } from "@mui/material";
+import { Link } from "react-router-dom";
+import { prettySubstring } from "../../utils/text";
 
 type Props = {
   post: BlogPost;
@@ -38,7 +31,7 @@ const StyledImageBox = styled(Paper)(({ theme }) => ({
 
 const StyledBackground = styled("div", {
   shouldForwardProp: (p) => p !== "bg" && p !== "blur",
-})(({ bg, blur }: { bg?: string, blur?: boolean }) => ({
+})(({ bg, blur }: { bg?: string; blur?: boolean }) => ({
   backgroundImage: `url(${bg})`,
   filter: blur ? "blur(6px)" : "none",
   backgroundPosition: "center",

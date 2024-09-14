@@ -1,15 +1,26 @@
-import React, { FC, useId, useMemo, useRef, useState } from 'react';
+import React, { FC, useId, useMemo, useRef, useState } from "react";
 import {
-  Button, Chip, Dialog, DialogActions, DialogContent,
-  DialogTitle, Divider, FormControlLabel, ListItemText,
-  Radio, RadioGroup, Stack, Typography, styled,
-} from '@mui/material';
-import { useForm } from 'react-hook-form';
-import { LoadingButton } from '@mui/lab';
-import { useAuthProvider } from '../../Providers/AuthProvider';
-import useProfileListsLookup from '../../hooks/useProfileListsLookup';
-import { formatDate } from '../../utils/date';
-import { ENDPOINTS, STATUS_OK } from '../../config/Endpoints';
+  Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  FormControlLabel,
+  ListItemText,
+  Radio,
+  RadioGroup,
+  Stack,
+  Typography,
+  styled,
+} from "@mui/material";
+import { useForm } from "react-hook-form";
+import { LoadingButton } from "@mui/lab";
+import { useAuthProvider } from "../../Providers/AuthProvider";
+import useProfileListsLookup from "../../hooks/useProfileListsLookup";
+import { formatDate } from "../../utils/date";
+import { ENDPOINTS, STATUS_OK } from "../../config/Endpoints";
 
 type Props = {
   vehicle: Vehicle;
@@ -45,7 +56,9 @@ const ListAssignmentDialog: FC<Props> = ({ vehicle, onClose }: Props) => {
     }
 
     const clonedLists = [...lists.owned];
-    clonedLists.sort((a, b) => new Date(b.created_date).getTime() - new Date(a.created_date).getTime());
+    clonedLists.sort(
+      (a, b) => new Date(b.created_date).getTime() - new Date(a.created_date).getTime()
+    );
     return clonedLists;
   }, [lists]);
 
@@ -65,7 +78,7 @@ const ListAssignmentDialog: FC<Props> = ({ vehicle, onClose }: Props) => {
       signal,
     }).catch(() => null);
 
-    const { status } = await response?.json() || {};
+    const { status } = (await response?.json()) || {};
     if (status === STATUS_OK) {
       onClose();
     }
@@ -99,23 +112,27 @@ const ListAssignmentDialog: FC<Props> = ({ vehicle, onClose }: Props) => {
                   {...register("uuid")}
                   value={uuid}
                   control={<Radio />}
-                  label={(
+                  label={
                     <ListItemText
-                      primary={(
+                      primary={
                         <Typography variant="body1" fontWeight={600}>
                           {name}
                         </Typography>
-                      )}
-                      secondary={(
+                      }
+                      secondary={
                         <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                          <Chip label={`${vehicle_count} vehicle${vehicle_count !== 1 ? "s" : ""}`} />
-                          <Chip label={`${follower_count} follower${follower_count !== 1 ? "s" : ""}`} />
+                          <Chip
+                            label={`${vehicle_count} vehicle${vehicle_count !== 1 ? "s" : ""}`}
+                          />
+                          <Chip
+                            label={`${follower_count} follower${follower_count !== 1 ? "s" : ""}`}
+                          />
                           <Chip label={formatDate(new Date(created_date))} />
                         </Stack>
-                      )}
+                      }
                       secondaryTypographyProps={{ component: "div" }}
                     />
-                  )}
+                  }
                 />
                 <Divider sx={{ my: 1 }} />
               </React.Fragment>
@@ -124,8 +141,12 @@ const ListAssignmentDialog: FC<Props> = ({ vehicle, onClose }: Props) => {
         </form>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onCloseWrapper} color="error">Cancel</Button>
-        <LoadingButton type="submit" form={id} loading={saving}>Add</LoadingButton>
+        <Button onClick={onCloseWrapper} color="error">
+          Cancel
+        </Button>
+        <LoadingButton type="submit" form={id} loading={saving}>
+          Add
+        </LoadingButton>
       </DialogActions>
     </StyledDialog>
   );

@@ -9,7 +9,10 @@ type Props = {
   filled?: boolean;
 };
 
-const StyledStack = styled(Stack, { shouldForwardProp: (p) => p !== "filled" })<{ filled: boolean; theme?: Theme }>(({ filled, theme }) => ({
+const StyledStack = styled(Stack, { shouldForwardProp: (p) => p !== "filled" })<{
+  filled: boolean;
+  theme?: Theme;
+}>(({ filled, theme }) => ({
   borderRadius: "8px",
   padding: "8px",
   backgroundColor: !filled || !theme ? "transparent" : theme.palette.action.selected,
@@ -38,24 +41,28 @@ const PostProfile: FC<Props> = ({ post, filled = true }: Props) => {
   const { person, vehicle } = post;
   const { uuid, username, avatar } = person;
   const { vin } = vehicle;
+  const odometer = post.mileage ? formatOdometer(post.mileage) : null;
 
   return (
     <StyledStack direction="row" gap={1} filled={filled}>
-      <ProfileAvatar username={username} avatar={avatar} />
+      <ProfileAvatar username={username} avatar={avatar} data-testid="post-profile-avatar" />
       <Stack direction="column" justifyContent="center">
         <Typography variant="body1" fontWeight={600}>
-          <StyledLink to={`/profile/${uuid}`}>
-            @
-            {username}
+          <StyledLink to={`/profile/${uuid}`} data-testid="post-profile-username">
+            @{username}
           </StyledLink>
         </Typography>
         <Typography variant="body2">
-          <StyledLink to={`/vehicle/${vin}`}>{formatVehicleName(vehicle)}</StyledLink>
-          {post.mileage && (
+          <StyledLink to={`/vehicle/${vin}`} data-testid="post-profile-vehicle">
+            {formatVehicleName(vehicle)}
+          </StyledLink>
+          {odometer && (
             <>
               {" - "}
-              {formatOdometer(post.mileage)}
-              mi
+              <span data-testid="post-profile-odometer">
+                {odometer}
+                mi
+              </span>
             </>
           )}
         </Typography>

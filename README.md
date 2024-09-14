@@ -1,5 +1,7 @@
 # Introduction
 
+[![Coverage Status](https://coveralls.io/repos/github/amattu2/better-vinwiki/badge.svg?branch=master)](https://coveralls.io/github/amattu2/better-vinwiki?branch=master)
+
 This is a reenvisionioned and revamped implementation of the VINwiki.com web application
 built with a cohesive user experience in mind.
 

@@ -1,11 +1,20 @@
-import React, { FC, useEffect, useId, useState } from 'react';
+import React, { FC, useEffect, useId, useState } from "react";
 import {
-  Button, Dialog, DialogActions, DialogContent,
-  DialogTitle, Divider, FormHelperText, Stack, TextField, Typography, styled,
-} from '@mui/material';
-import { useForm } from 'react-hook-form';
-import { LoadingButton } from '@mui/lab';
-import { ImageUpload } from '../ImageUpload';
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  FormHelperText,
+  Stack,
+  TextField,
+  Typography,
+  styled,
+} from "@mui/material";
+import { useForm } from "react-hook-form";
+import { LoadingButton } from "@mui/lab";
+import { ImageUpload } from "../ImageUpload";
 
 type Props = {
   vehicle: Vehicle;
@@ -101,7 +110,9 @@ const EditVehicleDialog: FC<Props> = ({ vehicle, onConfirm, onClose }: Props) =>
             {...register("trim", { required: false })}
           />
           <Divider sx={{ my: 2 }} />
-          <Typography variant="subtitle2" sx={{ mb: 1 }}>Vehicle Photo (Optional)</Typography>
+          <Typography variant="subtitle2" sx={{ mb: 1 }}>
+            Vehicle Photo (Optional)
+          </Typography>
           <ImageUpload
             InputProps={register("image", { required: false })}
             preview={preview}
@@ -109,13 +120,20 @@ const EditVehicleDialog: FC<Props> = ({ vehicle, onConfirm, onClose }: Props) =>
             onDrop={(e) => setValue("image", e.dataTransfer.files)}
           />
           {imageUpload?.[0] && (
-            <FormHelperText sx={{ mt: 2 }}>Depending on the size of your photo, it may take a few minutes for it to appear properly on the vehicle page.</FormHelperText>
+            <FormHelperText sx={{ mt: 2 }}>
+              Depending on the size of your photo, it may take a few minutes for it to appear
+              properly on the vehicle page.
+            </FormHelperText>
           )}
         </form>
       </StyledDialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="error">Cancel</Button>
-        <LoadingButton type="submit" form={id} loading={saving}>Save</LoadingButton>
+        <Button onClick={onClose} color="error">
+          Cancel
+        </Button>
+        <LoadingButton type="submit" form={id} loading={saving}>
+          Save
+        </LoadingButton>
       </DialogActions>
     </StyledDialog>
   );

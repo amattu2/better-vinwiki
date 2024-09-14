@@ -5,7 +5,7 @@ import usePageTitle from "../../hooks/usePageTitle";
 const RegisterController = () => {
   usePageTitle("Register");
 
-  return (<RegisterView />);
+  return <RegisterView />;
 };
 
 export default RegisterController;

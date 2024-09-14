@@ -1,12 +1,18 @@
-import React, { FC, useEffect, useId, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { LoadingButton } from '@mui/lab';
+import React, { FC, useEffect, useId, useState } from "react";
+import { useForm } from "react-hook-form";
+import { LoadingButton } from "@mui/lab";
 import {
-  Button, Dialog, DialogActions, DialogContent,
-  DialogTitle, FormHelperText, Stack, styled,
-} from '@mui/material';
-import { MEDIA_CDN_URL } from '../../config/Endpoints';
-import { ImageUpload } from '../ImageUpload';
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormHelperText,
+  Stack,
+  styled,
+} from "@mui/material";
+import { MEDIA_CDN_URL } from "../../config/Endpoints";
+import { ImageUpload } from "../ImageUpload";
 
 type Props = {
   profile: Profile;
@@ -73,7 +79,10 @@ const EditProfilePictureDialog: FC<Props> = ({ profile, onConfirm, onClose }: Pr
       <DialogTitle component={Stack} direction="row" alignItems="center">
         Change Profile Picture
       </DialogTitle>
-      <StyledDialogContent sx={{ pt: (theme) => (preview ? theme.spacing(0.5) : undefined) }} dividers>
+      <StyledDialogContent
+        sx={{ pt: (theme) => (preview ? theme.spacing(0.5) : undefined) }}
+        dividers
+      >
         <form onSubmit={handleSubmit(saveImage)} id={id}>
           <ImageUpload
             InputProps={register("image", { required: true })}
@@ -82,13 +91,20 @@ const EditProfilePictureDialog: FC<Props> = ({ profile, onConfirm, onClose }: Pr
             onDrop={(e) => setValue("image", e.dataTransfer.files)}
           />
           {imageUpload?.[0] && (
-            <FormHelperText sx={{ mt: 2 }}>Depending on the size of your photo, it may take a few minutes for it to appear properly throughout the website.</FormHelperText>
+            <FormHelperText sx={{ mt: 2 }}>
+              Depending on the size of your photo, it may take a few minutes for it to appear
+              properly throughout the website.
+            </FormHelperText>
           )}
         </form>
       </StyledDialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="error">Cancel</Button>
-        <LoadingButton type="submit" form={id} loading={saving} disabled={!imageUpload?.[0]}>Save</LoadingButton>
+        <Button onClick={onClose} color="error">
+          Cancel
+        </Button>
+        <LoadingButton type="submit" form={id} loading={saving} disabled={!imageUpload?.[0]}>
+          Save
+        </LoadingButton>
       </DialogActions>
     </StyledDialog>
   );

@@ -8,7 +8,7 @@ import { VinCharacterRegex } from "../config/RegEx";
  * @param fill the value to fill fields with
  * @returns Vehicle
  */
-export const buildPlaceholderVehicle = (vin: string = "", fill: string = "-"): Vehicle => ({
+export const buildPlaceholderVehicle = (vin = "", fill = "-"): Vehicle => ({
   icon_photo: DEFAULT_VEHICLE_SRC,
   long_name: fill,
   make: fill,
@@ -27,7 +27,7 @@ export const buildPlaceholderVehicle = (vin: string = "", fill: string = "-"): V
 export const formatVehicleName = ({ year, make, model }: Vehicle | PlateDecodeResponse) => {
   let result = "";
 
-  if (year && year.toString().length === 4) {
+  if (year && year.toString().trim().length === 4) {
     result += `${year} `;
   }
   if (make) {
@@ -38,17 +38,36 @@ export const formatVehicleName = ({ year, make, model }: Vehicle | PlateDecodeRe
     result += `${model} `;
   }
 
-  return result.replace(/\s+$/, "") || "Unknown Vehicle";
+  return result.replace(/\s+/g, " ").trim() || "Unknown Vehicle";
 };
 
-export const sortVehicles = (vehicles: Vehicle[]) => vehicles.sort((a, b) => (a?.long_name || "").localeCompare(b?.long_name || ""));
+/**
+ * Sorts an array of vehicles by their `long_name` property
+ *
+ * @note Does not mutate the original array
+ * @param vehicles The vehicles to sort
+ * @returns The sorted array of vehicles
+ */
+export const sortVehicles = (vehicles: Vehicle[]) =>
+  [...(vehicles || [])].sort((a, b) => (a?.long_name || "").localeCompare(b?.long_name || "")) ||
+  [];
 
-export const formatOdometer = (mileage: number): string => {
-  if (typeof mileage !== "number") {
+/**
+ * Format a odometer reading as a string in the proper locale
+ *
+ * @param odometer The unformatted odometer reading
+ * @param locale The locale to format the odometer in
+ * @returns formatted odometer reading string
+ */
+export const formatOdometer = (
+  odometer: number,
+  locale: Intl.LocalesArgument = "en-US"
+): string => {
+  if (typeof odometer !== "number") {
     return "";
   }
 
-  return mileage.toLocaleString("en-US");
+  return odometer.toLocaleString(locale);
 };
 
 /**

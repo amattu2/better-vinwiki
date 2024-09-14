@@ -88,10 +88,13 @@ export const FeedProvider: FC<Props> = ({ type, identifier, limit, children }: P
   const { token } = useAuthProvider();
 
   const cacheKey = `${CacheKeys.FEED}_${type}_${identifier}`;
-  const [cache, setCache] = useSessionStorage<Pick<ProviderState, "posts" | "count"> | null>(cacheKey, null);
-  const [state, setState] = useState<ProviderState>(cache
-    ? { ...defaultState, ...cache, status: ProviderStatus.RELOADING }
-    : defaultState);
+  const [cache, setCache] = useSessionStorage<Pick<ProviderState, "posts" | "count"> | null>(
+    cacheKey,
+    null
+  );
+  const [state, setState] = useState<ProviderState>(
+    cache ? { ...defaultState, ...cache, status: ProviderStatus.RELOADING } : defaultState
+  );
   const [nextPage, setNextPage] = useState<string>("");
 
   const addPost = (post: FeedPost): boolean => {
@@ -109,7 +112,11 @@ export const FeedProvider: FC<Props> = ({ type, identifier, limit, children }: P
       return false;
     }
 
-    setState((prev) => ({ ...prev, posts: prev.posts.filter((post) => post.uuid !== uuid), count: prev.count - 1 }));
+    setState((prev) => ({
+      ...prev,
+      posts: prev.posts.filter((post) => post.uuid !== uuid),
+      count: prev.count - 1,
+    }));
 
     return false;
   };
@@ -128,7 +135,14 @@ export const FeedProvider: FC<Props> = ({ type, identifier, limit, children }: P
       },
     }).catch(() => null);
 
-    const { status, count: postCount, next_page_uuid, end, feed, posts } = await response?.json() || {};
+    const {
+      status,
+      count: postCount,
+      next_page_uuid,
+      end,
+      feed,
+      posts,
+    } = (await response?.json()) || {};
     if (status === STATUS_OK) {
       setState((prev) => ({
         status: ProviderStatus.LOADED,
@@ -167,7 +181,7 @@ export const FeedProvider: FC<Props> = ({ type, identifier, limit, children }: P
       }).catch(() => null);
 
       // NOTE: Either `feed` or `posts` will be returned, depending on the type of feed requested
-      const { status, count, next_page_uuid, end, feed, posts } = await response?.json() || {};
+      const { status, count, next_page_uuid, end, feed, posts } = (await response?.json()) || {};
       if (status === STATUS_OK) {
         setState({
           status: ProviderStatus.LOADED,
@@ -188,9 +202,5 @@ export const FeedProvider: FC<Props> = ({ type, identifier, limit, children }: P
 
   const value = useMemo(() => ({ ...state, next, addPost, removePost }), [state]);
 
-  return (
-    <Context.Provider value={value}>
-      {children}
-    </Context.Provider>
-  );
+  return <Context.Provider value={value}>{children}</Context.Provider>;
 };

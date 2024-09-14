@@ -8,11 +8,17 @@ import { cloneDeep } from "lodash";
  * @returns {Lists[]} a cloned and sorted array of lists
  */
 export const sortLists = (lists: List[], sortBy: "alpha" | "date" | "popularity"): List[] => {
+  if (!Array.isArray(lists)) {
+    return [];
+  }
+
   const cloned: List[] = cloneDeep(lists);
 
   switch (sortBy) {
     case "date":
-      cloned.sort((a, b) => new Date(a.created_date).getTime() - new Date(b.created_date).getTime());
+      cloned.sort(
+        (a, b) => new Date(a.created_date).getTime() - new Date(b.created_date).getTime()
+      );
       break;
     case "popularity":
       cloned.sort((a, b) => b.follower_count - a.follower_count);

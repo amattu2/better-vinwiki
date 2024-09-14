@@ -45,12 +45,16 @@ type Props = {
 export const AuthProvider: FC<Props> = ({ children }: Props) => {
   const [profile, setProfile] = useLocalStorage<AuthProfile | null>(CacheKeys.AUTH_PROFILE, null);
   const token = useReadLocalStorage<string>(CacheKeys.AUTH_TOKEN);
-  const [state] = useState<ProviderState>((token && profile?.uuid) ? {
-    status: ProviderStatus.LOADED,
-    authenticated: true,
-    profile,
-    token,
-  } : defaultState);
+  const [state] = useState<ProviderState>(
+    token && profile?.uuid
+      ? {
+          status: ProviderStatus.LOADED,
+          authenticated: true,
+          profile,
+          token,
+        }
+      : defaultState
+  );
 
   useEffect(() => {
     if (!state?.profile) {
@@ -60,9 +64,5 @@ export const AuthProvider: FC<Props> = ({ children }: Props) => {
     setProfile(state.profile);
   }, [state.profile]);
 
-  return (
-    <Context.Provider value={state}>
-      {children}
-    </Context.Provider>
-  );
+  return <Context.Provider value={state}>{children}</Context.Provider>;
 };

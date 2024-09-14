@@ -9,45 +9,70 @@ dayjs.extend(utc);
 dayjs.extend(advancedFormat);
 dayjs.extend(customParseFormat);
 
-export const formatDate = (date: Date) => date.toLocaleDateString('en-US', {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-});
+/**
+ * Format a date into a human-readable string, with an optional locale argument.
+ *
+ * @example formatDate(new Date(), "en-US") -> "June 6, 2018"
+ * @param date The JavaScript date to format
+ * @param locale The locale to use for formatting
+ * @returns The formatted date string
+ */
+export const formatDate = (date: Date, locale: Intl.LocalesArgument = "en-US") =>
+  date.toLocaleDateString(locale, {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
-export const formatTime = (date: Date) => date.toLocaleTimeString('en-US', {
-  hour: 'numeric',
-  minute: 'numeric',
-});
+/**
+ * Format a time from a Date object into a human-readable string, with an optional locale argument.
+ *
+ * @example "10:32 AM"
+ * @param date The JavaScript date object to format
+ * @param locale The locale to use for formatting
+ * @returns The formatted time string
+ */
+export const formatTime = (date: Date, locale: Intl.LocalesArgument = "en-US") =>
+  date.toLocaleTimeString(locale, {
+    hour: "numeric",
+    minute: "numeric",
+  });
 
 /**
  * Parse a Date object into a formatted date and time string
  *
  * @param date JavaScript Date object
  * @param includePrefix include "today" prefix
+ * @param locale locale to use for formatting
  * @returns formatted date and time
  */
-export const formatDateTime = (date: Date, includePrefix = false) => {
+export const formatDateTime = (
+  date: Date,
+  includePrefix = false,
+  locale: Intl.LocalesArgument = "en-US"
+) => {
   const now = new Date();
   const diff = now.getTime() - date.getTime();
 
-  if (diff < (12 * 60 * 60 * 1000)) {
-    return `${includePrefix ? "today at " : ""}${formatTime(date)}`;
+  if (diff < 12 * 60 * 60 * 1000) {
+    return `${includePrefix ? "today at " : ""}${formatTime(date, locale)}`;
   }
 
-  return `${formatDate(date)} at ${formatTime(date)}`;
+  return `${formatDate(date, locale)} at ${formatTime(date, locale)}`;
 };
 
 /**
  * Parse a Date object into a MM/YY formatted string
  *
  * @param date JavaScript Date object
+ * @param locale locale to use for formatting
  * @returns formatted MM/YY string
  */
-export const formatDateMMYY = (date: Date) => date.toLocaleDateString('en-US', {
-  month: '2-digit',
-  year: '2-digit',
-});
+export const formatDateMMYY = (date: Date, locale: Intl.LocalesArgument = "en-US") =>
+  date.toLocaleDateString(locale, {
+    month: "2-digit",
+    year: "2-digit",
+  });
 
 /**
  * Parse a NHTSA recall date DD/MM/YYYY into MMMM Do, YYYY
@@ -91,7 +116,10 @@ export const parseNHTSADate = (date: string) => dayjs(date, "DD/MM/YYYY", true).
  * @throws {Error} If any of the constraints are violated
  * @returns {boolean} true if the `event_date` is valid
  */
-export const isValidEventDate = (event: FeedPost["event_date"], post: FeedPost["post_date"]): boolean => {
+export const isValidEventDate = (
+  event: FeedPost["event_date"],
+  post: FeedPost["post_date"]
+): boolean => {
   // Missing or invalid event date. This is not valid.
   const eventDate = dayjs(new Date(event));
   if (!event || !eventDate.isValid()) {

@@ -2,9 +2,17 @@ import React, { FC, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Add, Edit, NavigateNext, UploadFile } from "@mui/icons-material";
 import {
-  Box, Breadcrumbs, Button, Card,
-  IconButton, Skeleton, Stack, Theme, Tooltip,
-  Typography, styled,
+  Box,
+  Breadcrumbs,
+  Button,
+  Card,
+  IconButton,
+  Skeleton,
+  Stack,
+  Theme,
+  Tooltip,
+  Typography,
+  styled,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { unparse } from "papaparse";
@@ -14,14 +22,19 @@ import GenericText from "../../components/GenericText/GenericText";
 import Loader from "../../components/Loader";
 import { StatisticItem } from "../../components/StatisticItem";
 import { ScrollToTop } from "../../components/ScrollToTop/ScrollButton";
-import { useListVehiclesProvider, ProviderStatus as ListProviderStatus } from "../../Providers/ListVehiclesProvider";
+import {
+  useListVehiclesProvider,
+  ProviderStatus as ListProviderStatus,
+} from "../../Providers/ListVehiclesProvider";
 import useListLookup, { LookupStatus as ListLookupStatus } from "../../hooks/useListLookup";
 import { VehicleTable } from "../../components/VehicleTable";
 import { DEFAULT_DATE } from "../../config/Endpoints";
 import { formatDate, formatDateMMYY } from "../../utils/date";
 import ProfileAvatar from "../../components/ProfileAvatar";
 import EditListDialog from "../../components/EditListDialog";
-import useIsFollowingListLookup, { LookupStatus as IsFollowingLookupStatus } from "../../hooks/useIsFollowingListLookup";
+import useIsFollowingListLookup, {
+  LookupStatus as IsFollowingLookupStatus,
+} from "../../hooks/useIsFollowingListLookup";
 import { downloadBlob } from "../../utils/files";
 import VehicleSelectionDialog from "../../components/VehicleSelectionDialog";
 import DeleteContentDialog from "../../components/DeleteContentConfirm";
@@ -59,13 +72,15 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
   margin: theme.spacing(-1),
 }));
 
-const StyledListOwner = styled(Stack, { shouldForwardProp: (p) => p !== "filled" })(({ filled, theme }: { filled?: boolean; theme?: Theme }) => ({
-  borderRadius: "8px",
-  padding: "8px",
-  paddingLeft: !filled ? "0" : "8px",
-  backgroundColor: !filled || !theme ? "transparent" : theme.palette.action.selected,
-  marginRight: "auto",
-}));
+const StyledListOwner = styled(Stack, { shouldForwardProp: (p) => p !== "filled" })(
+  ({ filled, theme }: { filled?: boolean; theme?: Theme }) => ({
+    borderRadius: "8px",
+    padding: "8px",
+    paddingLeft: !filled ? "0" : "8px",
+    backgroundColor: !filled || !theme ? "transparent" : theme.palette.action.selected,
+    marginRight: "auto",
+  })
+);
 
 /**
  * A page for viewing a single Vehicle List.
@@ -80,8 +95,14 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
   const [{ status: isFollowingStatus, following }, toggleFollow] = useIsFollowingListLookup(uuid);
   const { profile } = useAuthProvider();
   const {
-    status: listVehiclesStatus, count, vehicles, hasNext,
-    next, addVehicles, removeVehicles, addVins,
+    status: listVehiclesStatus,
+    count,
+    vehicles,
+    hasNext,
+    next,
+    addVehicles,
+    removeVehicles,
+    addVins,
   } = useListVehiclesProvider();
   const tableCardRef = useRef<HTMLDivElement>(null);
   const deleteVehiclesRef = useRef<Vehicle[]>([]);
@@ -121,7 +142,9 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
     const removed = await removeVehicles?.(deleteVehiclesRef.current.map((v) => v.vin));
     deleteVehiclesRef.current = [];
     setDeleteVehiclesOpen(false);
-    enqueueSnackbar(`${removed} vehicle${removed !== 1 ? "s" : ""} deleted from list`, { variant: "success" });
+    enqueueSnackbar(`${removed} vehicle${removed !== 1 ? "s" : ""} deleted from list`, {
+      variant: "success",
+    });
   };
 
   const deleteSelectionPrompt = async (vehicles: Vehicle[]) => {
@@ -136,17 +159,21 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
 
   const addVehiclesWrapper = async (vehicles: Vehicle[]) => {
     const added = await addVehicles?.(vehicles);
-    enqueueSnackbar(`${added} new vehicle${added !== 1 ? "s" : ""} added to list`, { variant: "success" });
+    enqueueSnackbar(`${added} new vehicle${added !== 1 ? "s" : ""} added to list`, {
+      variant: "success",
+    });
   };
 
   const importVehicles = async (vins: Vehicle["vin"][]) => {
     const added = await addVins?.(vins);
-    enqueueSnackbar(`${added} new vehicle${added !== 1 ? "s" : ""} imported`, { variant: "success" });
+    enqueueSnackbar(`${added} new vehicle${added !== 1 ? "s" : ""} imported`, {
+      variant: "success",
+    });
   };
 
   const exportSelection = (vehicles: Vehicle[]) => {
     const d = unparse(vehicles);
-    downloadBlob(d, 'export.csv', 'text/csv');
+    downloadBlob(d, "export.csv", "text/csv");
   };
 
   const onDeleteWrapper = async () => {
@@ -194,10 +221,15 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
       <StyledProfileDetails direction="column" gap={2}>
         <Stack direction="row" alignItems="center" justifyContent="flex-start" gap={2}>
           <Stack direction="column" alignItems="flex-start" justifyContent="center" gap={1}>
-            <Typography variant="caption" sx={{ mb: "-10px", color: (theme: Theme) => theme.palette.text.secondary }}>
+            <Typography
+              variant="caption"
+              sx={{ mb: "-10px", color: (theme: Theme) => theme.palette.text.secondary }}
+            >
               {`Created ${formatDate(new Date(list.created_date))}`}
             </Typography>
-            <Typography variant="h5" sx={{ fontWeight: 600 }}>{list.name}</Typography>
+            <Typography variant="h5" sx={{ fontWeight: 600 }}>
+              {list.name}
+            </Typography>
             {list.description ? <GenericText content={list.description} /> : null}
 
             <StyledListOwner direction="row" gap={1} sx={{ height: "55px" }}>
@@ -206,18 +238,34 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
                 <Typography variant="caption" sx={{ mb: "-5px" }}>
                   List Curator
                 </Typography>
-                <Typography component={StyledLink} to={`/profile/${list.owner.uuid}`} variant="body1" fontWeight={600}>
+                <Typography
+                  component={StyledLink}
+                  to={`/profile/${list.owner.uuid}`}
+                  variant="body1"
+                  fontWeight={600}
+                >
                   {`@${list.owner.username}`}
                 </Typography>
               </Stack>
             </StyledListOwner>
-            {profile?.uuid !== list?.owner?.uuid && (
-              isFollowingStatus === IsFollowingLookupStatus.Loading ? (
-                <Skeleton variant="rectangular" width={100} height={32} sx={{ borderRadius: "8px" }} />
+            {profile?.uuid !== list?.owner?.uuid &&
+              (isFollowingStatus === IsFollowingLookupStatus.Loading ? (
+                <Skeleton
+                  variant="rectangular"
+                  width={100}
+                  height={32}
+                  sx={{ borderRadius: "8px" }}
+                />
               ) : (
-                <Button variant="outlined" color="primary" onClick={toggleFollow} sx={{ mr: "auto", textTransform: "none" }}>{following ? "Unfollow" : "Follow"}</Button>
-              )
-            )}
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={toggleFollow}
+                  sx={{ mr: "auto", textTransform: "none" }}
+                >
+                  {following ? "Unfollow" : "Follow"}
+                </Button>
+              ))}
           </Stack>
         </Stack>
       </StyledProfileDetails>
@@ -235,7 +283,9 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
         />
         <StatisticItem
           name="Created"
-          value={list.created_date !== DEFAULT_DATE ? formatDateMMYY(new Date(list.created_date)) : "N/A"}
+          value={
+            list.created_date !== DEFAULT_DATE ? formatDateMMYY(new Date(list.created_date)) : "N/A"
+          }
         />
       </StyledStatisticStack>
 
@@ -243,7 +293,9 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
         <VehicleTable
           status={tableStatus}
           vehicles={vehicles || []}
-          totalCount={listVehiclesStatus !== ListProviderStatus.LOADING ? count : list.vehicle_count}
+          totalCount={
+            listVehiclesStatus !== ListProviderStatus.LOADING ? count : list.vehicle_count
+          }
           onPageChange={tablePageChange}
           onExport={exportSelection}
           onDelete={list.owner.uuid === profile?.uuid ? deleteSelectionPrompt : undefined}
@@ -257,10 +309,31 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
         onConfirm={onConfirmDelete}
         onCancel={cancelDeleteVehicles}
       />
-      {(list.follower_count > 0 && followersOpen) && <FollowersDialog identifier={uuid} type="List" count={list.follower_count} onClose={() => setFollowersOpen(false)} />}
-      {editOpen && <EditListDialog list={list} onClose={() => setEditOpen(false)} onDelete={onDeleteWrapper} onConfirm={editList} />}
-      {addVehiclesOpen && <VehicleSelectionDialog onSelect={addVehiclesWrapper} onClose={() => setAddVehiclesOpen(false)} />}
-      {uploadOpen && (<ListImportDialog onConfirm={importVehicles} onClose={() => setUploadOpen(false)} />)}
+      {list.follower_count > 0 && followersOpen && (
+        <FollowersDialog
+          identifier={uuid}
+          type="List"
+          count={list.follower_count}
+          onClose={() => setFollowersOpen(false)}
+        />
+      )}
+      {editOpen && (
+        <EditListDialog
+          list={list}
+          onClose={() => setEditOpen(false)}
+          onDelete={onDeleteWrapper}
+          onConfirm={editList}
+        />
+      )}
+      {addVehiclesOpen && (
+        <VehicleSelectionDialog
+          onSelect={addVehiclesWrapper}
+          onClose={() => setAddVehiclesOpen(false)}
+        />
+      )}
+      {uploadOpen && (
+        <ListImportDialog onConfirm={importVehicles} onClose={() => setUploadOpen(false)} />
+      )}
     </Box>
   );
 };

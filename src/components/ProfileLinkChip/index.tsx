@@ -22,11 +22,7 @@ const ProfileLinkChip: FC<Props> = ({ uuid }: Props) => {
   const [{ status, profile }] = useProfileLookup(uuid);
 
   if (status !== LookupStatus.Success || !profile?.username) {
-    return (
-      <Link to={`/profile/${uuid}`}>
-        {`${window.origin}/profile/${uuid}`}
-      </Link>
-    );
+    return <Link to={`/profile/${uuid}`}>{`${window.origin}/profile/${uuid}`}</Link>;
   }
 
   return (
