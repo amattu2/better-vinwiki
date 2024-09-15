@@ -13,21 +13,20 @@ export enum LookupStatus {
   Error = "error",
 }
 
+export type ListLookupResponse = [
+  { status: LookupStatus; list: List | null },
+  editList: (list: Partial<List>) => Promise<boolean>,
+  deleteList: () => Promise<boolean>,
+];
+
 /**
  * A hook to cache and lookup List information by UUID
  *
  * @param uuid the uuid to lookup
  * @param refetch if true, will refetch the list
- * @returns [{ status, List }, (list: Partial<List>) => Promise<boolean>, () => Promise<boolean>]
+ * @returns ListLookupResponse
  */
-const useListLookup = (
-  uuid: List["uuid"],
-  refetch = false
-): [
-  { status: LookupStatus; list: List | null },
-  (list: Partial<List>) => Promise<boolean>,
-  () => Promise<boolean>,
-] => {
+const useListLookup = (uuid: List["uuid"], refetch = false): ListLookupResponse => {
   const { token, profile: authProfile } = useAuthProvider();
   const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.LIST_LOOKUP, {});
   const cachedValue: List | null = cache[uuid] || null;
