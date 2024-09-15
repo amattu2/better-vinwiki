@@ -12,15 +12,15 @@ export enum LookupStatus {
   Error = "error",
 }
 
+export type UUIDLookupResponse = [LookupStatus, { uuid: Profile["uuid"] | null }];
+
 /**
  * A hook to cache and lookup a uuid by username
  *
  * @param username username to lookup
- * @returns [status, { uuid }]
+ * @returns UUIDLookupResponse
  */
-const useUUIDLookup = (
-  username: Profile["username"]
-): [LookupStatus, { uuid: Profile["uuid"] | null }] => {
+const useUUIDLookup = (username: Profile["username"]): UUIDLookupResponse => {
   const { token } = useAuthProvider();
   const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.UUID_LOOKUP, {});
   const cachedValue: Profile["uuid"] | null = cache[username] || null;
