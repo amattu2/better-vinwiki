@@ -7,20 +7,17 @@ export enum LookupStatus {
   Error = "error",
 }
 
-type LookupResult = {
-  description: string | null;
-};
+export type TroubleCodeLookupResponse = [LookupStatus, { description: string | null }];
 
 /**
  * A hook to lookup an OBD-ii code and return details on it
  *
- * NOTE: This is prep for a future network-based
- * lookup feature.
+ * NOTE: This is prep for a future network-based lookup feature.
  *
  * @param {string} code OBD-ii code to lookup
- * @returns [status, LookupResult]
+ * @returns {TroubleCodeLookupResponse}
  */
-const useTroubleCodeLookup = (code: string): [LookupStatus, LookupResult] => {
+const useTroubleCodeLookup = (code: string): TroubleCodeLookupResponse => {
   const description: string | null = OBDii[code] || null;
   const [status] = useState<LookupStatus>(description ? LookupStatus.Success : LookupStatus.Error);
 
