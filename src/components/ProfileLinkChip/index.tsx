@@ -8,13 +8,10 @@ type Props = {
 };
 
 /**
- * A profile UUID chip that returns a `@mention` chip
- * if the user exists. Otherwise, returns a localized
- * link to the profile.
+ * A profile embed chip used to pretty-link to a user's profile when a full profile link
+ * is in a message.
  *
- * Not to be confused with the `<MentionChip />` itself, which
- * is used when `@username` is in the post body.
- *
+ * @note This is the opposite of `<MentionChip />`, which is used when a username is known.
  * @param {Props} props
  * @returns {JSX.Element}
  */
@@ -33,6 +30,7 @@ const ProfileLinkChip: FC<Props> = ({ uuid }: Props) => {
       to={`/profile/${uuid}`}
       size="small"
       data-testid="mention-chip"
+      clickable
     />
   );
 };

@@ -303,6 +303,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
                 label={profile.website_url}
                 variant="filled"
                 size="small"
+                clickable
               />
             </StyledLink>
           )}

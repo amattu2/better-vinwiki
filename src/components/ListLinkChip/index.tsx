@@ -30,6 +30,7 @@ const ListLinkChip: FC<Props> = ({ uuid }: Props) => {
       to={`/list/${uuid}`}
       size="small"
       data-testid="list-chip"
+      clickable
     />
   );
 };

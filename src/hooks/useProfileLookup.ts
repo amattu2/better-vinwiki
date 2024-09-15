@@ -13,21 +13,20 @@ export enum LookupStatus {
   Error = "error",
 }
 
+export type ProfileLookupResponse = [
+  { status: LookupStatus; profile: Profile | null },
+  editProfile: (profile: Partial<Profile>) => Promise<boolean>,
+  editProfileImage: (image: FileList) => Promise<boolean>,
+];
+
 /**
  * A hook to cache and lookup a Profile by UUID.
  *
  * @param uuid the uuid to lookup
  * @param refetch whether to refetch the profile even if it's cached
- * @returns [{ status, Profile }, (profile: Partial<Profile>) => Promise<boolean>, (image: FileList) => Promise<boolean>]
+ * @returns ProfileLookupResponse
  */
-const useProfileLookup = (
-  uuid: Profile["uuid"],
-  refetch = false
-): [
-  { status: LookupStatus; profile: Profile | null },
-  (profile: Partial<Profile>) => Promise<boolean>,
-  (image: FileList) => Promise<boolean>,
-] => {
+const useProfileLookup = (uuid: Profile["uuid"], refetch = false): ProfileLookupResponse => {
   const { token, profile: authProfile } = useAuthProvider();
   const [cache, setCache] = useSessionStorage<Cache>(CacheKeys.PROFILE, {});
 

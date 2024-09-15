@@ -29,6 +29,7 @@ const MentionChip: FC<Props> = ({ handle }: Props) => {
       to={`/profile/${uuid}`}
       size="small"
       data-testid="mention-chip"
+      clickable
     />
   );
 };
