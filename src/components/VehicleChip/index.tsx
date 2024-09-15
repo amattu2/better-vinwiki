@@ -25,6 +25,7 @@ const VehicleChip: FC<Props> = ({ vin }: Props) => (
     to={`/vehicle/${vin}`}
     size="small"
     data-testid="vehicle-chip"
+    clickable
   />
 );
 
