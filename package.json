@@ -36,7 +36,7 @@
     "eject": "react-scripts eject",
     "postbuild": "cp ./openapi.yml ./build",
     "test": "react-scripts test",
-    "test:ci": "TZ=UTC CI=true react-scripts test --passWithNoTests --coverage",
+    "test:ci": "TZ=UTC CI=true react-scripts test --passWithNoTests --coverage --maxWorkers=2 --maxConcurrent=2",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx src",
     "lint:ci": "eslint --ext .js,.jsx,.ts,.tsx src --max-warnings 0",
     "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx src",
