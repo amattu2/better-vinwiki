@@ -10,7 +10,7 @@
     "@mui/material": "^5.15.15",
     "@mui/x-date-pickers": "^7.3.1",
     "@shaggytools/nhtsa-api-wrapper": "^3.0.4",
-    "dayjs": "^1.11.10",
+    "dayjs": "^1.11.13",
     "exif-library": "^2.0.0-alpha.0",
     "lodash": "^4.17.21",
     "notistack": "^3.0.1",
