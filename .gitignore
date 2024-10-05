@@ -18,3 +18,8 @@ thunderActivity.json
 *.ini
 *.gch
 *.exe
+
+# wrangler project
+
+.dev.vars
+.wrangler/
