@@ -10,27 +10,26 @@ on:
     tags:
       - "v*"
     paths:
-      - "src/**"
-      - "public/**"
+      - "packages/frontent/src/**"
+      - "packages/frontend/public/**"
 
 jobs:
   publish:
     name: Publish to Cloudflare Pages
-    if: ${{ github.repository_owner == 'amattu2' }}
     runs-on: ubuntu-latest
     environment: better-vinwiki (Production)
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Dependencies
         run: npm ci
 
       - name: Test (Jest)
-        run: npm run test:ci
+        run: npx lerna run test:ci --scope=@better-vinwiki/frontend
 
       - name: Lint (EsLint)
-        run: npm run lint:ci
+        run: npx lerna run lint:ci --scope=@better-vinwiki/frontend
 
       - name: Build
         env:
@@ -42,7 +41,7 @@ jobs:
           REACT_APP_MEDIA_API_URL: ${{ vars.REACT_APP_MEDIA_API_URL }}
           REACT_APP_MEDIA_CDN_URL: ${{ vars.REACT_APP_MEDIA_CDN_URL }}
           REACT_APP_API_CLIENT: ${{ vars.REACT_APP_API_CLIENT }}
-        run: npm run build
+        run: npx lerna run build --scope=@better-vinwiki/frontend
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
@@ -51,5 +50,5 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: better-vinwiki
-          directory: ./build
+          directory: ./packages/frontend/build
           branch: main
