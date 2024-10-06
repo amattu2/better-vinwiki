@@ -1,0 +1,25 @@
+{
+	"name": "@better-vinwiki/backend",
+	"version": "1.0.3",
+	"private": true,
+	"scripts": {
+		"deploy": "wrangler deploy",
+		"start": "wrangler dev",
+		"test": "vitest",
+		"test:ci": "vitest --coverage",
+		"lint": "eslint --ext .ts,.js src",
+		"lint:ci": "eslint --ext .ts,.js src --max-warnings 0",
+		"cf-typegen": "wrangler types",
+		"typecheck": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "^0.5.2",
+		"@cloudflare/workers-types": "^4.20241004.0",
+		"typescript": "^5.5.2",
+		"vitest": "2.0.5",
+		"wrangler": "^3.60.3"
+	},
+	"dependencies": {
+		"itty-router": "^5.0.18"
+	}
+}
