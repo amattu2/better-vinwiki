@@ -239,7 +239,7 @@ const View: FC<Props> = ({ uuid }: Props) => {
   };
 
   if (profileStatus === ProfileProviderStatus.Loading) {
-    return <Loader />;
+    return <Loader showDelayText />;
   }
 
   if (profileStatus === ProfileProviderStatus.Error || !profile) {

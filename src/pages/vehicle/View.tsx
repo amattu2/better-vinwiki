@@ -157,7 +157,7 @@ const View: FC<Props> = ({ vin }: Props) => {
   };
 
   if (status === VehicleProviderStatus.LOADING) {
-    return <Loader />;
+    return <Loader showDelayText />;
   }
 
   if (status === VehicleProviderStatus.ERROR || !vehicle || !editVehicle) {

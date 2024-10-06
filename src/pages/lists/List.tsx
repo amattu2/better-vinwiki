@@ -182,7 +182,7 @@ const ListView: FC<Props> = ({ uuid }: Props) => {
   };
 
   if (status === ListLookupStatus.Loading) {
-    return <Loader />;
+    return <Loader showDelayText />;
   }
 
   if (status === ListLookupStatus.Error || !list) {
