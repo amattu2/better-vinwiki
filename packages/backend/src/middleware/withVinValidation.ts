@@ -1,4 +1,4 @@
-import { error, type RequestHandler } from "itty-router";
+import { error, type RequestHandler } from 'itty-router';
 
 /**
  * Middleware to perform VIN validation on the request
