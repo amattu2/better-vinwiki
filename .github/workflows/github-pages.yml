@@ -17,8 +17,7 @@ on:
       - development
       - dev
     paths:
-      - "packages/frontend/src/**"
-      - "packages/frontend/public/**"
+      - "packages/frontend/**"
 
 jobs:
   publish:

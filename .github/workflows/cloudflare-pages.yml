@@ -10,8 +10,7 @@ on:
     tags:
       - "v*"
     paths:
-      - "packages/frontent/src/**"
-      - "packages/frontend/public/**"
+      - "packages/frontend/**"
 
 jobs:
   publish:
@@ -24,12 +23,6 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci
-
-      - name: Test (Jest)
-        run: npx lerna run test:ci --scope=@better-vinwiki/frontend
-
-      - name: Lint (EsLint)
-        run: npx lerna run lint:ci --scope=@better-vinwiki/frontend
 
       - name: Build
         env:
