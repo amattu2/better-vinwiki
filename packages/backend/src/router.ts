@@ -4,10 +4,7 @@ import withVinValidation from './middleware/withVinValidation';
 /**
  * Base API router for the application
  */
-const router: IttyRouterType = IttyRouter({
-	404: () => error(404, 'Not found'),
-	500: () => error(500, 'Internal server error'),
-});
+const router: IttyRouterType = IttyRouter();
 
 router
 	.get('/api/v1/vin/:vin/golo365', withParams, withVinValidation, ({ vin }) => ({ message: `${vin}`}))
