@@ -1,3 +1,7 @@
 {
-  "jest.jestCommandLine": "npm run test --"
+  "jest.jestCommandLine": "npm run test --",
+  "eslint.workingDirectories": [
+    "./packages/backend",
+    "./packages/frontend"
+  ]
 }
