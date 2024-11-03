@@ -1,0 +1,35 @@
+name: Cloudflare Worker
+
+concurrency:
+  group: "cloudflare-worker"
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+    paths:
+      - "packages/backend/**"
+
+jobs:
+  publish:
+    name: Publish to Cloudflare Workers
+    runs-on: ubuntu-latest
+    environment: better-vinwiki (Production)
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build
+        run: npx lerna run build --scope=@better-vinwiki/backend
+
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: ./packages/backend
