@@ -21,20 +21,14 @@ const StyledImageBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-const StyledBackground = styled("div", {
-  shouldForwardProp: (p) => p !== "bg" && p !== "blur",
-})(({ bg, blur }: { bg?: string; blur?: boolean }) => ({
-  backgroundImage: `url(${bg})`,
+const StyledImage = styled("img", {
+  shouldForwardProp: (p) => p !== "blur",
+})(({ blur }: { blur?: boolean }) => ({
+  display: "block",
   filter: blur ? "blur(6px)" : "none",
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-  backgroundRepeat: "no-repeat",
-  position: "absolute",
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  zIndex: 1,
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
   transition: "filter 0.3s ease-out",
   "&:hover": {
     filter: "brightness(0.8)",
@@ -77,7 +71,7 @@ export const ExpandableImage: FC<Props> = ({ lowRes, highRes, alt }: Props) => {
   return (
     <>
       <StyledImageBox className="image-box" onClick={() => setExpanded(true)}>
-        <StyledBackground bg={src} blur={blur} />
+        <StyledImage src={src} alt={alt} blur={blur} />
         <StyledButton className="expand-button">
           <AspectRatio />
         </StyledButton>
