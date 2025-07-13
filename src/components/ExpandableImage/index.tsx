@@ -24,6 +24,7 @@ const StyledImageBox = styled(Box)(({ theme }) => ({
 const StyledImage = styled("img", {
   shouldForwardProp: (p) => p !== "blur",
 })(({ blur }: { blur?: boolean }) => ({
+  display: "block",
   filter: blur ? "blur(6px)" : "none",
   width: "100%",
   height: "100%",
