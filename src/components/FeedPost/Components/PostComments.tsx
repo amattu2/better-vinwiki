@@ -26,6 +26,9 @@ const StyledCommentBox = styled(Box)({
   "& .MuiDivider-root:last-child": {
     display: "none",
   },
+  "@media print": {
+    display: "none",
+  },
 });
 
 const StyledCommentStack = styled(Stack)({
