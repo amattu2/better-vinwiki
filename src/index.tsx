@@ -1,7 +1,7 @@
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { CssBaseline, ThemeProvider } from "@mui/material";
+import { CssBaseline, ThemeProvider, useMediaQuery } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useDarkMode } from "usehooks-ts";
@@ -32,10 +32,13 @@ const router = createBrowserRouter(routes, { basename: CONFIG.PUBLIC_URL });
 
 const App: FC = () => {
   const { isDarkMode } = useDarkMode();
+  const isPrint = useMediaQuery("@media print");
+
+  const darkMode = useMemo(() => isDarkMode && !isPrint, [isDarkMode, isPrint]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <ThemeProvider theme={isDarkMode ? DarkTheme : LightTheme}>
+      <ThemeProvider theme={darkMode ? DarkTheme : LightTheme}>
         <CssBaseline />
         <RouterProvider router={router} fallbackElement={<p>Error!</p>} />
       </ThemeProvider>

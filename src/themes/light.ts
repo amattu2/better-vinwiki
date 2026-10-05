@@ -15,6 +15,9 @@ export const LightTheme: Theme = createTheme({
         body: {
           height: "100vh",
           backgroundColor: "rgb(244, 247, 250)",
+          "@media print": {
+            backgroundColor: "#fff",
+          },
         },
       },
     },

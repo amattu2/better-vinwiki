@@ -55,10 +55,16 @@ const StyledHeaderSection = styled(Stack)(({ theme }) => ({
   position: "sticky",
   top: 0,
   zIndex: 8,
+  "@media print": {
+    display: "none",
+  },
 }));
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
   margin: theme.spacing(-1),
+  "@media print": {
+    display: "none",
+  },
 }));
 
 const StyledDetailsGrid = styled(Grid)(({ theme }) => ({
@@ -95,6 +101,9 @@ const StyledButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(1),
   marginRight: "auto",
   textTransform: "none",
+  "@media print": {
+    display: "none",
+  },
 }));
 
 const StyledPillGrid = styled(Grid)(({ theme }) => ({
@@ -116,6 +125,17 @@ const StyledActionsGrid = styled(Grid)(({ theme }) => ({
   position: "sticky",
   top: "57px",
   [theme.breakpoints.down("md")]: {
+    display: "none",
+  },
+  "@media print": {
+    display: "none",
+  },
+}));
+
+const StyledLoadNextBox = styled(Box)(({ theme }) => ({
+  textAlign: "center",
+  marginTop: theme.spacing(2),
+  "@media print": {
     display: "none",
   },
 }));
@@ -279,7 +299,7 @@ const View: FC<Props> = ({ vin }: Props) => {
               )}
               {slicedPosts?.map((post) => <FeedPost key={post.uuid} {...post} isVehiclePage />)}
               {hasNext && (
-                <Box sx={{ textAlign: "center", mt: 2 }}>
+                <StyledLoadNextBox>
                   <LoadingButton
                     variant="outlined"
                     onClick={loadMore}
@@ -287,7 +307,7 @@ const View: FC<Props> = ({ vin }: Props) => {
                   >
                     Show More
                   </LoadingButton>
-                </Box>
+                </StyledLoadNextBox>
               )}
             </Box>
           </Grid>
