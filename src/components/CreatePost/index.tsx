@@ -28,6 +28,7 @@ import {
   Tooltip,
   Typography,
   styled,
+  useMediaQuery,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -100,6 +101,7 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
   const { profile, token } = useAuthProvider();
   const { addPost: addFeedPost } = useFeedProvider();
   const { enqueueSnackbar } = useSnackbar();
+  const isMediaQuery = useMediaQuery("@media print");
 
   const [expanded, setExpanded] = useState<boolean>(false);
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(vehicle || null);
@@ -264,6 +266,10 @@ const CreatePost: FC<Props> = ({ vehicle }: Props) => {
       setImageHasGpsData(false);
     })();
   }, [imageUpload?.[0]]);
+
+  if (isMediaQuery) {
+    return null;
+  }
 
   return (
     <>

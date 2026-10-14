@@ -1,8 +1,16 @@
 import React, { FC } from "react";
-import { Box, Stack } from "@mui/material";
+import { styled, Box, Stack } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import AutoScroll from "../components/ScrollToTop/AutoScroll";
 import Sidebar from "../components/Sidebar";
+
+const StyledOutletContainer = styled(Box)({
+  flexGrow: 1,
+  marginLeft: "72px",
+  "@media print": {
+    marginLeft: "unset",
+  },
+});
 
 /**
  * The layout for a Authenticated user
@@ -14,9 +22,9 @@ export const AuthenticatedLayout: FC = () => (
     <AutoScroll />
     <Stack direction="row">
       <Sidebar />
-      <Box sx={{ flexGrow: 1, ml: "72px" }}>
+      <StyledOutletContainer>
         <Outlet />
-      </Box>
+      </StyledOutletContainer>
     </Stack>
   </>
 );

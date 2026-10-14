@@ -32,6 +32,9 @@ const StyledBox = styled(Box)(({ theme }) => ({
   "& *": {
     userSelect: "none",
   },
+  "@media print": {
+    display: "none",
+  },
 }));
 
 const StyledLogoBox = styled(Box)({

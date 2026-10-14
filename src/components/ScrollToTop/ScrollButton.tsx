@@ -12,6 +12,9 @@ const StyledFabBox = styled(Box)(({ theme }) => ({
   bottom: "16px",
   right: "16px",
   zIndex: theme.zIndex.fab,
+  "@media print": {
+    display: "none",
+  },
 }));
 
 export const ScrollToTop: FC<Props> = ({ topGap = true }: Props) => {
